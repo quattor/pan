@@ -1,0 +1,14 @@
+<project default="all" basedir=".">
+
+	<import file="../../common.xml" />
+	
+	<property name="objfiles" value="test*.tpl" />
+
+	<target name="build.java" depends="define.tasks" description="build with java implementation">
+		<jbuild nthread="0" dir="${basedir}" glob="${objfiles}"/>
+		<jbuild nthread="1" dir="${basedir}" glob="${objfiles}"/>
+	</target>
+
+	<target name="all" depends="build.java" />
+	
+</project>

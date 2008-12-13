@@ -1,0 +1,1056 @@
+/*
+ Copyright (c) 2006 Charles A. Loomis, Jr, Cedric Duprilot, and
+ Centre National de la Recherche Scientifique (CNRS).
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+
+ $HeadURL: https://svn.lal.in2p3.fr/LCG/QWG/panc/trunk/grammar/PanParser.jjt $
+ $Id: PanParser.jjt 3937 2008-11-22 10:31:49Z loomis $
+ */
+
+options {
+  LOOKAHEAD = 1;
+  FORCE_LA_CHECK = false;
+  STATIC = false;
+  MULTI = true;
+  UNICODE_INPUT = true;
+  JDK_VERSION = "1.5";
+}
+
+PARSER_BEGIN(PanParser)
+
+package org.quattor.pan.parser;
+
+import org.quattor.pan.dml.data.*;
+
+@SuppressWarnings("unchecked")
+public class PanParser { 
+
+  java.io.File tplFile = null;
+  int deprecationLevel = 0;
+  boolean debugSuppressed = true;
+  org.quattor.pan.CompilerOptions compilerOptions = null;
+  
+  /**
+   * Set the file name. */
+  public void setFile(java.io.File file) {
+    if ((file!=null) && (!file.isAbsolute())) {
+      file = file.getAbsoluteFile();
+    }
+    tplFile = file;
+  }
+  
+  /**
+   * Get the file name */
+  public java.io.File getFile() {
+    return tplFile;
+  }
+  
+  /**
+   * Get the debugging pattern. */
+  public boolean setDebugSuppressedFlag(String templateName) {
+    boolean enabled = false;
+    if (compilerOptions != null) {
+      enabled = compilerOptions.checkDebugEnabled(templateName);
+    }
+    return !enabled;
+  }
+  
+  /**
+   * Set the compiler options.  Will be used to determine debugging status. */
+  public void setCompilerOptions(org.quattor.pan.CompilerOptions options) {
+    AnnotationToken.setDumpAnnotation(options.dumpAnnotations);
+    compilerOptions = options;
+  }
+  
+   /**
+    * Write deprecation message to standard output.
+    */
+   public void deprecated(String message, Token token, int level) {
+     if ((compilerOptions != null) && (level <= compilerOptions.deprecationLevel)) {
+       StringBuilder msg = new StringBuilder("DEPRECATED ");
+       if (token != null) {
+         msg.append("[" + tplFile + ":" + token.beginLine + "." + token.beginColumn + "]");
+       } else {
+         msg.append("[" + tplFile + ":<unknown>]");
+       }
+       msg.append("\n");
+       msg.append(message);
+
+       System.err.println(msg.toString());
+     }
+   };
+  
+}
+
+PARSER_END(PanParser)
+
+/* Global token manager declarations.  These are used to handle
+   heredoc sections of the input file. */
+TOKEN_MGR_DECLS : {
+
+  // Global variables for handling the heredoc syntax.
+  boolean terminatorFound = false;
+  int heredocIndex = 0;
+  StringBuilder heredocBuffer = new StringBuilder();
+  java.util.Vector<String> heredocMarkers = new java.util.Vector<String>();
+  java.util.Vector<StringProperty> heredocStrings = new java.util.Vector<StringProperty>();
+
+  /**
+   * Return the vector with the heredoc strings in it. */
+  public java.util.Vector<StringProperty> getHeredocStrings() {
+    return heredocStrings;
+  }
+
+  /**
+   * Return the current count of the number of heredoc strings. */
+  public int getHeredocIndex() {
+    return heredocIndex-1;
+  }
+
+  /**
+   * Initialize the heredoc state.  This must be called explicitly
+   * before reusing the token manager for a new template. */
+  public void initializeHeredocState() {
+    terminatorFound = false;
+    heredocIndex = 0;
+    heredocBuffer.setLength(0);
+    heredocMarkers.clear();
+    heredocStrings.clear();
+  }
+
+}
+
+/* Skip (most) white space.  The line feed and carriage return processing
+   is more complicated because of the need to handle the 'heredoc' syntax. */
+<DEFAULT, NAMESPACE> SKIP : /* Whitespace. */
+{
+  < (" " | "\t" | "\f") >
+  |
+  < ("\n" | "\r" | "\r\n") > 
+  { 
+    if (heredocMarkers.size()>0) {
+      terminatorFound = false;
+      heredocBuffer.setLength(0);
+      SwitchTo(HEREDOC);
+    }
+  }
+}
+
+/* Treat comments as special tokens.  This allows the comments
+   to be passed to the parser without interfering with the 
+   parsing itself. */
+<DEFAULT, NAMESPACE> SPECIAL_TOKEN : /* Comments. */
+{
+  <COMMENT: "#" (~["\n","\r"])* >
+}
+
+/* Allow annotations to be added to the pan language source
+   files.  These annotations are intended to provide documentation
+   for the various language constructs. */
+<DEFAULT, NAMESPACE> SPECIAL_TOKEN : /* Annotations. */
+{
+  <ANNOTATION: "@" (" " | "\t" | "\f" | "\n" | "\r")* 
+                   ( 
+                     ("(" (~[")"])* ")") | 
+                     ("[" (~["]"])* "]") | 
+                     ("{" (~["}"])* "}")
+                   ) >
+  {
+    AnnotationToken a = (AnnotationToken) matchedToken;
+    Object result = a.getValue();
+    if (result instanceof Exception) {
+      Exception e = (Exception) result;
+      ParseException pe = new ParseException("invalid annotation syntax:\n" + e.getMessage());
+      pe.sourceRange = PanParserUtils.sourceRangeFromTokens(a,a);
+      throw pe;
+    } else {
+      a.dump();
+    }
+  }
+}
+
+/* Collect the heredoc string into the buffer.  This will be
+   passed to the parser through a backdoor channel. */
+<HEREDOC> SKIP : /* Strip out the heredoc info. */
+{
+
+  /* A line excluding the end-of-line character. */
+  < (~["\n","\r"])+ > 
+  { String line = image.toString();
+    if (line.equals(heredocMarkers.firstElement())) {
+      terminatorFound = true;
+      heredocMarkers.remove(0);
+      heredocStrings.add(StringProperty.getInstance(heredocBuffer.toString()));
+      heredocBuffer.setLength(0);
+    } else {
+      terminatorFound = false;
+      heredocBuffer.append(image);
+    }
+  }
+
+  |
+  
+  /* Reached an end-of-line.  Process the end of the heredoc if appropriate. */
+  < ("\n"|"\r"|"\r\n") > 
+  {
+    if (!terminatorFound) {
+      heredocBuffer.append(image);
+    } 
+    terminatorFound = false;
+    
+    if (heredocMarkers.size()==0) {
+      SwitchTo(DEFAULT);
+    }
+  }
+
+}
+
+<DEFAULT, NAMESPACE> TOKEN : /* Special processing for left brace. */
+{
+  <LBRACE: "{"> : DEFAULT
+}
+
+TOKEN : /* Operators and punctuation. */
+{
+  <OPTIONAL: "?">
+  |
+  <REQUIRED: ":">
+  |
+  <SEMICOLON: ";">
+  |
+  <COMMA: ",">
+  |
+  <LPAREN: "(">
+  |
+  <RPAREN: ")">
+  |
+  <LBRACKET: "[">
+  |
+  <RBRACKET: "]">
+  |
+  <RBRACE: "}">
+  |
+  <ASSIGN: "=">
+  |
+  <PLUS: "+">
+  |
+  <MINUS: "-">
+  |
+  <MOD: "%">
+  |
+  <DIV: "/">
+  |
+  <NOT: "!">
+  |
+  <GT: ">">
+  |
+  <LT: "<">
+  |
+  <RANGE: "..">
+  |
+  <OR: "||">
+  |
+  <AND: "&&">
+  |
+  <BIT_IOR: "|">
+  |
+  <BIT_XOR: "^">
+  |
+  <BIT_AND: "&">
+  |
+  <BIT_NOT: "~">
+  |
+  <EQ: "==">
+  |
+  <NE: "!=">
+  |
+  <GE: ">=">
+  |
+  <LE: "<=">
+  |
+  <ASSIGN_DEFAULT: "?=">
+}
+
+TOKEN : /* Literals. */
+{
+  <HD_MARKER: "<<" >
+  |
+  < UNDEF_LITERAL: "undef" >
+  |
+  < NULL_LITERAL: "null" >
+  |
+  < TRUE: "true">
+  |
+  < FALSE: "false">
+  |
+  < DECIMAL_LITERAL: ["1"-"9"] (["0"-"9"])* >
+  |
+  < HEX_LITERAL: "0" ["x","X"] (["0"-"9","a"-"f","A"-"F"])+ >
+  |
+  < OCTAL_LITERAL: "0" (["0"-"7"])* >
+  |
+  /* Doubles must have a digit after the decimal point to avoid conflicts
+     with the lexing of range expressions.  I.e. avoid 1.. being interpreted
+     as "1." followed by a period. */
+  < DOUBLE_LITERAL:
+    (["0"-"9"])+ "." (["0"-"9"])+ (<EXPONENT>)?
+    | (["0"-"9"])+ <EXPONENT>
+  >
+  |
+  < #EXPONENT: ["e","E"] (["+","-"])? (["0"-"9"])+ >
+  |
+  < HEREDOC_STRING : <HD_MARKER> <IDENTIFIER> >
+  { 
+    String marker = image.substring(2);
+    matchedToken.image = Integer.toString(heredocIndex++);
+    heredocMarkers.add(marker);
+  }
+  |
+  < SINGLE_QUOTED_STRING: "'" ( (~["'","\n","\r"]) | ("''") )* "'" >
+  {
+    PanParserUtils.processSingleQuotedString(image);
+    matchedToken.image = image.toString();
+  }
+  |
+  < DOUBLE_QUOTED_STRING:
+      "\"" ( "\\\"" | "\\\n" | "\\\r" | "\\\r\n" | (~["\"","\n","\r"]) )* "\"" >
+  {
+    PanParserUtils.processDoubleQuotedString(image,
+      PanParserUtils.sourceRangeFromTokens(matchedToken,matchedToken));
+    matchedToken.image = image.toString();
+  }
+}
+
+
+TOKEN : /* Reserved words and operators. */
+{
+  <ASTERISK: "*">
+  |
+  <IF: "if">
+  |
+  <FOR: "for">
+  | 
+  <WITH: "with">
+  | 
+  <ELSE: "else">
+  | 
+  <TYPE: "type">
+  | 
+  <BIND: "bind">
+  | 
+  <WHILE: "while">
+  | 
+  <VALID: "valid">
+  | 
+  <FINAL: "final">
+  | 
+  <UNIQUE: "unique">
+  | 
+  <OBJECT: "object">
+  | 
+  <FOREACH: "foreach" >
+  | 
+  <INCLUDE: "include" > : NAMESPACE
+  |
+  <TEMPLATE: "template"> : NAMESPACE
+  | 
+  <FUNCTION: "function">
+  | 
+  <VARIABLE: "variable">
+  | 
+  <STRUCTURE: "structure">
+  | 
+  <EXTENSIBLE: "extensible">
+  | 
+  <DECLARATION: "declaration">
+}
+
+TOKEN : /* Default identifiers. */
+{
+  <IDENTIFIER: [ "a"-"z", "A"-"Z", "_" ] ( [ "a"-"z", "A"-"Z", "_", "0"-"9" ] )* >
+}
+
+<NAMESPACE> TOKEN : /* Namespaced identifiers.  Simplified syntax; details checked in statements. */
+{
+  <NS_IDENTIFIER: ( [ "a"-"z", "A"-"Z", "_", "0"-"9", "-", "+", ".", "/" ] )+ > : DEFAULT
+}
+
+/* Check at the end of file that there are no unprocessed heredoc
+   tags.  If so, set the token text to the error message.  If 
+   the error is non-null then the EndOfFile production will 
+   throw a ParseException. */
+<*> TOKEN : 
+{
+  <EOF>
+  { 
+    if (heredocMarkers.size() == 0) {
+      matchedToken.image = null;
+    } else {
+      matchedToken.image = "EOF while processing heredoc";
+    }
+  }
+}
+
+/* If nothing else matches in the lexer, then there is an error.
+   Match the character where a standard token cannot be found. */
+<*> TOKEN:
+{
+  <ERROR: ~[] >
+}
+
+
+/*************************************************************************
+End-of-file processing.  
+*************************************************************************/
+void endOfFile() #void : 
+{ }
+{
+  token=<EOF>
+  { if (token.image != null) throw new ParseException(token.image); }
+}
+
+
+/*************************************************************************
+Literals.  
+*************************************************************************/
+void stringLiteral() #Operation :
+{ Token t; }
+{
+  ( t=<SINGLE_QUOTED_STRING> | t=<DOUBLE_QUOTED_STRING> )
+  {
+    jjtThis.setOperation(StringProperty.getInstance(t.image)); 
+    jjtThis.setOperationType(ASTOperation.OperationType.LITERAL);
+    jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(t,t));
+  }
+  |
+  t=<HEREDOC_STRING>
+  { 
+    jjtThis.setOperation(LongProperty.getInstance(token_source.getHeredocIndex()));
+    jjtThis.setOperationType(ASTOperation.OperationType.HEREDOC);
+    jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(t,t));
+  }
+}
+
+String longLiteral() #Operation :
+{ Token t; }
+{
+  ( t=<DECIMAL_LITERAL> | t=<HEX_LITERAL> | t=<OCTAL_LITERAL> )
+  { 
+    jjtThis.setOperation(LongProperty.getInstance(t.image));
+    jjtThis.setOperationType(ASTOperation.OperationType.LITERAL);
+    jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(t,t));
+    return t.image; 
+  }
+}
+
+void doubleLiteral() #Operation :
+{ Token t; }
+{
+  t=<DOUBLE_LITERAL>
+  { jjtThis.setOperation(DoubleProperty.getInstance(t.image)); 
+    jjtThis.setOperationType(ASTOperation.OperationType.LITERAL);
+    jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(t,t)); 
+  }
+}
+
+void booleanLiteral() #Operation :
+{ Token t; }
+{
+  ( t=<TRUE> | t=<FALSE> )
+  { jjtThis.setOperation(BooleanProperty.getInstance(t.image));     
+    jjtThis.setOperationType(ASTOperation.OperationType.LITERAL);
+    jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(t,t)); 
+  }
+}
+
+void nullLiteral() #Operation :
+{ Token t; }
+{
+  t=<NULL_LITERAL>
+  { jjtThis.setOperation(Null.VALUE); 
+    jjtThis.setOperationType(ASTOperation.OperationType.LITERAL);
+    jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(t,t)); 
+  }
+}
+
+void undefLiteral() #Operation :
+{ Token t; }
+{
+  t=<UNDEF_LITERAL>
+  { jjtThis.setOperation(Undef.VALUE); 
+    jjtThis.setOperationType(ASTOperation.OperationType.LITERAL);
+    jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(t,t)); 
+  }
+}
+
+/*************************************************************************
+Path.  A string literal excepting the heredoc format.  Used to simplify
+the generated AST.
+*************************************************************************/
+Token path() #void :
+{ Token t; }
+{
+  ( t=<SINGLE_QUOTED_STRING> | t=<DOUBLE_QUOTED_STRING> )
+  {return t; }
+}
+
+/*************************************************************************
+Template syntax.  Just a template declaration followed by a series of
+statements.
+*************************************************************************/
+
+ASTTemplate template() #Template :
+{ Token f=null, n, b, e; }
+{
+
+  [ f=<STRUCTURE> | f=<OBJECT> | f=<DECLARATION> | f=<UNIQUE> ] b=<TEMPLATE> n=templateName() e=<SEMICOLON> 
+  statementSequence()
+  endOfFile()
+  { 
+    if (f!=null) b=f;
+    jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(b,e)); 
+    jjtThis.setIdentifier(n.image);
+    jjtThis.setTemplateType((f!=null) ? f.kind : -1);
+    PanParserUtils.replaceHeredocStrings(jjtThis,token_source.getHeredocStrings());
+    return(jjtThis);
+  }
+}
+
+/*******************************************************************************
+  This is separated in order to set a flag to indicate if debugging calls should
+  be included in this template. 
+********************************************************************************/
+Token templateName() #void :
+{ Token n; }
+{ n=<NS_IDENTIFIER>
+  {
+    debugSuppressed = setDebugSuppressedFlag(n.image);
+    return(n);
+  } 
+}
+
+/*************************************************************************
+Statements--assignments, declarations, and includes.
+*************************************************************************/
+
+void statement() #Statement :
+{ Token b=null, e=null, t=null, i=null, f=null, s=null; }
+{
+  b=<SEMICOLON>
+  { 
+    jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(b,b)); 
+    jjtThis.setStatementType(ASTStatement.StatementType.NOOP);
+  }
+  |
+  /* Static and DML include statements. */
+  b=<INCLUDE> ( i=<NS_IDENTIFIER> | dmlSequence() ) e=<SEMICOLON>
+  { 
+    jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(b,e));
+    jjtThis.setStatementType(ASTStatement.StatementType.INCLUDE);
+    if (i!=null) {
+      deprecated("replace \"include <identifier>\" with \"include {'identifier'}\"", b, 0);
+      jjtThis.setIdentifier(i.image);
+    } 
+  }
+  |
+  /* Validation statement implemented as a bind statement with Element type. */
+  b=<VALID> s=path() <ASSIGN> dml() e=<SEMICOLON>
+  { 
+    jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(b,e)); 
+    jjtThis.setStatementType(ASTStatement.StatementType.BIND);
+    jjtThis.setIdentifier(s.image);
+  }
+  |
+  /* Bind statements bind a full type specification to a path. */
+  b=<BIND> s=path() <ASSIGN> fullTypeSpec() e=<SEMICOLON>
+  { 
+    jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(b,e));
+    jjtThis.setStatementType(ASTStatement.StatementType.BIND);
+    jjtThis.setIdentifier(s.image);
+  }
+  |
+  /* Alternate, deprecated form of a bind statement. */
+  LOOKAHEAD(2) b=<TYPE> s=path() <ASSIGN> fullTypeSpec() e=<SEMICOLON>
+  { 
+    deprecated("replace 'type <path> = ...' with 'bind <path> = ...'", b, 0);
+    jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(b,e)); 
+    jjtThis.setStatementType(ASTStatement.StatementType.BIND);
+    jjtThis.setIdentifier(s.image);
+  }
+  |
+  /* Assign a value or code to a path. */
+  LOOKAHEAD(2) [ f=<FINAL> ] s=path() (t=<ASSIGN> | t=<ASSIGN_DEFAULT>) dml() e=<SEMICOLON>
+  { 
+    b=(f!=null)?f:s;
+    jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(b,e));
+    jjtThis.setStatementType(ASTStatement.StatementType.ASSIGN);
+    jjtThis.setIdentifier(s.image);
+    jjtThis.setFinalFlag(f!=null);
+    jjtThis.setConditionalFlag(t.kind == PanParserConstants.ASSIGN_DEFAULT);
+  }
+  |
+  /* Assign variable to a global variable. */
+  LOOKAHEAD(3) [ f=<FINAL> ] b=<VARIABLE> i=<IDENTIFIER> (t=<ASSIGN> | t=<ASSIGN_DEFAULT>) dml() e=<SEMICOLON>
+  { 
+    if (f!=null) b=f;
+    if (i.image.equals("loadpath")) deprecated("replace variable 'loadpath' with 'LOADPATH'", t, 0);
+    jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(b,e)); 
+    jjtThis.setStatementType(ASTStatement.StatementType.VARIABLE);
+    jjtThis.setIdentifier(i.image);
+    jjtThis.setFinalFlag(f!=null);
+    jjtThis.setConditionalFlag(t.kind == PanParserConstants.ASSIGN_DEFAULT);
+  }
+  |
+  /* Declare a new type. */
+  LOOKAHEAD(2) b=<TYPE> i=<IDENTIFIER> <ASSIGN> fullTypeSpec() e=<SEMICOLON>
+  { 
+    jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(b,e)); 
+    jjtThis.setStatementType(ASTStatement.StatementType.TYPE);
+    jjtThis.setIdentifier(i.image);
+  }
+  |
+  /* Declare a new function. */
+  LOOKAHEAD(2) b=<FUNCTION> i=<IDENTIFIER> <ASSIGN> dml() e=<SEMICOLON>
+  { 
+    jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(b,e)); 
+    jjtThis.setStatementType(ASTStatement.StatementType.FUNCTION);
+    jjtThis.setIdentifier(i.image);
+  }
+}
+
+/* A sequence of statements consists of zero or more valid statements. */
+void statementSequence() #void :
+{ }
+{
+  (statement())*
+}
+
+
+/*************************************************************************
+Type declarations.
+*************************************************************************/
+
+/* Type specification possibly with attached validation code and 
+   description. */
+ASTFullTypeSpec fullTypeSpec() #FullTypeSpec :
+{ org.quattor.pan.template.SourceRange t, d = null, w = null; }
+{
+  t=typeSpec() [ d=defaultValue() ] [ w=with() ]  
+  {
+    jjtThis.setSourceRange(org.quattor.pan.template.SourceRange.combineSourceRanges(t,d,w));
+    return jjtThis;
+  }
+}
+
+org.quattor.pan.template.SourceRange defaultValue() #Operation :
+{ Token t=null; }
+{
+  t=<ASSIGN> dml()
+  { 
+    jjtThis.setOperationType(ASTOperation.OperationType.DEFAULT); 
+    jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(t,t));
+    return jjtThis.getSourceRange();
+  }
+}
+
+org.quattor.pan.template.SourceRange with() #Operation :
+{ Token t=null; }
+{
+  t=<WITH> dml()
+  { 
+    jjtThis.setOperationType(ASTOperation.OperationType.WITH); 
+    jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(t,t));
+    return jjtThis.getSourceRange();
+  }
+}
+
+/* Type definition. */
+org.quattor.pan.template.SourceRange typeSpec() #TypeSpec :
+{ org.quattor.pan.template.SourceRange b = null; org.quattor.pan.template.SourceRange e = null; }
+{
+  b=baseTypeSpec() ( e=listClause() | e=hashClause() | e=linkClause() )*
+  {
+    jjtThis.setSourceRange(org.quattor.pan.template.SourceRange.combineSourceRanges(b,e));
+    return jjtThis.getSourceRange();
+  }
+}
+
+/* Note that this is more permissive than the old pan compiler which
+   didn't allow an empty set of parenthesis for the limits clause.  
+   An empty set of parentheses are the same as no limits.  
+   
+   A limits clause is also permissible after a record statement.  This
+   was not permitted in previous versions of the pan grammar. */
+org.quattor.pan.template.SourceRange baseTypeSpec() #BaseTypeSpec :
+{ Token t = null, b=null, e=null; org.quattor.pan.utils.Range r = null; }
+{
+  t=<IDENTIFIER> [ <LPAREN> [ r=range() ] e=<RPAREN> ]
+  {
+    jjtThis.setIdentifier(t.image); jjtThis.setRange(r); 
+    jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(t,(e!=null)?e:t));
+    return jjtThis.getSourceRange();
+  }
+  |
+  [ b=<EXTENSIBLE> ] t=<LBRACE> (fieldSpec())* e=<RBRACE> [ <LPAREN> [ r=range() ] e=<RPAREN> ]
+  {
+    jjtThis.setExtensible(b!=null); 
+    jjtThis.setRange(r);
+    jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens((b!=null)?b:t,e));
+    return jjtThis.getSourceRange();
+  }
+}
+
+void fieldSpec() #FieldSpec :
+{ Token p=null, t=null; }
+{
+  p=path() (<OPTIONAL> | t=<REQUIRED>) fullTypeSpec()
+  {
+    jjtThis.setPath(p.image); 
+    jjtThis.setRequired(t!=null); 
+    jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(p,p));
+  }
+  |
+  <INCLUDE> t=<NS_IDENTIFIER>
+  {
+    jjtThis.setInclude(t.image);
+    jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(t,t));
+  }
+}
+
+org.quattor.pan.template.SourceRange linkClause() #TypeClause :
+{ Token t; }
+{
+  t=<ASTERISK>
+  {
+    jjtThis.setClauseType(ASTTypeClause.ClauseType.LINK); jjtThis.setRange(null);
+    jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(t,t));
+    return jjtThis.getSourceRange();
+  }
+}
+
+org.quattor.pan.template.SourceRange listClause() #TypeClause:
+{ Token b,e; org.quattor.pan.utils.Range r = null; }
+{
+  b=<LBRACKET> [ r=range() ] e=<RBRACKET>
+  {
+    jjtThis.setClauseType(ASTTypeClause.ClauseType.LIST); jjtThis.setRange(r);
+    jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(b,e));
+    return jjtThis.getSourceRange();
+  }
+}
+
+org.quattor.pan.template.SourceRange hashClause() #TypeClause :
+{ Token b,e; org.quattor.pan.utils.Range r = null; }
+{
+  b=<LBRACE> [ r=range() ] e=<RBRACE>
+  {
+    jjtThis.setClauseType(ASTTypeClause.ClauseType.HASH); jjtThis.setRange(r);
+    jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(b,e));
+    return jjtThis.getSourceRange();
+  }
+}
+
+/* Note: This is a more inclusive syntax than previous versions of the
+   pan grammar.  This will allow any legal long literal syntax to be 
+   used to specify the bounds.  Previous versions only allowed decimal
+   long values. */
+org.quattor.pan.utils.Range range() #void :
+{ String min=null, max=null; Token t=null; }
+{
+  min=longLiteral() [ t=<RANGE> [ max=longLiteral() ] ]
+  { 
+    jjtree.popNode(); 
+    if (max!=null) jjtree.popNode();
+    if (max==null && t==null) max=min;
+    return new org.quattor.pan.utils.Range(min,max); 
+  }
+  |
+  <RANGE> max=longLiteral()
+  { 
+    jjtree.popNode();
+    return new org.quattor.pan.utils.Range(null,max); 
+  }
+} 
+
+/*************************************************************************
+Expressions.
+*************************************************************************/
+
+void dmlSequence() #Operation(>1) :
+{ Token t=null, e=null; }
+{
+  t=<LBRACE> dml() (LOOKAHEAD(2) <SEMICOLON> dml())* [ <SEMICOLON> ] e=<RBRACE>
+  { 
+    if (jjtree.nodeCreated()) {
+      jjtThis.setOperationType(ASTOperation.OperationType.DML); 
+      jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(t,e)); 
+    }
+  }
+}
+
+void dmlVariable() #Variable :
+{ Token t=null, e=null; }
+{
+  /* Object is required because it is both a global variable and a keyword. */
+  ( t=<IDENTIFIER> | t=<OBJECT> ) (<LBRACKET> dml() e=<RBRACKET>)*
+  { 
+    if (t.image.equals("object")) deprecated("replace variable 'object' with 'OBJECT'", t, 0);
+    if (t.image.equals("self")) deprecated("replace variable 'self' with 'SELF'", t, 0);
+    if (t.image.equals("argc")) deprecated("replace variable 'argc' with 'ARGC'", t, 0);
+    if (t.image.equals("argv")) deprecated("replace variable 'argv' with 'ARGV'", t, 0);
+    if (t.image.equals("loadpath")) deprecated("replace variable 'loadpath' with 'LOADPATH'", t, 0);
+    jjtThis.setOperationType(ASTOperation.OperationType.VARIABLE);
+    jjtThis.setName(t.image);
+    jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(t,(e!=null)?e:t)); 
+  }
+}
+
+ASTOperation dml() #Operation :
+{ }
+{
+  ( expression() | dmlSequence() )
+  { 
+    jjtThis.setOperationType(ASTOperation.OperationType.DML); 
+    return jjtThis; 
+  }
+  |
+  emptyStatement()
+}
+
+void ifStatement() #Operation : 
+{ Token t; }
+{
+  t=<IF> <LPAREN> dml() <RPAREN> dml() [ LOOKAHEAD(2) <ELSE> dml() ]
+  { 
+    jjtThis.setOperationType(ASTOperation.OperationType.IF); 
+    jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(t,t)); 
+  }
+}
+
+void whileStatement() #Operation : 
+{ Token t; }
+{
+  t=<WHILE> <LPAREN> dml() <RPAREN> dml() 
+  {
+    jjtThis.setOperationType(ASTOperation.OperationType.WHILE); 
+    jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(t,t)); 
+  }
+}
+
+void foreachStatement() #Operation : 
+{ Token t; }
+{
+  t=<FOREACH> <LPAREN> dmlVariable() <SEMICOLON> dmlVariable() <SEMICOLON> dml() <RPAREN> dml() 
+  {
+    jjtThis.setOperationType(ASTOperation.OperationType.FOREACH); 
+    jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(t,t)); 
+  }
+}
+
+void forStatement() #Operation : 
+{ Token t; }
+{
+  t=<FOR> <LPAREN> dml() <SEMICOLON> dml() <SEMICOLON> dml() <RPAREN> dml() 
+  {
+    jjtThis.setOperationType(ASTOperation.OperationType.FOR); 
+    jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(t,t)); 
+  }
+}
+
+/* Empty DML statements are illegal because there is no way to 
+   determine what should be the correct return value from it. */
+void emptyStatement() #void : 
+{ Token t; }
+{
+  t=<SEMICOLON>
+  { 
+    ParseException pe = new ParseException("illegal empty DML statement");
+    pe.sourceRange = PanParserUtils.sourceRangeFromTokens(t,t);
+    throw pe;
+  } 
+}
+
+void expression() #void : 
+{ }
+{
+  assignmentExpression() 
+}
+
+void assignmentExpression() #Operation(>1) : 
+{ Token t=null; }
+{
+  ( LOOKAHEAD( dmlVariable() <ASSIGN> ) dmlVariable()  t=<ASSIGN> )* (ifStatement() | whileStatement() | forStatement() | foreachStatement() | logicalOrExpression() )
+  {
+    if (jjtree.nodeCreated()) {
+      jjtThis.setOperationType(ASTOperation.OperationType.ASSIGN); 
+      jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(t,t)); 
+    }
+  }
+}
+
+void logicalOrExpression() #void : 
+{ }
+{
+  logicalAndExpression() ( <OR> logicalAndExpression() #logicalOrExpression(2) )*
+}
+
+void logicalAndExpression() #void : 
+{ }
+{
+  inclusiveOrExpression() ( <AND> inclusiveOrExpression() #logicalAndExpression(2) )*
+}
+
+void inclusiveOrExpression() #void : 
+{ }
+{
+  exclusiveOrExpression() ( <BIT_IOR> exclusiveOrExpression() #BitwiseInclusiveOrOperation(2) )*
+}
+
+void exclusiveOrExpression() #void : 
+{ }
+{
+  bitAndExpression() ( <BIT_XOR> bitAndExpression() #BitwiseExclusiveOrOperation(2) )*
+}
+
+void bitAndExpression() #void : 
+{ }
+{
+  equalityExpression() ( <BIT_AND> equalityExpression() #BitwiseAndOperation(2) )*
+}
+
+void equalityExpression() #void : 
+{ }
+{
+  relationalExpression() 
+  (
+    ( <EQ> relationalExpression() ) #EQOperation(2)
+  |
+    ( <NE> relationalExpression() ) #NEOperation(2)
+  )*
+}
+
+void relationalExpression() #void : 
+{ }
+{
+  additiveExpression() 
+  (
+    ( <LT> additiveExpression() ) #LTOperation(2)
+  |
+    ( <GT> additiveExpression() ) #GTOperation(2)
+  |
+    ( <LE> additiveExpression() ) #LEOperation(2)
+  |
+    ( <GE> additiveExpression() ) #GEOperation(2)
+  )*
+}
+
+void additiveExpression() #void : 
+{ }
+{
+  multiplicativeExpression() 
+  ( 
+    ( <PLUS> multiplicativeExpression() ) #AddOperation(2) 
+  | 
+    ( <MINUS> multiplicativeExpression() ) #SubOperation(2)
+  )*
+}
+
+void multiplicativeExpression() #void :
+{ }
+{
+  unaryExpression() 
+  ( 
+    ( <ASTERISK> unaryExpression() ) #MulOperation(2)
+  |
+    ( <DIV> unaryExpression() ) #DivOperation(2)
+  |
+    ( <MOD> unaryExpression() ) #ModOperation(2)
+  )*
+}
+
+void unaryExpression() #Operation(t!=null) :
+{ Token t=null; }
+{
+  t=<PLUS> functionalExpression()
+  {
+    jjtThis.setOperationType(ASTOperation.OperationType.PLUS); 
+    jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(t,t)); 
+  }
+  |
+  t=<MINUS> functionalExpression()
+  {
+    jjtThis.setOperationType(ASTOperation.OperationType.MINUS); 
+    jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(t,t)); 
+  }
+  |
+  t=<NOT> functionalExpression()
+  {
+    jjtThis.setOperationType(ASTOperation.OperationType.NOT); 
+    jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(t,t)); 
+  }
+  |
+  t=<BIT_NOT> functionalExpression()
+  { 
+    jjtThis.setOperationType(ASTOperation.OperationType.BIT_NOT); 
+    jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(t,t)); 
+  }
+  |
+  functionalExpression()
+}
+
+void functionalExpression() #Function(t!=null) :
+{ Token t=null, e=null; }
+{
+  LOOKAHEAD(2)
+  ( t=<IDENTIFIER> <LPAREN> [ dml() ] ( LOOKAHEAD(2) <COMMA> dml() )* [ <COMMA> ] e=<RPAREN> )
+  { 
+    if (jjtree.nodeCreated()) {
+      jjtThis.setOperationType(ASTOperation.OperationType.FUNCTION);
+      jjtThis.setName(t.image);
+      if (debugSuppressed) {
+          // Mark functions with special name to indicate the call should be optimized out.
+        if ("debug".equals(t.image)) {
+          jjtThis.setName("-suppress-debug-");
+        }
+        if ("traceback".equals(t.image)) {
+          jjtThis.setName("-suppress-traceback-");
+        }
+      }
+      jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(t,e)); 
+    }
+  }
+  |
+  primaryExpression()
+}
+
+void primaryExpression() #void :
+{ }
+{
+  longLiteral()
+  |
+  doubleLiteral()
+  |
+  stringLiteral()
+  |
+  undefLiteral()
+  |
+  nullLiteral()
+  |
+  booleanLiteral()
+  |
+  dmlVariable()
+  |
+  <LPAREN> dml() <RPAREN>
+}
+ 

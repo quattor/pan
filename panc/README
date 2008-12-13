@@ -1,0 +1,6 @@
+Please find documentation about the pan configuration language
+and the java implementation of the pan compiler can be found
+on the documentation wiki:
+
+Language --> https://trac.lal.in2p3.fr/LCGQWG/wiki/Doc/panc
+Compiler --> https://trac.lal.in2p3.fr/LCGQWG/wiki/Doc/compiler

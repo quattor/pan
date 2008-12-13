@@ -1,0 +1,1704 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<article version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:mml="http://www.w3.org/1998/Math/MathML"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns:db="http://docbook.org/ns/docbook">
+  <title>Pan Language Manual</title>
+
+  <info>
+    <author>
+      <personname><firstname>Charles</firstname><surname>Loomis</surname></personname>
+    </author>
+
+    <abstract>
+      <para>The pan configuration language allows the definition of machine
+      configuration information and an associated schema with a simple,
+      human-accessible syntax. A pan language compiler transforms the
+      configuration information contained within a set of pan templates to a
+      machine-friendly XML format. This manual describes the pan
+      language.</para>
+    </abstract>
+  </info>
+
+  <section>
+    <title xml:id="introduction">Introduction</title>
+
+    <para>The pan language is used within the Quattor toolkit to define the
+    desired configuration for one or more machines. The language is primarily
+    a declarative language where elements in a hierarchical tree are set to
+    particular values. The pan syntax is human-friendly and fairly simple, yet
+    allows system administrators to simultaneously set configuration values,
+    define an overall configuration schema, and validate the final
+    configuration against the schema.</para>
+  </section>
+
+  <section>
+    <title>Templates</title>
+
+    <para>A machine configuration is defined by a set of files, called
+    templates, written in the pan language. These templates define
+    simultaneously the configuration parameters, the configuration schema, and
+    validation functions. Each template is named and is contained in a file
+    having the same name.</para>
+
+    <para>The syntax of a template file is simple:</para>
+
+    <para><programlisting>[ object | declaration | unique | structure ] template template-name;
+[ statement ... ]</programlisting></para>
+
+    <para>These files may contain comments that start with the hash sign ('#')
+    and terminate with the next new line or end of file. There are five
+    different types of templates that are identified by the template
+    modifier.</para>
+
+    <section>
+      <title>Object Templates</title>
+
+      <para>An object template is declared via the <literal>object</literal>
+      modifier. Each object template is associated with a machine profile and
+      the pan compiler will, by default, generate an XML profile for each
+      processed object template. An object template may contain any of the pan
+      statements. Statements that operate on paths may contain only absolute
+      paths.</para>
+
+      <para>Object template names may be namespaced, allowing organization of
+      object templates in directory structures as is done for other templates.
+      For the automatic loading mechanism to find object templates, the root
+      directory containing them must be specified explicitly in the load path
+      (either on the command line or via the <varname>LOADPATH</varname>
+      variable).</para>
+    </section>
+
+    <section>
+      <title>Ordinary Templates</title>
+
+      <para>An ordinary template uses no template modifier in the declaration.
+      These templates may contain any pan statement, but statements must
+      operate only on absolute paths.</para>
+    </section>
+
+    <section>
+      <title>Declaration Templates</title>
+
+      <para>A template declared with a <literal>declaration</literal> modifier
+      is a declaration template. These template may contain only those pan
+      statements that do not modify the machine profile. That is, they may
+      contain only <command>type</command>, <command>bind</command>,
+      <command>variable</command>, and <command>function</command> statements.
+      A declaration template will only be executed once for each processed
+      object template no matter how many times it is included. It will be
+      executed when the first include statement referencing the template is
+      encountered.</para>
+    </section>
+
+    <section>
+      <title>Unique Templates</title>
+
+      <para>A template defined with the <literal>unique</literal> modifier
+      behaves like an ordinary template except that it will only be included
+      once for each processed object template. It has the same restrictions as
+      an ordinary template. It will be executed when the first include
+      statement referencing the template is encountered.</para>
+    </section>
+
+    <section>
+      <title>Structure Templates</title>
+
+      <para>A template declared with the <literal>structure</literal> modifier
+      may only contain <command>include</command> statements and assignment
+      statements that operate on relative paths. The
+      <command>include</command> statements may only reference other structure
+      templates. Structure templates are an alternative for creating nlists
+      and are used via the <function>create</function> function.</para>
+    </section>
+  </section>
+
+  <section>
+    <title>Statements</title>
+
+    <section>
+      <title>assignment</title>
+
+      <para>Assignment statements are used to modify a part of the
+      configuration tree by replacing the subtree identified by its path by
+      the result of the execution a DML block. This result can be a single
+      property or a resource holding any number of elements. There are
+      conditional and unconditional assignments:</para>
+
+      <para><programlisting>[ final ] path ?= dml;
+[ final ] path = dml; </programlisting></para>
+
+      <para>where the path is represented by a string literal. Single-quoted
+      strings are slightly more efficient, but double-quoted strings work as
+      well. The conditional form (?=) will only execute the DML block and
+      assign a value if the named path does not exist or contains the
+      <literal>undef</literal> value.</para>
+
+      <para>The assignment will create parents of the value that do not
+      already exist.</para>
+
+      <para>If a value already exists, the pan compiler will verify that the
+      new value has a compatible type. If not, it will terminate the
+      processing with an error.</para>
+
+      <para>If the <literal>final</literal> modifier is used, then the path
+      and any children of that path may not be subsequently modified. Attempts
+      to do so will result in a fatal error.</para>
+    </section>
+
+    <section>
+      <title>include</title>
+
+      <para>The <command>include</command> statement acts as if the contents
+      of the named template were included literally at the point the include
+      statement is executed. Two variants of the <command>include</command>
+      statement are permitted:</para>
+
+      <para><programlisting>include template-name;
+include {dml};</programlisting></para>
+
+      <para>The first variant includes the named template; the template is
+      written as a token without quotes. The second variant executes the given
+      DML block. The block must evaluate to a string,
+      <literal>undef</literal>, or <literal>null</literal>. If the result is
+      <literal>undef</literal> or <literal>null</literal>, the
+      <command>include</command> statement does nothing; if the result is a
+      string, the named template is loaded and executed. Any other type will
+      generate an error. The braces in the second variant are required.</para>
+
+      <para>Ordinary templates may be included multiple times, but loops are
+      not permitted. Templates marked as <literal>declaration</literal> or
+      <literal>unique</literal> templates will be only included once where
+      first encountered.</para>
+
+      <para>There are some restrictions on what types of templates can be
+      included. Object templates cannot be included. Structure templates can
+      only include and be included by other structure templates. Declaration
+      templates can only include other declaration templates. All other
+      situations are allowed.</para>
+    </section>
+
+    <section>
+      <title>function</title>
+
+      <para>Functions can be defined by the user. These are arbitrary DML
+      blocks bound to an identifier. Once defined, functions can be called
+      from any subsequent DML block. Functions may only be defined once;
+      attempts to redefine an existing function will cause the compilation to
+      abort. The function definition syntax is:</para>
+
+      <para><programlisting>function identifier = dml; </programlisting></para>
+
+      <para>See the Function section for more information on user-defined
+      functions and a list of built-in functions.</para>
+
+      <para>Note that the compiler keeps distinct function and type
+      namespaces. One can define a function and type with the same
+      names.</para>
+    </section>
+
+    <section>
+      <title>type</title>
+
+      <para>Type definitions are critical for the validation of the generated
+      machine profiles. Types can be built up from the primitive pan types and
+      arbitrary validation functions. New types can be defined with</para>
+
+      <para><programlisting>type identifier = type-spec;</programlisting></para>
+
+      <para>A type may be defined only once; attempts to redefine an existing
+      type will cause the compilation to abort. Types referenced in the
+      type-spec must already be defined. See the Type section for more details
+      on the syntax of the type specification.</para>
+
+      <para>Note that the compiler keeps distinct function and type
+      namespaces. One can define a function and type with the same
+      names.</para>
+    </section>
+
+    <section>
+      <title>variable</title>
+
+      <para>Global variables can be defined via a <command>variable</command>
+      statement. These may be referenced from any DML block after being
+      defined. They may not be modified from a DML block; they can only be
+      modified from a <command>variable</command> statement. Like the
+      assignment statement there are conditional and unconditional
+      forms:</para>
+
+      <programlisting>[ final ] variable identifier ?= dml;
+[ final ] variable identifier = dml;</programlisting>
+
+      <para>For the conditional form, the DML block will only be evaluated and
+      the assignment done if the variable does not exist or has the
+      <literal>undef</literal> value.</para>
+
+      <para>If the <literal>final</literal> modifier is used, then the
+      variable may not be subsequently modified. Attempts to do so will result
+      in a fatal error.</para>
+
+      <para>Pan provides several automatic global variables:
+      <varname>OBJECT</varname>, <varname>SELF</varname>,
+      <varname>FUNCTION</varname>, and <varname>LOADPATH</varname> (and their
+      deprecated lowercase equivalents). <varname>OBJECT</varname> contains
+      the name of the object template being evaluated; it is a final variable.
+      <varname>SELF</varname> is the current value of a path referred to in an
+      assignment or variable statement. The <varname>SELF</varname> reference
+      cannot be modified, but children of <varname>SELF</varname> may be.
+      <varname>FUNCTION</varname> contains the name of the current function,
+      if it exists. <varname>FUNCTION</varname> is a final variable.
+      <varname>LOADPATH</varname> can be used to modify the load path used to
+      locate template for the <command>include</command> statement.</para>
+
+      <para>Any valid identifier may be used to name a global variable. To
+      avoid conflicts with local variables, however, global variables are
+      usually named in all uppercase; local variables in all lowercase.</para>
+    </section>
+
+    <section>
+      <title>bind</title>
+
+      <para>The <command>bind</command> statement binds a type definition to a
+      path. Multiple types may be bound to a single path. During the
+      validation phase, the value corresponding to the named path will be
+      checked against the bound types. There are two variants:</para>
+
+      <programlisting>bind path = type-spec;
+type path = type-spec;</programlisting>
+
+      <para>See the Type section for a complete description of the
+      <replaceable>type-spec</replaceable> syntax. Note that the second form
+      is deprecated and will disappear in a future release.</para>
+    </section>
+
+    <section>
+      <title>valid</title>
+
+      <para>The <command>valid</command> statement binds a validation DML
+      block to a path. It has the form:</para>
+
+      <para><programlisting>valid path = DML;</programlisting></para>
+
+      <para>This is a convenience statement and has exactly the same effect as
+      the statement:</para>
+
+      <para><programlisting>bind path = element with DML;</programlisting></para>
+
+      <para>The pan compiler internally implements this statement as the
+      <command>bind</command> statement above.</para>
+    </section>
+  </section>
+
+  <section>
+    <title>Types</title>
+
+    <para>The following statement will bind an existing type definition
+    (either a built-in definition or a user-defined one) to a path in a
+    machine configuration:</para>
+
+    <programlisting>bind path = type-spec;</programlisting>
+
+    <para>where 'path' is a valid path name and
+    <replaceable>type-spec</replaceable> is either a type specification or
+    name of an existing type. The syntax:</para>
+
+    <para><programlisting>type path = type-spec; # DEPRECATED</programlisting></para>
+
+    <para>will also work, but its use is deprecated. Support for the latter
+    form will disappear in a future release of the compiler.</para>
+
+    <para>Full type specifications are of the form:</para>
+
+    <para><programlisting>identifier = constant <literal>with</literal> validation-dml</programlisting></para>
+
+    <para>where 'constant' is a DML block that evaluates to a compile-time
+    constant (the default value), and the 'validation-dml' is a DML block that
+    will be run to validate paths associated with this type. Both the default
+    value and validation block are optional. The identifier can be any legal
+    name with an optional array specifier and/or range afterwards. For
+    example, an array of 5 elements is written int[5] or a string of length 5
+    to 10 characters string(5..10).</para>
+
+    <section>
+      <title>Primitive Types</title>
+
+      <para>There are five primitive, atomic types in the pan language:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>boolean</para>
+        </listitem>
+
+        <listitem>
+          <para>long</para>
+        </listitem>
+
+        <listitem>
+          <para>double</para>
+        </listitem>
+
+        <listitem>
+          <para>string</para>
+        </listitem>
+
+        <listitem>
+          <para>link</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>The "link" type appears as a string, but must be a valid path name
+      that exists at validation time. In addition, there are two primitive
+      collection types:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>list</para>
+        </listitem>
+
+        <listitem>
+          <para>nlist</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>The 'list' is an ordered list of elements. The named list (nlist)
+      associates a string key with a value; these are also known as hashes or
+      associative lists. These seven comprise the primitive types in the pan
+      language.</para>
+    </section>
+
+    <section>
+      <title>User-Defined Types</title>
+
+      <para>Users can create new types built up from the primitive types and
+      with optional validation functions. The general format for creating a
+      new type is:</para>
+
+      <programlisting>type identifier = type-spec;</programlisting>
+
+      <para>where the general form for a type specification 'type-spec' is
+      given above.</para>
+
+      <para>Probably the easiest way to understand the type definitions is by
+      example. The following are "alias" types that associate a new name with
+      an existing type, plus some restrictions.</para>
+
+      <programlisting>type ulong1 = long with self &gt;= 0;
+type ulong2 = long(0..);
+type port = long(0..65535);
+type short_string = string(..255);
+type small_even = long(-16..16) with self %2 == 0;</programlisting>
+
+      <para>Similarly one can create link types for elements in the machine
+      configuration:</para>
+
+      <programlisting>type mylink = long(0..)* with match(self, 'r$');</programlisting>
+
+      <para>Values associated to this type must be a string ending with 'r';
+      the value must be a valid path that references an unsigned long
+      value.</para>
+
+      <para>Slightly more complex is to create uniform collections:</para>
+
+      <programlisting>type long_list = long[10];
+type matrix = long[3][4];
+type double_nlist = double{};
+type small_even_nlist = small_even{};</programlisting>
+
+      <para>Here all of the elements of the collection have the same type. The
+      last example shows that previously-defined, user types can be used as
+      easily as the built-in primitive types.</para>
+
+      <para>A record is an nlist that explicitly names and types its children.
+      A record is by far, the most used type definition. For example, the type
+      definition:</para>
+
+      <programlisting>type cpu = {
+  'vendor' : string
+  'model' : string
+  'speed' : double
+  'fpu' ? boolean
+};</programlisting>
+
+      <para>defines an nlist with four children named 'vendor', 'model', etc.
+      The first three use a colon (":") in the definition and are consequently
+      required; the last uses a question mark ("?") and is optional. As
+      defined, no other children may appear in nlists of this type. However,
+      one can make the record extensible with:</para>
+
+      <programlisting>type cpu = extensible {
+  'vendor' : string
+  'model' : string
+  'speed' : double
+  'fpu' ? boolean
+};</programlisting>
+
+      <para>This will check the types of 'vendor', 'model', etc., but will
+      also allow children of the nlist with different unlisted names to
+      appear. This provides some limited subclassing support. Each of the
+      types for the children can be a full type specification and may contain
+      default values and/or validation blocks. One can also attach default
+      values or validation blocks to the record as a whole.</para>
+    </section>
+  </section>
+
+  <section>
+    <title>Functions</title>
+
+    <para>Within a Data Manipulation Language (DML) block, user-defined and
+    built-in functions may be called. The pan language uses a typical syntax
+    for calling a function:</para>
+
+    <programlisting>identifier(arg1, arg2, ...);</programlisting>
+
+    <para>where 'identifier' is a valid pan identifier and the arguments are
+    passed to the function as a comma-separated list. The arguments may be
+    expressions, in which case those expressions will be completely evaluated
+    before calling the function.</para>
+
+    <para>All functions return a value, although it might be
+    <literal>undef</literal>.</para>
+
+    <section>
+      <title>User-Defined Functions</title>
+
+      <para>The pan language permits user-defined functions. These functions
+      are essentially a DML block bound to an identifier. Only one DML block
+      may be assigned to a given identifier. Attempts to redefine an existing
+      function will cause the execution to be aborted. The syntax for defining
+      a function is:</para>
+
+      <programlisting>function identifier = DML;</programlisting>
+
+      <para>where identifier is a valid pan identifier and DML is the block to
+      bind to this identifier.</para>
+
+      <para>When the function is called, the DML will have the variables
+      <varname>ARGC</varname> and <varname>ARGV</varname> defined. (The
+      deprecated names <varname>argc</varname> and <varname>argv</varname>
+      will also be defined.) The variable <varname>ARGC</varname> contains the
+      number of arguments passed to the function; <varname>ARGV</varname> is a
+      list containing the values of the arguments.</para>
+
+      <para>Note that <varname>ARGV</varname> is a standard pan list.
+      Consequently, passing null values (intended to delete elements) to
+      functions can have non-obvious effects. For example, the call:</para>
+
+      <programlisting>f(null);</programlisting>
+
+      <para>will result is an empty <varname>ARGV</varname> list because the
+      null value deletes the nonexistent element
+      <varname>ARGV[0]</varname>.</para>
+
+      <para>The pan language does no automatic checking of the number or types
+      of arguments. The DML block that defines the function must make all of
+      these checks explicitly and use the error() function to emit an
+      informative message in case of an error.</para>
+
+      <para>Recursive calls to a function are permitted. However, the call
+      depth is limited (by an option when the compiler is invoked) to avoid
+      infinite recursion. Typically, the maximum is a small number like
+      10.</para>
+
+      <para>The following example defines a function that checks if the number
+      of arguments is even and are all numbers:</para>
+
+      <programlisting>function even_numbers = {
+
+  if (ARGC%2 != 0) {
+    error('number of arguments must be even'); 
+  };
+
+  foreach (k, v, ARGV) {
+    if (! is_number(v)) {
+      error('non-numeric argument found');
+    };
+  };
+
+};</programlisting>
+    </section>
+
+    <section>
+      <title>Built-In Functions</title>
+
+      <para></para>
+
+      <table>
+        <title>String Manipulation Functions</title>
+
+        <tgroup cols="2">
+          <colspec align="center" />
+
+          <tbody>
+            <row>
+              <entry><xref linkend="format" /></entry>
+
+              <entry>Generate a formatted string based on the formatting
+              parameters and the values provided.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="index" /></entry>
+
+              <entry>Return the index of a substring or -1 if the substring is
+              not found.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="length" /></entry>
+
+              <entry>Gives the length of a string.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="match" /></entry>
+
+              <entry>Return a boolean indicating if a string matches the given
+              regular expression.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="matches" /></entry>
+
+              <entry>Return an array containing the matched string and matched
+              groups for a given string and regular expression.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="replace" /></entry>
+
+              <entry>Replace all occurrences of a substring within a given
+              string.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="splice" /></entry>
+
+              <entry>Remove a substring and optionally replace it with
+              another.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="split" /></entry>
+
+              <entry>Split a string based on a given regular expression and
+              return an array of the results.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="substr" /></entry>
+
+              <entry>Extract a substring from the given string.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="to_lowercase" /></entry>
+
+              <entry>Change all of the characters in a string to lowercase
+              (using the US locale).</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="to_uppercase" /></entry>
+
+              <entry>Change all of the characters in a string to uppercase
+              (using the US locale).</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+
+      <table>
+        <title>Debugging Functions</title>
+
+        <tgroup cols="2">
+          <colspec align="center" />
+
+          <tbody>
+            <row>
+              <entry><xref linkend="debug" /></entry>
+
+              <entry>Print a debugging message to the standard error stream.
+              Returns the message or <literal>undef</literal>.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="error" /></entry>
+
+              <entry>Print an error message to the standard error and
+              terminate processing.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="traceback" /></entry>
+
+              <entry>Print an error message to the standard error along with a
+              traceback. Returns <literal>undef</literal>.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="deprecated" /></entry>
+
+              <entry>Print a warning message to the standard error if required
+              by the deprecation level in effect. Returns <literal>the message
+              or undef</literal>.</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+
+      <table>
+        <title>Encoding and Decoding Functions</title>
+
+        <tgroup cols="2">
+          <colspec align="center" />
+
+          <tbody>
+            <row>
+              <entry><xref linkend="base64_decode" /></entry>
+
+              <entry>Decode a string that is encoded using the Base64
+              standard.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="base64_encode" /></entry>
+
+              <entry>Encode a string using the Base64 standard.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="escape" /></entry>
+
+              <entry>Escape characters within the string to ensure string is a
+              valid nlist key (path term).</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="unescape" /></entry>
+
+              <entry>Transform an escaped string into its original
+              form.</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+
+      <table>
+        <title>Resource Manipulation Functions</title>
+
+        <tgroup cols="2">
+          <colspec align="center" />
+
+          <tbody>
+            <row>
+              <entry><xref linkend="create" /></entry>
+
+              <entry>Create an nlist from the named structure
+              template.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="first" /></entry>
+
+              <entry>Initialize an iterator over a resource. Returns a boolean
+              to indicate if more values exist in the resource.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="nlist" /></entry>
+
+              <entry>Create an nlist from the given key/value pairs given as
+              arguments.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="key" /></entry>
+
+              <entry>Find the n'th key in an nlist.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="length" /></entry>
+
+              <entry>Get the number of elements in the given resource.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="list" /></entry>
+
+              <entry>Create a list from the given arguments.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="merge" /></entry>
+
+              <entry>Perge two resources into a single one. This function
+              always creates a new resource and leaves the arguments
+              untouched.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="next" /></entry>
+
+              <entry>Extract the next value while iterating over a resource.
+              Returns a boolean to indicate if more values exist in the
+              resource.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="splice" /></entry>
+
+              <entry>Remove a section of a list and optionally replace removed
+              values with those in a given list.</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+
+      <table>
+        <title>Type Checking Functions</title>
+
+        <tgroup cols="2">
+          <colspec align="center" />
+
+          <tbody>
+            <row>
+              <entry><xref linkend="is_boolean" /></entry>
+
+              <entry>Check if the argument is a boolean value. If the argument
+              is a simple variable reference and the referenced variable does
+              not exist, the function will return false rather than raising an
+              error.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="is_defined" /></entry>
+
+              <entry>Check if the argument is a value other than
+              <literal>null</literal> or <literal>undef</literal>. If the
+              argument is a simple variable reference and the referenced
+              variable does not exist, the function will return false rather
+              than raising an error.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="is_double" /></entry>
+
+              <entry>Check if the argument is a double value. If the argument
+              is a simple variable reference and the referenced variable does
+              not exist, the function will return false rather than raising an
+              error.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="is_list" /></entry>
+
+              <entry>Check if the argument is a list. If the argument is a
+              simple variable reference and the referenced variable does not
+              exist, the function will return false rather than raising an
+              error.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="is_long" /></entry>
+
+              <entry>Check if the argument is a long value. If the argument is
+              a simple variable reference and the referenced variable does not
+              exist, the function will return false rather than raising an
+              error.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="is_nlist" /></entry>
+
+              <entry>Check if the argument is an nlist. If the argument is a
+              simple variable reference and the referenced variable does not
+              exist, the function will return false rather than raising an
+              error.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="is_null" /></entry>
+
+              <entry>Check if the argument is a <literal>null</literal>. If
+              the argument is a simple variable reference and the referenced
+              variable does not exist, the function will return false rather
+              than raising an error.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="is_number" /></entry>
+
+              <entry>Check if the argument is either a long or double value.
+              If the argument is a simple variable reference and the
+              referenced variable does not exist, the function will return
+              false rather than raising an error.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="is_property" /></entry>
+
+              <entry>Check if the argument is a property (long, double, or
+              string). If the argument is a simple variable reference and the
+              referenced variable does not exist, the function will return
+              false rather than raising an error.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="is_resource" /></entry>
+
+              <entry>Check if the argument is a list or nlist. If the argument
+              is a simple variable reference and the referenced variable does
+              not exist, the function will return false rather than raising an
+              error.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="is_string" /></entry>
+
+              <entry>Check if the argument is a string value. If the argument
+              is a simple variable reference and the referenced variable does
+              not exist, the function will return false rather than raising an
+              error.</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+
+      <table>
+        <title>Type Conversion Functions</title>
+
+        <tgroup cols="2">
+          <colspec align="center" />
+
+          <tbody>
+            <row>
+              <entry><xref linkend="to_boolean" /></entry>
+
+              <entry>Convert the argument to a boolean. Any number other than
+              0 and 0.0 are <literal>true</literal>. Any string other than
+              "false" are <literal>true</literal>. If the argument is a
+              resource, an error will occur.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="to_double" /></entry>
+
+              <entry>Convert the argument to a double value. Strings will be
+              parsed to create a double value; any literal form of a double is
+              valid.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="to_long" /></entry>
+
+              <entry>Convert the argument to a long value. Strings will be
+              parsed to create a long value; any literal form of a long is
+              valid (e.g. hex or octal literals).</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="to_string" /></entry>
+
+              <entry>Convert the argument to a string. The function will
+              return a string representation for any argument, including list
+              and nlist.</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+
+      <table>
+        <title>Miscellaneous Functions</title>
+
+        <tgroup cols="2">
+          <colspec align="center" />
+
+          <tbody>
+            <row>
+              <entry><xref linkend="clone" /></entry>
+
+              <entry>Create a deep copy of the given value.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="delete" /></entry>
+
+              <entry>Delete a local variable or child of a local
+              variable.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="exists" /></entry>
+
+              <entry>Return true if the given argument exists. The argument
+              can either be a variable reference, path, or template
+              name.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="path_exists" /></entry>
+
+              <entry>Return true if the given path exists. The argument must
+              be an absolute or external path.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="if_exists" /></entry>
+
+              <entry>For a given template name, return the template name if it
+              exists or undef if it does not. This can be used with the
+              include statement for a conditional include.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="return" /></entry>
+
+              <entry>Interrupt the normal flow of processing and return the
+              given value as the result of the current frame (either a
+              function call or the main DML block).</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="value" /></entry>
+
+              <entry>Retrieve the value associated with the given path. The
+              path may either be an absolute or external path.</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+    </section>
+  </section>
+
+  <section>
+    <title>Data Manipulation Language</title>
+
+    <para>Many of the top-level pan language statements take a Data
+    Manipulation Language (DML) block. Although the DML is not intended as a
+    complete high-level programming language, it does provide many features of
+    such a language and makes the pan language more flexible than a pure
+    declarative language.</para>
+
+    <para>Overall the DML looks very similar to stripped-down c or java. The
+    syntax and operators will be familiar to programmers of either language.
+    The principal difference is that all DML statements return a value, like
+    Lisp. The value of a block of statements is the value of the last
+    statement executed.</para>
+
+    <section>
+      <title>Literals</title>
+
+      <section>
+        <title>Boolean Literals</title>
+
+        <para>There are exactly two possible boolean values:
+        <literal>true</literal> and <literal>false</literal>. They must appear
+        as an unquoted word and completely in lowercase.</para>
+      </section>
+
+      <section>
+        <title>Long Literals</title>
+
+        <para>Long literals may be given in decimal, hexadecimal, or octal
+        format. A decimal literal is a sequence of digits starting with a
+        number other than zero. A hexadecimal literal starts with the '0x' or
+        '0X' and is followed by a sequence of hexadecimal digits. An octal
+        literal starts with a zero is followed by a sequence of octal digits.
+        Examples:</para>
+
+        <programlisting>123  # decimal long literal
+0755 # octal long literal
+0xFF # hexadecimal long literal</programlisting>
+
+        <para>Long literals are represented internally as an 8-byte signed
+        number. Long values that cannot be represented in 8 bytes will cause a
+        syntax error to be thrown.</para>
+      </section>
+
+      <section>
+        <title>Double Literals</title>
+
+        <para>Double literals represent a floating point number. A double
+        literal must start with a digit and must contain either a decimal
+        point or an exponent. Examples:</para>
+
+        <programlisting>0.01
+3.14159
+1e-8
+1.3E10</programlisting>
+
+        <para>Note that '.2' is not a valid double literal; this value must be
+        written as '0.2'.</para>
+
+        <para>Double literals are represented internally as an 8-byte value.
+        Double values that cannot be represented in 8 bytes will cause a
+        syntax error to be thrown.</para>
+      </section>
+
+      <section>
+        <title>String Literals</title>
+
+        <para>The string literals can be expressed in three different forms.
+        They can be of any length and can contain any character, including the
+        NULL byte.</para>
+
+        <para>Single quoted strings are used to represent short and simple
+        strings. They cannot span several lines and all the characters will
+        appear verbatim in the string, except the doubled single quote which
+        is used to represent a single quote inside the string. For
+        instance:</para>
+
+        <programlisting>’foo’ 
+’it’’s a sentence’ 
+’ˆ\d+\.\d+$’ </programlisting>
+
+        <para>This is the most efficient string representation and should be
+        used when possible.</para>
+
+        <para>Double quoted strings are more flexible and use the backslash to
+        represent escape sequences. For instance:</para>
+
+        <programlisting>"foo" 
+"it’s a sentence" 
+"Java-style escapes: \t (tab) \r (carriage return) \n (newline)" 
+"Hexadecimal escapes: \x3d (=) \x00 (NULL byte) \x0A (newline)" 
+"Miscellaneous escapes: \" (double quote) \\ (backslash)" 
+"this string spans two lines and\
+does not contain a newline"</programlisting>
+
+        <para>Invalid escape sequences will cause a syntax error to be
+        thrown.</para>
+
+        <para>Multi-line strings can be represented using the 'here-doc'
+        syntax, like in shell or Perl.</para>
+
+        <programlisting>"test" = "foo" + &lt;&lt;EOT + "bar"; 
+this code will assign to the path "test" the string 
+made of ‘foo’, plus this text including the final newline, 
+plus ‘bar’... 
+EOT</programlisting>
+
+        <para>The contents of the 'here-doc' are treated as a single-quoted
+        string. That is, no escape processing is done.</para>
+
+        <para>The easiest solution to put binary data inside pan code is to
+        base64 encode it and put it inside ”here-doc” strings like in the
+        following example:</para>
+
+        <programlisting>"/system/binary/stuff" = base64_decode(&lt;&lt;EOT); 
+H4sIAOwLyDwAA02PQQ7DMAgE731FX9BT1f8QZ52iYhthEiW/r2SitCdmxCK0E3W8no+36n2G 
+8UbOrYYWGROCgurBe4JeCexI2ahgWF5rulaLtImkDxbucS0tcc3t5GXMAqeZnIYo+TvAmsL8 
+GGLobbUUX7pT+pxkXJc/5Bx5p0ki7Cgq5KccGrCR8PzruUfP2xfJgVqHCgEAAA== 
+EOT</programlisting>
+
+        <para>The <function>base64_decode()</function> function is one of the
+        built-in pan functions.</para>
+
+        <section>
+          <title>Path Literals</title>
+
+          <para>Pan paths are represented as string literals; any of the
+          standard forms for a string literal can be used to represent a path.
+          There are three different types of paths: external, absolute, and
+          relative. An external path explicitly references an object template.
+          There are two forms that are currently supported:</para>
+
+          <programlisting>my/external/object:/some/absolute/path
+myobject:/some/absolute/path</programlisting>
+
+          <para>The first form allows namespace object templates to be
+          referenced; the second form does not. The second form is
+          deprecated.</para>
+
+          <para>An absolute path starts at the top of a configuration tree and
+          identifies a node within the tree. All absolute paths start with a
+          slash ("/") and are followed by a series of terms that identify a
+          specific child of each resource. A bare slash ("/") refers to the
+          full configuration tree. The allowed syntax for each term in the
+          path is described below.</para>
+
+          <para>A relative path refers to a path relative to a structure
+          template. Relative paths do not start with a slash, but otherwise
+          are identical to the absolute paths.</para>
+
+          <para>Terms may consist of letters, digits, underscores, hyphens,
+          and pluses. Terms beginning with a digit must be a valid long
+          literal. Terms that contain other characters must be escaped, either
+          by using the escape() function within a DML block or by enclosing
+          the term within braces for a path literal. For example, the
+          following creates an absolute path with three terms:</para>
+
+          <programlisting>/alpha/{a/b}/gamma</programlisting>
+
+          <para>The second term is equivalent to escape("a/b").</para>
+        </section>
+
+        <section>
+          <title>Regular Expressions</title>
+
+          <para>Regular expressions are written as a standard pan string
+          literals. The regular expression syntax is compatible with the Perl
+          regular expression syntax. (The actual implementation exposes the
+          java regular expression syntax, which is largely compatible with the
+          Perl syntax.) Because certain characters have a special meaning in
+          pan double quoted strings, characters like backslashes will need to
+          be escaped. It is preferable to use single-quoted strings for
+          regular expression literals.</para>
+        </section>
+      </section>
+
+      <section>
+        <title>Special Literals</title>
+
+        <bridgehead>undef</bridgehead>
+
+        <para>The undef literal can be used to represent the undefined
+        element, i.e. an element which is neither a property nor a
+        resource.</para>
+
+        <para>The undefined element cannot be written to a final machine
+        profile and most built-in functions will report a fatal error when
+        processing it. It can be used to mark an element that must be
+        overwritten during the processing.</para>
+
+        <bridgehead>null</bridgehead>
+
+        <para>The null value deletes the path or global variable to which it
+        is assigned. Most operations and functions will report an error if
+        this value is processed directly.</para>
+      </section>
+    </section>
+
+    <section>
+      <title>Variables</title>
+
+      <para>To ease data handling, you can use variables in any DML
+      expression. They are by default lexically scoped to the
+      <emphasis>outermost</emphasis> enclosing DML expression. They do not
+      need to be declared before they are used. The local variables are
+      destroyed once the outermost enclosing DML block terminates.</para>
+
+      <para>As a first approximation, variables work the way you expect them
+      to work. They can contain properties and resources and you can easily
+      access resource children using square brackets:</para>
+
+      <programlisting># populate /table which is a nlist 
+’/table/red’ = ’rouge’; 
+’/table/green’ = ’vert’; 
+
+’/test’ = { 
+  x = list(’a’, ’b’, ’c’); # x is a list 
+  y = value(’/table’);     # y is a nlist 
+  z = x[1] + y[’red’];     # z is a string 
+  return(length(z));       # this will be 6 
+};</programlisting>
+
+      <para>Local variables are subject to primitive type checking. So the
+      primitive type of a local variable cannot be changed unless the variable
+      is assigned a value of 'undef' or 'null' between the type-changing
+      assignments.</para>
+
+      <para>Global variables (defined with the 'variable' statement) can be
+      read from the DML block. Global variables may not be modified from
+      within the block; attempting to do so will abort the execution.</para>
+
+      <para>Global and local variables share the same namespace. Consequently,
+      there may be unintended naming conflicts between them. The best practice
+      to avoid this, is to name all local variables with all lowercase letters
+      and all global variables with all uppercase letters.</para>
+    </section>
+
+    <section>
+      <title>Operators</title>
+
+      <para>The operators available in the pan Data Manipulation Language
+      (DML) are very similar to those in the java or c languages. The
+      following tables summarize the DML operators. The valid primitive types
+      for each operator are indicated. Those marked with "number" will take
+      either long or double arguments. In the case of binary operators, the
+      result will be promoted to a double if the operands are mixed.</para>
+
+      <table>
+        <title>Unary DML Operators</title>
+
+        <tgroup cols="3">
+          <tbody>
+            <row>
+              <entry>+</entry>
+
+              <entry>number</entry>
+
+              <entry>preserves sign of argument</entry>
+            </row>
+
+            <row>
+              <entry>-</entry>
+
+              <entry>number</entry>
+
+              <entry>changes sign of argument</entry>
+            </row>
+
+            <row>
+              <entry>~</entry>
+
+              <entry>long</entry>
+
+              <entry>bitwise not</entry>
+            </row>
+
+            <row>
+              <entry>!</entry>
+
+              <entry>boolean</entry>
+
+              <entry>logical not</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+
+      <table>
+        <title>Binary DML Operators</title>
+
+        <tgroup cols="3">
+          <tbody>
+            <row>
+              <entry>+</entry>
+
+              <entry>number</entry>
+
+              <entry>addition</entry>
+            </row>
+
+            <row>
+              <entry>+</entry>
+
+              <entry>string</entry>
+
+              <entry>string concatenation</entry>
+            </row>
+
+            <row>
+              <entry>-</entry>
+
+              <entry>number</entry>
+
+              <entry>subtraction</entry>
+            </row>
+
+            <row>
+              <entry>*</entry>
+
+              <entry>number</entry>
+
+              <entry>multiplication</entry>
+            </row>
+
+            <row>
+              <entry>/</entry>
+
+              <entry>number</entry>
+
+              <entry>division</entry>
+            </row>
+
+            <row>
+              <entry>%</entry>
+
+              <entry>long</entry>
+
+              <entry>modulus</entry>
+            </row>
+
+            <row>
+              <entry>&amp;</entry>
+
+              <entry>long</entry>
+
+              <entry>bitwise and</entry>
+            </row>
+
+            <row>
+              <entry>|</entry>
+
+              <entry>long</entry>
+
+              <entry>bitwise or</entry>
+            </row>
+
+            <row>
+              <entry>^</entry>
+
+              <entry>long</entry>
+
+              <entry>bitwise exclusive or</entry>
+            </row>
+
+            <row>
+              <entry>&amp;&amp;</entry>
+
+              <entry>boolean</entry>
+
+              <entry>logical and (short-circuit logic)</entry>
+            </row>
+
+            <row>
+              <entry>||</entry>
+
+              <entry>boolean</entry>
+
+              <entry>logical or (short-circuit logic)</entry>
+            </row>
+
+            <row>
+              <entry>==</entry>
+
+              <entry>number</entry>
+
+              <entry>equal</entry>
+            </row>
+
+            <row>
+              <entry>==</entry>
+
+              <entry>string</entry>
+
+              <entry>lexical equal</entry>
+            </row>
+
+            <row>
+              <entry>!=</entry>
+
+              <entry>number</entry>
+
+              <entry>not equal</entry>
+            </row>
+
+            <row>
+              <entry>!=</entry>
+
+              <entry>string</entry>
+
+              <entry>lexical not equal</entry>
+            </row>
+
+            <row>
+              <entry>&gt;</entry>
+
+              <entry>number</entry>
+
+              <entry>greater than</entry>
+            </row>
+
+            <row>
+              <entry>&gt;</entry>
+
+              <entry>string</entry>
+
+              <entry>lexical greater than</entry>
+            </row>
+
+            <row>
+              <entry>&gt;=</entry>
+
+              <entry>number</entry>
+
+              <entry>greater than or equal</entry>
+            </row>
+
+            <row>
+              <entry>&gt;=</entry>
+
+              <entry>string</entry>
+
+              <entry>lexical greater than or equal</entry>
+            </row>
+
+            <row>
+              <entry>&lt;</entry>
+
+              <entry>number</entry>
+
+              <entry>less than</entry>
+            </row>
+
+            <row>
+              <entry>&lt;</entry>
+
+              <entry>string</entry>
+
+              <entry>lexical less than</entry>
+            </row>
+
+            <row>
+              <entry>&lt;=</entry>
+
+              <entry>number</entry>
+
+              <entry>less than or equal</entry>
+            </row>
+
+            <row>
+              <entry>&lt;=</entry>
+
+              <entry>string</entry>
+
+              <entry>lexical less than or equal</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+
+      <table>
+        <title>Operator Precedence (lowest to highest)</title>
+
+        <tgroup cols="1">
+          <tbody>
+            <row>
+              <entry>||</entry>
+            </row>
+
+            <row>
+              <entry>&amp;&amp;</entry>
+            </row>
+
+            <row>
+              <entry>|</entry>
+            </row>
+
+            <row>
+              <entry>^</entry>
+            </row>
+
+            <row>
+              <entry>&amp;</entry>
+            </row>
+
+            <row>
+              <entry>==, !=</entry>
+            </row>
+
+            <row>
+              <entry>&lt;, &lt;=, &gt;, &gt;=</entry>
+            </row>
+
+            <row>
+              <entry>+ (binary), - (binary)</entry>
+            </row>
+
+            <row>
+              <entry>*, /, %</entry>
+            </row>
+
+            <row>
+              <entry>+ (unary), - (unary), !, ~</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+    </section>
+
+    <section>
+      <title>Flow Control</title>
+
+      <para>DML contains four statements that permit non-linear execution of
+      code within a DML block. The <literal>if</literal> statement allows
+      conditional branches, the <literal>while</literal> statement allows
+      looping over a DML block, the <literal>for</literal> statement allows
+      the same, and the <literal>foreach</literal> statement allows iteration
+      over an entire resource (<type>list</type> or
+      <type>nlist</type>).</para>
+
+      <para>These statements, like all DML statements, return a value. Be
+      careful of this, because unexecuted blocks generally will return
+      'undef', which may lead to non-intuitive behavior.</para>
+
+      <section>
+        <title>Branching (<literal>if</literal> statement)</title>
+
+        <para>The <literal>if</literal> statement allows conditional execution
+        of a DML block. The statement may include an <literal>else</literal>
+        clause that will be executed if the condition is
+        <literal>false</literal>. The syntax is:</para>
+
+        <programlisting>if ( condition-dml ) true-dml;
+if ( condition-dml ) true-dml else false-dml;</programlisting>
+
+        <para>where all of the blocks may either be a single DML statement or
+        a true DML block.</para>
+
+        <para>The value returned by this statement is the value returned by
+        the <replaceable>true-dml</replaceable> or
+        <replaceable>false-dml</replaceable> block, whichever is actually
+        executed. If the <literal>else</literal> clause is not present and the
+        <replaceable>condition-dml</replaceable> is false, the if statement
+        returns <literal>undef</literal>.</para>
+      </section>
+
+      <section>
+        <title>Looping (<literal>while</literal> and <literal>for</literal>
+        statements)</title>
+
+        <para>Simple looping behavior is provided by the
+        <literal>while</literal> statement. The syntax is:</para>
+
+        <programlisting>while ( condition-dml ) body-dml;</programlisting>
+
+        <para>The loop will continue until the
+        <replaceable>condition-dml</replaceable> evaluates as
+        <literal>false</literal>. The value of this statement is that returned
+        by the <replaceable>body-dml</replaceable> block. If the
+        <replaceable>body-dml</replaceable> block is never executed, then
+        <literal>undef</literal> is returned.</para>
+
+        <para>The pan language also contains a for statement that in many
+        cases provides a more concise syntax for many types of loops. The
+        syntax is:</para>
+
+        <programlisting>for (initialization-dml; condition-dml; increment-dml) body-dml;</programlisting>
+
+        <para>The <replaceable>initialization-dml</replaceable> block will
+        first be executed. Before each iteration the
+        <replaceable>condition-dml</replaceable> block will be executed; the
+        <replaceable>body-dml</replaceable> will only be executed (again) if
+        the condition evaluates to <literal>true</literal>. After each
+        iteration, the <replaceable>increment-dml</replaceable> block is
+        executed. If the condition never evaluates to <literal>true</literal>,
+        then the value of the statement will be that of the
+        <replaceable>initialization-dml</replaceable>. All of the DML blocks
+        must be present, but those not of interest can be defined as just
+        <literal>undef</literal>.</para>
+
+        <para>Note that the compiler usually enforces an iteration limit to
+        avoid infinite loops. Loops exceeding the iteration limit will cause
+        the compiler to abort the execution.</para>
+      </section>
+
+      <section>
+        <title>Iteration (<literal>foreach</literal> statement)</title>
+
+        <para>The 'foreach' statement allows iteration over all of the
+        elements of a list or nlist. The syntax is:</para>
+
+        <programlisting>foreach (key; value; resource) body-dml;</programlisting>
+
+        <para>This will cause the body-dml to be executed once for each
+        element in resource (a list or nlist). The local variables 'key' and
+        'value' (you can choose these names) will be set at each iteration to
+        the key and value of the element. For a list, the key is the element's
+        index. The iteration will always occur in the natural order of the
+        resource: ordinal order for lists and lexical order of the keys for
+        nlists.</para>
+
+        <para>The value returned will be that of the last iteration of the
+        body-dml. If the body-dml is never executed (for an empty list or
+        nlist), 'undef' will be returned.</para>
+
+        <para>The 'foreach' statement is not subject to the compiler's
+        iteration limit. By definition, the resource has a finite number of
+        entries, so this safeguard is not needed.</para>
+
+        <para>This form of iteration should be used in preference to the
+        first/next functions or the key function whenever possible. It is more
+        efficient than the functional forms and less prone to error.</para>
+      </section>
+    </section>
+  </section>
+
+  <section>
+    <title>Other Features</title>
+
+    <section>
+      <title>Annotations</title>
+
+      <para>An annotation mechanism has been added to the pan language to
+      allow a set of key-value pairs to be associated with various
+      language-level elements. This was originally intended to help with the
+      generation of documentation, but the general nature of the solution may
+      lend itself to other uses. The basic syntax of an annotation is:</para>
+
+      <programlisting>@(<replaceable>content</replaceable>) | @ [<replaceable>content</replaceable>] | @{<replaceable>content</replaceable>}</programlisting>
+
+      <para>where <replaceable>content</replaceable> is either a set of
+      key-value pairs or a block of text. The chosen delimiter (parenthesis,
+      bracket, or brace) cannot appear in the enclosed
+      <replaceable>content</replaceable>. Annotations may appear before any
+      token in the pan language and are logically attached to the following
+      token. The compiler will process annotations when building machine
+      configurations, but ignore the contents. Syntactically invalid
+      annotations will cause the compilation to fail.</para>
+
+      <para>A set of key-value pairs inside of an annotation are written
+      like:</para>
+
+      <programlisting>@(
+  key1 = value1
+  key2 = value2
+)</programlisting>
+
+      <para>The key can be any sequence of letters, digits, and the characters
+      "_.+-/". The value associated with the key is the string starting with
+      the first non-whitespace character after the equals sign up to, but not
+      including, the end of line or terminating delimiter of the annotation.
+      The syntax is tolerant of whitespace with whitespace before the key and
+      around the equals sign being ignored. Lines consisting of only
+      whitespace are also ignored.</para>
+
+      <para>Long values may be split between lines by terminating intermediate
+      lines with a single backslash. For example,</para>
+
+      <programlisting>@(
+  key1 = some \
+long \
+value
+)</programlisting>
+
+      <para>Will assign the value "some long value" to the key "key1". Note
+      that the newlines after the backslashes are <emphasis>not</emphasis>
+      included in the value.</para>
+
+      <para>Multi-line values may be defined by quoting the value, such as the
+      following:</para>
+
+      <programlisting>@(
+  key1 = "some
+long
+value"
+)</programlisting>
+
+      <para>The value consists of the three words "some", "long", and "value"
+      separated by newlines. Either single or double quotes may be used, but
+      the value itself may not contain the chosen delimiter. The quote must be
+      the first non-whitespace character after the equals sign to start a
+      multi-line value.</para>
+
+      <para>An abbreviated format of an annotation allows for a single
+      descriptive value. For example,</para>
+
+      <programlisting>@(A long descriptive text
+that can span multiple lines)</programlisting>
+
+      <para>In this case, the value is treated as a multi-line value and is
+      assigned to the key "desc". That is, the above is equivalent to:</para>
+
+      <programlisting>@( desc = "A long descriptive text
+that can span multiple lines" )</programlisting>
+
+      <para>The only limitation with this abbreviated syntax is that the
+      equals sign may not appear in the first, non-blank line of the
+      value.</para>
+
+      <para>It is expected that pan compilers will provide a mechanism to
+      recover the annotation information to allow the automatic processing of
+      those annotations. See the compiler manual to understand if and how that
+      can be done.</para>
+    </section>
+  </section>
+
+  <xi:include href="appendix-built-in-functions.xml" xpointer="element(/1)" />
+</article>

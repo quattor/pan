@@ -1,0 +1,130 @@
+<project>
+
+	<description>testing tasks for compiler</description>
+
+	<!-- import external software locations -->
+	<import file="external.xml" />
+
+	<!-- temporary directory for tests -->
+	<property name="tmp.test" location="${tmp}/test" />
+	<property name="tmp.stage" location="${tmp}/stage" />
+	<property name="build.reports" location="${build}/reports" />
+
+	<!-- glob for finding junit tests -->
+	<property name="junit.tests.include" value="**/*Test.class" />
+	<property name="junit.tests.exclude" value="" />
+
+	<!-- **************************************************************************
+     Define testing tasks
+    ************************************************************************** -->
+
+	<target name="test.define.tasks" depends="init">
+
+		<taskdef name="junit"
+		         classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
+			<classpath>
+				<pathelement path="${ant-junit.jar}" />
+				<pathelement path="${junit.jar}" />
+			</classpath>
+		</taskdef>
+
+		<taskdef name="findbugs"
+		         classname="edu.umd.cs.findbugs.anttask.FindBugsTask">
+			<classpath>
+				<pathelement path="${findbugs-ant.jar}" />
+				<pathelement path="${findbugs.jar}" />
+			</classpath>
+		</taskdef>
+
+	</target>
+
+
+	<!-- **************************************************************************
+	     Stage the minimum necessary for tests.
+	 ************************************************************************** -->
+
+	<target name="test.stage" depends="jar, version">
+
+		<!-- Copy the jar file into place. -->
+		<copy todir="${tmp.stage}/lib">
+			<fileset dir="${build.pkgs}" includes="panc.jar" />
+		</copy>
+
+		<!-- Copy binaries and make them executable. -->
+		<copy todir="${tmp.stage}/bin">
+			<fileset dir="${src.scripts}" includes="panc*" />
+		</copy>
+		<chmod dir="${tmp.stage}/bin" includes="*" perm="755" />
+
+	</target>
+
+
+	<!-- **************************************************************************
+	     Run JUnit tests.
+	 ************************************************************************** -->
+
+	<target name="junit" depends="test.stage">
+
+		<delete includeEmptyDirs="true" dir="${tmp.test}" />
+		<mkdir dir="${tmp.test}" />
+
+		<junit printsummary="off"
+		       showoutput="yes"
+		       filtertrace="on"
+		       fork="yes"
+		       errorproperty="junit.error">
+			<formatter type="brief" usefile="false" />
+			<sysproperty key="panc.tmpdir" value="${tmp.test}" />
+			<sysproperty key="panc.testdir" value="${tests}" />
+			<sysproperty key="panc.script" value="${tmp.stage}/bin/panc" />
+			<assertions>
+				<enable />
+			</assertions>
+			<classpath>
+				<pathelement path="${junit.jar}" />
+				<pathelement path="${build.java}" />
+			</classpath>
+			<batchtest>
+				<fileset dir="${build.java}">
+					<include name="${junit.tests.include}" />
+					<exclude name="${junit.tests.exclude}" />
+				</fileset>
+			</batchtest>
+		</junit>
+
+		<fail message="JUnit test failed" if="junit.error" />
+
+	</target>
+
+
+	<!-- **************************************************************************
+	     findbugs: run static analysis of code to find potential errors
+	 ************************************************************************** -->
+
+	<target name="findbugs" depends="test.define.tasks, jar">
+
+		<mkdir dir="${build.reports}" />
+
+		<findbugs home="${findbugs.home}"
+		          jvmargs="-Xmx1500M"
+		          output="xml"
+		          effort="max"
+		          reportLevel="medium"
+		          excludeFilter="${basedir}/findbugs-filter.xml"
+		          outputFile="${build.reports}/findbugs-panc.xml"
+		          failOnError="true">
+			<sourcePath path="${src.java}" />
+			<auxClasspath path="${ant.jar}" />
+			<auxClasspath path="${ant-launcher.jar}" />
+			<auxClasspath path="${junit.jar}" />
+			<class location="${tmp.stage}/lib/panc.jar" />
+		</findbugs>
+	</target>
+
+	<!-- **************************************************************************
+	     test: run junit tests and findbugs
+	 ************************************************************************** -->
+
+	<target name="test" depends="junit, findbugs" description="test compiler" />
+
+</project>

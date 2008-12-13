@@ -1,0 +1,16 @@
+<project name="panc performance tests" default="all">
+
+	<description>iterate over all performance tests</description>
+
+	<property file="${basedir}/quattor.build.properties" />
+	<property file="${basedir}/../quattor.build.properties" />
+
+	<target name="iterate" description="iterate over all test build files">
+		<subant target="all">
+			<fileset dir="tests" includes="*/build.xml" />
+		</subant>
+	</target>
+
+	<target name="all" depends="iterate" description="full performance test" />
+
+</project>

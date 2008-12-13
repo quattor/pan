@@ -1,0 +1,38 @@
+<FindBugsFilter>
+
+     <!-- JavaCC produces some not very clean code.  Ignore all warning from the generated parser. -->
+     <Match>
+       <Package name="~org.quattor.pan.parser.*" />
+     </Match>
+
+     <!-- To test floating operations, floating point comparisons are inevitable. -->
+     <Match>
+       <Or>
+         <Class name="org.quattor.pan.dml.operators.LogicalEQ"/>
+         <Class name="org.quattor.pan.dml.operators.LogicalNE"/>
+         <Class name="org.quattor.pan.dml.operators.AddTest"/>
+         <Class name="org.quattor.pan.dml.operators.MultTest"/>
+         <Class name="org.quattor.pan.dml.operators.SubTest"/>
+         <Class name="org.quattor.pan.dml.operators.DivTest"/>
+         <Class name="org.quattor.pan.dml.functions.ToDoubleTest"/>
+         <Class name="org.quattor.pan.template.ObjectContextTest"/>
+       </Or>
+       <Bug pattern="FE_FLOATING_POINT_EQUALITY"/>
+     </Match>
+
+     <!-- Checks of null values passed to methods. -->
+     <Match>
+       <Or>
+         <Class name="org.quattor.pan.CompilerOptionsTest"/>
+         <Class name="org.quattor.pan.utils.RangeTest"/>
+       </Or>
+       <Bug pattern="NP_LOAD_OF_KNOWN_NULL_VALUE"/>
+     </Match>
+
+     <!-- Hard-coded file names in tests. -->
+     <Match>
+       <Class name="org.quattor.pan.CompilerOptionsTest"/>
+       <Bug pattern="DMI_HARDCODED_ABSOLUTE_FILENAME"/>
+     </Match>
+
+</FindBugsFilter>

@@ -1,0 +1,60 @@
+<project>
+
+	<description>common build file for running performance tests</description>
+
+	<!-- Checks for a build.properties file in the local area.  This
+       can be used to override any of the defaults given below. -->
+	<property file="${basedir}/quattor.build.properties" />
+	<property file="${basedir}/../quattor.build.properties" />
+
+	<property name="topdir" location="../.." />
+
+	<property name="build" location="${topdir}/../../build" />
+	<property name="build.performance" location="${build}/performance" />
+
+	<!-- panc (java version) -->
+	<property name="panc.jar" location="${build}/jar/panc.jar" />
+
+	<!-- pan compiler flags -->
+	<property name="pan.debug.flag" value="false" />
+	<property name="pan.xml.format" value="xmldb" />
+	<property name="pan.xml.gzip" value="false" />
+
+	<target name="clean" description="clean up generated files">
+		<delete dir="${build}" />
+	</target>
+
+
+	<target name="define.tasks">
+
+		<taskdef resource="org/quattor/ant/panc-ant.xml">
+			<classpath>
+				<pathelement path="${panc.jar}" />
+			</classpath>
+		</taskdef>
+
+	</target>
+
+	<macrodef name="jbuild">
+		<attribute name="nthread" />
+		<attribute name="dir" />
+		<attribute name="glob" />
+		<sequential>
+			<echo message="nthread=@{nthread}" />
+			<echo message="dir=@{dir}" />
+			<echo message="glob=@{glob}" />
+			<delete dir="${build.performance}" />
+			<mkdir dir="${build.performance}" />
+
+			<panc nthread="@{nthread}" deprecationLevel="-1" debugEnabled="false" objLoadEnabled="false" objWriteEnabled="false" xmlWriteEnabled="true" depWriteEnabled="false" verbose="true" outputDirectory="${build.performance}" formatter="${pan.xml.format}">
+
+				<fileset dir="@{dir}" includes="@{glob}" />
+				<path id="pan.loadpath">
+					<pathelement path="@{dir}" />
+				</path>
+			</panc>
+
+		</sequential>
+	</macrodef>
+
+</project>

@@ -1,0 +1,1 @@
+template tpl_ordinary;

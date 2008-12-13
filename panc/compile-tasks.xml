@@ -1,0 +1,132 @@
+<project>
+
+    <description>tasks for building compiler</description>
+
+    <!-- source location for support software -->
+    <property name="src.java" location="${src}" />
+    <property name="src.java.parser"
+              location="${src.java}/org/quattor/pan/parser" />
+
+    <!-- location for generated sources -->
+    <property name="generated.parser"
+              location="${generated}/org/quattor/pan/parser" />
+
+    <!-- build subdirectories (local to sub-ant builds) -->
+    <property name="build.jar" location="${build}/jar" />
+    <property name="build.java" location="${build}/java" />
+
+    <!-- locale to use for generating default message bundle -->
+    <property name="default.locale" value="en_US" />
+
+    <!-- import external software locations -->
+    <import file="external.xml" />
+
+    <!-- **************************************************************************
+	     Build the parser.
+	 ************************************************************************** -->
+
+    <target name="create.parser">
+
+        <!-- remove generated files if the grammar is more recent -->
+        <dependset>
+            <srcfilelist dir="${grammar}" files="PanParser.jjt" />
+            <targetfileset dir="${generated.parser}" includes="*.java" />
+        </dependset>
+
+        <!-- Copy the hand-created source files to the build directory to prevent javacc from creating them. -->
+        <copy todir="${generated.parser}">
+            <fileset dir="${src.java.parser}" includes="*.java" />
+        </copy>
+
+        <mkdir dir="${generated.parser}/annotation" />
+
+        <!-- Create all of the source files for using JJTree. (ANNOTATION) -->
+        <jjtree target="${grammar}/AnnotationParser.jjt"
+                javacchome="${javacc.home}"
+                outputdirectory="${generated.parser}/annotation"
+                buildnodefiles="true" />
+
+        <!-- Create all of the source files for using JJTree. (PAN) -->
+        <jjtree target="${grammar}/PanParser.jjt"
+                javacchome="${javacc.home}"
+                outputdirectory="${generated.parser}"
+                buildnodefiles="true" />
+
+        <!-- Remove the copied files from the build directory, avoiding duplicate source files. -->
+        <delete>
+            <fileset dir="${generated.parser}">
+                <present present="both" targetdir="${src.java.parser}" />
+            </fileset>
+        </delete>
+
+        <!-- Finally build the parser itself. (ANNOTATION) -->
+        <javacc target="${generated.parser}/annotation/AnnotationParser.jj"
+                javacchome="${javacc.home}"
+                outputdirectory="${generated.parser}/annotation" />
+
+        <!-- Finally build the parser itself. (PAN) -->
+        <javacc target="${generated.parser}/PanParser.jj"
+                javacchome="${javacc.home}"
+                outputdirectory="${generated.parser}" />
+
+        <!-- Remove the copied files from the build directory, avoiding duplicate source files. -->
+        <delete>
+            <fileset dir="${generated.parser}">
+                <present present="both" targetdir="${src.java.parser}" />
+            </fileset>
+        </delete>
+
+        <!-- Remove the parser exception class because this has been customized. -->
+        <delete>
+            <fileset dir="${generated.parser}">
+                <include name="ParseException.java" />
+            </fileset>
+        </delete>
+
+    </target>
+
+
+    <!-- **************************************************************************
+	     Compile the java code.
+	 ************************************************************************** -->
+
+    <target name="compile" depends="create.parser">
+
+        <mkdir dir="${build.java}" />
+
+        <javac destdir="${build.java}"
+               debug="true"
+               debuglevel="lines,vars,source"
+               optimize="false">
+            <src path="${src.java}" />
+            <src path="${generated}" />
+            <include name="**/*.java" />
+            <classpath refid="compile.classpath" />
+        </javac>
+
+        <!-- Also ensure that XML files and property files are "built". -->
+        <copy todir="${build.java}">
+            <fileset dir="${src}" includes="**/*.xml" />
+            <fileset dir="${src}" includes="**/*.properties" />
+        </copy>
+
+        <!-- Create default bundles from the chosen localization. -->
+        <copy todir="${build.java}">
+            <fileset dir="${src}" includes="**/*.properties" />
+            <mapper type="glob"
+                    from="*_${default.locale}.properties"
+                    to="*.properties" />
+        </copy>
+
+    </target>
+
+
+    <!-- **************************************************************************
+	     all: build compiler
+	 ************************************************************************** -->
+
+    <target name="build"
+            depends="create.parser,compile"
+            description="build compiler" />
+
+</project>

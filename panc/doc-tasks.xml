@@ -1,0 +1,285 @@
+<project>
+
+    <description>tasks for generating documentation</description>
+
+    <property name="tmp.srcdocs" location="${tmp}/srcdocs" />
+    <property name="tmp.docs" location="${tmp}/docs" />
+    <property name="tmp.man" location="${tmp.docs}/man" />
+
+    <property name="build.docs" location="${build}/docs" />
+    <property name="build.javadoc" location="${build.docs}/javadoc" />
+    <property name="build.pdf" location="${build.docs}/pdf" />
+    <property name="build.html" location="${build.docs}/html" />
+    <property name="build.man" location="${build}/man" />
+
+    <!-- import external software locations -->
+    <import file="external.xml" />
+
+    <!-- Saxon ant task. -->
+    <property name="external.saxon-ant" location="${external}/saxon-ant" />
+    <property name="saxon-ant.jar"
+              location="${external.saxon-ant}/saxon9-ant.jar" />
+    <path id="classpath.saxon-ant">
+        <pathelement location="${saxon-ant.jar}" />
+    </path>
+
+    <!-- XSLT1 processor parameters. -->
+    <property name="external.xslt1" location="${external}/saxon6-5-5" />
+    <property name="xslt1.transformer.classname"
+              value="com.icl.saxon.TransformerFactoryImpl" />
+    <property name="saxon.jar" location="${external.xslt1}/saxon.jar" />
+    <path id="classpath.xslt1">
+        <pathelement location="${saxon.jar}" />
+    </path>
+
+    <!-- XSLT2 processor parameters. -->
+    <property name="external.xslt2" location="${external}/saxon9" />
+    <property name="xslt2.transformer.classname"
+              value="net.sf.saxon.TransformerFactoryImpl" />
+    <property name="saxon9.jar" location="${external.xslt2}/saxon9.jar" />
+    <path id="classpath.xslt2">
+        <pathelement location="${saxon9.jar}" />
+    </path>
+
+    <!-- Location of the XIPr stylesheet. -->
+    <property name="external.xipr" location="${external}/xipr" />
+    <property name="xipr.xsl" location="${external.xipr}/xipr.xsl" />
+
+    <!-- This macro will invoke the target in a forked JVM. -->
+    <macrodef name="forked-target">
+        <attribute name="target" description="target to invoke" />
+        <attribute name="working.dir"
+                   default="${basedir}"
+                   description="working directory to use" />
+        <sequential>
+            <mkdir dir="@{working.dir}" />
+            <java classname="org.apache.tools.ant.launch.Launcher"
+                  fork="true"
+                  failonerror="true"
+                  dir="@{working.dir}"
+                  taskname="startAnt">
+
+                <classpath>
+                    <pathelement location="${ant.home}/lib/ant-launcher.jar" />
+                    <path refid="classpath.xslt1" />
+                </classpath>
+
+                <arg value="-buildfile" />
+                <arg file="${basedir}/build.xml" />
+                <arg value="-Dbasedir=${basedir}" />
+                <arg value="@{target}" />
+            </java>
+        </sequential>
+    </macrodef>
+
+    <target name="define.fop.task">
+        <taskdef name="fop" classname="org.apache.fop.tools.anttasks.Fop">
+            <classpath refid="classpath.fop" />
+        </taskdef>
+    </target>
+
+
+    <!-- Generate the JavaDoc pages for the compiler. -->
+    <target name="javadoc" depends="compile">
+
+        <delete includeEmptyDirs="true" dir="${build.javadoc}" />
+        <mkdir dir="${build.javadoc}" />
+
+        <javadoc destdir="${build.javadoc}">
+            <fileset dir="${src.java}"
+                     includes="**/*.java"
+                     excludes="**/*Test*.java" />
+            <fileset dir="${generated}"
+                     includes="**/*.java"
+                     excludes="**/*Test*.java" />
+            <package name="org.quattor.pan.*" />
+            <excludepackage name="org.apache.*" />
+            <excludepackage name="net.jcip.*" />
+            <excludepackage name="edu.umd.cs.findbugs.*" />
+            <classpath refid="javadoc.classpath" />
+        </javadoc>
+
+    </target>
+
+
+    <!--                                                               -->
+    <!-- Transform DocBook into XHTML.                                 -->
+    <!--                                                               -->
+    <target name="db2xhtml" depends="preprocess.docbook">
+        <forked-target target="local.db2xhtml" />
+    </target>
+
+    <!--                                                               -->
+    <!-- INTERNAL: Transform DocBook into XHTML.                       -->
+    <!-- MUST BE INVOKED VIA FORKED JVM TO WORK CORRECTLY!             -->
+    <!--                                                               -->
+    <target name="local.db2xhtml">
+
+        <mkdir dir="${build.html}" />
+
+        <!-- copy in the CSS file -->
+        <copy todir="${build.html}">
+            <fileset dir="${tmp.docs}" includes="pan.css" />
+        </copy>
+
+        <!-- copy over all of the PNG images -->
+        <mkdir dir="${build.html}/images" />
+        <copy todir="${build.html}/images">
+            <fileset dir="${tmp.docs}/images" includes="**/*.png" />
+        </copy>
+
+        <mkdir dir="${build.html}" />
+
+        <xslt destdir="${build.html}"
+              style="${docbook.home}/xhtml/docbook.xsl"
+              scanincludeddirectories="false"
+              useImplicitFileset="no">
+
+            <factory name="${xslt1.transformer.classname}" />
+
+            <fileset dir="${tmp.docs}" includes="*.xml" />
+            <mapper type="glob" from="*.xml" to="*.html" />
+
+            <param name="paper.type" expression="A4" />
+            <param name="section.autolabel" expression="1" />
+            <param name="callout.unicode" expression="1" />
+            <param name="callout.graphics" expression="0" />
+            <param name="html.stylesheet" expression="pan.css" />
+        </xslt>
+
+    </target>
+
+    <!--                                                               -->
+    <!-- Transform DocBook into manpages.                              -->
+    <!--                                                               -->
+    <target name="db2man" depends="preprocess.docbook">
+        <forked-target target="local.db2man" working.dir="${tmp.man}" />
+    </target>
+
+    <!--                                                               -->
+    <!-- INTERNAL: Transform DocBook into manpages.                    -->
+    <!-- MUST BE INVOKED VIA FORKED JVM TO WORK CORRECTLY!             -->
+    <!--                                                               -->
+    <target name="local.db2man">
+
+        <mkdir dir="${tmp.man}" />
+        <mkdir dir="${build.man}" />
+
+        <!-- generate the man page(s) into temporary area -->
+        <xslt destdir="${tmp.man}"
+              style="${docbook.home}/manpages/docbook.xsl"
+              scanincludeddirectories="false"
+              useImplicitFileset="no">
+
+            <factory name="${xslt1.transformer.classname}" />
+
+            <fileset dir="${tmp.docs}" includes="*.xml" />
+            <mapper type="glob" from="*.xml" to="*.man" />
+
+        </xslt>
+
+        <!-- copy the generated man pages while adding the correct structure -->
+        <!-- only copy panc* man pages because function man pages conflict   -->
+        <!-- with standard man pages from the system on RedHat linux.        -->
+        <copy todir="${build.man}">
+            <fileset dir="${tmp.man}" includes="panc*" />
+            <mapper type="regexp"
+                    from="(.*)\.(\d)"
+                    to="man\2${file.separator}\1\.\2" />
+        </copy>
+
+    </target>
+
+    <!--                                                               -->
+    <!-- Transform DocBook into FO.                                    -->
+    <!--                                                               -->
+    <target name="db2pdf" depends="preprocess.docbook">
+        <forked-target target="local.db2pdf" />
+    </target>
+
+    <!--                                                               -->
+    <!-- INTERNAL: Transform DocBook into FO.                          -->
+    <!-- MUST BE INVOKED VIA FORKED JVM TO WORK CORRECTLY!             -->
+    <!--                                                               -->
+    <target name="local.db2pdf" depends="define.fop.task">
+
+        <mkdir dir="${tmp.docs}" />
+
+        <xslt destdir="${tmp.docs}"
+              style="${docbook.home}/fo/docbook.xsl"
+              scanincludeddirectories="false"
+              useImplicitFileset="no">
+
+            <factory name="${xslt1.transformer.classname}" />
+
+            <fileset dir="${tmp.docs}" includes="*.xml" />
+            <mapper type="glob" from="*.xml" to="*.fo" />
+
+            <param name="paper.type" expression="A4" />
+            <param name="section.autolabel" expression="1" />
+            <param name="callout.unicode" expression="1" />
+            <param name="callout.graphics" expression="0" />
+        </xslt>
+
+        <mkdir dir="${build.pdf}" />
+
+        <fop format="application/pdf" outdir="${build.pdf}">
+            <fileset dir="${tmp.docs}">
+                <include name="*.fo" />
+            </fileset>
+        </fop>
+
+    </target>
+
+    <target name="preprocess.docbook"
+            depends="compile, version, init"
+            description="preprocess docbook files">
+
+        <taskdef name="saxon-xslt" classname="net.sf.saxon.ant.AntTransform">
+            <classpath>
+                <pathelement location="${saxon9.jar}" />
+                <pathelement location="${saxon-ant.jar}" />
+            </classpath>
+        </taskdef>
+
+        <mkdir dir="${tmp.docs}" />
+
+        <!-- copy invariant files to the temporary output directory -->
+        <copy todir="${tmp.docs}">
+            <fileset dir="${src.docs}" includes="images/*,pan.css" />
+        </copy>
+
+        <saxon-xslt destdir="${tmp.docs}"
+                    style="${xipr.xsl}"
+                    schemaaware="false"
+                    schemavalidation="skip"
+                    scanincludeddirectories="false"
+                    useimplicitfileset="no">
+
+            <fileset dir="${src.docs}" includes="pan-*.xml,README.xml" />
+            <mapper type="glob" from="*.xml" to="*.xml.tmp" />
+        </saxon-xslt>
+
+        <!-- preprocess with XInclude and with changes to version and date -->
+        <copy todir="${tmp.docs}">
+
+            <fileset dir="${tmp.docs}" includes="*.xml.tmp" />
+            <mapper type="glob" from="*.xml.tmp" to="*.xml" />
+            <filterchain>
+
+                <!-- Add the version and the date. -->
+                <replacetokens>
+                    <token key="VERSION" value="${panc.version}" />
+                    <token key="DATE" value="${DATE}" />
+                </replacetokens>
+
+            </filterchain>
+        </copy>
+
+    </target>
+
+    <target name="document"
+            depends="javadoc,db2pdf,db2xhtml,db2man"
+            description="create documentation" />
+
+</project>

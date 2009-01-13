@@ -100,7 +100,7 @@
 
         <arg>-? | --usage</arg>
 
-        <arg choice="plain"
+        <arg choice="opt"
         rep="repeat"><replaceable>template</replaceable></arg>
       </cmdsynopsis>
     </refsynopsisdiv>

@@ -200,8 +200,15 @@ public class PanParserUtils {
 				// Fall through.
 			case '\n':
 				int count = ((i + 2 < sb.length()) && "\r\n".equals(sb
-						.substring(i, i + 3))) ? 3 : 2;
+						.substring(i + 1, i + 3))) ? 3 : 2;
 				sb.delete(i, i + count);
+
+				// Because this replaces the entire sequence with nothing, the
+				// counter must decremented. If it isn't, then the first
+				// character after the replacement will never be checked for a
+				// escape sequence. (See SF bug #2533401.)
+				i--;
+
 				break;
 			default:
 				ParseException pe = new ParseException(

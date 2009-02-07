@@ -1892,6 +1892,13 @@ type ipv4 = string with {
 
 # will be the list 'a', 'b', 'XXX', 'e'
 '/l3' = splice(list('a','b','c','d','e'), 2, 2, list('XXX'));</programlisting>
+
+      <important>
+        <para>This function will <emphasis>not</emphasis> modify the arguments
+        directly. Instead a copy of the input string or list is created,
+        modified, and returned by the function. If you ignore the return
+        value, then the function call will have no effect.</para>
+      </important>
     </refsection>
   </refentry>
 

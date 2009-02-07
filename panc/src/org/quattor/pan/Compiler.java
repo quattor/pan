@@ -73,8 +73,8 @@ public class Compiler {
 	static {
 		String svnurl = "$HeadURL: https://svn.lal.in2p3.fr/LCG/QWG/panc/trunk/src/org/quattor/pan/Compiler.java $";
 
-		Matcher trunk = Pattern.compile(".*/panc/trunk/.*").matcher(svnurl);
-		Matcher tag = Pattern.compile(".*/panc/tags/(\\d+\\.\\d+\\.\\d+)/.*")
+		Matcher trunk = Pattern.compile(".*/trunk/panc/.*").matcher(svnurl);
+		Matcher tag = Pattern.compile(".*/tags/panc/(\\d+\\.\\d+\\.\\d+)/.*")
 				.matcher(svnurl);
 
 		if (trunk.matches()) {

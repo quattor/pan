@@ -207,7 +207,15 @@ public class CompilerLogging {
 				}
 			}
 		} catch (IOException consumed) {
-			System.err.println("WARNING: unable to open logging file handler");
+			StringBuilder sb = new StringBuilder();
+			sb.append("WARNING: unable to open logging file handler\n");
+			if (logfile != null) {
+				sb.append("WARNING: logfile = '" + logfile.getAbsolutePath()
+						+ "'");
+			}
+			sb.append("\nWARNING: message = ");
+			sb.append(consumed.getMessage());
+			System.err.println(sb.toString());
 		}
 
 	}

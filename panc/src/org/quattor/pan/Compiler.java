@@ -14,7 +14,7 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 
- $HeadURL: https://svn.lal.in2p3.fr/LCG/QWG/panc/trunk/src/org/quattor/pan/Compiler.java $
+ $HeadURL$
  $Id: Compiler.java 3614 2008-08-20 15:53:05Z loomis $
  */
 
@@ -71,7 +71,7 @@ public class Compiler {
 	// assumes that the repository is organized such that all tags are below a
 	// "tags" subdirectory and that each tag has the form "0.1.2".
 	static {
-		String svnurl = "$HeadURL: https://svn.lal.in2p3.fr/LCG/QWG/panc/trunk/src/org/quattor/pan/Compiler.java $";
+		String svnurl = "$HeadURL$";
 
 		Matcher trunk = Pattern.compile(".*/trunk/panc/.*").matcher(svnurl);
 		Matcher tag = Pattern.compile(".*/tags/panc/(\\d+\\.\\d+\\.\\d+)/.*")

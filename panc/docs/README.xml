@@ -531,6 +531,37 @@ variable X ?=
     <title>Change Log</title>
 
     <section>
+      <title>Version 8.2.6</title>
+
+      <itemizedlist>
+        <listitem>
+          <para>(SF BUG #2405657) When the defined log file cannot be opened,
+          ensure that the message contains the full file name trying to opened
+          and the error message.</para>
+        </listitem>
+
+        <listitem>
+          <para>(SF BUG #2504034) The pan man page incorrectly implied that
+          the template file names were required. They are in fact optional.
+          The man page has been corrected. </para>
+        </listitem>
+
+        <listitem>
+          <para>(SF BUG #2506902) Splice() description is unclear about
+          side-effects for the arguments. There are no side-effects and the
+          returned value is a (modified) copy of the input arguments. This has
+          been clarified in the description.</para>
+        </listitem>
+
+        <listitem>
+          <para>(SF BUG #2533401) When splitting a double quoted string across
+          lines, any escape sequence at the beginning of the line was ignored.
+          This has been fixed. </para>
+        </listitem>
+      </itemizedlist>
+    </section>
+
+    <section>
       <title>Version 8.2.5</title>
 
       <itemizedlist>

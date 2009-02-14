@@ -307,7 +307,7 @@ abstract public class Element implements Operation {
 	/**
 	 * Add the given child to this resource, creating intermediate resources as
 	 * necessary. If this Element is not a resource, then this will throw an
-	 * EvaluationException. The default implementation of this method throws
+	 * InvalidTermException. The default implementation of this method throws
 	 * such an exception.
 	 * 
 	 * @throws InvalidTermException

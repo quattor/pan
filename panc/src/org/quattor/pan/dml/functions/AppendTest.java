@@ -41,20 +41,6 @@ public class AppendTest extends BuiltInFunctionTestUtils {
 		checkClassRequirements(Append.class);
 	}
 
-	@Test
-	public void isSelfAppend() throws SyntaxException {
-		Operation op = Append.getInstance(null, StringProperty
-				.getInstance("OK"));
-		assertTrue(op instanceof SelfAppend);
-	}
-
-	@Test
-	public void isListAppend() throws SyntaxException {
-		Operation op = Append.getInstance(null, new ListResource(),
-				StringProperty.getInstance("OK"));
-		assertTrue(op instanceof ListAppend);
-	}
-
 	@Test(expected = SyntaxException.class)
 	public void testTooFewArguments() throws SyntaxException {
 		Append.getInstance(null);

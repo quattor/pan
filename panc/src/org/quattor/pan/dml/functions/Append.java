@@ -20,12 +20,19 @@
 
 package org.quattor.pan.dml.functions;
 
+import static org.quattor.pan.utils.MessageUtils.MSG_FIRST_ARG_LIST_OR_VARIABLE_REF;
 import static org.quattor.pan.utils.MessageUtils.MSG_ONE_OR_TWO_ARGS_REQ;
 import static org.quattor.pan.utils.MessageUtils.MSG_VALUE_CANNOT_BE_NULL;
 
 import org.quattor.pan.dml.Operation;
+import org.quattor.pan.dml.data.Element;
+import org.quattor.pan.dml.data.ListResource;
 import org.quattor.pan.dml.data.Null;
+import org.quattor.pan.dml.operators.ListVariable;
+import org.quattor.pan.dml.operators.Variable;
+import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
+import org.quattor.pan.template.Context;
 import org.quattor.pan.template.SourceRange;
 
 /**
@@ -35,7 +42,7 @@ import org.quattor.pan.template.SourceRange;
  * @author loomis
  * 
  */
-abstract public class Append extends BuiltInFunction {
+final public class Append extends BuiltInFunction {
 
 	private static final long serialVersionUID = 5803166359104659514L;
 
@@ -62,14 +69,61 @@ abstract public class Append extends BuiltInFunction {
 					"append");
 		}
 
-		Operation op = null;
+		// Create the appropriate list of operations. The raw operations cannot
+		// be used because the variable must be turned into a ListVariable
+		// operation.
+		Operation[] modifiedOps = new Operation[2];
 		if (operations.length == 1) {
-			op = SelfAppend.getInstance(sourceRange, operations);
+			modifiedOps[0] = ListVariable.getInstance(sourceRange, "SELF");
+			modifiedOps[1] = operations[0];
 		} else if (operations.length == 2) {
-			op = ListAppend.getInstance(sourceRange, operations);
+			if (operations[0] instanceof Variable) {
+				modifiedOps[0] = ListVariable
+						.getInstance((Variable) operations[0]);
+			} else {
+				modifiedOps[0] = operations[0];
+			}
+			modifiedOps[1] = operations[1];
 		}
 
-		return op;
+		return new Append(sourceRange, modifiedOps);
+	}
+
+	@Override
+	public Element execute(Context context) {
+
+		ListResource result = null;
+
+		// Retrieve the values of the arguments.
+		Element[] args = calculateArgs(context);
+		assert (ops.length == 2);
+
+		// Check that the value argument is not an explicit null.
+		if (args[1] instanceof Null) {
+			throw EvaluationException.create(sourceRange,
+					MSG_VALUE_CANNOT_BE_NULL, "append");
+		}
+
+		// Check that the first argument is a list.
+		if (!(args[0] instanceof ListResource)) {
+			throw EvaluationException.create(sourceRange,
+					MSG_FIRST_ARG_LIST_OR_VARIABLE_REF, "append");
+		}
+
+		// The return value is the list argument.
+		result = (ListResource) args[0];
+
+		// Although, if the list is protected, then we'll have to create a copy.
+		// This may happen if the argument is a constant or coming from
+		// something like a value() call.
+		if (result.isProtected()) {
+			result = (ListResource) result.writableCopy();
+		}
+
+		// Append the value to the end of the list.
+		result.append(args[1]);
+
+		return result;
 	}
 
 }

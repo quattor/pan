@@ -126,4 +126,46 @@ public class ListResourceTest {
 		list.put(index, DoubleProperty.getInstance(1.0));
 	}
 
+	@Test
+	public void testAppend() throws InvalidTermException {
+
+		// Indexes into the array.
+		Term zero = TermFactory.create(0L);
+		Term one = TermFactory.create(1L);
+
+		// Elements to use for the values.
+		Element filler = StringProperty.getInstance("FILLER");
+		Element value = StringProperty.getInstance("OK");
+
+		// Create the resource and add the filler value.
+		ListResource list = new ListResource();
+		list.put(zero, filler);
+
+		// Try the append and ensure that it ended up at the end of the list.
+		list.append(value);
+		assertTrue(list.size() == 2);
+		assertTrue(value.equals(list.get(one)));
+	}
+
+	@Test
+	public void testPrepend() throws InvalidTermException {
+
+		// Index into the array.
+		Term zero = TermFactory.create(0L);
+
+		// Elements to use for the values.
+		Element filler = StringProperty.getInstance("FILLER");
+		Element value = StringProperty.getInstance("OK");
+
+		// Create the resource and add the filler value.
+		ListResource list = new ListResource();
+		list.put(zero, filler);
+
+		// Try the prepend and ensure that it ended up at the beginning of the
+		// list.
+		list.prepend(value);
+		assertTrue(list.size() == 2);
+		assertTrue(value.equals(list.get(zero)));
+	}
+
 }

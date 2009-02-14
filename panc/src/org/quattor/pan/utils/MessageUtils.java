@@ -209,6 +209,8 @@ public class MessageUtils {
 
 	public final static String MSG_ONE_ARG_REQ = "MSG_ONE_ARG_REQ";
 
+	public final static String MSG_ONE_OR_TWO_ARGS_REQ = "MSG_ONE_OR_TWO_ARGS_REQ";
+
 	public final static String MSG_ONE_OR_MORE_ARG_REQ = "MSG_ONE_OR_MORE_ARG_REQ";
 
 	public final static String MSG_TWO_ARGS_REQ = "MSG_TWO_ARGS_REQ";
@@ -240,6 +242,8 @@ public class MessageUtils {
 	public final static String MSG_FIELD_MUST_BE_VALID_KEY = "MSG_FIELD_MUST_BE_VALID_KEY";
 
 	public final static String MSG_FIRST_ARG_VARIABLE_REF = "MSG_FIRST_ARG_VARIABLE_REF";
+
+	public final static String MSG_FIRST_ARG_LIST_OR_VARIABLE_REF = "MSG_FIRST_ARG_LIST_OR_VARIABLE_REF";
 
 	public final static String MSG_DEF_VALUE_NOT_CONSTANT = "MSG_DEF_VALUE_NOT_CONSTANT";
 
@@ -364,8 +368,10 @@ public class MessageUtils {
 	public final static String MSG_ASSIGNMENT_HAS_NON_VARIABLE_CHILD = "MSG_ASSIGNMENT_HAS_NON_VARIABLE_CHILD";
 
 	public final static String MSG_UNEXPECTED_EXCEPTION_ENCOUNTERED = "MSG_UNEXPECTED_EXCEPTION_ENCOUNTERED";
-	
+
 	public final static String MSG_NULL_ELEMENT_IN_CONFIGURATION = "MSG_NULL_ELEMENT_IN_CONFIGURATION";
+
+	public final static String MSG_VALUE_CANNOT_BE_NULL = "MSG_VALUE_CANNOT_BE_NULL";
 
 	// Name of the resource bundle to use for compiler messages.
 	private final static String bundleName = "org.quattor.pan.Messages";

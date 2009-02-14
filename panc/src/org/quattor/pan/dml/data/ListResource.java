@@ -171,6 +171,31 @@ public class ListResource extends Resource {
 		return oldValue;
 	}
 
+	/**
+	 * Specialized method for a ListResource to append an element to the end of
+	 * the list. This is used in the append() function implementation.
+	 * 
+	 * @param e
+	 *            element to append to the end of the list; this may not be null
+	 */
+	public void append(Element e) {
+		assert (e != null);
+		list.add(e);
+	}
+
+	/**
+	 * Specialized method for a ListResource to prepend an element at the
+	 * beginning of a list. This is used in the prepend() function
+	 * implementation.
+	 * 
+	 * @param e
+	 *            element to prepend to beginning of list; this may not be null
+	 */
+	public void prepend(Element e) {
+		assert (e != null);
+		list.add(0, e);
+	}
+
 	@Override
 	public int size() {
 		return list.size();

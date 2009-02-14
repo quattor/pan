@@ -43,6 +43,7 @@ import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.Null;
 import org.quattor.pan.dml.data.StringProperty;
 import org.quattor.pan.dml.data.Undef;
+import org.quattor.pan.dml.functions.Append;
 import org.quattor.pan.dml.functions.Base64Decode;
 import org.quattor.pan.dml.functions.Base64Encode;
 import org.quattor.pan.dml.functions.Clone;
@@ -157,6 +158,9 @@ public class PanParserAstUtils {
 			HashMap<String, Method> fc = new HashMap<String, Method>();
 
 			// Fill the lookup table with all of the function constructors.
+			fc.put("append", (Append.class).getDeclaredMethod("getInstance",
+					SourceRange.class, Operation[].class));
+
 			fc.put("first", (First.class).getDeclaredMethod("getInstance",
 					SourceRange.class, Operation[].class));
 

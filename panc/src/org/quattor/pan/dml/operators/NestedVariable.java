@@ -22,7 +22,7 @@ package org.quattor.pan.dml.operators;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_UNDEFINED_VAR;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.quattor.pan.dml.Operation;
 import org.quattor.pan.dml.data.Element;
@@ -32,7 +32,6 @@ import org.quattor.pan.template.Context;
 import org.quattor.pan.template.SourceRange;
 import org.quattor.pan.utils.MessageUtils;
 import org.quattor.pan.utils.Term;
-import org.quattor.pan.utils.TermFactory;
 
 /**
  * Looks up a nested variable in the execution context. There must be at least
@@ -55,11 +54,9 @@ public class NestedVariable extends Variable {
 	public Element execute(Context context) {
 
 		// Create the array of terms to dereference the variable.
-		ArrayList<Term> terms = new ArrayList<Term>(ops.length);
+		List<Term> terms = null;
 		try {
-			for (Operation op : ops) {
-				terms.add(TermFactory.create(op.execute(context)));
-			}
+			terms = calculateTerms(context);
 		} catch (EvaluationException ee) {
 			throw ee.addExceptionInfo(getSourceRange(), context);
 		}
@@ -69,8 +66,8 @@ public class NestedVariable extends Variable {
 		try {
 			try {
 
-				result = context.dereferenceVariable(identifier,
-						lookupOnly, terms);
+				result = context.dereferenceVariable(identifier, lookupOnly,
+						terms);
 
 			} catch (InvalidTermException ite) {
 				if (!lookupOnly) {

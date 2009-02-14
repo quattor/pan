@@ -24,7 +24,6 @@ import static org.quattor.pan.utils.MessageUtils.MSG_AUTO_VAR_CANNOT_BE_SET;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_EXECUTE_METHOD_CALLED;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_TERM;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.quattor.pan.dml.AbstractOperation;
@@ -162,22 +161,12 @@ public class SetValue extends AbstractOperation {
 
 	public Element execute(Context context, Element result) {
 
-		// Retrieve the values of the arguments.
-		Element[] args = calculateArgs(context);
-		assert (args.length >= 0);
-
 		// Create an array containing the terms for dereferencing.
 		List<Term> terms = null;
-		int nterms = args.length;
-		if (nterms > 0) {
-			terms = new ArrayList<Term>(nterms);
-			for (Element e : args) {
-				try {
-					terms.add(TermFactory.create(e));
-				} catch (EvaluationException ee) {
-					throw ee.addExceptionInfo(sourceRange, context);
-				}
-			}
+		try {
+			terms = calculateTerms(context);
+		} catch (EvaluationException e) {
+			throw e.addExceptionInfo(sourceRange, context);
 		}
 
 		// Duplicate the result only if necessary. Within a DML block,
@@ -188,11 +177,11 @@ public class SetValue extends AbstractOperation {
 		//
 		// Also need to duplicate if this is a protected value. This is to make
 		// sure that global variables copied into a local variable behave as
-		// expected.  (I.e. pulling out children 
+		// expected. (I.e. pulling out children
 		//
 		Element dupResult = result;
 		if (result != null) {
-			if (nterms > 0 || result.isProtected()) {
+			if (terms.size() > 0 || result.isProtected()) {
 				dupResult = result.duplicate();
 			}
 		}

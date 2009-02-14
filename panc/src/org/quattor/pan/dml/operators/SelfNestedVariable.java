@@ -22,7 +22,6 @@ package org.quattor.pan.dml.operators;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_UNDEFINED_VAR;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.quattor.pan.dml.Operation;
@@ -34,7 +33,6 @@ import org.quattor.pan.template.Context;
 import org.quattor.pan.template.SourceRange;
 import org.quattor.pan.utils.MessageUtils;
 import org.quattor.pan.utils.Term;
-import org.quattor.pan.utils.TermFactory;
 
 /**
  * Looks up a nested variable in the execution context. There must be at least
@@ -72,13 +70,8 @@ public class SelfNestedVariable extends NestedVariable {
 		// will all of the terms and do the recursive lookup of the value.
 		List<Term> terms = null;
 		if (!(result instanceof Undef)) {
-			terms = new ArrayList<Term>(ops.length);
 			try {
-
-				for (Operation op : ops) {
-					terms.add(TermFactory.create(op.execute(context)));
-				}
-
+				terms = calculateTerms(context);
 			} catch (EvaluationException ee) {
 				throw ee.addExceptionInfo(getSourceRange(), context);
 			}

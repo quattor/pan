@@ -28,36 +28,36 @@ import org.quattor.pan.dml.Operation;
 import org.quattor.pan.dml.data.StringProperty;
 import org.quattor.pan.exceptions.SyntaxException;
 
-public class VariableTest extends AbstractOperationTestUtils {
+public class ListVariableTest extends AbstractOperationTestUtils {
 
 	@Test
 	public void testSimpleVariable() throws SyntaxException {
 
-		Operation op = Variable.getInstance(null, "x");
-		assertTrue(op instanceof SimpleVariable);
+		Operation op = ListVariable.getInstance(null, "x");
+		assertTrue(op instanceof SimpleListVariable);
 	}
 
 	@Test
 	public void testSelfSimpleVariable() throws SyntaxException {
 
-		Operation op = Variable.getInstance(null, "SELF");
-		assertTrue(op instanceof SelfSimpleVariable);
+		Operation op = ListVariable.getInstance(null, "SELF");
+		assertTrue(op instanceof SelfSimpleListVariable);
 	}
 
 	@Test
 	public void testNestedVariable() throws SyntaxException {
 
-		Operation op = Variable.getInstance(null, "x", StringProperty
+		Operation op = ListVariable.getInstance(null, "x", StringProperty
 				.getInstance("OK"));
-		assertTrue(op instanceof NestedVariable);
+		assertTrue(op instanceof NestedListVariable);
 	}
 
 	@Test
 	public void testSelfNestedVariable() throws SyntaxException {
 
-		Operation op = Variable.getInstance(null, "SELF", StringProperty
+		Operation op = ListVariable.getInstance(null, "SELF", StringProperty
 				.getInstance("OK"));
-		assertTrue(op instanceof SelfNestedVariable);
+		assertTrue(op instanceof SelfNestedListVariable);
 	}
 
 }

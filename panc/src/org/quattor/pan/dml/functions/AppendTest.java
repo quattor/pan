@@ -30,7 +30,7 @@ import org.quattor.pan.dml.data.Null;
 import org.quattor.pan.dml.data.StringProperty;
 import org.quattor.pan.exceptions.InvalidTermException;
 import org.quattor.pan.exceptions.SyntaxException;
-import org.quattor.pan.template.BuildContext;
+import org.quattor.pan.template.CompileTimeContext;
 import org.quattor.pan.template.Context;
 import org.quattor.pan.utils.TermFactory;
 
@@ -79,7 +79,7 @@ public class AppendTest extends BuiltInFunctionTestUtils {
 	@Test
 	public void testAppendToList() throws SyntaxException, InvalidTermException {
 
-		Context context = new BuildContext();
+		Context context = new CompileTimeContext();
 		ListResource list = new ListResource();
 		Element value = StringProperty.getInstance("OK");
 
@@ -100,7 +100,7 @@ public class AppendTest extends BuiltInFunctionTestUtils {
 	public void testAppendToProtectedList() throws SyntaxException,
 			InvalidTermException {
 
-		Context context = new BuildContext();
+		Context context = new CompileTimeContext();
 
 		// Create a protected resource.
 		ListResource list = new ListResource();

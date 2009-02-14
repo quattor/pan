@@ -149,13 +149,10 @@ public class BuildContext implements Context {
 	private Set<String> objectDependencies;
 
 	/**
-	 * Constructs a new Context object that can be used for compile-time
-	 * evaluation of DML blocks. Only built-in functions will be available; no
-	 * global variables are defined in the environment, including automatic
-	 * variables.
+	 * Constructs a new Context object intended for testing.
 	 */
 	public BuildContext() {
-		this(null, emptyTemplate, true);
+		this(null, emptyTemplate, false);
 	}
 
 	/**

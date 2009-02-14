@@ -20,6 +20,7 @@
 
 package org.quattor.pan.dml.operators;
 
+import static org.quattor.pan.utils.MessageUtils.MSG_CANNOT_MODIFY_SELF;
 import static org.quattor.pan.utils.MessageUtils.MSG_ILLEGAL_SELF_REF;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_COMPILE_TIME_OPERATION;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_EXECUTE_METHOD_CALLED;
@@ -100,8 +101,8 @@ public class SetSelf extends SetValue {
 
 		// Check that SELF isn't fixed. This is true for a validation call.
 		if (context.isSelfFinal()) {
-			EvaluationException ee = new EvaluationException(
-					"cannot modify SELF from validation function");
+			EvaluationException ee = EvaluationException
+					.create(MSG_CANNOT_MODIFY_SELF);
 			throw ee.addExceptionInfo(sourceRange, context);
 		}
 

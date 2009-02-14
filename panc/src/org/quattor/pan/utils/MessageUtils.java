@@ -373,6 +373,10 @@ public class MessageUtils {
 
 	public final static String MSG_VALUE_CANNOT_BE_NULL = "MSG_VALUE_CANNOT_BE_NULL";
 
+	public final static String MSG_DUPLICATE_KEY = "MSG_DUPLICATE_KEY";
+
+	public final static String MSG_INVALID_KEY_TYPE = "MSG_INVALID_KEY_TYPE";
+
 	// Name of the resource bundle to use for compiler messages.
 	private final static String bundleName = "org.quattor.pan.Messages";
 

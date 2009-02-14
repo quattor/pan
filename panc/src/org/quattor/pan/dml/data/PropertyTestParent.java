@@ -23,9 +23,6 @@ package org.quattor.pan.dml.data;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Test;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.InvalidTermException;
@@ -56,16 +53,14 @@ abstract public class PropertyTestParent extends ElementTestParent {
 	@Test(expected = EvaluationException.class)
 	public void testRecursiveGet() throws InvalidTermException {
 		Element e = getTestElement();
-		List<Term> terms = new ArrayList<Term>();
-		terms.add(TermFactory.create("OK"));
+		Term[] terms = { TermFactory.create("OK") };
 		e.rget(terms, 0, false, false);
 	}
 
 	@Test(expected = EvaluationException.class)
 	public void testRecursivePut() throws InvalidTermException {
 		Element e = getTestElement();
-		List<Term> terms = new ArrayList<Term>();
-		terms.add(TermFactory.create("OK"));
+		Term[] terms = { TermFactory.create("OK") };
 		StringProperty s = StringProperty.getInstance("OK");
 		e.rput(terms, 0, s);
 	}

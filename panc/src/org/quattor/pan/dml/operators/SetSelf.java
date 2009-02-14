@@ -24,8 +24,6 @@ import static org.quattor.pan.utils.MessageUtils.MSG_ILLEGAL_SELF_REF;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_COMPILE_TIME_OPERATION;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_EXECUTE_METHOD_CALLED;
 
-import java.util.List;
-
 import org.quattor.pan.dml.Operation;
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.HashResource;
@@ -83,7 +81,7 @@ public class SetSelf extends SetValue {
 		}
 
 		// Create an array containing the terms for dereferencing.
-		List<Term> terms = null;
+		Term[] terms = null;
 		try {
 			terms = calculateTerms(context);
 		} catch (EvaluationException ee) {
@@ -121,7 +119,7 @@ public class SetSelf extends SetValue {
 			// type and insert into variable table.
 			if (self instanceof Undef) {
 
-				Term term = terms.get(0);
+				Term term = terms[0];
 				if (term.isKey()) {
 					self = new HashResource();
 				} else {

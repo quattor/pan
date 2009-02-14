@@ -384,7 +384,7 @@ public interface Context {
 	 * @return Element value of the associated dereferenced variable
 	 */
 	public Element dereferenceVariable(String name, boolean lookupOnly,
-			List<Term> terms) throws InvalidTermException;
+			Term[] terms) throws InvalidTermException;
 
 	/**
 	 * Set the local variable to the given value. If the value is null, then the
@@ -419,7 +419,7 @@ public interface Context {
 	 *             if there is a global variable with the same name as the local
 	 *             variable
 	 */
-	public void setLocalVariable(String name, List<Term> terms, Element value)
+	public void setLocalVariable(String name, Term[] terms, Element value)
 			throws EvaluationException;
 
 	public int getCallLimit();

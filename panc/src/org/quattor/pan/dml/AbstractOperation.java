@@ -20,9 +20,6 @@
 
 package org.quattor.pan.dml;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
@@ -94,10 +91,12 @@ abstract public class AbstractOperation implements Operation {
 	 */
 	protected Element[] calculateArgs(Context context)
 			throws EvaluationException {
+
 		Element[] results = new Element[ops.length];
 		for (int i = 0; i < ops.length; i++) {
 			results[i] = ops[i].execute(context);
 		}
+
 		return results;
 	}
 
@@ -107,18 +106,17 @@ abstract public class AbstractOperation implements Operation {
 	 * @param context
 	 *            evaluation context to use
 	 * 
-	 * @return list of terms calculated from the operations
+	 * @return array of terms calculated from the operations
 	 * 
 	 * @throws EvaluationException
 	 *             if any error occurs when evaluating the arguments or if the
 	 *             resulting value is not a valid Term
 	 */
-	protected List<Term> calculateTerms(Context context)
-			throws EvaluationException {
+	protected Term[] calculateTerms(Context context) throws EvaluationException {
 
-		List<Term> terms = new ArrayList<Term>(ops.length);
-		for (Operation op : ops) {
-			terms.add(TermFactory.create(op.execute(context)));
+		Term[] terms = new Term[ops.length];
+		for (int i = 0; i < ops.length; i++) {
+			terms[i] = TermFactory.create(ops[i].execute(context));
 		}
 
 		return terms;

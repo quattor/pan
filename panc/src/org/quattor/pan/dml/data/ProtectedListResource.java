@@ -2,7 +2,6 @@ package org.quattor.pan.dml.data;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_ILLEGAL_WRITE_TO_PROTECTED_LIST;
 
-import java.util.List;
 
 import org.quattor.pan.exceptions.CompilerError;
 import org.quattor.pan.exceptions.InvalidTermException;
@@ -90,7 +89,7 @@ public class ProtectedListResource extends ListResource {
 	}
 
 	@Override
-	public void rput(List<Term> terms, int index, Element value)
+	public void rput(Term[] terms, int index, Element value)
 			throws InvalidTermException {
 		throw CompilerError.create(MSG_ILLEGAL_WRITE_TO_PROTECTED_LIST);
 	}

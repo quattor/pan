@@ -198,8 +198,7 @@ public class PathTest {
 	@Test
 	public void testLegalCombinations() throws SyntaxException {
 
-		List<Term> p2 = Arrays.asList(TermFactory.create("gamma"), TermFactory
-				.create("delta"));
+		Term[] p2 = { TermFactory.create("gamma"), TermFactory.create("delta") };
 		List<String> correct = Arrays.asList("alpha", "beta", "gamma", "delta");
 
 		Path p1 = new Path("alpha/beta");
@@ -216,8 +215,7 @@ public class PathTest {
 	@Test
 	public void testIllegalCombinations() {
 
-		List<Term> p2 = Arrays.asList(TermFactory.create("gamma"), TermFactory
-				.create("delta"));
+		Term[] p2 = { TermFactory.create("gamma"), TermFactory.create("delta") };
 		List<String> correct = Arrays.asList("alpha", "beta", "gamma", "delta");
 
 		List<String> paths = Arrays.asList("//alpha/beta", "alpha:beta",

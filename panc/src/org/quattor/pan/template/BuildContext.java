@@ -913,8 +913,8 @@ public class BuildContext implements Context {
 
 		if (path.isAbsolute() || path.isRelative()) {
 
-			List<Term> terms = path.getTerms();
-			int nterms = terms.size();
+			Term[] terms = path.getTerms();
+			int nterms = terms.length;
 
 			// If the list is empty, then we are trying to modify the root
 			// resource directly. Ensure that the value is an instance of a
@@ -1139,7 +1139,7 @@ public class BuildContext implements Context {
 	 * @return Element value of the associated dereferenced variable
 	 */
 	public Element dereferenceVariable(String name, boolean lookupOnly,
-			List<Term> terms) throws InvalidTermException {
+			Term[] terms) throws InvalidTermException {
 
 		boolean duplicate = false;
 		Element result = localVariables.get(name);
@@ -1224,7 +1224,7 @@ public class BuildContext implements Context {
 	 *             if there is a global variable with the same name as the local
 	 *             variable
 	 */
-	public void setLocalVariable(String name, List<Term> terms, Element value)
+	public void setLocalVariable(String name, Term[] terms, Element value)
 			throws EvaluationException {
 
 		assert (name != null);
@@ -1236,7 +1236,7 @@ public class BuildContext implements Context {
 					MSG_CANNOT_MODIFY_GLOBAL_VARIABLE_FROM_DML, name));
 		}
 
-		if (terms == null || terms.size() == 0) {
+		if (terms == null || terms.length == 0) {
 
 			// Revert back to the simple case that does not require
 			// dereferencing.
@@ -1261,7 +1261,7 @@ public class BuildContext implements Context {
 			// type and insert into variable table.
 			if (var == null || var instanceof Undef) {
 
-				Term term = terms.get(0);
+				Term term = terms[0];
 				if (term.isKey()) {
 					var = new HashResource();
 				} else {

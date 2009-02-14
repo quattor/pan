@@ -81,7 +81,7 @@ public class ValidationException extends RuntimeException {
 		Path rPath = null;
 		if (path != null) {
 			try {
-				rPath = new Path(path, terms);
+				rPath = new Path(path, terms.toArray(new Term[terms.size()]));
 			} catch (SyntaxException consumed) {
 				// This may cause the reported path to be incorrect, but this
 				// information is probably better than nothing.

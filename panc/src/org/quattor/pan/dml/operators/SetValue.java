@@ -24,8 +24,6 @@ import static org.quattor.pan.utils.MessageUtils.MSG_AUTO_VAR_CANNOT_BE_SET;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_EXECUTE_METHOD_CALLED;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_TERM;
 
-import java.util.List;
-
 import org.quattor.pan.dml.AbstractOperation;
 import org.quattor.pan.dml.Operation;
 import org.quattor.pan.dml.data.Element;
@@ -162,7 +160,7 @@ public class SetValue extends AbstractOperation {
 	public Element execute(Context context, Element result) {
 
 		// Create an array containing the terms for dereferencing.
-		List<Term> terms = null;
+		Term[] terms = null;
 		try {
 			terms = calculateTerms(context);
 		} catch (EvaluationException e) {
@@ -181,7 +179,7 @@ public class SetValue extends AbstractOperation {
 		//
 		Element dupResult = result;
 		if (result != null) {
-			if (terms.size() > 0 || result.isProtected()) {
+			if (terms.length > 0 || result.isProtected()) {
 				dupResult = result.duplicate();
 			}
 		}

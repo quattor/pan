@@ -24,9 +24,6 @@ import static org.quattor.pan.utils.MessageUtils.MSG_CANNOT_ADD_CHILD;
 import static org.quattor.pan.utils.MessageUtils.MSG_ILLEGAL_DEREFERENCE;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_RANGE_CHECK;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_REPLACEMENT;
-
-import java.util.List;
-
 import net.jcip.annotations.Immutable;
 
 import org.quattor.pan.dml.Operation;
@@ -298,7 +295,7 @@ abstract public class Element implements Operation {
 	 *             thrown if an trying to dereference a list with a key or a
 	 *             hash with an index
 	 */
-	public Element rget(List<Term> terms, int index, boolean protect,
+	public Element rget(Term[] terms, int index, boolean protect,
 			boolean lookupOnly) throws InvalidTermException {
 		if (!lookupOnly) {
 			throw new EvaluationException(MessageUtils.format(
@@ -317,7 +314,7 @@ abstract public class Element implements Operation {
 	 *             thrown if an trying to dereference a list with a key or a
 	 *             hash with an index
 	 */
-	public void rput(List<Term> terms, int index, Element value)
+	public void rput(Term[] terms, int index, Element value)
 			throws InvalidTermException {
 		throw new EvaluationException(MessageUtils.format(MSG_CANNOT_ADD_CHILD,
 				this.getTypeAsString()));

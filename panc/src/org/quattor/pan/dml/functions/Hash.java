@@ -20,10 +20,13 @@
 
 package org.quattor.pan.dml.functions;
 
+import static org.quattor.pan.utils.MessageUtils.MSG_DUPLICATE_KEY;
 import static org.quattor.pan.utils.MessageUtils.MSG_EVEN_NUMBER_OF_ARGS;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_KEY_HASH;
+import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_KEY_TYPE;
 
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.quattor.pan.dml.Operation;
 import org.quattor.pan.dml.data.Element;
@@ -34,14 +37,13 @@ import org.quattor.pan.exceptions.InvalidTermException;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.template.Context;
 import org.quattor.pan.template.SourceRange;
-import org.quattor.pan.utils.MessageUtils;
 import org.quattor.pan.utils.Term;
 import org.quattor.pan.utils.TermFactory;
 
 /**
- * Creates an nlist from the function's arguments. There must be an even
- * number of arguments. This function is available as <code>nlist</code>
- * in the pan language.
+ * Creates an nlist from the function's arguments. There must be an even number
+ * of arguments. This function is available as <code>nlist</code> in the pan
+ * language.
  * 
  * @author loomis
  * 
@@ -68,13 +70,13 @@ final public class Hash extends BuiltInFunction {
 		// Do a detailed check of the keys. They must be valid and there can be
 		// no duplicates.
 		try {
-			ArrayList<Term> keys = new ArrayList<Term>();
+			Set<Term> keys = new HashSet<Term>();
 			for (int i = 0; i < operations.length; i += 2) {
 				if (operations[i] instanceof Element) {
 					Term key = createKey((Element) operations[i]);
 					if (keys.contains(key)) {
-						throw new EvaluationException("duplicate key (" + key
-								+ ") in nlist function");
+						throw EvaluationException
+								.create(MSG_DUPLICATE_KEY, key);
 					}
 					keys.add(key);
 				}
@@ -99,24 +101,19 @@ final public class Hash extends BuiltInFunction {
 			Term t = null;
 			try {
 				t = createKey(args[i]);
+
 				Element value = args[i + 1];
 
 				Element old = result.put(t, value);
 
 				if (old != null) {
-					throw new EvaluationException("duplicate key (" + t
-							+ ") in nlist function");
+					throw EvaluationException.create(MSG_DUPLICATE_KEY, t);
 				}
 
-			} catch (ClassCastException cce) {
-				throw new EvaluationException(
-						"nlist keys must be string; argument " + i
-								+ " is of type " + args[i].getTypeAsString());
 			} catch (InvalidTermException ite) {
 				// This should actually not be reachable because the type of the
 				// term is checked with the createKey() method.
-				throw new EvaluationException(MessageUtils.format(
-						MSG_INVALID_KEY_HASH, t));
+				throw EvaluationException.create(MSG_INVALID_KEY_HASH, t);
 			}
 		}
 
@@ -133,14 +130,13 @@ final public class Hash extends BuiltInFunction {
 			result = TermFactory.create(key);
 
 		} catch (ClassCastException cce) {
-			throw new EvaluationException(
-					"nlist keys must be string; argument is of type "
-							+ stringProperty.getTypeAsString());
+			throw EvaluationException.create(MSG_INVALID_KEY_TYPE,
+					stringProperty.getTypeAsString());
 		}
 
 		if (!result.isKey()) {
-			throw new EvaluationException(MessageUtils.format(
-					MSG_INVALID_KEY_HASH, stringProperty));
+			throw EvaluationException.create(MSG_INVALID_KEY_HASH,
+					stringProperty);
 		}
 
 		return result;

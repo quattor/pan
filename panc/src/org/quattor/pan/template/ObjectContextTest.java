@@ -22,9 +22,6 @@ package org.quattor.pan.template;
 
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Test;
 import org.quattor.pan.dml.data.DoubleProperty;
 import org.quattor.pan.dml.data.Element;
@@ -108,8 +105,7 @@ public class ObjectContextTest {
 		context.setLocalVariable("x", nlist);
 
 		// Check that replacing a value with an incorrect type causes an error.
-		List<Term> terms = new ArrayList<Term>();
-		terms.add(TermFactory.create("a"));
+		Term[] terms = { TermFactory.create("a") };
 		context.setLocalVariable("x", terms, LongProperty.getInstance(2L));
 
 		// Ensure that the variable exists.
@@ -134,8 +130,7 @@ public class ObjectContextTest {
 		context.setLocalVariable("x", nlist);
 
 		// Check that replacing a value with an incorrect type causes an error.
-		List<Term> terms = new ArrayList<Term>();
-		terms.add(TermFactory.create("a"));
+		Term[] terms = { TermFactory.create("a") };
 		context.setLocalVariable("x", terms, DoubleProperty.getInstance(2.0));
 	}
 
@@ -151,8 +146,7 @@ public class ObjectContextTest {
 		context.setLocalVariable("x", list);
 
 		// Check that replacing a value with an incorrect type causes an error.
-		List<Term> terms = new ArrayList<Term>();
-		terms.add(TermFactory.create(0));
+		Term[] terms = { TermFactory.create(0L) };
 		context.setLocalVariable("x", terms, LongProperty.getInstance(2L));
 
 		// Ensure that the variable exists.
@@ -176,8 +170,7 @@ public class ObjectContextTest {
 		context.setLocalVariable("x", list);
 
 		// Check that replacing a value with an incorrect type causes an error.
-		List<Term> terms = new ArrayList<Term>();
-		terms.add(TermFactory.create(0));
+		Term[] terms = { TermFactory.create(0L) };
 		context.setLocalVariable("x", terms, DoubleProperty.getInstance(2.0));
 	}
 
@@ -191,8 +184,7 @@ public class ObjectContextTest {
 		context.setLocalVariable("x", Undef.VALUE);
 
 		// Check that replacing a value with an incorrect type causes an error.
-		List<Term> terms = new ArrayList<Term>();
-		terms.add(TermFactory.create("a"));
+		Term[] terms = { TermFactory.create("a") };
 		context.setLocalVariable("x", terms, LongProperty.getInstance(2L));
 
 		// Ensure that the variable exists.

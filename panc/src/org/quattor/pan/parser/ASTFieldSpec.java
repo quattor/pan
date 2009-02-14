@@ -24,8 +24,6 @@ import static org.quattor.pan.utils.MessageUtils.MSG_FIELD_MUST_BE_VALID_KEY;
 import static org.quattor.pan.utils.MessageUtils.MSG_FIELD_MUST_BE_VALID_PATH;
 import static org.quattor.pan.utils.MessageUtils.MSG_FIELD_MUST_BE_VALID_TERM;
 
-import java.util.List;
-
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.utils.Path;
@@ -72,12 +70,12 @@ public class ASTFieldSpec extends SimpleNode {
 		Term t = null;
 		try {
 			Path p = new Path(path);
-			List<Term> terms = p.getTerms();
-			if (terms.size() != 1) {
+			Term[] terms = p.getTerms();
+			if (terms.length != 1) {
 				throw SyntaxException.create(getSourceRange(),
 						MSG_FIELD_MUST_BE_VALID_TERM, path);
 			}
-			t = terms.get(0);
+			t = terms[0];
 			if (!t.isKey()) {
 				throw SyntaxException.create(getSourceRange(),
 						MSG_FIELD_MUST_BE_VALID_KEY, path);

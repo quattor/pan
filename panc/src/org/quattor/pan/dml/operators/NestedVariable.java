@@ -22,8 +22,6 @@ package org.quattor.pan.dml.operators;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_UNDEFINED_VAR;
 
-import java.util.List;
-
 import org.quattor.pan.dml.Operation;
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.exceptions.EvaluationException;
@@ -54,7 +52,7 @@ public class NestedVariable extends Variable {
 	public Element execute(Context context) {
 
 		// Create the array of terms to dereference the variable.
-		List<Term> terms = null;
+		Term[] terms = null;
 		try {
 			terms = calculateTerms(context);
 		} catch (EvaluationException ee) {

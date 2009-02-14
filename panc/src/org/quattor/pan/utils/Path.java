@@ -29,8 +29,7 @@ import static org.quattor.pan.utils.MessageUtils.MSG_PATH_MISSING_TERM;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -66,10 +65,10 @@ public class Path implements Serializable, Comparable<Path> {
 
 	/**
 	 * The path other than the authority is represented an immutable list of
-	 * terms. As some uses require random access to the list, the underlying
-	 * implementation should implement the RandomAccess interface.
+	 * terms. This must remain immutable, so copies of the terms should be
+	 * returned rather than the array itself.
 	 */
-	private List<Term> terms;
+	private Term[] terms;
 
 	/**
 	 * The type of this Path.
@@ -219,7 +218,7 @@ public class Path implements Serializable, Comparable<Path> {
 		xt.trimToSize();
 
 		// Make this an unmodifiable list.
-		terms = Collections.unmodifiableList(xt);
+		terms = xt.toArray(new Term[xt.size()]);
 	}
 
 	/**
@@ -227,7 +226,8 @@ public class Path implements Serializable, Comparable<Path> {
 	 * existing paths. The first argument cannot be an external path. The second
 	 * argument may be null.
 	 */
-	public Path(Path root, List<Term> terms) throws SyntaxException {
+	// FIXME: Change method signature to use array.
+	public Path(Path root, Term[] terms) throws SyntaxException {
 
 		// Check that the root path is not an external path.
 		if (root.isExternal()) {
@@ -242,14 +242,19 @@ public class Path implements Serializable, Comparable<Path> {
 
 		// Add in the path terms from the parent and child. Use the known size
 		// of the result.
-		ArrayList<Term> xt = new ArrayList<Term>(root.terms);
+		int size = root.terms.length;
 		if (terms != null) {
-			xt.addAll(terms);
+			size += terms.length;
 		}
-		xt.trimToSize();
+		Term[] result = new Term[size];
+
+		System.arraycopy(root.terms, 0, result, 0, root.terms.length);
+		if (terms != null) {
+			System.arraycopy(terms, 0, result, root.terms.length, terms.length);
+		}
 
 		// Make this an unmodifiable list.
-		this.terms = Collections.unmodifiableList(xt);
+		this.terms = result;
 	}
 
 	/**
@@ -272,8 +277,8 @@ public class Path implements Serializable, Comparable<Path> {
 	 * RandomAccess interface, so fast random access to individual element can
 	 * be assumed.
 	 */
-	public List<Term> getTerms() {
-		return terms;
+	public Term[] getTerms() {
+		return terms.clone();
 	}
 
 	/**
@@ -354,7 +359,7 @@ public class Path implements Serializable, Comparable<Path> {
 		}
 
 		// Finally check the individual terms.
-		return terms.equals(p.terms);
+		return Arrays.equals(terms, p.terms);
 	}
 
 	/**
@@ -419,19 +424,17 @@ public class Path implements Serializable, Comparable<Path> {
 		// Same type of path, so check first the number of terms. If not equal,
 		// then it is easy to decide the order. (Longer paths come before
 		// shorter ones.)
-		int mySize = this.terms.size();
-		int otherSize = o.terms.size();
+		int mySize = this.terms.length;
+		int otherSize = o.terms.length;
 		if (mySize != otherSize) {
 			return (mySize < otherSize) ? 1 : -1;
 		}
 
 		// Ok, the hard case, the two paths are of the same type and have the
 		// same number of terms.
-		Iterator<Term> myIterator = this.terms.iterator();
-		Iterator<Term> otherIterator = o.terms.iterator();
-		while (myIterator.hasNext()) {
-			Term myTerm = myIterator.next();
-			Term otherTerm = otherIterator.next();
+		for (int i = 0; i < mySize; i++) {
+			Term myTerm = this.terms[i];
+			Term otherTerm = o.terms[i];
 			int comparison = myTerm.compareTo(otherTerm);
 			if (comparison != 0) {
 				return comparison;

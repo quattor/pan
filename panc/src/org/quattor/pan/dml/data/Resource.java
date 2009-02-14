@@ -22,7 +22,6 @@ package org.quattor.pan.dml.data;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_PATH_INDEX;
 
-import java.util.List;
 import java.util.Map;
 
 import org.quattor.pan.exceptions.CompilerError;
@@ -82,20 +81,20 @@ abstract public class Resource extends PersistentElement implements
 	abstract public int size();
 
 	@Override
-	public Element rget(List<Term> terms, int index, boolean protect,
+	public Element rget(Term[] terms, int index, boolean protect,
 			boolean lookupOnly) throws InvalidTermException {
 
 		// Set the initial value to this resource. This value will be used if
 		// there are no terms or if the index is already greater than that of
 		// the last element.
 		Element rvalue = this;
-		int remaining = terms.size() - index - 1;
+		int remaining = terms.length - index - 1;
 
 		if (remaining >= 0) {
 
 			// Always pull out the referenced child.
 			try {
-				rvalue = get(terms.get(index));
+				rvalue = get(terms[index]);
 			} catch (InvalidTermException ite) {
 				throw ite.setInfo(terms, index, getTypeAsString());
 			}
@@ -111,19 +110,19 @@ abstract public class Resource extends PersistentElement implements
 	}
 
 	@Override
-	public void rput(List<Term> terms, int index, Element value)
+	public void rput(Term[] terms, int index, Element value)
 			throws InvalidTermException {
 
-		int remaining = terms.size() - index - 1;
+		int remaining = terms.length - index - 1;
 
 		// This is a problem with the compiler. An index was given that
 		// exceeds the number of terms in the path.
 		if (remaining < 0) {
-			throw CompilerError.create(MSG_INVALID_PATH_INDEX, index, terms
-					.size());
+			throw CompilerError.create(MSG_INVALID_PATH_INDEX, index,
+					terms.length);
 		}
 
-		Term term = terms.get(index);
+		Term term = terms[index];
 
 		if (remaining == 0) {
 
@@ -153,7 +152,7 @@ abstract public class Resource extends PersistentElement implements
 			// If the child does not exist or is undef, then we need to create a
 			// new Resource.
 			if (child == null || child instanceof Undef) {
-				if (terms.get(index + 1).isKey()) {
+				if (terms[index + 1].isKey()) {
 					child = new HashResource();
 				} else {
 					child = new ListResource();

@@ -2,7 +2,6 @@ package org.quattor.pan.dml.data;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_ILLEGAL_WRITE_TO_PROTECTED_HASH;
 
-import java.util.List;
 import java.util.Set;
 
 import org.quattor.pan.exceptions.CompilerError;
@@ -91,7 +90,7 @@ public class ProtectedHashResource extends HashResource {
 	}
 
 	@Override
-	public void rput(List<Term> terms, int index, Element value)
+	public void rput(Term[] terms, int index, Element value)
 			throws InvalidTermException {
 		throw CompilerError.create(MSG_ILLEGAL_WRITE_TO_PROTECTED_HASH);
 	}

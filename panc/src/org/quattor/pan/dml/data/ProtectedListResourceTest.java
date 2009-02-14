@@ -23,9 +23,6 @@ package org.quattor.pan.dml.data;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Test;
 import org.quattor.pan.exceptions.CompilerError;
 import org.quattor.pan.exceptions.InvalidTermException;
@@ -97,8 +94,7 @@ public class ProtectedListResourceTest {
 
 		ProtectedListResource list = new ProtectedListResource(baseList);
 
-		List<Term> terms = new ArrayList<Term>();
-		terms.add(index);
+		Term[] terms = { index };
 
 		list.rput(terms, 0, StringProperty.getInstance("BAD"));
 	}

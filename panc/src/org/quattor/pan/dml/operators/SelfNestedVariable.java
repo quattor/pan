@@ -22,8 +22,6 @@ package org.quattor.pan.dml.operators;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_UNDEFINED_VAR;
 
-import java.util.List;
-
 import org.quattor.pan.dml.Operation;
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.Undef;
@@ -68,7 +66,7 @@ public class SelfNestedVariable extends NestedVariable {
 
 		// If there are some operations in this Value operation, create a list
 		// will all of the terms and do the recursive lookup of the value.
-		List<Term> terms = null;
+		Term[] terms = null;
 		if (!(result instanceof Undef)) {
 			try {
 				terms = calculateTerms(context);

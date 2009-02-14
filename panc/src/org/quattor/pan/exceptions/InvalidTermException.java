@@ -50,7 +50,7 @@ public class InvalidTermException extends Exception {
 		super(message);
 	}
 
-	public InvalidTermException setInfo(List<Term> terms, int index,
+	public InvalidTermException setInfo(Term[] terms, int index,
 			String actualType) {
 
 		this.actualType = actualType;
@@ -60,7 +60,7 @@ public class InvalidTermException extends Exception {
 			if (i > 0) {
 				sb.append("/");
 			}
-			sb.append(terms.get(i).toString());
+			sb.append(terms[i].toString());
 		}
 		errorPath = sb.toString();
 
@@ -101,19 +101,21 @@ public class InvalidTermException extends Exception {
 				getMessage(), sb.toString(), path.toString());
 	}
 
-	public String formatVariableMessage(String name, List<Term> terms) {
+	public String formatVariableMessage(String name, Term[] terms) {
 
 		// Create the prefix for the error path.
 		StringBuilder sb = new StringBuilder();
 		sb.append(name);
-		for (Term term : terms) {
-			sb.append("[");
-			sb.append(term.toString());
-			sb.append("]");
+		if (terms != null) {
+			for (Term term : terms) {
+				sb.append("[");
+				sb.append(term.toString());
+				sb.append("]");
+			}
 		}
 
 		return MessageUtils.format(MSG_INVALID_PATH_DEREFERENCE, actualType,
-				getMessage(), name+errorPath, name);
+				getMessage(), name + errorPath, name);
 	}
 
 }

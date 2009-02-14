@@ -305,10 +305,30 @@ abstract public class Element implements Operation {
 	}
 
 	/**
+	 * This is a special lookup function that will retrieve a list from the
+	 * resource. If the resource does not exist, an empty list will be created.
+	 * All necessary parent resources are created. The returned list is
+	 * guaranteed to be a writable resource.
+	 * 
+	 * @param terms
+	 *            list of terms to use for dereference
+	 * @param index
+	 *            the term to use in the given list of term
+	 * 
+	 * @return writable list
+	 */
+	public ListResource rgetList(Term[] terms, int index)
+			throws InvalidTermException {
+		throw new EvaluationException(MessageUtils.format(
+				MSG_ILLEGAL_DEREFERENCE, this.getTypeAsString()));
+	}
+
+	/**
 	 * Add the given child to this resource, creating intermediate resources as
 	 * necessary. If this Element is not a resource, then this will throw an
 	 * InvalidTermException. The default implementation of this method throws
-	 * such an exception.
+	 * such an exception. This resource must be a writable resource, otherwise
+	 * an exception will be thrown.
 	 * 
 	 * @throws InvalidTermException
 	 *             thrown if an trying to dereference a list with a key or a

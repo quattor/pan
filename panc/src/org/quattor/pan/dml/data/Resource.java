@@ -21,10 +21,12 @@
 package org.quattor.pan.dml.data;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_PATH_INDEX;
+import static org.quattor.pan.utils.MessageUtils.MSG_REFERENCED_VARIABLE_NOT_LIST;
 
 import java.util.Map;
 
 import org.quattor.pan.exceptions.CompilerError;
+import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.InvalidTermException;
 import org.quattor.pan.utils.Term;
 
@@ -173,6 +175,80 @@ abstract public class Resource extends PersistentElement implements
 
 		}
 
+	}
+
+	@Override
+	public ListResource rgetList(Term[] terms, int index)
+			throws InvalidTermException {
+
+		ListResource result = null;
+
+		int remaining = terms.length - index - 1;
+
+		// This is a problem with the compiler. An index was given that
+		// exceeds the number of terms in the path.
+		if (remaining < 0) {
+			throw CompilerError.create(MSG_INVALID_PATH_INDEX, index,
+					terms.length);
+		}
+
+		Term term = terms[index];
+
+		if (remaining == 0) {
+
+			// Pull out the referenced value. If the result was not a list, then
+			// throw an exception.
+			try {
+				Element element = get(term);
+				if (element instanceof ListResource) {
+					result = (ListResource) element;
+				} else if (element instanceof Undef || element == null) {
+					result = new ListResource();
+					put(term, result);
+				} else {
+					throw EvaluationException.create(
+							MSG_REFERENCED_VARIABLE_NOT_LIST, element
+									.getTypeAsString());
+				}
+			} catch (InvalidTermException ite) {
+				throw ite.setInfo(terms, index, getTypeAsString());
+			}
+
+		} else if (remaining > 0) {
+
+			// More to do. Pull out the given child.
+			Element child = null;
+			try {
+				child = get(term);
+			} catch (InvalidTermException ite) {
+				throw ite.setInfo(terms, index, getTypeAsString());
+			}
+
+			// If the child does not exist or is undef, then we need to create a
+			// new Resource.
+			if (child == null || child instanceof Undef) {
+				if (terms[index + 1].isKey()) {
+					child = new HashResource();
+				} else {
+					child = new ListResource();
+				}
+				put(term, child);
+			}
+
+			// If the child is protected, then we need to create an unprotected
+			// copy of the child and replace the entry in this resource.
+			assert (child != null);
+			if (child.isProtected()) {
+				child = child.writableCopy();
+				put(term, child);
+			}
+
+			// Now recursively descend to put the value in the correct place.
+			result = child.rgetList(terms, index + 1);
+
+		}
+
+		return result;
 	}
 
 	/**

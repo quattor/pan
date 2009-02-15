@@ -531,6 +531,27 @@ variable X ?=
     <title>Change Log</title>
 
     <section>
+      <title>Version 8.2.7</title>
+
+      <itemizedlist>
+        <listitem>
+          <para>(SF RFE #2577226) The <function>append</function> and
+          <function>prepend</function> functions have been added to the pan
+          language. This should eventually replace the
+          <function>push</function> function in the QWG template
+          distribution.</para>
+        </listitem>
+
+        <listitem>
+          <para>(SF BUG #2602409) The <function>to_long</function>,
+          <function>to_double</function>, and <function>to_boolean</function>
+          function descriptions have been updated to correctly reflect their
+          behavior.</para>
+        </listitem>
+      </itemizedlist>
+    </section>
+
+    <section>
       <title>Version 8.2.6</title>
 
       <itemizedlist>
@@ -543,7 +564,7 @@ variable X ?=
         <listitem>
           <para>(SF BUG #2504034) The pan man page incorrectly implied that
           the template file names were required. They are in fact optional.
-          The man page has been corrected. </para>
+          The man page has been corrected.</para>
         </listitem>
 
         <listitem>
@@ -556,7 +577,7 @@ variable X ?=
         <listitem>
           <para>(SF BUG #2533401) When splitting a double quoted string across
           lines, any escape sequence at the beginning of the line was ignored.
-          This has been fixed. </para>
+          This has been fixed.</para>
         </listitem>
       </itemizedlist>
     </section>

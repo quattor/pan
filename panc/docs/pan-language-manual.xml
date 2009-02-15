@@ -694,6 +694,12 @@ type small_even_nlist = small_even{};</programlisting>
 
           <tbody>
             <row>
+              <entry><xref linkend="append" /></entry>
+
+              <entry>Add a value to the end of a list.</entry>
+            </row>
+
+            <row>
               <entry><xref linkend="create" /></entry>
 
               <entry>Create an nlist from the named structure
@@ -746,6 +752,12 @@ type small_even_nlist = small_even{};</programlisting>
               <entry>Extract the next value while iterating over a resource.
               Returns a boolean to indicate if more values exist in the
               resource.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="prepend" /></entry>
+
+              <entry>Add a value to the beginning of a list.</entry>
             </row>
 
             <row>
@@ -879,7 +891,7 @@ type small_even_nlist = small_even{};</programlisting>
               <entry><xref linkend="to_boolean" /></entry>
 
               <entry>Convert the argument to a boolean. Any number other than
-              0 and 0.0 are <literal>true</literal>. Any string other than
+              0 and 0.0 is <literal>true</literal>. Any strings other than
               "false" are <literal>true</literal>. If the argument is a
               resource, an error will occur.</entry>
             </row>

@@ -9,6 +9,112 @@
           xmlns:db="http://docbook.org/ns/docbook">
   <title>Built-In Function Reference</title>
 
+  <refentry xml:id="append">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>append</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>append</refname>
+
+      <refpurpose>adds a value to the end of a list</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>list <function>append</function></funcdef>
+
+          <paramdef>element <parameter>value</parameter></paramdef>
+        </funcprototype>
+
+        <funcprototype>
+          <funcdef>list <function>append</function></funcdef>
+
+          <paramdef>list <parameter>target</parameter></paramdef>
+
+          <paramdef>element <parameter>value</parameter></paramdef>
+        </funcprototype>
+
+        <funcprototype>
+          <funcdef>list <function>append</function></funcdef>
+
+          <paramdef>variable_reference
+          <parameter>target</parameter></paramdef>
+
+          <paramdef>element <parameter>value</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>The <function>append</function> function will add the given value
+      to the end of the target list. There are three variants of this
+      function. For all of the variants, an explicit <literal>null</literal>
+      value is illegal and will terminate the compilation with an
+      error.</para>
+
+      <para>The first variant takes a single argument and always operates on
+      <varname>SELF</varname>. It will directly modify the value of
+      <varname>SELF</varname> and give the modified list
+      (<varname>SELF</varname>) as the return value. If
+      <varname>SELF</varname> does not exist, is <literal>undef</literal>, or
+      is <literal>null</literal>, then an empty list will be created and the
+      given value appended to that list. If <varname>SELF</varname> exists but
+      is not a list, an error will terminate the compilation. This variant
+      cannot be used to create a compile-time constant.</para>
+
+      <programlisting># /result will have the values 1 and 2 in that order
+'/result' = list(1);
+'/result' = append(2);</programlisting>
+
+      <para>The second variant takes two arguments. The first argument is a
+      list value, either a literal list value or a list calculated from a DML
+      block. This version will create a copy of the given list and append the
+      given value to the copy. The modified copy is returned. If the target is
+      not a list, then an error will terminate the compilation. This variant
+      can be used to create a compile-time constant as long as the target
+      expression does not reference information outside of the DML block by
+      using, for example, the <function>value</function> function.</para>
+
+      <programlisting># /result will have the values 1 and 2 in that order
+# /x will only have the value 1
+'/x' = list(1);
+'/result' = append(value('/x'), 2);</programlisting>
+
+      <para>The third variant also takes two arguments, where the first value
+      is a variable reference. This variant will take precedence over the
+      second variant. This variant will directly modify the referenced
+      variable and return the modified list. If the referenced variable does
+      not exist, it will be created. As for the other forms, if the referenced
+      target exists and is not a list, then an error will terminate the
+      compilation. <varname>SELF</varname> or descendants of
+      <varname>SELF</varname> can be used as the target. This variant can be
+      used to create a compile-time constant if the referenced variable is an
+      <emphasis>existing</emphasis> local variable. Referencing a global
+      variable (except via <varname>SELF</varname>) is not permitted as
+      modifying global variables from within a DML block is forbidden.</para>
+
+      <programlisting># /result will have the values 1 and 2 in that order
+'/result' = {
+  append(x, 1); # will create local variable x
+  append(x, 2);
+};</programlisting>
+    </refsection>
+  </refentry>
+
   <refentry xml:id="base64_decode">
     <info>
       <productnumber>@VERSION@</productnumber>
@@ -1722,6 +1828,112 @@ type ipv4 = string with {
       function should be used in preference to the <function>exists</function>
       function to avoid an ambiguity in handling the argument to
       <function>exists</function> as a path or variable reference.</para>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="prepend">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>prepend</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>prepend</refname>
+
+      <refpurpose>adds a value to the beginning of a list</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>list <function>prepend</function></funcdef>
+
+          <paramdef>element <parameter>value</parameter></paramdef>
+        </funcprototype>
+
+        <funcprototype>
+          <funcdef>list <function>prepend</function></funcdef>
+
+          <paramdef>list <parameter>target</parameter></paramdef>
+
+          <paramdef>element <parameter>value</parameter></paramdef>
+        </funcprototype>
+
+        <funcprototype>
+          <funcdef>list <function>prepend</function></funcdef>
+
+          <paramdef>variable_reference
+          <parameter>target</parameter></paramdef>
+
+          <paramdef>element <parameter>value</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>The <function>prepend</function> function will add the given value
+      to the beginning of the target list. There are three variants of this
+      function. For all of the variants, an explicit <literal>null</literal>
+      value is illegal and will terminate the compilation with an
+      error.</para>
+
+      <para>The first variant takes a single argument and always operates on
+      <varname>SELF</varname>. It will directly modify the value of
+      <varname>SELF</varname> and give the modified list
+      (<varname>SELF</varname>) as the return value. If
+      <varname>SELF</varname> does not exist, is <literal>undef</literal>, or
+      is <literal>null</literal>, then an empty list will be created and the
+      given value prepended to that list. If <varname>SELF</varname> exists
+      but is not a list, an error will terminate the compilation. This variant
+      cannot be used to create a compile-time constant.</para>
+
+      <programlisting># /result will have the values 2 and 1 in that order
+'/result' = list(1);
+'/result' = prepend(2);</programlisting>
+
+      <para>The second variant takes two arguments. The first argument is a
+      list value, either a literal list value or a list calculated from a DML
+      block. This version will create a copy of the given list and prepend the
+      given value to the copy. The modified copy is returned. If the target is
+      not a list, then an error will terminate the compilation. This variant
+      can be used to create a compile-time constant as long as the target
+      expression does not reference information outside of the DML block by
+      using, for example, the <function>value</function> function.</para>
+
+      <programlisting># /result will have the values 2 and 1 in that order
+# /x will only have the value 1
+'/x' = list(1);
+'/result' = prepend(value('/x'), 2);</programlisting>
+
+      <para>The third variant also takes two arguments, where the first value
+      is a variable reference. This variant will take precedence over the
+      second variant. This variant will directly modify the referenced
+      variable and return the modified list. If the referenced variable does
+      not exist, it will be created. As for the other forms, if the referenced
+      target exists and is not a list, then an error will terminate the
+      compilation. <varname>SELF</varname> or descendants of
+      <varname>SELF</varname> can be used as the target. This variant can be
+      used to create a compile-time constant if the referenced variable is an
+      <emphasis>existing</emphasis> local variable. Referencing a global
+      variable (except via <varname>SELF</varname>) is not permitted as
+      modifying global variables from within a DML block is forbidden.</para>
+
+      <programlisting># /result will have the values 2 and 1 in that order
+'/result' = {
+  prepend(x, 1); # will create local variable x
+  prepend(x, 2);
+};</programlisting>
     </refsection>
   </refentry>
 

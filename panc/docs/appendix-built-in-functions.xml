@@ -2275,9 +2275,10 @@ type ipv4 = string with {
 
       <para>This function converts the given property into a boolean value.
       The numeric values 0 and 0.0 are considered <literal>false</literal>;
-      other numbers, <literal>true</literal>. The empty string will return
-      <literal>false</literal>; all other strings will return
-      <literal>true</literal>, (including the string "false"!).</para>
+      other numbers, <literal>true</literal>. The empty string and the string
+      "false" (ignoring case) will return <literal>false</literal>; all other
+      strings will return <literal>true</literal>. The function will not
+      accept resources.</para>
     </refsection>
   </refentry>
 
@@ -2315,9 +2316,23 @@ type ipv4 = string with {
     <refsection>
       <title>Description</title>
 
-      <para>This function converts the given property into a double. Strings
-      that do not represent a valid double value will cause a fatal
+      <para>This function converts the given property into a double.</para>
+
+      <para>If the argument is a string, then the string will be parsed to
+      determine the double value. Any valid literal double syntax can be used.
+      Strings that do not represent a valid double value will cause a fatal
       error.</para>
+
+      <para>If the argument is a boolean, then the function will return
+      <literal>0.0</literal> or <literal>1.0</literal> depending on whether
+      the boolean value is <literal>false</literal> or
+      <literal>true</literal>, respectively.</para>
+
+      <para>If the argument is a long, then the corresponding double value
+      will be returned.</para>
+
+      <para>If the argument is a double, then the value is returned
+      directly.</para>
     </refsection>
   </refentry>
 
@@ -2355,11 +2370,24 @@ type ipv4 = string with {
     <refsection>
       <title>Description</title>
 
-      <para>This function converts the given property into a long value.
-      Strings that do not represent a valid long value will cause a fatal
-      error. The string may represent a long value as an octal, decimal, or
-      hexadecimal value. The syntax is exactly the same as for specifying
-      literal long values.</para>
+      <para>This function converts the given property into a long
+      value.</para>
+
+      <para>If the argument is a string, then the string will be parsed to
+      determine the long value. The string may represent a long value as an
+      octal, decimal, or hexadecimal value. The syntax is exactly the same as
+      for specifying literal long values. String values that cannot be parsed
+      as a long value will result in an error.</para>
+
+      <para>If the argument is a boolean, then the return value will be either
+      <literal>0</literal> or <literal>1</literal> depending on whether the
+      boolean is <literal>false</literal> or <literal>true</literal>,
+      respectively.</para>
+
+      <para>If the argument is a double value, then the double value is
+      rounded to the nearest long value.</para>
+
+      <para>If the argument is a long value, it is returned directly. </para>
     </refsection>
   </refentry>
 
@@ -2438,7 +2466,9 @@ type ipv4 = string with {
     <refsection>
       <title>Description</title>
 
-      <para>This function will convert the argument into a string.</para>
+      <para>This function will convert the argument into a string. The
+      function will create a reasonable human-readable representation of all
+      data types, including lists and nlists. </para>
     </refsection>
   </refentry>
 

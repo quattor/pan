@@ -891,9 +891,10 @@ type small_even_nlist = small_even{};</programlisting>
               <entry><xref linkend="to_boolean" /></entry>
 
               <entry>Convert the argument to a boolean. Any number other than
-              0 and 0.0 is <literal>true</literal>. Any strings other than
-              "false" are <literal>true</literal>. If the argument is a
-              resource, an error will occur.</entry>
+              0 and 0.0 is <literal>true</literal>. The empty string and the
+              string 'false' (ignoring case) return <literal>false</literal>.
+              Any other string will return <literal>true</literal>. If the
+              argument is a resource, an error will occur.</entry>
             </row>
 
             <row>
@@ -901,7 +902,11 @@ type small_even_nlist = small_even{};</programlisting>
 
               <entry>Convert the argument to a double value. Strings will be
               parsed to create a double value; any literal form of a double is
-              valid.</entry>
+              valid. Boolean values will convert to <literal>0.0</literal> and
+              <literal>1.0</literal> for <literal>false</literal> and
+              <literal>true</literal>, respectively. Long values are converted
+              to the corresponding double value. Double values are
+              unchanged.</entry>
             </row>
 
             <row>
@@ -909,7 +914,11 @@ type small_even_nlist = small_even{};</programlisting>
 
               <entry>Convert the argument to a long value. Strings will be
               parsed to create a long value; any literal form of a long is
-              valid (e.g. hex or octal literals).</entry>
+              valid (e.g. hex or octal literals). Boolean values will convert
+              to <literal>0</literal> and <literal>1</literal> for
+              <literal>false</literal> and <literal>true</literal>,
+              respectively. Double values are rounded to the nearest long
+              value. Long values are unchanged.</entry>
             </row>
 
             <row>

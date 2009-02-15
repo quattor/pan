@@ -271,8 +271,6 @@ public class MessageUtils {
 
 	public final static String MSG_INVALID_ARG_IN_CONSTRUCTOR = "MSG_INVALID_ARG_IN_CONSTRUCTOR";
 
-	public final static String MSG_CANNOT_RUN_IN_COMPILE_TIME_CONTEXT = "MSG_CANNOT_RUN_IN_COMPILE_TIME_CONTEXT";
-
 	public final static String MSG_NULL_RESULT_FROM_OPERATION = "MSG_NULL_RESULT_FROM_OPERATION";
 
 	public final static String MSG_CLONE_NOT_SUPPORTED = "MSG_CLONE_NOT_SUPPORTED";
@@ -339,8 +337,6 @@ public class MessageUtils {
 
 	public final static String MSG_INVALID_EXECUTE_METHOD_CALLED = "MSG_INVALID_EXECUTE_METHOD_CALLED";
 
-	public final static String MSG_INVALID_COMPILE_TIME_OPERATION = "MSG_INVALID_COMPILE_TIME_OPERATION";
-
 	public final static String MSG_DUPLICATE_FORMATTER_KEY = "MSG_DUPLICATE_FORMATTER_KEY";
 
 	public final static String MSG_UNEXPECTED_EXCEPTION_WHILE_WRITING_OUTPUT = "MSG_UNEXPECTED_EXCEPTION_WHILE_WRITING_OUTPUT";
@@ -380,8 +376,10 @@ public class MessageUtils {
 	public final static String MSG_REFERENCED_VARIABLE_NOT_LIST = "MSG_REFERENCED_VARIABLE_NOT_LIST";
 
 	public final static String MSG_CANNOT_MODIFY_SELF = "MSG_CANNOT_MODIFY_SELF";
-	
+
 	public final static String MSG_SELF_IS_UNDEFINED = "MSG_SELF_IS_UNDEFINED";
+
+	public final static String MSG_INVALID_IN_COMPILE_TIME_CONTEXT = "MSG_INVALID_IN_COMPILE_TIME_CONTEXT";
 
 	// Name of the resource bundle to use for compiler messages.
 	private final static String bundleName = "org.quattor.pan.Messages";

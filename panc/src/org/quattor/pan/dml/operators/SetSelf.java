@@ -22,8 +22,8 @@ package org.quattor.pan.dml.operators;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_CANNOT_MODIFY_SELF;
 import static org.quattor.pan.utils.MessageUtils.MSG_ILLEGAL_SELF_REF;
-import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_COMPILE_TIME_OPERATION;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_EXECUTE_METHOD_CALLED;
+import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_IN_COMPILE_TIME_CONTEXT;
 
 import org.quattor.pan.dml.Operation;
 import org.quattor.pan.dml.data.Element;
@@ -77,8 +77,9 @@ public class SetSelf extends SetValue {
 		// Quickly check to see if this is a compile-time context. This function
 		// cannot be evaluated in such a context.
 		if (context.isCompileTimeContext()) {
-			throw EvaluationException
-					.create(MSG_INVALID_COMPILE_TIME_OPERATION);
+			throw EvaluationException.create(sourceRange,
+					MSG_INVALID_IN_COMPILE_TIME_CONTEXT, this.getClass()
+							.getSimpleName());
 		}
 
 		// Create an array containing the terms for dereferencing.

@@ -21,6 +21,7 @@
 package org.quattor.pan.dml.operators;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_CANNOT_MODIFY_GLOBAL_VARIABLE_FROM_DML;
+import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_IN_COMPILE_TIME_CONTEXT;
 
 import org.quattor.pan.dml.Operation;
 import org.quattor.pan.dml.data.Element;
@@ -66,6 +67,15 @@ public class NestedListVariable extends ListVariable {
 		Element result = context.getLocalVariable(identifier);
 
 		if (result == null) {
+
+			// This operation can only be used in a compile-time context if the
+			// referenced variable already exists. If it doesn't it can lead to
+			// incorrect compile-time values that rely on global variables.
+			if (context.isCompileTimeContext()) {
+				throw EvaluationException.create(sourceRange,
+						MSG_INVALID_IN_COMPILE_TIME_CONTEXT, this.getClass()
+								.getSimpleName());
+			}
 
 			// Before creating the given local variable, ensure that we are not
 			// masking a global variable.

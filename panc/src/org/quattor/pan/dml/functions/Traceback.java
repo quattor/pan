@@ -20,6 +20,7 @@
 
 package org.quattor.pan.dml.functions;
 
+import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_IN_COMPILE_TIME_CONTEXT;
 import static org.quattor.pan.utils.MessageUtils.MSG_ONE_STRING_ARG_REQ;
 
 import org.quattor.pan.dml.Operation;
@@ -29,7 +30,6 @@ import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.template.Context;
 import org.quattor.pan.template.SourceRange;
-import org.quattor.pan.utils.MessageUtils;
 
 /**
  * Print the traceback from the current point in the execution to the standard
@@ -76,8 +76,9 @@ final public class Traceback extends BuiltInFunction {
 
 			// Do not allow traceback to be used in a compile time context to
 			// avoid it being optimized away.
-			throw new EvaluationException(
-					MessageUtils.MSG_CANNOT_RUN_IN_COMPILE_TIME_CONTEXT);
+			throw EvaluationException.create(sourceRange,
+					MSG_INVALID_IN_COMPILE_TIME_CONTEXT, this.getClass()
+							.getSimpleName());
 
 		} else {
 

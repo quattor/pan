@@ -62,6 +62,12 @@ public class AppendTest extends BuiltInFunctionTestUtils {
 		Append.getInstance(null, new ListResource(), Null.getInstance());
 	}
 
+	@Test(expected = SyntaxException.class)
+	public void testInvalidFirstArg() throws SyntaxException {
+		Append.getInstance(null, StringProperty.getInstance("BAD"),
+				StringProperty.getInstance("OK"));
+	}
+
 	@Test
 	public void testAppendToList() throws SyntaxException, InvalidTermException {
 

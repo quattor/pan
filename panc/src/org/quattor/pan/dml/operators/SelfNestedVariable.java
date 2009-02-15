@@ -20,6 +20,7 @@
 
 package org.quattor.pan.dml.operators;
 
+import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_IN_COMPILE_TIME_CONTEXT;
 import static org.quattor.pan.utils.MessageUtils.MSG_UNDEFINED_VAR;
 
 import org.quattor.pan.dml.Operation;
@@ -55,8 +56,9 @@ public class SelfNestedVariable extends NestedVariable {
 		// Quickly check to see if this is a compile-time context. This function
 		// cannot be evaluated in such a context.
 		if (context.isCompileTimeContext()) {
-			throw new EvaluationException(
-					"SELF[] cannot be evaluated in compile-time context");
+			throw EvaluationException.create(sourceRange,
+					MSG_INVALID_IN_COMPILE_TIME_CONTEXT, this.getClass()
+							.getSimpleName());
 		}
 
 		// Look up the variable. This may be null if we're running at

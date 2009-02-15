@@ -21,6 +21,7 @@
 package org.quattor.pan.dml.operators;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_CANNOT_MODIFY_SELF;
+import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_IN_COMPILE_TIME_CONTEXT;
 import static org.quattor.pan.utils.MessageUtils.MSG_REFERENCED_VARIABLE_NOT_LIST;
 import static org.quattor.pan.utils.MessageUtils.MSG_SELF_IS_UNDEFINED;
 
@@ -53,8 +54,9 @@ final public class SelfSimpleListVariable extends SimpleListVariable {
 		// Quickly check to see if this is a compile-time context. This function
 		// cannot be evaluated in such a context.
 		if (context.isCompileTimeContext()) {
-			throw new EvaluationException(
-					"SELF list variable cannot be evaluated in compile-time context");
+			throw EvaluationException.create(sourceRange,
+					MSG_INVALID_IN_COMPILE_TIME_CONTEXT, this.getClass()
+							.getSimpleName());
 		}
 
 		// Check that SELF isn't fixed. This is true for a validation call.

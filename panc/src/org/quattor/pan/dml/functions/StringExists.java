@@ -21,6 +21,7 @@
 package org.quattor.pan.dml.functions;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_ARG_IN_CONSTRUCTOR;
+import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_IN_COMPILE_TIME_CONTEXT;
 import static org.quattor.pan.utils.MessageUtils.MSG_ONE_ARG_REQ;
 import static org.quattor.pan.utils.MessageUtils.MSG_ONE_STRING_OR_IDENTIFIER_REQ;
 import static org.quattor.pan.utils.MessageUtils.MSG_PATH_OR_TPL_NAME_REQ;
@@ -70,8 +71,7 @@ final public class StringExists extends Exists {
 		// the operation list.
 		assert (operations.length == 1);
 		if (operations[0] instanceof Variable) {
-			throw CompilerError
-					.create(MSG_INVALID_ARG_IN_CONSTRUCTOR);
+			throw CompilerError.create(MSG_INVALID_ARG_IN_CONSTRUCTOR);
 		}
 
 		// If it is a constant argument, check already that it is a string.
@@ -91,8 +91,9 @@ final public class StringExists extends Exists {
 		// Quickly check to see if this is a compile-time context. This function
 		// cannot be evaluated in such a context.
 		if (context.isCompileTimeContext()) {
-			throw new EvaluationException(
-					MessageUtils.MSG_CANNOT_RUN_IN_COMPILE_TIME_CONTEXT);
+			throw EvaluationException.create(sourceRange,
+					MSG_INVALID_IN_COMPILE_TIME_CONTEXT, this.getClass()
+							.getSimpleName());
 		}
 
 		Element result = ops[0].execute(context);

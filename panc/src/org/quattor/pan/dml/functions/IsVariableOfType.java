@@ -21,6 +21,7 @@
 package org.quattor.pan.dml.functions;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_ARG_IN_CONSTRUCTOR;
+import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_IN_COMPILE_TIME_CONTEXT;
 import static org.quattor.pan.utils.MessageUtils.MSG_ONE_ARG_REQ;
 
 import org.quattor.pan.dml.Operation;
@@ -32,7 +33,6 @@ import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.template.Context;
 import org.quattor.pan.template.SourceRange;
-import org.quattor.pan.utils.MessageUtils;
 
 /**
  * Tests if the given variable reference is of the given class.
@@ -58,8 +58,7 @@ final public class IsVariableOfType extends IsOfType {
 		// little argument checking for function calls, this explicit check is
 		// needed.
 		if (operations.length != 1) {
-			throw SyntaxException
-					.create(sourceRange, MSG_ONE_ARG_REQ, name);
+			throw SyntaxException.create(sourceRange, MSG_ONE_ARG_REQ, name);
 		}
 		assert (operations.length == 1);
 
@@ -86,8 +85,9 @@ final public class IsVariableOfType extends IsOfType {
 		// Quickly check to see if this is a compile-time context. This function
 		// cannot be evaluated in such a context.
 		if (context.isCompileTimeContext()) {
-			throw new EvaluationException(
-					MessageUtils.MSG_CANNOT_RUN_IN_COMPILE_TIME_CONTEXT);
+			throw EvaluationException.create(sourceRange,
+					MSG_INVALID_IN_COMPILE_TIME_CONTEXT, this.getClass()
+							.getSimpleName());
 		}
 
 		assert (ops.length == 1);

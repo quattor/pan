@@ -69,6 +69,16 @@ final public class Append extends BuiltInFunction {
 					"append");
 		}
 
+		// For two-argument function call, the first argument must be a list.
+		if (operations.length == 2) {
+			if (operations[0] instanceof Element) {
+				if (!(operations[0] instanceof ListResource)) {
+					throw SyntaxException.create(sourceRange,
+							MSG_FIRST_ARG_LIST_OR_VARIABLE_REF, "append");
+				}
+			}
+		}
+
 		// Create the appropriate list of operations. The raw operations cannot
 		// be used because the variable must be turned into a ListVariable
 		// operation.

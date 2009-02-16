@@ -182,7 +182,23 @@ public class HashResource extends Resource {
 
 	@Override
 	public boolean equals(Object o) {
-		return map.equals(o);
+		if (o instanceof HashResource) {
+			return map.equals(((HashResource) o).getBackingMap());
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * This method is used to access the underlying map used to store the hash
+	 * information. This method is used in the equals method to determine if one
+	 * HashResource is equivalent to another. The map must not be modified by
+	 * the caller.
+	 * 
+	 * @return backing map for hash resource
+	 */
+	protected Map<String, Element> getBackingMap() {
+		return map;
 	}
 
 	@Override

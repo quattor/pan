@@ -47,7 +47,7 @@ public class ListResource extends Resource {
 
 	private static final long serialVersionUID = 9153878005017517633L;
 
-	private ArrayList<Element> list;
+	private List<Element> list;
 
 	public ListResource() {
 		list = new ArrayList<Element>();
@@ -86,11 +86,12 @@ public class ListResource extends Resource {
 	 *            ListResource to copy
 	 */
 	protected ListResource(ListResource source) {
-		list = new ArrayList<Element>(source.list.size());
+		ArrayList<Element> alist = new ArrayList<Element>(source.list.size());
 		for (Element e : source.list) {
-			list.add(e.protect());
+			alist.add(e.protect());
 		}
-		list.trimToSize();
+		alist.trimToSize();
+		list = alist;
 	}
 
 	@Override
@@ -264,7 +265,23 @@ public class ListResource extends Resource {
 
 	@Override
 	public boolean equals(Object o) {
-		return list.equals(o);
+		if (o instanceof ListResource) {
+			return list.equals(((ListResource) o).list);
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * This method is used to access the underlying map used to store the hash
+	 * information. This method is used in the equals method to determine if one
+	 * HashResource is equivalent to another. The map must not be modified by
+	 * the caller.
+	 * 
+	 * @return backing map for hash resource
+	 */
+	protected List<Element> getBackingList() {
+		return list;
 	}
 
 	@Override

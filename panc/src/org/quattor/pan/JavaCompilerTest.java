@@ -58,7 +58,8 @@ public class JavaCompilerTest {
 		List<File> path = new LinkedList<File>();
 		path.add(dir);
 		CompilerOptions options = new CompilerOptions(null, null, true, false,
-				100, 50, formatter, getTmpdir(), null, path, 0, false, 2, false, false);
+				100, 50, formatter, getTmpdir(), null, path, 0, false, 2,
+				false, false);
 		List<File> tplfiles = new LinkedList<File>();
 		tplfiles.add(tplfile);
 		return new Compiler(options, new LinkedList<String>(), tplfiles);
@@ -95,9 +96,18 @@ public class JavaCompilerTest {
 		}
 		File tplfile = new File(tpldir, "template.tpl");
 		String contents = "object template misplaced/template;";
-		FileWriter fw = new FileWriter(tplfile);
-		fw.write(contents);
-		fw.close();
+
+		FileWriter fw = null;
+		try {
+			fw = new FileWriter(tplfile);
+			fw.write(contents);
+		} catch (IOException e) {
+			throw e;
+		} finally {
+			if (fw != null) {
+				fw.close();
+			}
+		}
 
 		// Create the path. Should be a path pointing to the WRONG place.
 		List<File> path = new LinkedList<File>();

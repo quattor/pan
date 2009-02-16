@@ -2,6 +2,7 @@ package org.quattor.pan.dml.data;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_ILLEGAL_WRITE_TO_PROTECTED_HASH;
 
+import java.util.Map;
 import java.util.Set;
 
 import org.quattor.pan.exceptions.CompilerError;
@@ -65,13 +66,22 @@ public class ProtectedHashResource extends HashResource {
 		return baseHash.hashCode();
 	}
 
+	// As this class is just a wrapper around another HashResource, the
+	// superclass' equals method will work as intended.
 	@Override
 	public boolean equals(Object o) {
-		boolean result = false;
-		if (o instanceof ProtectedHashResource) {
-			result = baseHash.equals(((ProtectedHashResource) o).baseHash);
-		}
-		return result;
+		return super.equals(o);
+	}
+
+	/**
+	 * Override this method to return the map from the base hash. This allows
+	 * use of the superclass' equals method.
+	 * 
+	 * @return backing map for hash resource
+	 */
+	@Override
+	protected Map<String, Element> getBackingMap() {
+		return baseHash.getBackingMap();
 	}
 
 	@Override

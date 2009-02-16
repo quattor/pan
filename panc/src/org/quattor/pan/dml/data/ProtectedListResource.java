@@ -2,6 +2,7 @@ package org.quattor.pan.dml.data;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_ILLEGAL_WRITE_TO_PROTECTED_LIST;
 
+import java.util.List;
 
 import org.quattor.pan.exceptions.CompilerError;
 import org.quattor.pan.exceptions.InvalidTermException;
@@ -69,13 +70,22 @@ public class ProtectedListResource extends ListResource {
 		return baseList.hashCode();
 	}
 
+	// As this class is just a wrapper around another ListResource, the
+	// superclass' equals method will work as intended.
 	@Override
 	public boolean equals(Object o) {
-		boolean result = false;
-		if (o instanceof ProtectedListResource) {
-			result = baseList.equals(((ProtectedListResource) o).baseList);
-		}
-		return result;
+		return super.equals(o);
+	}
+
+	/**
+	 * Override this method to return the list from the base list. This allows
+	 * use of the superclass' equals method.
+	 * 
+	 * @return backing list for list resource
+	 */
+	@Override
+	protected List<Element> getBackingList() {
+		return baseList.getBackingList();
 	}
 
 	@Override

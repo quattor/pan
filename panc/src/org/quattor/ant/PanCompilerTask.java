@@ -110,6 +110,8 @@ public class PanCompilerTask extends Task {
 
 	private String loggingFlags = "none";
 
+	private Pattern ignoreDependency = null;
+
 	private File logfile = null;
 
 	private boolean dumpAnnotations = false;
@@ -520,6 +522,11 @@ public class PanCompilerTask extends Task {
 				continue;
 			}
 
+			if (debugTask) {
+				System.err.println(debugIdent
+						+ "Ignoring templates matching " + ignoreDependency.to_string();
+			}
+
 			// Compare the target file with the youngest of the dependencies
 			// (i.e. the largest modification time). Also check that none
 			// of the files has changed position in the load path.
@@ -549,14 +556,27 @@ public class PanCompilerTask extends Task {
 								.getAbsoluteFile();
 
 						// Check that the dependency exists and hasn't been
-						// modified after the output file modification time.
-						if (statCache.isMissingOrModifiedAfter(dep, targetTime)) {
-							outOfDate = true;
+						// modified after the output file modification time,
+						// except if it matches the ignoreDependency regexp
+						Matcher ignoreMatcher = ignoreDependency.matcher(templateName);
+						if (ignoreMatcher.matches()) {
+							if (!statCache.exists(dep)) {
+								outOfDate = true;
 
-							// There is no point in continuing to check other
-							// dependencies because we already know the file is
-							// out of date.
-							break;
+								// There is no point in continuing to check other
+								// dependencies because we already know the file is
+								// out of date.
+								break;
+							}														
+						} else {
+							if (statCache.isMissingOrModifiedAfter(dep, targetTime)) {
+								outOfDate = true;
+
+								// There is no point in continuing to check other
+								// dependencies because we already know the file is
+								// out of date.
+								break;
+							}							
 						}
 
 						// Check that the location hasn't changed in the
@@ -676,6 +696,20 @@ public class PanCompilerTask extends Task {
 	 */
 	public void setGzipOutput(boolean gzipOutput) {
 		this.gzipOutput = gzipOutput;
+	}
+
+	/**
+	 * Dependencies that must be ignored when selecting the profiles to rebuild. Value must be a regexp matching a template name
+	 * relative to the load path.
+	 * 
+	 * MUST BE USED WITH CAUTION as it can lead to some profiles not being rebuilt. Mainly intended for use with RPM repostiory
+	 * templates.
+	 * 
+	 * @param ignoreDependency
+	 *            regexp matching a template name relative to load path
+	 */
+	public void setIgnoreDependency(String ignoreDependency) {
+		this.ignoreDependency = Pattern.compile(ignoreDependency);
 	}
 
 	/**

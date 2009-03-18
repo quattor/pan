@@ -873,11 +873,16 @@ public class PanCompilerTask extends Task {
 		private long getModificationTime(File file) {
 			Long modtime = cachedTimes.get(file);
 			if (modtime == null) {
-                                boolean depIgnored = false;
-                                if ( ignoreDependency  != null ) {
-				        Matcher ignoreMatcher = ignoreDependency.matcher(file.getName());
-                                        depIgnored = ignoreMatcher.matches();
-                                };
+				boolean depIgnored = false;
+				if ( ignoreDependency  != null ) {
+					if (debugVerbose) {
+						System.err.println(debugIdent
+								+ "Matching dependency '" + file.getName()
+								+ "' against <<<" + ignoreDependency.pattern() + ">>>");
+					}
+					Matcher ignoreMatcher = ignoreDependency.matcher(file.getName());
+					depIgnored = ignoreMatcher.matches();
+				};
 				if (depIgnored) {
 					// Use a non-zero fake time when the dependency must be ignored
 					modtime = Long.valueOf(1);

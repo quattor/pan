@@ -823,7 +823,7 @@ public class PanCompilerTask extends Task {
 		 *         after the epoch
 		 */
 		public boolean exists(File file) {
-			return (getModificationTime(file) > 0L);
+			return (getModificationTime(file.getName()) > 0L);
 		}
 
 		/**

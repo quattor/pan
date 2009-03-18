@@ -785,7 +785,7 @@ public class PanCompilerTask extends Task {
 
 	private static class FileStatCache {
 
-		private HashMap<File, Long> cachedTimes = new HashMap<File, Long>();
+		private HashMap<String, Long> cachedTimes = new HashMap<String, Long>();
 
 		private Pattern ignoreDependency = null;
 		
@@ -871,16 +871,17 @@ public class PanCompilerTask extends Task {
 		 *         file does not exist (or an IO error occurred)
 		 */
 		private long getModificationTime(File file) {
-			Long modtime = cachedTimes.get(file);
+			String fileName = file.getName();
+			Long modtime = cachedTimes.get(fileName);
 			if (modtime == null) {
 				boolean depIgnored = false;
 				if ( ignoreDependency  != null ) {
 					if (debugVerbose) {
 						System.err.println(debugIdent
-								+ "Matching dependency '" + file.getName()
+								+ "Matching dependency '" + fileName
 								+ "' against <<<" + ignoreDependency.pattern() + ">>>");
 					}
-					Matcher ignoreMatcher = ignoreDependency.matcher(file.getName());
+					Matcher ignoreMatcher = ignoreDependency.matcher(fileName);
 					depIgnored = ignoreMatcher.matches();
 				};
 				if (depIgnored) {
@@ -888,13 +889,13 @@ public class PanCompilerTask extends Task {
 					modtime = Long.valueOf(1);
 					if (debugTask) {
 						System.err.println(debugIdent
-								+ "Dependency file " + file.getName()
+								+ "Dependency file " + fileName
 								+ " added to ignored list");
 					}
 				} else {
 					modtime = Long.valueOf(file.lastModified());
 				}
-				cachedTimes.put(file, modtime);
+				cachedTimes.put(fileName, modtime);
 			}
 			return modtime.longValue();
 		}

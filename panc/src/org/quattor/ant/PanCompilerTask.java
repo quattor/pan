@@ -562,6 +562,12 @@ public class PanCompilerTask extends Task {
 						if (statCache.isMissingOrModifiedAfter(dep, targetTime)) {
 							outOfDate = true;
 
+							if (debugTask && outOfDate) {
+								System.err.println(debugIdent
+										+ "Template " + dep
+										+ " modified since last compilation of " + t);
+							}
+
 							// There is no point in continuing to check other
 							// dependencies because we already know the file is
 							// out of date.

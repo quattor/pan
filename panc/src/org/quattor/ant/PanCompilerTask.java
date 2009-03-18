@@ -874,9 +874,14 @@ public class PanCompilerTask extends Task {
 			String fileName = file.getName();
 			Long modtime = cachedTimes.get(fileName);
 			if (modtime == null) {
+				if (debugVerbose) {
+					System.err.println(debugIdent
+							+ "Checking if dependency '" + fileName
+							+ "' is current and updating cachedTimes...");
+				}
 				boolean depIgnored = false;
 				if ( ignoreDependency  != null ) {
-					if (debugVerbose) {
+					if (debugTask) {
 						System.err.println(debugIdent
 								+ "Matching dependency '" + fileName
 								+ "' against <<<" + ignoreDependency.pattern() + ">>>");
@@ -896,6 +901,12 @@ public class PanCompilerTask extends Task {
 					modtime = Long.valueOf(file.lastModified());
 				}
 				cachedTimes.put(fileName, modtime);
+			} else {
+				if (debugVerbose) {
+					System.err.println(debugIdent
+							+ "Dependency '" + fileName
+							+ "' modification time retrieved from cache...");
+				}
 			}
 			return modtime.longValue();
 		}

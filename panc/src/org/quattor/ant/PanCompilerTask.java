@@ -106,18 +106,28 @@ public class PanCompilerTask extends Task {
 
 	private boolean forceBuild = false;
 
-	private String debugIdent = "    ";
+	protected static String debugIdent = "    ";
 
 	private String loggingFlags = "none";
-
-	private Pattern ignoreDependency = null;
 
 	private File logfile = null;
 
 	private boolean dumpAnnotations = false;
 
+	private FileStatCache statCache = null;
+	
+	/**
+	 * Constructor
+	 */
 	public PanCompilerTask() {
+		// Set profile output format
 		setFormatter("xmldb");
+
+		// Create a cache for the modification times of the templates. In the
+		// case where all of the files are up to date, this will save repeated
+		// disk reads to determine the state of files as dependencies are in
+		// common within a cluster.
+		statCache = new FileStatCache();
 	}
 
 	/**
@@ -342,6 +352,8 @@ public class PanCompilerTask extends Task {
 
 		if (debugTask > 1)
 			this.debugVerbose = true;
+		
+		statCache.setDebugLevel(this.debugTask, this.debugVerbose);
 	}
 
 	/**
@@ -469,12 +481,6 @@ public class PanCompilerTask extends Task {
 	 */
 	private int removeCurrentProfiles() {
 
-		// Create a cache for the modification times of the templates. In the
-		// case where all of the files are up to date, this will save repeated
-		// disk reads to determine the state of files as dependencies are in
-		// common within a cluster.
-		FileStatCache statCache = new FileStatCache();
-
 		// Loop over all of the files and create a list of those which
 		// are current.
 		LinkedList<File> current = new LinkedList<File>();
@@ -522,11 +528,6 @@ public class PanCompilerTask extends Task {
 				continue;
 			}
 
-			if (debugTask) {
-				System.err.println(debugIdent
-						+ "Ignoring templates matching " + ignoreDependency.to_string();
-			}
-
 			// Compare the target file with the youngest of the dependencies
 			// (i.e. the largest modification time). Also check that none
 			// of the files has changed position in the load path.
@@ -558,26 +559,14 @@ public class PanCompilerTask extends Task {
 						// Check that the dependency exists and hasn't been
 						// modified after the output file modification time,
 						// except if it matches the ignoreDependency regexp
-						Matcher ignoreMatcher = ignoreDependency.matcher(templateName);
-						if (ignoreMatcher.matches()) {
-							if (!statCache.exists(dep)) {
-								outOfDate = true;
+						if (statCache.isMissingOrModifiedAfter(dep, targetTime)) {
+							outOfDate = true;
 
-								// There is no point in continuing to check other
-								// dependencies because we already know the file is
-								// out of date.
-								break;
-							}														
-						} else {
-							if (statCache.isMissingOrModifiedAfter(dep, targetTime)) {
-								outOfDate = true;
-
-								// There is no point in continuing to check other
-								// dependencies because we already know the file is
-								// out of date.
-								break;
-							}							
-						}
+							// There is no point in continuing to check other
+							// dependencies because we already know the file is
+							// out of date.
+							break;
+						}							
 
 						// Check that the location hasn't changed in the
 						// path. If it has changed, then profile isn't
@@ -709,7 +698,12 @@ public class PanCompilerTask extends Task {
 	 *            regexp matching a template name relative to load path
 	 */
 	public void setIgnoreDependency(String ignoreDependency) {
-		this.ignoreDependency = Pattern.compile(ignoreDependency);
+		if (debugTask) {
+			System.err.println(debugIdent
+					+ "Ignoring templates matching " + ignoreDependency.toString());
+		}
+
+		statCache.setIgnoreDependency(ignoreDependency);
 	}
 
 	/**
@@ -793,6 +787,32 @@ public class PanCompilerTask extends Task {
 
 		private HashMap<File, Long> cachedTimes = new HashMap<File, Long>();
 
+		private Pattern ignoreDependency = null;
+		
+		private boolean debugTask = false;
+		
+		private boolean debugVerbose = false;
+
+		/**
+		 * Setting this flag will print debugging information from this class.
+		 * This is primarily useful if one wants to debug a build using the command
+		 * line interface.
+		 * 
+		 * @param debugTask, debugVerbose
+		 *            flag to print task debugging information or set verbosity
+		 */
+		public void setDebugLevel(boolean debugTask, boolean debugVerbose) {
+			this.debugTask = debugTask;
+			this.debugVerbose = debugVerbose;
+		}
+
+		/**
+		 * Method called to actually set the dependencies to ignore, specified as a regexp
+		 */
+		public void setIgnoreDependency(String ignoreDependency) {
+			this.ignoreDependency = Pattern.compile(ignoreDependency);
+		}
+
 		/**
 		 * Method will return true if the named file exists and has a
 		 * modification time after the epoch.
@@ -853,7 +873,18 @@ public class PanCompilerTask extends Task {
 		private long getModificationTime(File file) {
 			Long modtime = cachedTimes.get(file);
 			if (modtime == null) {
-				modtime = Long.valueOf(file.lastModified());
+				Matcher ignoreMatcher = ignoreDependency.matcher(file.getName());
+				if (ignoreMatcher.matches()) {
+					// Use a non-zero fake time when the dependency must be ignored
+					modtime = Long.valueOf(1);
+					if (debugTask) {
+						System.err.println(debugIdent
+								+ "Dependency file " + file.getName()
+								+ " added to ignored list");
+					}
+				} else {
+					modtime = Long.valueOf(file.lastModified());
+				}
 				cachedTimes.put(file, modtime);
 			}
 			return modtime.longValue();
@@ -861,3 +892,4 @@ public class PanCompilerTask extends Task {
 	}
 
 }
+

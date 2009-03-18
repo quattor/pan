@@ -816,7 +816,11 @@ public class PanCompilerTask extends Task {
 		 * Method called to actually set the dependencies to ignore, specified as a regexp
 		 */
 		public void setIgnoreDependency(String ignoreDependency) {
-			this.ignoreDependency = Pattern.compile(ignoreDependency);
+			try {
+				this.ignoreDependency = Pattern.compile(ignoreDependency);
+			} catch (PatternSyntaxException e) {
+				throw new BuildException("Invalid pattern for dependencies to ignore ("+ignoreDependency+"): "+e.getMessage());
+			};
 		}
 
 		/**
@@ -877,7 +881,7 @@ public class PanCompilerTask extends Task {
 		 *         file does not exist (or an IO error occurred)
 		 */
 		private long getModificationTime(File file) {
-			String fileName = file.getName();
+			String fileName = file.getAbsolutePath();
 			Long modtime = cachedTimes.get(fileName);
 			if (modtime == null) {
 				if (debugVerbose) {

@@ -552,17 +552,19 @@ public class PanCompilerTask extends Task {
 								File.separatorChar)
 								+ ".tpl";
 						String templatePath = matcher.group(2);
-						String templateFullName = templatePath + templateName;
-						
+
+						File dep = new File(templatePath + templateName)
+								.getAbsoluteFile();
+
 						// Check that the dependency exists and hasn't been
 						// modified after the output file modification time,
 						// except if it matches the ignoreDependency regexp
-						if (statCache.isMissingOrModifiedAfter(templateFullName, targetTime)) {
+						if (statCache.isMissingOrModifiedAfter(dep, targetTime)) {
 							outOfDate = true;
 
 							if (debugTask && outOfDate) {
 								System.err.println(debugIdent
-										+ "Template " + templateFullName
+										+ "Template " + dep
 										+ " modified since last compilation of " + t);
 							}
 
@@ -575,23 +577,21 @@ public class PanCompilerTask extends Task {
 						// Check that the location hasn't changed in the
 						// path. If it has changed, then profile isn't
 						// current.
-                        outOfDate = true;
 						for (File pathdir : includeDirectories) {
-							File check = new File (pathdir, templateName);
-							if (statCache.exists(check.getAbsolutePath())) {
-                                outOfDate = false;
-                                
+							File check = new File(pathdir, templateName);
+							if (statCache.exists(check)) {
+
 								// If this isn't the correct dependency, then
 								// flag that this file is out of date.
-//								if (!dep.equals(check)) {
-//
-//									outOfDate = true;
-//									if (debugTask) {
-//										System.err.println(debugIdent
-//												+ "Template " + dep
-//												+ " moved (new=" + check + ")");
-//									}
-//								}
+								if (!dep.equals(check)) {
+
+									outOfDate = true;
+									if (debugTask) {
+										System.err.println(debugIdent
+												+ "Template " + dep
+												+ " moved (new=" + check + ")");
+									}
+								}
 
 								// Can stop at the first one found. Either this
 								// is the correct dependency or the template has
@@ -704,6 +704,11 @@ public class PanCompilerTask extends Task {
 	 *            regexp matching a template name relative to load path
 	 */
 	public void setIgnoreDependency(String ignoreDependency) {
+		if (debugTask) {
+			System.err.println(debugIdent
+					+ "Ignoring templates matching " + ignoreDependency.toString());
+		}
+
 		statCache.setIgnoreDependency(ignoreDependency);
 	}
 
@@ -812,11 +817,6 @@ public class PanCompilerTask extends Task {
 		 */
 		public void setIgnoreDependency(String ignoreDependency) {
 			if ( ignoreDependency.length() > 0 ) {
-				if (debugTask) {
-					System.err.println(debugIdent
-							+ "Ignoring templates matching <<<" + ignoreDependency.toString()+">>>");
-				}
-
 				try {
 					this.ignoreDependency = Pattern.compile(ignoreDependency);
 				} catch (PatternSyntaxException e) {
@@ -834,7 +834,7 @@ public class PanCompilerTask extends Task {
 		 * @return true if the named file exists and has a modification time
 		 *         after the epoch
 		 */
-		public boolean exists(String file) {
+		public boolean exists(File file) {
 			return (getModificationTime(file) > 0L);
 		}
 
@@ -850,7 +850,7 @@ public class PanCompilerTask extends Task {
 		 * @return true if the named file exists and was modified after the
 		 *         target time
 		 */
-		public boolean isModifiedAfter(String file, long targetTime) {
+		public boolean isModifiedAfter(File file, long targetTime) {
 			long modtime = getModificationTime(file);
 			return ((modtime != 0L) && (modtime > targetTime));
 		}
@@ -867,7 +867,7 @@ public class PanCompilerTask extends Task {
 		 * @return true if the named file doesn't exist or was modified after
 		 *         the target time
 		 */
-		public boolean isMissingOrModifiedAfter(String file, long targetTime) {
+		public boolean isMissingOrModifiedAfter(File file, long targetTime) {
 			long modtime = getModificationTime(file);
 			return ((modtime == 0L) || (modtime > targetTime));
 		}
@@ -882,26 +882,26 @@ public class PanCompilerTask extends Task {
 		 * @return long value representing the modification time or 0L if the
 		 *         file does not exist (or an IO error occurred)
 		 */
-		private long getModificationTime(String templateName) {
-			Long modtime = cachedTimes.get(templateName);
+		private long getModificationTime(File file) {
+			String fileName = file.getAbsolutePath();
+			Long modtime = cachedTimes.get(fileName);
 			if (modtime == null) {
 				if (debugVerbose) {
 					System.err.println(debugIdent
-							+ "Checking if dependency '" + templateName
+							+ "Checking if dependency '" + fileName
 							+ "' is current and updating cachedTimes...");
 				}
 				boolean depIgnored = false;
-				File file = new File(templateName);
-				// Ensure a non existing file as a modtime
-				// equal to 0
+                                // Ensure a non existing file as a modtime
+                                // equal to 0
 				modtime = Long.valueOf(file.lastModified());
 				if ( (ignoreDependency  != null) && (modtime > 0L) ) {
 					if (debugTask) {
 						System.err.println(debugIdent
-								+ "Matching dependency '" + templateName
+								+ "Matching dependency '" + fileName
 								+ "' against <<<" + ignoreDependency.pattern() + ">>>");
 					}
-					Matcher ignoreMatcher = ignoreDependency.matcher(templateName);
+					Matcher ignoreMatcher = ignoreDependency.matcher(fileName);
 					depIgnored = ignoreMatcher.find();
 				};
 				if (depIgnored) {
@@ -909,15 +909,15 @@ public class PanCompilerTask extends Task {
 					modtime = Long.valueOf(1);
 					if (debugTask) {
 						System.err.println(debugIdent
-								+ "Dependency file " + templateName
+								+ "Dependency file " + fileName
 								+ " added to ignored list");
 					}
 				}
-				cachedTimes.put(templateName, modtime);
+				cachedTimes.put(fileName, modtime);
 			} else {
 				if (debugVerbose) {
 					System.err.println(debugIdent
-							+ "Dependency '" + templateName
+							+ "Dependency '" + fileName
 							+ "' modification time retrieved from cache ("+modtime.longValue()+")");
 				}
 			}

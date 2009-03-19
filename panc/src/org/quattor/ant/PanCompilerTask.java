@@ -613,6 +613,10 @@ public class PanCompilerTask extends Task {
 						// move templates around in the "internal" load
 						// path; these changes will not be picked up
 						// correctly.
+						
+					if ( debugVerbose ) {
+						System.err.println(debugIdent
+								+ "Template " + templateFullName + " not found in external loadpath: assumed up-to-date")
 					}
 				}
 
@@ -704,11 +708,6 @@ public class PanCompilerTask extends Task {
 	 *            regexp matching a template name relative to load path
 	 */
 	public void setIgnoreDependency(String ignoreDependency) {
-		if (debugTask) {
-			System.err.println(debugIdent
-					+ "Ignoring templates matching " + ignoreDependency.toString());
-		}
-
 		statCache.setIgnoreDependency(ignoreDependency);
 	}
 
@@ -817,6 +816,11 @@ public class PanCompilerTask extends Task {
 		 */
 		public void setIgnoreDependency(String ignoreDependency) {
 			if ( ignoreDependency.length() > 0 ) {
+				if (debugTask) {
+					System.err.println(debugIdent
+							+ "Ignoring templates matching <<<" + ignoreDependency.toString()+">>>");
+				}
+
 				try {
 					this.ignoreDependency = Pattern.compile(ignoreDependency);
 				} catch (PatternSyntaxException e) {

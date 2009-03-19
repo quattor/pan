@@ -614,9 +614,10 @@ public class PanCompilerTask extends Task {
 						// path; these changes will not be picked up
 						// correctly.
 						
-					if ( debugVerbose ) {
-						System.err.println(debugIdent
-								+ "Template " + templateFullName + " not found in external loadpath: assumed up-to-date")
+						if ( debugVerbose ) {
+							System.err.println(debugIdent
+									+ "Template " + dep + " not found in external loadpath: assumed up-to-date");
+						}
 					}
 				}
 
@@ -818,7 +819,7 @@ public class PanCompilerTask extends Task {
 			if ( ignoreDependency.length() > 0 ) {
 				if (debugTask) {
 					System.err.println(debugIdent
-							+ "Ignoring templates matching <<<" + ignoreDependency.toString()+">>>");
+							+ "Ignoring templates matching <<<" + ignoreDependency.toString() +">>>");
 				}
 
 				try {

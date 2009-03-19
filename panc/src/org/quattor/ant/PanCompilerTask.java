@@ -816,10 +816,12 @@ public class PanCompilerTask extends Task {
 		 * Method called to actually set the dependencies to ignore, specified as a regexp
 		 */
 		public void setIgnoreDependency(String ignoreDependency) {
-			try {
-				this.ignoreDependency = Pattern.compile(ignoreDependency);
-			} catch (PatternSyntaxException e) {
-				throw new BuildException("Invalid pattern for dependencies to ignore ("+ignoreDependency+"): "+e.getMessage());
+			if ( ignoreDependency.length() > 0 ) {
+				try {
+					this.ignoreDependency = Pattern.compile(ignoreDependency);
+				} catch (PatternSyntaxException e) {
+					throw new BuildException("Invalid pattern for dependencies to ignore ("+ignoreDependency+"): "+e.getMessage());
+				};
 			};
 		}
 
@@ -890,14 +892,17 @@ public class PanCompilerTask extends Task {
 							+ "' is current and updating cachedTimes...");
 				}
 				boolean depIgnored = false;
-				if ( ignoreDependency  != null ) {
+                                // Ensure a non existing file as a modtime
+                                // equal to 0
+				modtime = Long.valueOf(file.lastModified());
+				if ( (ignoreDependency  != null) && (modtime > 0L) ) {
 					if (debugTask) {
 						System.err.println(debugIdent
 								+ "Matching dependency '" + fileName
 								+ "' against <<<" + ignoreDependency.pattern() + ">>>");
 					}
 					Matcher ignoreMatcher = ignoreDependency.matcher(fileName);
-					depIgnored = ignoreMatcher.matches();
+					depIgnored = ignoreMatcher.find();
 				};
 				if (depIgnored) {
 					// Use a non-zero fake time when the dependency must be ignored
@@ -907,15 +912,13 @@ public class PanCompilerTask extends Task {
 								+ "Dependency file " + fileName
 								+ " added to ignored list");
 					}
-				} else {
-					modtime = Long.valueOf(file.lastModified());
 				}
 				cachedTimes.put(fileName, modtime);
 			} else {
 				if (debugVerbose) {
 					System.err.println(debugIdent
 							+ "Dependency '" + fileName
-							+ "' modification time retrieved from cache...");
+							+ "' modification time retrieved from cache ("+modtime.longValue()+")");
 				}
 			}
 			return modtime.longValue();

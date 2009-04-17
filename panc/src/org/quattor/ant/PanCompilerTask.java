@@ -115,7 +115,7 @@ public class PanCompilerTask extends Task {
 	private boolean dumpAnnotations = false;
 
 	private FileStatCache statCache = null;
-	
+
 	/**
 	 * Constructor
 	 */
@@ -352,7 +352,7 @@ public class PanCompilerTask extends Task {
 
 		if (debugTask > 1)
 			this.debugVerbose = true;
-		
+
 		statCache.setDebugLevel(this.debugTask, this.debugVerbose);
 	}
 
@@ -563,16 +563,19 @@ public class PanCompilerTask extends Task {
 							outOfDate = true;
 
 							if (debugTask && outOfDate) {
-								System.err.println(debugIdent
-										+ "Template " + dep
-										+ " modified since last compilation of " + t);
+								System.err
+										.println(debugIdent
+												+ "Template "
+												+ dep
+												+ " modified since last compilation of "
+												+ t);
 							}
 
 							// There is no point in continuing to check other
 							// dependencies because we already know the file is
 							// out of date.
 							break;
-						}							
+						}
 
 						// Check that the location hasn't changed in the
 						// path. If it has changed, then profile isn't
@@ -613,10 +616,13 @@ public class PanCompilerTask extends Task {
 						// move templates around in the "internal" load
 						// path; these changes will not be picked up
 						// correctly.
-						
-						if ( debugVerbose ) {
-							System.err.println(debugIdent
-									+ "Template " + dep + " not found in external loadpath: assumed up-to-date");
+
+						if (debugVerbose) {
+							System.err
+									.println(debugIdent
+											+ "Template "
+											+ dep
+											+ " not found in external loadpath: assumed up-to-date");
 						}
 					}
 				}
@@ -699,11 +705,12 @@ public class PanCompilerTask extends Task {
 	}
 
 	/**
-	 * Dependencies that must be ignored when selecting the profiles to rebuild. Value must be a regexp matching a template name
-	 * relative to the load path.
+	 * Dependencies that must be ignored when selecting the profiles to rebuild.
+	 * Value must be a regexp matching a template name relative to the load
+	 * path.
 	 * 
-	 * MUST BE USED WITH CAUTION as it can lead to some profiles not being rebuilt. Mainly intended for use with RPM repostiory
-	 * templates.
+	 * MUST BE USED WITH CAUTION as it can lead to some profiles not being
+	 * rebuilt. Mainly intended for use with RPM repostiory templates.
 	 * 
 	 * @param ignoreDependency
 	 *            regexp matching a template name relative to load path
@@ -794,18 +801,19 @@ public class PanCompilerTask extends Task {
 		private HashMap<String, Long> cachedTimes = new HashMap<String, Long>();
 
 		private Pattern ignoreDependency = null;
-		
+
 		private boolean debugTask = false;
-		
+
 		private boolean debugVerbose = false;
 
 		/**
 		 * Setting this flag will print debugging information from this class.
-		 * This is primarily useful if one wants to debug a build using the command
-		 * line interface.
+		 * This is primarily useful if one wants to debug a build using the
+		 * command line interface.
 		 * 
-		 * @param debugTask, debugVerbose
-		 *            flag to print task debugging information or set verbosity
+		 * @param debugTask
+		 *            , debugVerbose flag to print task debugging information or
+		 *            set verbosity
 		 */
 		public void setDebugLevel(boolean debugTask, boolean debugVerbose) {
 			this.debugTask = debugTask;
@@ -813,21 +821,27 @@ public class PanCompilerTask extends Task {
 		}
 
 		/**
-		 * Method called to actually set the dependencies to ignore, specified as a regexp
+		 * Method called to actually set the dependencies to ignore, specified
+		 * as a regexp
 		 */
 		public void setIgnoreDependency(String ignoreDependency) {
-			if ( ignoreDependency.length() > 0 ) {
+			if (ignoreDependency.length() > 0) {
 				if (debugTask) {
 					System.err.println(debugIdent
-							+ "Ignoring templates matching <<<" + ignoreDependency.toString() +">>>");
+							+ "Ignoring templates matching <<<"
+							+ ignoreDependency.toString() + ">>>");
 				}
 
 				try {
 					this.ignoreDependency = Pattern.compile(ignoreDependency);
 				} catch (PatternSyntaxException e) {
-					throw new BuildException("Invalid pattern for dependencies to ignore ("+ignoreDependency+"): "+e.getMessage());
-				};
-			};
+					throw new BuildException(
+							"Invalid pattern for dependencies to ignore ("
+									+ ignoreDependency + "): " + e.getMessage());
+				}
+				;
+			}
+			;
 		}
 
 		/**
@@ -892,38 +906,39 @@ public class PanCompilerTask extends Task {
 			Long modtime = cachedTimes.get(fileName);
 			if (modtime == null) {
 				if (debugVerbose) {
-					System.err.println(debugIdent
-							+ "Checking if dependency '" + fileName
+					System.err.println(debugIdent + "Checking if dependency '"
+							+ fileName
 							+ "' is current and updating cachedTimes...");
 				}
 				boolean depIgnored = false;
-                                // Ensure a non existing file as a modtime
-                                // equal to 0
+				// Ensure a non existing file as a modtime
+				// equal to 0
 				modtime = Long.valueOf(file.lastModified());
-				if ( (ignoreDependency  != null) && (modtime > 0L) ) {
+				if ((ignoreDependency != null) && (modtime > 0L)) {
 					if (debugTask) {
-						System.err.println(debugIdent
-								+ "Matching dependency '" + fileName
-								+ "' against <<<" + ignoreDependency.pattern() + ">>>");
+						System.err.println(debugIdent + "Matching dependency '"
+								+ fileName + "' against <<<"
+								+ ignoreDependency.pattern() + ">>>");
 					}
 					Matcher ignoreMatcher = ignoreDependency.matcher(fileName);
 					depIgnored = ignoreMatcher.find();
-				};
+				}
+				;
 				if (depIgnored) {
-					// Use a non-zero fake time when the dependency must be ignored
+					// Use a non-zero fake time when the dependency must be
+					// ignored
 					modtime = Long.valueOf(1);
 					if (debugTask) {
-						System.err.println(debugIdent
-								+ "Dependency file " + fileName
-								+ " added to ignored list");
+						System.err.println(debugIdent + "Dependency file "
+								+ fileName + " added to ignored list");
 					}
 				}
 				cachedTimes.put(fileName, modtime);
 			} else {
 				if (debugVerbose) {
-					System.err.println(debugIdent
-							+ "Dependency '" + fileName
-							+ "' modification time retrieved from cache ("+modtime.longValue()+")");
+					System.err.println(debugIdent + "Dependency '" + fileName
+							+ "' modification time retrieved from cache ("
+							+ modtime.longValue() + ")");
 				}
 			}
 			return modtime.longValue();
@@ -931,4 +946,3 @@ public class PanCompilerTask extends Task {
 	}
 
 }
-

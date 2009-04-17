@@ -106,7 +106,7 @@ public class PanCompilerTask extends Task {
 
 	private boolean forceBuild = false;
 
-	protected static String debugIdent = "    ";
+	final protected static String debugIdent = "    ";
 
 	private String loggingFlags = "none";
 

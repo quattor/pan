@@ -708,14 +708,14 @@ public class PanCompilerTask extends Task {
 	 * MUST BE USED WITH CAUTION as it can lead to some profiles not being
 	 * rebuilt. Mainly intended for use with RPM repository templates.
 	 * 
-	 * @param ignoreDependency
+	 * @param ignoreDependencyPattern
 	 *            regular expression used to match namespaced template names to
 	 *            ignore
 	 */
-	public void setIgnoreDependency(String ignoreDependency) {
+	public void setIgnoreDependencyPattern(String ignoreDependencyPattern) {
 		try {
-			Pattern pattern = Pattern.compile(ignoreDependency);
-			statCache.setIgnoreDependency(pattern);
+			Pattern pattern = Pattern.compile(ignoreDependencyPattern);
+			statCache.setIgnoreDependencyPattern(pattern);
 		} catch (PatternSyntaxException e) {
 			throw new BuildException("invalid ignore dependency pattern: "
 					+ e.getMessage());
@@ -827,7 +827,7 @@ public class PanCompilerTask extends Task {
 		 * Set the pattern used to select ignored dependencies. The pattern may
 		 * be null.
 		 */
-		public void setIgnoreDependency(Pattern ignoreDependencyPattern) {
+		public void setIgnoreDependencyPattern(Pattern ignoreDependencyPattern) {
 			this.ignoreDependencyPattern = ignoreDependencyPattern;
 			if (ignoreDependencyPattern != null) {
 				if (debugTask) {
@@ -910,8 +910,8 @@ public class PanCompilerTask extends Task {
 				if ((ignoreDependencyPattern != null) && (modtime > 0L)) {
 					if (debugTask) {
 						System.err.println(debugIdent + "matching dependency '"
-								+ fileName + "' against <<<"
-								+ ignoreDependencyPattern.pattern() + ">>>");
+								+ fileName + "' against pattern '"
+								+ ignoreDependencyPattern.pattern() + "'");
 					}
 					Matcher ignoreMatcher = ignoreDependencyPattern
 							.matcher(fileName);

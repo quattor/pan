@@ -114,20 +114,17 @@ public class PanCompilerTask extends Task {
 
 	private boolean dumpAnnotations = false;
 
-	private FileStatCache statCache = null;
+	// Create a cache for the modification times of the templates. In the
+	// case where all of the files are up to date, this will save repeated
+	// disk reads to determine the state of files as dependencies are in
+	// common within a cluster.
+	private FileStatCache statCache = new FileStatCache();
 
 	/**
 	 * Constructor
 	 */
 	public PanCompilerTask() {
-		// Set profile output format
 		setFormatter("xmldb");
-
-		// Create a cache for the modification times of the templates. In the
-		// case where all of the files are up to date, this will save repeated
-		// disk reads to determine the state of files as dependencies are in
-		// common within a cluster.
-		statCache = new FileStatCache();
 	}
 
 	/**

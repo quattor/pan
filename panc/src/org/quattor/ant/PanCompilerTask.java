@@ -706,17 +706,23 @@ public class PanCompilerTask extends Task {
 
 	/**
 	 * Dependencies that must be ignored when selecting the profiles to rebuild.
-	 * Value must be a regexp matching a template name relative to the load
-	 * path.
+	 * Value must be a regular expression matching a (namespaced) template name.
 	 * 
 	 * MUST BE USED WITH CAUTION as it can lead to some profiles not being
-	 * rebuilt. Mainly intended for use with RPM repostiory templates.
+	 * rebuilt. Mainly intended for use with RPM repository templates.
 	 * 
 	 * @param ignoreDependency
-	 *            regexp matching a template name relative to load path
+	 *            regular expression used to match namespaced template names to
+	 *            ignore
 	 */
 	public void setIgnoreDependency(String ignoreDependency) {
-		statCache.setIgnoreDependency(ignoreDependency);
+		try {
+			Pattern pattern = Pattern.compile(ignoreDependency);
+			statCache.setIgnoreDependency(pattern);
+		} catch (PatternSyntaxException e) {
+			throw new BuildException("invalid ignore dependency pattern: "
+					+ e.getMessage());
+		}
 	}
 
 	/**
@@ -800,7 +806,7 @@ public class PanCompilerTask extends Task {
 
 		private HashMap<String, Long> cachedTimes = new HashMap<String, Long>();
 
-		private Pattern ignoreDependency = null;
+		private Pattern ignoreDependencyPattern = null;
 
 		private boolean debugTask = false;
 
@@ -812,7 +818,7 @@ public class PanCompilerTask extends Task {
 		 * command line interface.
 		 * 
 		 * @param debugTask
-		 *            , debugVerbose flag to print task debugging information or
+		 *            debugVerbose flag to print task debugging information or
 		 *            set verbosity
 		 */
 		public void setDebugLevel(boolean debugTask, boolean debugVerbose) {
@@ -821,27 +827,18 @@ public class PanCompilerTask extends Task {
 		}
 
 		/**
-		 * Method called to actually set the dependencies to ignore, specified
-		 * as a regexp
+		 * Set the pattern used to select ignored dependencies. The pattern may
+		 * be null.
 		 */
-		public void setIgnoreDependency(String ignoreDependency) {
-			if (ignoreDependency.length() > 0) {
+		public void setIgnoreDependency(Pattern ignoreDependencyPattern) {
+			this.ignoreDependencyPattern = ignoreDependencyPattern;
+			if (ignoreDependencyPattern != null) {
 				if (debugTask) {
 					System.err.println(debugIdent
-							+ "Ignoring templates matching <<<"
-							+ ignoreDependency.toString() + ">>>");
+							+ "ignoring templates matching '"
+							+ ignoreDependencyPattern + "'");
 				}
-
-				try {
-					this.ignoreDependency = Pattern.compile(ignoreDependency);
-				} catch (PatternSyntaxException e) {
-					throw new BuildException(
-							"Invalid pattern for dependencies to ignore ("
-									+ ignoreDependency + "): " + e.getMessage());
-				}
-				;
 			}
-			;
 		}
 
 		/**
@@ -906,39 +903,38 @@ public class PanCompilerTask extends Task {
 			Long modtime = cachedTimes.get(fileName);
 			if (modtime == null) {
 				if (debugVerbose) {
-					System.err.println(debugIdent + "Checking if dependency '"
+					System.err.println(debugIdent + "checking if dependency '"
 							+ fileName
 							+ "' is current and updating cachedTimes...");
 				}
 				boolean depIgnored = false;
-				// Ensure a non existing file as a modtime
-				// equal to 0
+				// Ensure a non existing file as a modtime equal to 0
 				modtime = Long.valueOf(file.lastModified());
-				if ((ignoreDependency != null) && (modtime > 0L)) {
+				if ((ignoreDependencyPattern != null) && (modtime > 0L)) {
 					if (debugTask) {
-						System.err.println(debugIdent + "Matching dependency '"
+						System.err.println(debugIdent + "matching dependency '"
 								+ fileName + "' against <<<"
-								+ ignoreDependency.pattern() + ">>>");
+								+ ignoreDependencyPattern.pattern() + ">>>");
 					}
-					Matcher ignoreMatcher = ignoreDependency.matcher(fileName);
+					Matcher ignoreMatcher = ignoreDependencyPattern
+							.matcher(fileName);
 					depIgnored = ignoreMatcher.find();
 				}
-				;
 				if (depIgnored) {
 					// Use a non-zero fake time when the dependency must be
 					// ignored
 					modtime = Long.valueOf(1);
 					if (debugTask) {
-						System.err.println(debugIdent + "Dependency file "
+						System.err.println(debugIdent + "dependency file "
 								+ fileName + " added to ignored list");
 					}
 				}
 				cachedTimes.put(fileName, modtime);
 			} else {
 				if (debugVerbose) {
-					System.err.println(debugIdent + "Dependency '" + fileName
+					System.err.println(debugIdent + "dependency '" + fileName
 							+ "' modification time retrieved from cache ("
-							+ modtime.longValue() + ")");
+							+ modtime + ")");
 				}
 			}
 			return modtime.longValue();

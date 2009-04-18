@@ -80,6 +80,8 @@ public class PanCompilerTask extends Task {
 
 	private List<Pattern> debugExcludePatterns = new LinkedList<Pattern>();
 
+	private Pattern ignoreDependencyPattern = null;
+
 	private boolean xmlWriteEnabled = true;
 
 	private boolean depWriteEnabled = true;
@@ -106,7 +108,7 @@ public class PanCompilerTask extends Task {
 
 	private boolean forceBuild = false;
 
-	final protected static String debugIdent = "    ";
+	final protected static String debugIndent = "    ";
 
 	private String loggingFlags = "none";
 
@@ -171,7 +173,7 @@ public class PanCompilerTask extends Task {
 			System.err.println("includeroot: " + includeroot);
 			System.err.println("Profiles to process : \n");
 			for (File f : files) {
-				System.err.println(debugIdent + f.toString() + "\n");
+				System.err.println(debugIndent + f.toString() + "\n");
 			}
 		}
 
@@ -507,7 +509,7 @@ public class PanCompilerTask extends Task {
 			// the dependency file exist.
 			if (!(t.exists() && d.exists())) {
 				if (debugTask)
-					System.err.println(debugIdent
+					System.err.println(debugIndent
 							+ "Missing profile or dependency file for " + name);
 				continue;
 			}
@@ -532,7 +534,7 @@ public class PanCompilerTask extends Task {
 			try {
 
 				Scanner scanner = new Scanner(d);
-				while (!outOfDate && scanner.hasNextLine()) {
+				while (scanner.hasNextLine()) {
 
 					// Get the next line. This should never throw an exception
 					// because we've check that there actually is a line above.
@@ -542,84 +544,33 @@ public class PanCompilerTask extends Task {
 					Matcher matcher = depline.matcher(line);
 					if (matcher.matches()) {
 
-						// Create the template file name from the template name.
-						// Ensure that the correct file separator is used for
-						// namespaced templates.
-						String templateName = matcher.group(1).replace('/',
-								File.separatorChar)
-								+ ".tpl";
-						String templatePath = matcher.group(2);
+						// Extract the template name.
+						String tplName = matcher.group(1);
 
-						File dep = new File(templatePath + templateName)
-								.getAbsoluteFile();
+						// Only processing of the dependency if it is not being
+						// ignored.
+						if (ignoreDependencyPattern == null
+								|| (!ignoreDependencyPattern.matcher(tplName)
+										.matches())) {
 
-						// Check that the dependency exists and hasn't been
-						// modified after the output file modification time,
-						// except if it matches the ignoreDependency regexp
-						if (statCache.isMissingOrModifiedAfter(dep, targetTime)) {
-							outOfDate = true;
+							// Create the template file name from the template
+							// name. Ensure that the correct file separator is
+							// used for namespaced templates.
+							String tplFileName = tplName.replace('/',
+									File.separatorChar)
+									+ ".tpl";
+							String templatePath = matcher.group(2);
 
-							if (debugTask && outOfDate) {
-								System.err
-										.println(debugIdent
-												+ "Template "
-												+ dep
-												+ " modified since last compilation of "
-												+ t);
-							}
+							if (isDependencyOutOfDate(tplName, templatePath,
+									tplFileName, targetTime)) {
+								outOfDate = true;
 
-							// There is no point in continuing to check other
-							// dependencies because we already know the file is
-							// out of date.
-							break;
-						}
-
-						// Check that the location hasn't changed in the
-						// path. If it has changed, then profile isn't
-						// current.
-						for (File pathdir : includeDirectories) {
-							File check = new File(pathdir, templateName);
-							if (statCache.exists(check)) {
-
-								// If this isn't the correct dependency, then
-								// flag that this file is out of date.
-								if (!dep.equals(check)) {
-
-									outOfDate = true;
-									if (debugTask) {
-										System.err.println(debugIdent
-												+ "Template " + dep
-												+ " moved (new=" + check + ")");
-									}
-								}
-
-								// Can stop at the first one found. Either this
-								// is the correct dependency or the template has
-								// moved. In either case, we know the answer at
-								// this point.
+								// There is no point in checking the rest of the
+								// dependencies because we already know the file
+								// is out of date. Break out from the loop
+								// scanning the dependencies.
 								break;
 							}
-						}
-
-						// If the file hasn't been found at all, then do
-						// nothing. The file may not have been found on
-						// the load path for a couple of reasons: 1) it
-						// is the object file itself which may not be on
-						// the load path and 2) the internal loadpath
-						// variable may be used to find the file. In the
-						// second case, rely on the explicit list of
-						// dependencies to pick up changes. NOTE: this
-						// check isn't 100% correct. It is possible to
-						// move templates around in the "internal" load
-						// path; these changes will not be picked up
-						// correctly.
-
-						if (debugVerbose) {
-							System.err
-									.println(debugIdent
-											+ "Template "
-											+ dep
-											+ " not found in external loadpath: assumed up-to-date");
 						}
 					}
 				}
@@ -633,7 +584,7 @@ public class PanCompilerTask extends Task {
 				outOfDate = true;
 
 				if (debugTask) {
-					System.err.println(debugIdent
+					System.err.println(debugIndent
 							+ "Template dependency file (" + d
 							+ ") doesn't exist");
 				}
@@ -641,12 +592,15 @@ public class PanCompilerTask extends Task {
 			}
 
 			// The output file is current if it is younger than the youngest
-			// dependency.
+			// dependency. If so, add this file to the list of current
+			// templates.
 			if (!outOfDate) {
-				if (debugTask) {
-					System.err.println("Profile " + name + " up to date");
-				}
 				current.add(f);
+
+				if (debugTask) {
+					System.err.println(debugIndent + "profile " + name
+							+ " up to date");
+				}
 			}
 		}
 
@@ -655,6 +609,85 @@ public class PanCompilerTask extends Task {
 
 		// Send back the number which are up-to-date.
 		return current.size();
+	}
+
+	/**
+	 * A private method that checks to see if a single dependency is out of
+	 * date.
+	 * 
+	 * @param tplName
+	 *            pan name of template, used for debug printing
+	 * @param templatePath
+	 *            path where the template should be found
+	 * @param tplFileName
+	 *            name of the template file without loadpath
+	 * @param targetTime
+	 *            time to use for comparison
+	 * 
+	 * @return true if the dependency is out of date
+	 */
+	private boolean isDependencyOutOfDate(String tplName, String templatePath,
+			String tplFileName, long targetTime) {
+
+		File dep = new File(templatePath + tplFileName).getAbsoluteFile();
+
+		// Check that the dependency exists and hasn't been modified after the
+		// output file modification time.
+		if (statCache.isMissingOrModifiedAfter(dep, targetTime)) {
+
+			if (debugTask) {
+				System.err.println(debugIndent + "template " + dep
+						+ " modified since last compilation of " + tplName);
+			}
+
+			// No point in continuing since we already know the file is out of
+			// date.
+			return true;
+		}
+
+		// Check that the location hasn't changed in the path. If it has
+		// changed, then profile isn't current.
+		for (File pathdir : includeDirectories) {
+			File check = new File(pathdir, tplFileName);
+			if (statCache.exists(check)) {
+
+				// The dependency file has been found. Determine if it has
+				// moved. If so, return true; if not, return false. There is no
+				// sense in checking further into the loadpath.
+				if (!dep.equals(check)) {
+
+					if (debugTask) {
+						System.err.println(debugIndent + "Template " + dep
+								+ " moved (new=" + check + ")");
+					}
+
+					return true;
+
+				} else {
+
+					// The file has NOT moved. It must be up-to-date otherwise
+					// we would not have reached this block of code.
+					return false;
+				}
+
+			}
+		}
+
+		// If the file hasn't been found at all, then assume the file is up to
+		// date. The file may not have been found on the load path for a couple
+		// of reasons: 1) it is the object file itself which may not be on the
+		// load path and 2) the internal loadpath variable may be used to find
+		// the file. In the second case, rely on the explicit list of
+		// dependencies to pick up changes. NOTE: this check isn't 100% correct.
+		// It is possible to move templates around in the "internal" load path;
+		// these changes will not be picked up correctly.
+
+		if (debugVerbose) {
+			System.err.println(debugIndent + "template " + dep
+					+ " not found in external loadpath: assumed up-to-date");
+		}
+
+		return false;
 	}
 
 	/**
@@ -705,8 +738,8 @@ public class PanCompilerTask extends Task {
 	 * Dependencies that must be ignored when selecting the profiles to rebuild.
 	 * Value must be a regular expression matching a (namespaced) template name.
 	 * 
-	 * MUST BE USED WITH CAUTION as it can lead to some profiles not being
-	 * rebuilt. Mainly intended for use with RPM repository templates.
+	 * NOTE: Use of this option may cause incomplete builds. Use this option
+	 * with extreme caution.
 	 * 
 	 * @param ignoreDependencyPattern
 	 *            regular expression used to match namespaced template names to
@@ -715,7 +748,7 @@ public class PanCompilerTask extends Task {
 	public void setIgnoreDependencyPattern(String ignoreDependencyPattern) {
 		try {
 			Pattern pattern = Pattern.compile(ignoreDependencyPattern);
-			statCache.setIgnoreDependencyPattern(pattern);
+			this.ignoreDependencyPattern = pattern;
 		} catch (PatternSyntaxException e) {
 			throw new BuildException("invalid ignore dependency pattern: "
 					+ e.getMessage());
@@ -735,6 +768,12 @@ public class PanCompilerTask extends Task {
 		this.deprecationLevel = deprecationLevel;
 	}
 
+	/**
+	 * Setting this option will force the compiler to build object templates
+	 * even if the writing of the XML files and dependency files is turned off.
+	 * 
+	 * @param forceBuild
+	 */
 	public void setForceBuild(boolean forceBuild) {
 		this.forceBuild = forceBuild;
 	}
@@ -760,11 +799,23 @@ public class PanCompilerTask extends Task {
 		this.logfile = logfile;
 	}
 
+	/**
+	 * Class implements the debug element for the compilation task. The debug
+	 * element takes an include and/or exclude pattern for including or
+	 * excluding certain templates (based on the namespaced name) from emitting
+	 * debugging information.
+	 * 
+	 * @author loomis
+	 * 
+	 */
 	public static class Debug {
 
 		private Pattern include;
 		private Pattern exclude;
 
+		/**
+		 * Creates a new debug element that has no include or exclude patterns.
+		 */
 		public Debug() {
 			include = null;
 			exclude = null;
@@ -772,8 +823,7 @@ public class PanCompilerTask extends Task {
 
 		public void setInclude(String includePattern) {
 			try {
-				Pattern pattern = Pattern.compile(includePattern);
-				include = pattern;
+				include = Pattern.compile(includePattern);
 			} catch (PatternSyntaxException e) {
 				throw new BuildException("invalid include pattern: "
 						+ e.getMessage());
@@ -786,8 +836,7 @@ public class PanCompilerTask extends Task {
 
 		public void setExclude(String excludePattern) {
 			try {
-				Pattern pattern = Pattern.compile(excludePattern);
-				exclude = pattern;
+				exclude = Pattern.compile(excludePattern);
 			} catch (PatternSyntaxException e) {
 				throw new BuildException("invalid exclude pattern: "
 						+ e.getMessage());
@@ -799,13 +848,17 @@ public class PanCompilerTask extends Task {
 		}
 	}
 
+	/**
+	 * Class to cache file modification times. This class minimizes the number
+	 * of disk accesses to determine the modification times of files. This
+	 * improves the performance when the same file is requested many times.
+	 * 
+	 * @author loomis
+	 * 
+	 */
 	private static class FileStatCache {
 
-		private HashMap<String, Long> cachedTimes = new HashMap<String, Long>();
-
-		private Pattern ignoreDependencyPattern = null;
-
-		private boolean debugTask = false;
+		private HashMap<File, Long> cachedTimes = new HashMap<File, Long>();
 
 		private boolean debugVerbose = false;
 
@@ -819,23 +872,8 @@ public class PanCompilerTask extends Task {
 		 *            set verbosity
 		 */
 		public void setDebugLevel(boolean debugTask, boolean debugVerbose) {
-			this.debugTask = debugTask;
+			// The value of debugTask is currently not used. Just ignore it.
 			this.debugVerbose = debugVerbose;
-		}
-
-		/**
-		 * Set the pattern used to select ignored dependencies. The pattern may
-		 * be null.
-		 */
-		public void setIgnoreDependencyPattern(Pattern ignoreDependencyPattern) {
-			this.ignoreDependencyPattern = ignoreDependencyPattern;
-			if (ignoreDependencyPattern != null) {
-				if (debugTask) {
-					System.err.println(debugIdent
-							+ "ignoring templates matching '"
-							+ ignoreDependencyPattern + "'");
-				}
-			}
 		}
 
 		/**
@@ -896,44 +934,37 @@ public class PanCompilerTask extends Task {
 		 *         file does not exist (or an IO error occurred)
 		 */
 		private long getModificationTime(File file) {
-			String fileName = file.getAbsolutePath();
-			Long modtime = cachedTimes.get(fileName);
+
+			Long modtime = cachedTimes.get(file);
+
 			if (modtime == null) {
-				if (debugVerbose) {
-					System.err.println(debugIdent + "checking if dependency '"
-							+ fileName
-							+ "' is current and updating cachedTimes...");
-				}
-				boolean depIgnored = false;
-				// Ensure a non existing file as a modtime equal to 0
+
+				// The modification was not in cache. Retrieve it and cache it.
+
+				// Retrieve the modification of the file from the file system.
+				// If the file does not exist, then this method will return 0L.
 				modtime = Long.valueOf(file.lastModified());
-				if ((ignoreDependencyPattern != null) && (modtime > 0L)) {
-					if (debugTask) {
-						System.err.println(debugIdent + "matching dependency '"
-								+ fileName + "' against pattern '"
-								+ ignoreDependencyPattern.pattern() + "'");
-					}
-					Matcher ignoreMatcher = ignoreDependencyPattern
-							.matcher(fileName);
-					depIgnored = ignoreMatcher.find();
-				}
-				if (depIgnored) {
-					// Use a non-zero fake time when the dependency must be
-					// ignored
-					modtime = Long.valueOf(1);
-					if (debugTask) {
-						System.err.println(debugIdent + "dependency file "
-								+ fileName + " added to ignored list");
-					}
-				}
-				cachedTimes.put(fileName, modtime);
-			} else {
+
+				// Insert the time into the cache.
+				cachedTimes.put(file, modtime);
+
 				if (debugVerbose) {
-					System.err.println(debugIdent + "dependency '" + fileName
-							+ "' modification time retrieved from cache ("
-							+ modtime + ")");
+					System.err.println(debugIndent + "dependency '" + file
+							+ "' modification time (" + modtime
+							+ ") inserted in cache");
+				}
+
+			} else {
+
+				// The modification time was found in the cache. Emit a
+				// debugging message if request; otherwise, do nothing.
+				if (debugVerbose) {
+					System.err.println(debugIndent + "dependency '" + file
+							+ "' modification (" + modtime
+							+ ") retrieve from cache");
 				}
 			}
+
 			return modtime.longValue();
 		}
 	}

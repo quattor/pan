@@ -531,6 +531,27 @@ variable X ?=
     <title>Change Log</title>
 
     <section>
+      <title>Version 8.2.8</title>
+
+      <itemizedlist>
+        <listitem>
+          <para>(SF RFE #2213843) The ant task now includes an option to
+          exclude certain templates from the dependency calculation. The name
+          of the option is <option>ignoreDependencyPattern</option> and is a
+          regular expression matched against the namespaced template
+          name.</para>
+        </listitem>
+
+        <listitem>
+          <para>(SF BUG #2714229) The generated dependency file now
+          recursively includes dependencies from referenced object files via
+          the <function>value</function> function, either during the build or
+          validation phases.</para>
+        </listitem>
+      </itemizedlist>
+    </section>
+
+    <section>
       <title>Version 8.2.7</title>
 
       <itemizedlist>

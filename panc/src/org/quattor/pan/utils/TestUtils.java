@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,6 +42,9 @@ import org.quattor.pan.output.XmlDBFormatter;
 
 public class TestUtils {
 
+	private static final Pattern dependencyPattern = Pattern
+			.compile("#\\s*dep:\\s*([\\w\\.]+)\\s*");
+
 	private static final Pattern exceptionPattern = Pattern
 			.compile("#\\s*@expect\\s*=\\s*([\\w\\.]+)\\s*");
 
@@ -49,6 +53,8 @@ public class TestUtils {
 
 	private static final Pattern formatterPattern = Pattern
 			.compile("#\\s*@format\\s*=\\s*([\\w\\.]+)\\s*");
+
+	private static Pattern depline = Pattern.compile("\"(.*)\"\\s+\"(.*)\"");
 
 	private static final XPath xpath = XPathFactory.newInstance().newXPath();
 
@@ -134,13 +140,10 @@ public class TestUtils {
 	 * Extract the expected result from an object template. This expectation
 	 * should be embedded into the object template in a comment of the form:
 	 * 
-	 * @expect=org.quattor.pan.exception.SyntaxException
+	 * @expect=org.quattor.pan.exception.SyntaxException or
 	 * 
-	 * or
-	 * 
-	 * @expect="/profile/result=1"
-	 * 
-	 * for an expected exception or XPath value, respectively.
+	 * @expect="/profile/result=1" for an expected exception or XPath value,
+	 *                             respectively.
 	 * @param objtpl
 	 *            object template to analyze
 	 * 
@@ -201,12 +204,110 @@ public class TestUtils {
 	}
 
 	/**
+	 * Extract the set of dependencies from the source file. The source file
+	 * should have comments like the following to indicate the expected
+	 * dependencies:
+	 * 
+	 * # dep: mytemplate
+	 * 
+	 * @param objtpl
+	 *            object template to analyze
+	 * 
+	 * @return set of expected dependencies
+	 * 
+	 * @throws FileNotFoundException
+	 *             if the object file does not exist
+	 * @throws IOException
+	 *             if there is a problem reading the object file
+	 */
+	static public Set<String> extractDependencies(File objtpl) {
+
+		Set<String> dependencies = new TreeSet<String>();
+
+		// Read the object template line-by-line looking for the expected
+		// outcome.
+		BufferedReader in = null;
+
+		try {
+			in = new BufferedReader(new FileReader(objtpl));
+			for (String line = in.readLine(); line != null; line = in
+					.readLine()) {
+
+				Matcher m = dependencyPattern.matcher(line);
+				if (m.matches()) {
+					String dependency = m.group(1);
+					dependencies.add(dependency);
+				}
+			}
+		} catch (FileNotFoundException fnfe) {
+			dependencies.clear();
+		} catch (IOException ioe) {
+			dependencies.clear();
+		} finally {
+			if (in != null) {
+				try {
+					in.close();
+				} catch (IOException consumed) {
+				}
+			}
+		}
+
+		return dependencies;
+	}
+
+	/**
+	 * Extract the set of dependencies from the generated dependency file.
+	 * 
+	 * @param depfile
+	 *            dependency file to analyze
+	 * 
+	 * @return set of generated dependencies
+	 * 
+	 * @throws FileNotFoundException
+	 *             if the object file does not exist
+	 * @throws IOException
+	 *             if there is a problem reading the object file
+	 */
+	static public Set<String> extractGeneratedDependencies(File depfile) {
+
+		Set<String> dependencies = new TreeSet<String>();
+
+		// Read the object template line-by-line looking for the expected
+		// outcome.
+		BufferedReader in = null;
+
+		try {
+			in = new BufferedReader(new FileReader(depfile));
+			for (String line = in.readLine(); line != null; line = in
+					.readLine()) {
+
+				Matcher m = depline.matcher(line);
+				if (m.matches()) {
+					String dependency = m.group(1);
+					dependencies.add(dependency);
+				}
+			}
+		} catch (FileNotFoundException fnfe) {
+			dependencies.clear();
+		} catch (IOException ioe) {
+			dependencies.clear();
+		} finally {
+			if (in != null) {
+				try {
+					in.close();
+				} catch (IOException consumed) {
+				}
+			}
+		}
+
+		return dependencies;
+	}
+
+	/**
 	 * Extract the formatter to use for this compilation.
 	 * 
-	 * @format=pan
-	 * 
-	 * If no directive is found or if the formatter is not known, then xmldb
-	 * format will be used.
+	 * @format=pan If no directive is found or if the formatter is not known,
+	 *             then xmldb format will be used.
 	 * 
 	 * @param objtpl
 	 *            object template to analyze
@@ -227,10 +328,8 @@ public class TestUtils {
 	/**
 	 * Extract the format string to use for this compilation.
 	 * 
-	 * @format=pan
-	 * 
-	 * If no directive is found or if the formatter is not known, then xmldb
-	 * format will be used.
+	 * @format=pan If no directive is found or if the formatter is not known,
+	 *             then xmldb format will be used.
 	 * 
 	 * @param objtpl
 	 *            object template to analyze

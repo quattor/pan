@@ -24,8 +24,10 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.quattor.pan.utils.TestUtils.collectDirectories;
 import static org.quattor.pan.utils.TestUtils.collectTests;
+import static org.quattor.pan.utils.TestUtils.extractDependencies;
 import static org.quattor.pan.utils.TestUtils.extractExpectation;
 import static org.quattor.pan.utils.TestUtils.extractFormatter;
+import static org.quattor.pan.utils.TestUtils.extractGeneratedDependencies;
 import static org.quattor.pan.utils.TestUtils.getTestdir;
 import static org.quattor.pan.utils.TestUtils.getTmpdir;
 
@@ -58,6 +60,18 @@ public class JavaCompilerTest {
 		List<File> path = new LinkedList<File>();
 		path.add(dir);
 		CompilerOptions options = new CompilerOptions(null, null, true, false,
+				100, 50, formatter, getTmpdir(), null, path, 0, false, 2,
+				false, false);
+		List<File> tplfiles = new LinkedList<File>();
+		tplfiles.add(tplfile);
+		return new Compiler(options, new LinkedList<String>(), tplfiles);
+	}
+
+	protected Compiler getDependencyCompiler(File tplfile, File dir) {
+		List<File> path = new LinkedList<File>();
+		path.add(dir);
+		Formatter formatter = XmlDBFormatter.getInstance();
+		CompilerOptions options = new CompilerOptions(null, null, true, true,
 				100, 50, formatter, getTmpdir(), null, path, 0, false, 2,
 				false, false);
 		List<File> tplfiles = new LinkedList<File>();
@@ -309,6 +323,162 @@ public class JavaCompilerTest {
 		} else {
 			return "unexpected exception type "
 					+ ((Class<?>) expectation).getSimpleName();
+		}
+
+		// Everything's OK, so return null to indicate this.
+		return null;
+	}
+
+	@Test
+	public void javaDependencyTests() {
+
+		// Locate the directory with the dependency tests and extract all of
+		// the children.
+		File root = new File(getTestdir(), "Dependency");
+
+		// Create a list to hold all of the errors.
+		List<String> errors = new LinkedList<String>();
+
+		TreeSet<File> tests = collectTests(root);
+
+		for (File t : tests) {
+
+			File tpl = null;
+			File rootdir = null;
+
+			// Set the root directory and name of the template. In the case
+			// of a directory, the main test template is expected to have
+			// the same name as the directory with ".tpl" appended.
+			if (t.isFile()) {
+				tpl = t;
+				rootdir = t.getParentFile();
+			} else if (t.isDirectory()) {
+				tpl = new File(t, t.getName() + ".tpl");
+				rootdir = t;
+			}
+
+			// Run an individual test and collect any errors that arise.
+			if (tpl != null) {
+				if (tpl.exists()) {
+					String message = invokeDependencyTest(rootdir, tpl);
+					if (message != null) {
+						errors.add(tpl.getName() + ": " + message);
+					}
+				} else {
+					errors.add(tpl.getName() + ": test does not exist");
+				}
+			} else {
+				errors.add(t.getName()
+						+ ": file is not ordinary file or directory");
+			}
+		}
+
+		// If the error list isn't empty, then fail.
+		if (errors.size() > 0) {
+			StringBuilder sb = new StringBuilder();
+			for (String message : errors) {
+				sb.append(message);
+				sb.append("\n");
+			}
+			fail(sb.toString());
+		}
+
+	}
+
+	/**
+	 * Invoke a single dependency test by extracting the expected dependencies
+	 * from the object template, building the configuration, and ensuring that
+	 * the dependency file contains the correct templates.
+	 * 
+	 * @param rootdir
+	 *            root directory for build of this object template
+	 * @param objtpl
+	 *            the object template to compile
+	 * 
+	 * @return message (String) if there is an error, null otherwise
+	 */
+	protected String invokeDependencyTest(File rootdir, File objtpl) {
+
+		// Create the name of the output XML file from the template name.
+		String fname = objtpl.getName();
+		fname = fname.substring(0, fname.length() - 4) + ".xml";
+		File xml = new File(getTmpdir(), fname);
+
+		// Create the name of the dependency file.
+		File dep = new File(getTmpdir(), fname + ".dep");
+
+		// Delete the output XML file, if it exists.
+		if (xml.exists()) {
+			if (!xml.delete()) {
+				throw new BuildException("cannot delete existing XML file: "
+						+ xml.getAbsolutePath());
+			}
+		}
+
+		// Delete the dependency file, if it exists.
+		if (dep.exists()) {
+			if (!dep.delete()) {
+				throw new BuildException(
+						"cannot delete existing dependency file: "
+								+ dep.getAbsolutePath());
+			}
+		}
+
+		// Extract what is expected from the template file. This should either
+		// be an XPath expression, exception class, or a string that indicates
+		// an error.
+		Set<String> expected = extractDependencies(objtpl);
+
+		// Compile the given template and collect any errors.
+		Compiler compiler = getDependencyCompiler(objtpl, rootdir);
+		Set<Throwable> exceptions = compiler.process().getErrors();
+
+		// Ensure that the output file exists.
+		if (!xml.exists()) {
+
+			// Check to see if there was an exception thrown. If so,
+			// communicate what this exception was.
+			if (exceptions.size() > 0) {
+				Throwable[] errorArray = exceptions
+						.toArray(new Throwable[exceptions.size()]);
+				errorArray[0].printStackTrace();
+				return ("unexpected exception of type '"
+						+ errorArray[0].getClass().getSimpleName() + "' was thrown");
+			} else {
+				return xml.getName()
+						+ " does not exist and no exception was thrown";
+			}
+		}
+
+		// Ensure that the dependency file exists.
+		if (!dep.exists()) {
+
+			// Check to see if there was an exception thrown. If so,
+			// communicate what this exception was.
+			return dep.getName() + " does not exist";
+		}
+
+		// Extract the generated dependencies.
+		Set<String> generated = extractGeneratedDependencies(dep);
+
+		// If the expected and generated dependencies are not the same then
+		// raise an exception.
+		if (!expected.equals(generated)) {
+			StringBuilder sb = new StringBuilder("Mismatched dependencies: "
+					+ objtpl + "\n");
+			sb.append("Expected dependencies:\n");
+			for (String s : expected) {
+				sb.append(s + "\n");
+			}
+			sb.append("Generated dependencies:\n");
+			for (String s : generated) {
+				sb.append(s + "\n");
+			}
+			return sb.toString();
+		}
+
+		if (expected.isEmpty()) {
+			return "No dependencies were expected.";
 		}
 
 		// Everything's OK, so return null to indicate this.

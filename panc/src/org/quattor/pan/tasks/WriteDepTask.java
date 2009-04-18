@@ -25,7 +25,6 @@ import static org.quattor.pan.utils.MessageUtils.MSG_CANNOT_CREATE_OUTPUT_DIRECT
 import java.io.File;
 import java.io.PrintStream;
 import java.net.URI;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +40,7 @@ import org.quattor.pan.CompilerLogging.LoggingType;
 import org.quattor.pan.cache.Valid2Cache;
 import org.quattor.pan.exceptions.SystemException;
 import org.quattor.pan.template.Template;
+import org.quattor.pan.template.TemplateSourceComparator;
 import org.quattor.pan.utils.MessageUtils;
 
 /**
@@ -101,7 +101,7 @@ public class WriteDepTask extends Task<TaskResult> {
 
 			// The complete set of dependencies.
 			Set<Template> allDependencies = new TreeSet<Template>(
-					TemplateComparator.getInstance());
+					TemplateSourceComparator.getInstance());
 
 			// Use URI instances to operate on the output directory and the
 			// object name. The object name can be namespaced, so this extra
@@ -258,26 +258,4 @@ public class WriteDepTask extends Task<TaskResult> {
 		return objectTemplates;
 	}
 
-	private static class TemplateComparator implements Comparator<Template> {
-
-		private static TemplateComparator instance = new TemplateComparator();
-
-		private TemplateComparator() {
-		}
-
-		public static TemplateComparator getInstance() {
-			return instance;
-		}
-
-		public int compare(Template o1, Template o2) {
-			File f1 = o1.source;
-			File f2 = o2.source;
-			return f1.compareTo(f2);
-		}
-
-		public boolean equals(Object obj) {
-			return (obj instanceof TemplateComparator);
-		}
-
-	}
 }

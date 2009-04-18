@@ -332,16 +332,6 @@
 
           <tbody>
             <row>
-              <entry>nthread</entry>
-
-              <entry>Number of threads to use while compiling. Use 0 to set
-              the number of threads to the number of CPUs/cores on the
-              machine.</entry>
-
-              <entry>No. Default value: 0</entry>
-            </row>
-
-            <row>
               <entry>callDepthLimit</entry>
 
               <entry>Maximum number of recursive calls.</entry>
@@ -356,6 +346,17 @@
               profiles that have not changed.</entry>
 
               <entry>No. Default value: true</entry>
+            </row>
+
+            <row>
+              <entry>debugTask</entry>
+
+              <entry>Emit debugging messages for the ant task itself. If the
+              value is 1, then normal debugging is turned on; if the value is
+              greater than 1 then verbose debugging is turned on. A value of
+              zero turns off the task debugging.</entry>
+
+              <entry>No. Default value: 0</entry>
             </row>
 
             <row>
@@ -411,6 +412,16 @@
             </row>
 
             <row>
+              <entry>ignoreDependencyPattern</entry>
+
+              <entry>A pattern which will select dependencies to ignore during
+              the task's dependency calculation. The pattern will be matched
+              against the namespaced template name.</entry>
+
+              <entry>No. Default value: null</entry>
+            </row>
+
+            <row>
               <entry>includeRoot</entry>
 
               <entry>Directory to use as the root of the compilation.</entry>
@@ -422,7 +433,7 @@
               <entry>includes</entry>
 
               <entry>Set of directories below the include root to use in the
-              compilation. This is a "glob". </entry>
+              compilation. This is a "glob".</entry>
 
               <entry>Yes.</entry>
             </row>
@@ -454,6 +465,16 @@
               value "none" will override any other setting.</entry>
 
               <entry>No.</entry>
+            </row>
+
+            <row>
+              <entry>nthread</entry>
+
+              <entry>Number of threads to use while compiling. Use 0 to set
+              the number of threads to the number of CPUs/cores on the
+              machine.</entry>
+
+              <entry>No. Default value: 0</entry>
             </row>
 
             <row>

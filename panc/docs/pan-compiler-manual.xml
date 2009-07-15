@@ -93,13 +93,13 @@
       repository. The mainline development ("trunk") can be checked out with a
       subversion client with the command:</para>
 
-      <programlisting>svn checkout https://svn.lal.in2p3.fr/LCG/QWG/panc/trunk</programlisting>
+      <programlisting>svn checkout https://quattor.svn.sourceforge.net/svnroot/quattor/trunk/panc</programlisting>
 
       <para>As this is the active development branch, code checked out from it
       may or may not work. For use in a production environment, check out a
       specific version of the compiler with a command like:</para>
 
-      <para><programlisting>svn checkout https://svn.lal.in2p3.fr/LCG/QWG/panc/tags/7.1.15</programlisting></para>
+      <programlisting>svn checkout https://quattor.svn.sourceforge.net/svnroot/quattor/tags/panc/8.2.8</programlisting>
 
       <para>where the tags correspond to the version of the compiler. Unless
       you have special requirements, use the latest

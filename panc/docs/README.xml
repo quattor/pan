@@ -531,6 +531,17 @@ variable X ?=
     <title>Change Log</title>
 
     <section>
+      <title>Trunk</title>
+
+      <itemizedlist>
+        <listitem>
+          <para>(SF RFE #2821902) Updated SVN URL in <literal>Sources</literal>
+	  section.</para>
+        </listitem>
+      </itemizedlist>
+    </section>
+
+    <section>
       <title>Version 8.2.8</title>
 
       <itemizedlist>

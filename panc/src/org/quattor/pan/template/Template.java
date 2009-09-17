@@ -141,6 +141,13 @@ public class Template implements Serializable {
 			.compile("(^[\\w]$)|([\\w][\\w/+.-]*[\\w+.-]+$)");
 
 	/**
+	 * Pattern with all valid characters for namespaced name. This also requires
+	 * that the name not be the empty string.
+	 */
+	public static final Pattern validTemplateNameChars = Pattern
+			.compile("^[\\w\\./+-]+$");
+
+	/**
 	 * The source from which this template was constructed. This must be an
 	 * absolute File or null.
 	 */
@@ -219,9 +226,9 @@ public class Template implements Serializable {
 			statements = new LinkedList<Statement>();
 		}
 
-		// If this is an object template, then it may not contain a slash (i.e.
-		// be namespaced).
-		if (!validTemplateNamePattern.matcher(name).matches()) {
+		// Check that this is a valid template name. Such names may be
+		// namespaced.
+		if (!isValidTemplateName(name)) {
 			throw SyntaxException.create(sourceRange, source,
 					MSG_INVALID_TPL_NAME, name);
 		}
@@ -342,6 +349,41 @@ public class Template implements Serializable {
 						.create(MSG_TEMPLATE_CONTAINS_NON_STATIC_STATEMENTS);
 			}
 		}
+	}
+
+	/**
+	 * Check to see if the given name is a valid template name. Valid template
+	 * names may include only letters, digits, underscores, hyphens, periods,
+	 * pluses, and slashes. In addition, each term when split by slashes must
+	 * not be empty and must not start with a period. The second case excludes
+	 * potential hidden files and special names like "." and "..".
+	 * 
+	 * @param name
+	 *            template name to check for validity
+	 * 
+	 * @return boolean value indicating if the given name is a valid template
+	 *         name
+	 */
+	static public boolean isValidTemplateName(String name) {
+
+		// First do the easy check to make sure that the string isn't empty and
+		// contains only valid characters.
+		if (!validTemplateNameChars.matcher(name).matches()) {
+			return false;
+		}
+
+		// Split the string on slashes and ensure that each one of the terms is
+		// valid. Cannot be empty or start with a period. (Above check already
+		// guarantees that only allowed characters are in the string.)
+		for (String t : name.split("/")) {
+			if ("".equals(t) || t.startsWith(".")) {
+				return false;
+			}
+		}
+
+		// If we make it to this point, then the string has passed all of the
+		// checks and is valid.
+		return true;
 	}
 
 	/**

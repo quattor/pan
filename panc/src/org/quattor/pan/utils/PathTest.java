@@ -98,6 +98,20 @@ public class PathTest {
 	}
 
 	@Test
+	public void testLegalNamespacedAuthorities() {
+		List<String> paths = Arrays.asList("ns/alpha:", "ns/alpha:/",
+				"ns/127.0.0.1:", "ns/127.0.0.1:/", "ns/-:", "ns/-:/", "ns/+:",
+				"ns/+:/", "ns/_:", "ns/_:/");
+		for (String s : paths) {
+			try {
+				new Path(s);
+			} catch (SyntaxException se) {
+				fail("legal authority threw exception (" + s + ")");
+			}
+		}
+	}
+
+	@Test
 	public void testIllegalAuthoritiesOld() {
 		List<String> paths = Arrays.asList("//alpha;", "///", "//");
 		for (String s : paths) {
@@ -113,6 +127,21 @@ public class PathTest {
 	@Test
 	public void testIllegalAuthorities() {
 		List<String> paths = Arrays.asList("alpha;:", ":/", ":");
+		for (String s : paths) {
+			try {
+				new Path(s);
+				fail("illegal authority did not throw exception (" + s + ")");
+			} catch (SyntaxException se) {
+				// OK.
+			}
+		}
+	}
+
+	@Test
+	public void testIllegalNamespacedAuthorities() {
+		List<String> paths = Arrays.asList("ns/.:/", "ns/..:/", "ns/.hidden:/",
+				"ns//profile:/", "ns/./profile:/", "ns/../profile:/",
+				"ns/.hidden/profile:/");
 		for (String s : paths) {
 			try {
 				new Path(s);

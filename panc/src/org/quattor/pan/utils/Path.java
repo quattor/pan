@@ -37,6 +37,7 @@ import java.util.regex.Pattern;
 
 import org.quattor.pan.exceptions.CompilerError;
 import org.quattor.pan.exceptions.SyntaxException;
+import org.quattor.pan.template.Template;
 
 /**
  * This immutable class represents a pan path. The paths can be either absolute
@@ -172,9 +173,10 @@ public class Path implements Serializable, Comparable<Path> {
 					String auth = m.group(1);
 					s = m.group(2);
 
-					// Check that the authority is actually valid.
-					m = validAuthority.matcher(auth);
-					if (m.matches()) {
+					// Check that the authority is actually valid. This is
+					// potentially a namespaced template name. Use the standard
+					// method for determining the validity of the name.
+					if (Template.isValidTemplateName(auth)) {
 						authority = auth;
 					} else {
 						throw SyntaxException.create(null,

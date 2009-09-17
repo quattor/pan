@@ -531,12 +531,17 @@ variable X ?=
     <title>Change Log</title>
 
     <section>
-      <title>Trunk</title>
+      <title>Version 8.2.9</title>
 
       <itemizedlist>
         <listitem>
-          <para>(SF RFE #2821902) Updated SVN URL in <literal>Sources</literal>
-	  section.</para>
+          <para>(SF BUG #2860089) Incorrect handling of namespaced object
+          templates in path syntax.</para>
+        </listitem>
+
+        <listitem>
+          <para>(SF RFE #2821902) Updated SVN URL in
+          <literal>Sources</literal> section.</para>
         </listitem>
       </itemizedlist>
     </section>

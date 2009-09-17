@@ -1125,26 +1125,35 @@ EOT</programlisting>
           <para>Pan paths are represented as string literals; any of the
           standard forms for a string literal can be used to represent a path.
           There are three different types of paths: external, absolute, and
-          relative. An external path explicitly references an object template.
-          There are two forms that are currently supported:</para>
+          relative.</para>
 
-          <programlisting>my/external/object:/some/absolute/path
-myobject:/some/absolute/path</programlisting>
+          <para>An <emphasis>external path</emphasis> explicitly references an
+          object template. The preferred syntax for external paths is:</para>
 
-          <para>The first form allows namespace object templates to be
-          referenced; the second form does not. The second form is
-          deprecated.</para>
+          <programlisting>my/external/object:/some/absolute/path</programlisting>
 
-          <para>An absolute path starts at the top of a configuration tree and
-          identifies a node within the tree. All absolute paths start with a
-          slash ("/") and are followed by a series of terms that identify a
-          specific child of each resource. A bare slash ("/") refers to the
-          full configuration tree. The allowed syntax for each term in the
-          path is described below.</para>
+          <para>which will work for both namespaced and non-namespaced object
+          templates.</para>
 
-          <para>A relative path refers to a path relative to a structure
-          template. Relative paths do not start with a slash, but otherwise
-          are identical to the absolute paths.</para>
+          <para>A second, deprecated syntax is also supported by the
+          compiler:</para>
+
+          <programlisting>//myobject/some/absolute/path</programlisting>
+
+          <para>this form does not support namespaced object templates.
+          Support for this syntax will disappear in a future release of the
+          compiler.</para>
+
+          <para>An <emphasis>absolute path</emphasis> starts at the top of a
+          configuration tree and identifies a node within the tree. All
+          absolute paths start with a slash ("/") and are followed by a series
+          of terms that identify a specific child of each resource. A bare
+          slash ("/") refers to the full configuration tree. The allowed
+          syntax for each term in the path is described below.</para>
+
+          <para>A <emphasis>relative path</emphasis> refers to a path relative
+          to a structure template. Relative paths do not start with a slash,
+          but otherwise are identical to the absolute paths.</para>
 
           <para>Terms may consist of letters, digits, underscores, hyphens,
           and pluses. Terms beginning with a digit must be a valid long

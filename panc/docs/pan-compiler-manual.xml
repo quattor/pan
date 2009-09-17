@@ -99,7 +99,7 @@
       may or may not work. For use in a production environment, check out a
       specific version of the compiler with a command like:</para>
 
-      <programlisting>svn checkout https://quattor.svn.sourceforge.net/svnroot/quattor/tags/panc/8.2.8</programlisting>
+      <programlisting>svn checkout https://quattor.svn.sourceforge.net/svnroot/quattor/tags/panc/8.2.9</programlisting>
 
       <para>where the tags correspond to the version of the compiler. Unless
       you have special requirements, use the latest

@@ -60,8 +60,6 @@ import org.quattor.pan.statement.VariableStatement;
  * <code>SyntaxException</code> if any of the additional constraints are not
  * met.
  * 
- * The "object" form of a template is simply the serialized java object format.
- * 
  * @author loomis
  * 
  */

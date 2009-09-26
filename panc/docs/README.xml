@@ -479,13 +479,15 @@ variable X ?=
     <section>
       <title><varname>SELF</varname> Usage</title>
 
-      <para>The processing of SELF has been optimized in the latest version of
-      the pan compiler. This unfortunately does have some user-visible
-      consequences. Most notably setting a local variable to SELF
-      <emphasis>will now create a copy</emphasis> of the value of SELF. In
-      particular if SELF was a resource, then the local variable and SELF will
-      contain two distinct copies and further modifications of the local
-      variable will not affect SELF.</para>
+      <para>The processing of <varname>SELF</varname> has been optimized in
+      the latest version of the pan compiler. This unfortunately does have
+      some user-visible consequences. Most notably setting a local variable to
+      <varname>SELF</varname> <emphasis>will now create a copy</emphasis> of
+      the value of <varname>SELF</varname>. In particular if
+      <varname>SELF</varname> was a resource, then the local variable and
+      <varname>SELF</varname> will contain two distinct copies and further
+      modifications of the local variable will not affect
+      <varname>SELF</varname>.</para>
 
       <programlisting># The path /result will be undef and NOT contain a child named 'orphan'!
 '/result' = {
@@ -494,8 +496,9 @@ variable X ?=
   SELF;
 };</programlisting>
 
-      <para>Code that manipulates SELF, especially code that modifies SELF,
-      should always reference SELF directly. This allows the compiler to avoid
+      <para>Code that manipulates <varname>SELF</varname>, especially code
+      that modifies <varname>SELF</varname>, should always reference
+      <varname>SELF</varname> directly. This allows the compiler to avoid
       unnecessary copies and to optimize the code.</para>
 
       <programlisting># Code that has the expected behavior.  The path '/result' WILL have
@@ -534,6 +537,12 @@ variable X ?=
       <title>HEAD</title>
 
       <itemizedlist>
+        <listitem>
+          <para>(SF RFE #2806721) Request to add an <function>md5</function>
+          function. A more general <function>digest</function> function was
+          added that allows the digest algorithm to be specified.</para>
+        </listitem>
+
         <listitem>
           <para>(SF BUG #2806732) Cross-reference path literal syntax
           (especially the path terms) in the documentation where valid nlist

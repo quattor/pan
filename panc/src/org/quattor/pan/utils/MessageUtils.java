@@ -207,6 +207,8 @@ public class MessageUtils {
 
 	public final static String MSG_FIRST_STRING_ARG_REQ = "MSG_FIRST_STRING_ARG_REQ";
 
+	public final static String MSG_SECOND_STRING_ARG_REQ = "MSG_SECOND_STRING_ARG_REQ";
+
 	public final static String MSG_ONE_ARG_REQ = "MSG_ONE_ARG_REQ";
 
 	public final static String MSG_ONE_OR_TWO_ARGS_REQ = "MSG_ONE_OR_TWO_ARGS_REQ";
@@ -380,6 +382,8 @@ public class MessageUtils {
 	public final static String MSG_SELF_IS_UNDEFINED = "MSG_SELF_IS_UNDEFINED";
 
 	public final static String MSG_INVALID_IN_COMPILE_TIME_CONTEXT = "MSG_INVALID_IN_COMPILE_TIME_CONTEXT";
+
+	public final static String MSG_INVALID_DIGEST_ALGORITHM = "MSG_INVALID_DIGEST_ALGORITHM";
 
 	// Name of the resource bundle to use for compiler messages.
 	private final static String bundleName = "org.quattor.pan.Messages";

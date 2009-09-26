@@ -528,8 +528,6 @@ type small_even_nlist = small_even{};</programlisting>
     <section>
       <title>Built-In Functions</title>
 
-      <para></para>
-
       <table>
         <title>String Manipulation Functions</title>
 
@@ -672,6 +670,12 @@ type small_even_nlist = small_even{};</programlisting>
               <entry><xref linkend="base64_encode" /></entry>
 
               <entry>Encode a string using the Base64 standard.</entry>
+            </row>
+
+            <row>
+              <entry><xref linkend="digest" /></entry>
+
+              <entry>Create message digest using specified algorithm.</entry>
             </row>
 
             <row>

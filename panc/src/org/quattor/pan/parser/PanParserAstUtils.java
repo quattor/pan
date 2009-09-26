@@ -52,6 +52,7 @@ import org.quattor.pan.dml.functions.Debug;
 import org.quattor.pan.dml.functions.DebugSuppressed;
 import org.quattor.pan.dml.functions.Delete;
 import org.quattor.pan.dml.functions.Deprecated;
+import org.quattor.pan.dml.functions.Digest;
 import org.quattor.pan.dml.functions.ErrorMessage;
 import org.quattor.pan.dml.functions.Escape;
 import org.quattor.pan.dml.functions.Exists;
@@ -303,6 +304,9 @@ public class PanParserAstUtils {
 
 			fc.put("deprecated", (Deprecated.class).getDeclaredMethod(
 					"getInstance", SourceRange.class, Operation[].class));
+
+			fc.put("digest", (Digest.class).getDeclaredMethod("getInstance",
+					SourceRange.class, Operation[].class));
 
 			fc.put("debug", (Debug.class).getDeclaredMethod("getInstance",
 					SourceRange.class, Operation[].class));

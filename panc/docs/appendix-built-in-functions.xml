@@ -445,6 +445,52 @@ structure template mount_cdrom;
     </refsection>
   </refentry>
 
+  <refentry xml:id="digest">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>digest</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>digest</refname>
+
+      <refpurpose>creates a digest of a message using the specified
+      algorithm</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>string <function>digest</function></funcdef>
+
+          <paramdef>string <parameter>algorithm</parameter></paramdef>
+
+          <paramdef>string <parameter>message</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>This function returns a digest of the message using the specified
+      algorithm. The valid algorithms are: <literal>MD2</literal>,
+      <literal>MD5</literal>, <literal>SHA</literal>,
+      <literal>SHA-1</literal>, <literal>SHA-256</literal>,
+      <literal>SHA-384</literal>, and <literal>SHA-512</literal>. The
+      algorithm name is not case sensitive. </para>
+    </refsection>
+  </refentry>
+
   <refentry xml:id="error">
     <info>
       <productnumber>@VERSION@</productnumber>

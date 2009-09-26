@@ -123,7 +123,7 @@ final public class StringExists extends Exists {
 				// It was not an external or absolute path. Try treating it
 				// as a template name.
 
-				if (Template.validTemplateNamePattern.matcher(s).matches()) {
+				if (Template.isValidTemplateName(s)) {
 
 					try {
 						Template template = context.localLoad(s);

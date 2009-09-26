@@ -87,7 +87,7 @@ final public class IfExists extends BuiltInFunction {
 
 			// This must be a template name. First see if it is actually
 			// a valid template name.
-			if (Template.validTemplateNamePattern.matcher(s).matches()) {
+			if (Template.isValidTemplateName(s)) {
 
 				try {
 					Template template = context.localLoad(s);

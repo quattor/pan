@@ -133,12 +133,6 @@ public class Template implements Serializable {
 	}
 
 	/**
-	 * A pattern which defines valid, namespaced template names.
-	 */
-	public static final Pattern validTemplateNamePattern = Pattern
-			.compile("(^[\\w]$)|([\\w][\\w/+.-]*[\\w+.-]+$)");
-
-	/**
 	 * Pattern with all valid characters for namespaced name. This also requires
 	 * that the name not be the empty string.
 	 */

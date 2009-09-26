@@ -531,6 +531,19 @@ variable X ?=
     <title>Change Log</title>
 
     <section>
+      <title>HEAD</title>
+
+      <itemizedlist>
+        <listitem>
+          <para>(SF BUG #2806732) Cross-reference path literal syntax
+          (especially the path terms) in the documentation where valid nlist
+          keys are required. This was added to the function descriptions of
+          <function>create</function> and <function>nlist</function>.</para>
+        </listitem>
+      </itemizedlist>
+    </section>
+
+    <section>
       <title>Version 8.2.9</title>
 
       <itemizedlist>

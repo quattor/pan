@@ -46,13 +46,18 @@
 
     <para>The syntax of a template file is simple:</para>
 
-    <para><programlisting>[ object | declaration | unique | structure ] template template-name;
+    <para><programlisting>[ object | declaration | unique | structure ] <literal>template</literal> <replaceable>template-name</replaceable>;
 [ statement ... ]</programlisting></para>
 
     <para>These files may contain comments that start with the hash sign ('#')
     and terminate with the next new line or end of file. There are five
     different types of templates that are identified by the template
     modifier.</para>
+
+    <para>A template name is a series of substrings separated by slashes. Each
+    substring may consist of letters, digits, underscores, hyphens, periods,
+    and pluses. The substrings may not be empty or begin with a period; the
+    template name may not begin or end with a slash. </para>
 
     <section>
       <title>Object Templates</title>
@@ -1119,30 +1124,32 @@ EOT</programlisting>
         <para>The <function>base64_decode()</function> function is one of the
         built-in pan functions.</para>
 
-        <section>
+        <section xml:id="section-path-literals">
           <title>Path Literals</title>
 
-          <para>Pan paths are represented as string literals; any of the
-          standard forms for a string literal can be used to represent a path.
-          There are three different types of paths: external, absolute, and
-          relative.</para>
+          <para>Pan paths are represented as string literals; either of the
+          standard quoted forms for a string literal can be used to represent
+          a path. There are three different types of paths: external,
+          absolute, and relative.</para>
 
           <para>An <emphasis>external path</emphasis> explicitly references an
           object template. The preferred syntax for external paths is:</para>
 
           <programlisting>my/external/object:/some/absolute/path</programlisting>
 
-          <para>which will work for both namespaced and non-namespaced object
-          templates.</para>
+          <para>where the substring before the colon is the template name and
+          the substring after the colon is an absolute path. The leading slash
+          of the absolute path is optional in an external path. This form will
+          work for both namespaced and non-namespaced object templates.</para>
 
           <para>A second, deprecated syntax is also supported by the
           compiler:</para>
 
           <programlisting>//myobject/some/absolute/path</programlisting>
 
-          <para>this form does not support namespaced object templates.
-          Support for this syntax will disappear in a future release of the
-          compiler.</para>
+          <para>this form does <emphasis>not</emphasis> support namespaced
+          object templates. Support for this syntax will disappear in a future
+          release of the compiler.</para>
 
           <para>An <emphasis>absolute path</emphasis> starts at the top of a
           configuration tree and identifies a node within the tree. All
@@ -1164,7 +1171,8 @@ EOT</programlisting>
 
           <programlisting>/alpha/{a/b}/gamma</programlisting>
 
-          <para>The second term is equivalent to escape("a/b").</para>
+          <para>The second term is equivalent to
+          <function>escape</function>('a/b').</para>
         </section>
 
         <section>
@@ -1618,9 +1626,10 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
         <programlisting>foreach (key; value; resource) body-dml;</programlisting>
 
         <para>This will cause the body-dml to be executed once for each
-        element in resource (a list or nlist). The local variables 'key' and
-        'value' (you can choose these names) will be set at each iteration to
-        the key and value of the element. For a list, the key is the element's
+        element in resource (a list or nlist). The local variables
+        <varname>key</varname> and <varname>value</varname> (you can choose
+        these names) will be set at each iteration to the key and value of the
+        element. For a list, the <varname>key</varname> is the element's
         index. The iteration will always occur in the natural order of the
         resource: ordinal order for lists and lexical order of the keys for
         nlists.</para>
@@ -1634,7 +1643,8 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
         entries, so this safeguard is not needed.</para>
 
         <para>This form of iteration should be used in preference to the
-        first/next functions or the key function whenever possible. It is more
+        <function>first</function>, <function>next</function>, and
+        <function>key</function> functions whenever possible. It is more
         efficient than the functional forms and less prone to error.</para>
       </section>
     </section>

@@ -285,7 +285,8 @@
       the named structure template. The optional additional arguments are key,
       value pairs that will be added to the returned nlist, perhaps
       overwriting values from the structure template. The keys must be strings
-      that contain valid nlist keys. The values can be any element. Null
+      that contain valid nlist keys (see <xref
+      linkend="section-path-literals" />). The values can be any element. Null
       values will delete the given key from the resulting nlist.</para>
 
       <programlisting># description of CD mount entry with the device undefined
@@ -1730,7 +1731,7 @@ type ipv4 = string with {
       <para>The <function>nlist</function> function returns a new nlist
       consisting of the passed arguments; the arguments must be key value
       pairs. All of the keys must be strings and have values that are legal
-      hash keys.</para>
+      path terms (see <xref linkend="section-path-literals" />).</para>
 
       <programlisting># resulting nlist associates name with long value
 '/result' = nlist(
@@ -2387,7 +2388,7 @@ type ipv4 = string with {
       <para>If the argument is a double value, then the double value is
       rounded to the nearest long value.</para>
 
-      <para>If the argument is a long value, it is returned directly. </para>
+      <para>If the argument is a long value, it is returned directly.</para>
     </refsection>
   </refentry>
 
@@ -2468,7 +2469,7 @@ type ipv4 = string with {
 
       <para>This function will convert the argument into a string. The
       function will create a reasonable human-readable representation of all
-      data types, including lists and nlists. </para>
+      data types, including lists and nlists.</para>
     </refsection>
   </refentry>
 

@@ -385,6 +385,8 @@ public class MessageUtils {
 
 	public final static String MSG_INVALID_DIGEST_ALGORITHM = "MSG_INVALID_DIGEST_ALGORITHM";
 
+	public final static String MSG_RELATIVE_FILE_REQ = "MSG_RELATIVE_FILE_REQ";
+
 	// Name of the resource bundle to use for compiler messages.
 	private final static String bundleName = "org.quattor.pan.Messages";
 

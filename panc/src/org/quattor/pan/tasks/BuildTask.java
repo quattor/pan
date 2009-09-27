@@ -83,7 +83,7 @@ public class BuildTask extends Task<BuildResult> {
 		public BuildResult call() throws Exception {
 
 			// Locate the object template.
-			File tplFile = compiler.getTemplateLocator().lookup(objectName);
+			File tplFile = compiler.getSourceLocator().lookup(objectName);
 
 			// Throw an exception if the object file cannot be found. Even if it
 			// was given on the command line, it must be accessible from the

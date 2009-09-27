@@ -41,7 +41,7 @@ import org.quattor.pan.exceptions.EvaluationException;
  * @author loomis
  * 
  */
-public class TemplateLocator {
+public class SourceLocator {
 
 	private final File sessionDir;
 
@@ -74,7 +74,7 @@ public class TemplateLocator {
 	 *            List of include directories to search for templates. If null
 	 *            or empty, the current working directory will be used.
 	 */
-	public TemplateLocator(File sessionDirectory, List<File> includeDirectories) {
+	public SourceLocator(File sessionDirectory, List<File> includeDirectories) {
 		this.sessionDir = sessionDirectory;
 
 		// Create a copy to avoid any external modifications. Use the current

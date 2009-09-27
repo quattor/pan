@@ -34,7 +34,7 @@ import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.output.Formatter;
 import org.quattor.pan.template.Context;
 import org.quattor.pan.template.SourceRange;
-import org.quattor.pan.utils.TemplateLocator;
+import org.quattor.pan.utils.SourceLocator;
 
 /**
  * Encapsulates the global options for the pan compiler. An instance of this
@@ -103,7 +103,7 @@ public class CompilerOptions {
 	 */
 	public final int deprecationLevel;
 
-	public final TemplateLocator templateLocator;
+	public final SourceLocator templateLocator;
 
 	/**
 	 * Patterns that are matched against a template name to determine if debug()
@@ -233,7 +233,7 @@ public class CompilerOptions {
 			this.debugExcludePatterns = debugExcludePatterns;
 		}
 
-		templateLocator = new TemplateLocator(sessionDirectory,
+		templateLocator = new SourceLocator(sessionDirectory,
 				includeDirectories);
 
 		this.dumpAnnotations = dumpAnnotations;

@@ -36,7 +36,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class TemplateLocatorTest {
+public class SourceLocatorTest {
 
 	static private File tmpdir = new File(TestUtils.getTmpdir(),
 			"TemplateLocatorTest");
@@ -52,7 +52,7 @@ public class TemplateLocatorTest {
 		rpaths.add("rpath");
 	}
 
-	static private TemplateLocator locator;
+	static private SourceLocator locator;
 
 	@BeforeClass
 	static public void createTestFiles() throws IOException {
@@ -85,7 +85,7 @@ public class TemplateLocatorTest {
 		List<File> includes = new LinkedList<File>();
 		includes.add(include1);
 		includes.add(include2);
-		locator = new TemplateLocator(session, includes);
+		locator = new SourceLocator(session, includes);
 
 	}
 

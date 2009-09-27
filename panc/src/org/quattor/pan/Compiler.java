@@ -359,7 +359,7 @@ public class Compiler {
 		return v2cache;
 	}
 
-	public SourceLocator getTemplateLocator() {
+	public SourceLocator getSourceLocator() {
 		return options.templateLocator;
 	}
 

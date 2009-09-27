@@ -24,6 +24,7 @@ import static org.quattor.pan.utils.MessageUtils.MSG_NON_DIRECTORY_IN_INCLUDE_DI
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.quattor.pan.exceptions.EvaluationException;
@@ -42,6 +43,10 @@ import org.quattor.pan.exceptions.EvaluationException;
  * 
  */
 public class SourceLocator {
+
+	enum SearchResult {
+		SRC_FOUND, DEL_FOUND, NOT_FOUND
+	};
 
 	private final File sessionDir;
 
@@ -105,7 +110,7 @@ public class SourceLocator {
 					.size());
 			dirs.addAll(includeDirectories);
 			dirs.trimToSize();
-			this.includeDirectories = dirs;
+			this.includeDirectories = Collections.unmodifiableList(dirs);
 
 		} else {
 
@@ -114,7 +119,7 @@ public class SourceLocator {
 			ArrayList<File> dirs = new ArrayList<File>(1);
 			dirs.add(new File(System.getProperty("user.dir"))); //$NON-NLS-1$
 			dirs.trimToSize();
-			this.includeDirectories = dirs;
+			this.includeDirectories = Collections.unmodifiableList(dirs);
 
 		}
 
@@ -147,70 +152,149 @@ public class SourceLocator {
 	 *            cannot be null or empty.
 	 */
 	public File lookup(String name, List<String> loadpath) {
+		return lookup(name, ".tpl", loadpath);
+	}
 
-		String del = name + ".del"; //$NON-NLS-1$
-		String tpl = name + ".tpl"; //$NON-NLS-1$
+	/**
+	 * Locate a template with the given name using the defined session
+	 * directory, include directories, and LOADPATH. The LOADPATH is a list of
+	 * relative paths to search below the include directories. This is the value
+	 * of the LOADPATH variable in pan.
+	 * 
+	 * The loadpath cannot be null or empty. If there are no relative paths to
+	 * search, then the loadpath list should contain just a single empty string.
+	 * Use the single argument version of this method for that.
+	 * 
+	 * For each directory constructed from the session directory, include
+	 * directories, and the LOADPATH, this method tries to find a file with the
+	 * extension ".del" or ".tpl" in that order. The method will return null if
+	 * the file cannot be found. The ".del" indicates that the file has been
+	 * deleted and the processing will stop if such a file is found.
+	 * 
+	 * @param name
+	 *            String giving the name of the template to search for.
+	 * @param loadpath
+	 *            Relative search paths defined in LOADPATH variable. This
+	 *            cannot be null or empty.
+	 */
+	public File lookup(String name, String suffix, List<String> loadpath) {
 
-		// Flag the tpl files as being null.
-		File tplfile = null;
-
-		// The given loadpath must always have at least one element.
+		// Sanity checking. The loadpath must not be null and must contain at
+		// least one element. For an empty loadpath, the list should contain one
+		// empty string.
 		assert (loadpath != null);
 		assert (loadpath.size() > 0);
 
+		String del = name + ".del"; //$NON-NLS-1$
+		String src = name + suffix;
+
+		// Create an empty FileHolder for the result.
+		FileHolder fileHolder = new FileHolder();
+
 		// Search through the loadpath to find the appropriate files. The loop
-		// will terminate as soon as a matching *.tpl file is found. Finding a
+		// will terminate as soon as a matching source file is found. Finding a
 		// matching *.del file will cause the next relative path to be checked.
-		// Be careful, the algorithm is complicated and uses named breaks and
-		// continue statements.
+		//
+		// Note that the session directory check cannot be factored out even
+		// though it does not depend on the outermost loop. The session
+		// directory checks MUST be interleaved for each relative path in the
+		// loadpath. Be careful, the algorithm is complicated and uses named
+		// breaks and continue statements.
 		template_lookup: for (File d : includeDirectories) {
 			for (String rpath : loadpath) {
 
-				// Check first the session directory if it isn't null.
+				SearchResult result;
+
+				// If the session directory is not null, then it must be scanned
+				// first. Three results are possible: the source file was found,
+				// a *.del file was found, or no file was found.
 				if (sessionDir != null) {
 
-					File sdir = new File(sessionDir, rpath);
-					File dfile = new File(sdir, del);
+					result = lookupSingleFile(sessionDir, rpath, del, src,
+							fileHolder);
 
-					if (!dfile.exists()) {
-
-						// Check for a *.tpl file.
-						File tfile = new File(sdir, tpl);
-						if (tfile.exists()) {
-							tplfile = tfile;
-							break template_lookup;
-						}
-					} else {
-
-						// A *.del file found; continue to next relative path.
-						continue;
-					}
-				}
-
-				// Check the usual directories if nothing was found in the
-				// session directory.
-				File sdir = new File(d, rpath);
-				File dfile = new File(sdir, del);
-
-				if (!dfile.exists()) {
-
-					// Search for the *.tpl file.
-					File tfile = new File(sdir, tpl);
-					if (tfile.exists()) {
-						tplfile = tfile;
+					switch (result) {
+					case SRC_FOUND:
 						break template_lookup;
+					case DEL_FOUND:
+						continue;
+					case NOT_FOUND:
+						// Do nothing and fall through.
 					}
-				} else {
 
-					// A *.del file was found; continue with next relative path.
-					continue;
 				}
+
+				// If we make it to here, then nothing was found in the session
+				// directory. Check the usual directories.
+				result = lookupSingleFile(d, rpath, del, src, fileHolder);
+
+				switch (result) {
+				case SRC_FOUND:
+					break template_lookup;
+				case DEL_FOUND:
+					continue;
+				case NOT_FOUND:
+					// Do nothing and fall through.
+				}
+
 			}
 
 		}
 
 		// Return the found template.
-		return tplfile;
+		return fileHolder.file;
+	}
+
+	/**
+	 * A utility function to check for a single source file. There are three
+	 * possible results: the deleted file marker was found, the source file was
+	 * found, or nothing was found. The corresponding SearchResult will be
+	 * returned. If the source file was found, then the FileHolder will be
+	 * updated with the source File.
+	 * 
+	 * @param root
+	 *            base directory to use
+	 * @param rpath
+	 *            relative directory from the root to use
+	 * @param delFileName
+	 *            deleted file marker name
+	 * @param srcFileName
+	 *            source file name
+	 * @param fileHolder
+	 *            holder for result if source file was found
+	 * 
+	 * @return SearchResult indicating if the delete marker, source file, or
+	 *         nothing was found
+	 */
+	private static SearchResult lookupSingleFile(File root, String rpath,
+			String delFileName, String srcFileName, FileHolder fileHolder) {
+
+		File dir = new File(root, rpath);
+		File deletedFileMarker = new File(dir, delFileName);
+
+		if (!deletedFileMarker.exists()) {
+			File sourceFile = new File(dir, srcFileName);
+			if (sourceFile.exists()) {
+				fileHolder.file = sourceFile;
+				return SearchResult.SRC_FOUND;
+			}
+			return SearchResult.NOT_FOUND;
+		} else {
+			return SearchResult.DEL_FOUND;
+		}
+
+	}
+
+	/**
+	 * Class to hold a reference to a File so that the value can be modified
+	 * within a function call. This is rather ugly but avoids having to
+	 * duplicate code.
+	 * 
+	 * @author loomis
+	 * 
+	 */
+	private static class FileHolder {
+		public File file = null;
 	}
 
 }

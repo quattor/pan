@@ -387,6 +387,10 @@ public class MessageUtils {
 
 	public final static String MSG_RELATIVE_FILE_REQ = "MSG_RELATIVE_FILE_REQ";
 
+	public final static String MSG_NONEXISTANT_FILE = "MSG_NONEXISTANT_FILE";
+	
+	public final static String MSG_DIR_NOT_ALLOWED = "MSG_DIR_NOT_ALLOWED";
+
 	// Name of the resource bundle to use for compiler messages.
 	private final static String bundleName = "org.quattor.pan.Messages";
 

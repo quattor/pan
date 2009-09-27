@@ -20,6 +20,9 @@
 
 package org.quattor.pan.dml.functions;
 
+import static org.quattor.pan.utils.MessageUtils.MSG_DIR_NOT_ALLOWED;
+import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_IN_COMPILE_TIME_CONTEXT;
+import static org.quattor.pan.utils.MessageUtils.MSG_NONEXISTANT_FILE;
 import static org.quattor.pan.utils.MessageUtils.MSG_ONE_ARG_REQ;
 import static org.quattor.pan.utils.MessageUtils.MSG_RELATIVE_FILE_REQ;
 
@@ -35,6 +38,7 @@ import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.StringProperty;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
+import org.quattor.pan.exceptions.SystemException;
 import org.quattor.pan.template.Context;
 import org.quattor.pan.template.SourceRange;
 
@@ -45,23 +49,18 @@ import org.quattor.pan.template.SourceRange;
  * @author loomis
  * 
  */
-final public class ReadFile extends BuiltInFunction {
-	
-	// TODO: Should this be named "file_contents"?
-
-	// TODO: This class is incomplete. Need to think about generalizing source
-	// files.
+final public class FileContents extends BuiltInFunction {
 
 	private static final long serialVersionUID = 1053594650245882162L;
 
-	private ReadFile(SourceRange sourceRange, Operation... operations)
+	private FileContents(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super(sourceRange, operations);
 
 		// There must be exactly one argument.
 		if (operations.length != 1) {
 			throw SyntaxException.create(sourceRange, MSG_ONE_ARG_REQ,
-					"read_file");
+					"file_contents");
 		}
 
 		// If there is already a fixed argument, then check that it is valid.
@@ -69,14 +68,14 @@ final public class ReadFile extends BuiltInFunction {
 			File f = processArgument((Element) operations[0]);
 			if (f == null) {
 				throw SyntaxException.create(sourceRange,
-						MSG_RELATIVE_FILE_REQ, "read_file");
+						MSG_RELATIVE_FILE_REQ, "file_contents");
 			}
 		}
 	}
 
 	public static Operation getInstance(SourceRange sourceRange,
 			Operation... operations) throws SyntaxException {
-		return new ReadFile(sourceRange, operations);
+		return new FileContents(sourceRange, operations);
 	}
 
 	/**
@@ -147,6 +146,14 @@ final public class ReadFile extends BuiltInFunction {
 	@Override
 	public Element execute(Context context) {
 
+		// Quickly check to see if this is a compile-time context. This function
+		// cannot be evaluated in such a context.
+		if (context.isCompileTimeContext()) {
+			throw EvaluationException.create(sourceRange,
+					MSG_INVALID_IN_COMPILE_TIME_CONTEXT, this.getClass()
+							.getSimpleName());
+		}
+
 		// Calculate arguments.
 		Element[] args = calculateArgs(context);
 		assert (args.length == 1);
@@ -155,12 +162,27 @@ final public class ReadFile extends BuiltInFunction {
 		File f = processArgument(args[0]);
 		if (f == null) {
 			throw EvaluationException.create(sourceRange,
-					MSG_RELATIVE_FILE_REQ, "read_file");
+					MSG_RELATIVE_FILE_REQ, "file_contents");
 		}
 
 		// Use the lookup algorithm to convert this to an absolute file name for
 		// an existing file.
+		File srcFile = context.lookupFile(f.toString());
 
-		return StringProperty.getInstance("OK");
+		if (srcFile != null) {
+			if (srcFile.isDirectory()) {
+				throw EvaluationException.create(sourceRange,
+						MSG_DIR_NOT_ALLOWED, "file_contents");
+			}
+			try {
+				return readFileAsString(srcFile.getAbsoluteFile());
+			} catch (IOException e) {
+				throw new SystemException(e.getLocalizedMessage(), srcFile);
+			}
+		} else {
+			throw EvaluationException.create(sourceRange, MSG_NONEXISTANT_FILE,
+					"file_contents");
+		}
+
 	}
 }

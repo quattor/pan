@@ -70,6 +70,7 @@ import org.quattor.pan.utils.GlobalVariable;
 import org.quattor.pan.utils.MessageUtils;
 import org.quattor.pan.utils.Path;
 import org.quattor.pan.utils.SourceLocation;
+import org.quattor.pan.utils.SourceLocator;
 import org.quattor.pan.utils.Term;
 
 /**
@@ -395,6 +396,11 @@ public class BuildContext implements Context {
 		}
 
 		return template;
+	}
+
+	public File lookupFile(String name) {
+		SourceLocator locator = compiler.getSourceLocator();
+		return locator.lookup(name, "", relativeLoadpaths);
 	}
 
 	public LocalVariableMap createLocalVariableMap(ListResource argv) {

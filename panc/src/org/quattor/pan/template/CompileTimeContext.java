@@ -208,6 +208,11 @@ public class CompileTimeContext implements Context {
 		return null;
 	}
 
+	public File lookupFile(String name) {
+		// This should never be called.
+		return null;
+	}
+
 	public LocalVariableMap createLocalVariableMap(ListResource argv) {
 		LocalVariableMap oldMap = localVariables;
 		localVariables = new LocalVariableMap(argv);

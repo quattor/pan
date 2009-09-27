@@ -20,6 +20,7 @@
 
 package org.quattor.pan.template;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -114,6 +115,8 @@ public interface Context {
 	 * global cache to compile the template.
 	 */
 	public Template globalLoad(String name, boolean lookupOnly);
+
+	public File lookupFile(String name);
 
 	public LocalVariableMap createLocalVariableMap(ListResource argv);
 
@@ -462,6 +465,6 @@ public interface Context {
 	public void setRelativeLoadpaths(List<String> rpaths);
 
 	public List<String> getRelativeLoadpaths();
-	
+
 	public int getDeprecationLevel();
 }

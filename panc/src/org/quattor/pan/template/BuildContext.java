@@ -334,7 +334,7 @@ public class BuildContext implements Context {
 		// disk may be different for different object templates. The raw
 		// (unduplicated) value of LOADPATH can be used because it will not be
 		// changed by the code below.
-		File tplfile = compiler.getTemplateLocator().lookup(name,
+		File tplfile = compiler.getSourceLocator().lookup(name,
 				relativeLoadpaths);
 
 		// Didn't find the template. Either return null or throw an exception

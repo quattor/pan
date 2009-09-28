@@ -538,6 +538,13 @@ variable X ?=
 
       <itemizedlist>
         <listitem>
+          <para>(SF RFE #2718551) Implement a file_contents() function that
+          will lookup the named file and then provide the contents as a
+          string. (Note that the implementation does not yet add the named
+          file as a dependency.)</para>
+        </listitem>
+
+        <listitem>
           <para>(SF RFE #2806721) Request to add an <function>md5</function>
           function. A more general <function>digest</function> function was
           added that allows the digest algorithm to be specified.</para>

@@ -57,7 +57,7 @@
     <para>A template name is a series of substrings separated by slashes. Each
     substring may consist of letters, digits, underscores, hyphens, periods,
     and pluses. The substrings may not be empty or begin with a period; the
-    template name may not begin or end with a slash. </para>
+    template name may not begin or end with a slash.</para>
 
     <section>
       <title>Object Templates</title>
@@ -535,6 +535,13 @@ type small_even_nlist = small_even{};</programlisting>
           <colspec align="center" />
 
           <tbody>
+            <row>
+              <entry><xref linkend="file_contents" /></entry>
+
+              <entry>Lookup the named file and provide the file's contents as
+              a string.</entry>
+            </row>
+
             <row>
               <entry><xref linkend="format" /></entry>
 

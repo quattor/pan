@@ -487,7 +487,7 @@ structure template mount_cdrom;
       <literal>MD5</literal>, <literal>SHA</literal>,
       <literal>SHA-1</literal>, <literal>SHA-256</literal>,
       <literal>SHA-384</literal>, and <literal>SHA-512</literal>. The
-      algorithm name is not case sensitive. </para>
+      algorithm name is not case sensitive.</para>
     </refsection>
   </refentry>
 
@@ -663,6 +663,48 @@ r = exists(v+'');</programlisting>
       <para>The value of <varname>r</varname> in this case will be
       <literal>true</literal> if <literal>/some/absolute/path</literal> exists
       or <literal>false</literal> otherwise.</para>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="file_contents">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>file_contents</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>file_contents</refname>
+
+      <refpurpose>provide contents of file as a string</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>string <function>file_contents</function></funcdef>
+
+          <paramdef>string <parameter>filename</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>This function will return a string containing the contents of the
+      named file. The file is located using the standard source file lookup
+      algorithm. Because the load path is used to find the file, this function
+      may not be used to create a compile-time constant. If the file cannot be
+      found, an error will be raised.</para>
     </refsection>
   </refentry>
 

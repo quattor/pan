@@ -41,7 +41,7 @@ public class AnnotationToken extends Token {
 	public void dump() {
 		if (dumpAnnotation) {
 			System.out.println("@(");
-			if (map instanceof Map) {
+			if (map instanceof Map<?, ?>) {
 				Map<?, ?> mymap = (Map<?, ?>) map;
 				for (Entry<?, ?> entry : mymap.entrySet()) {
 					System.out.println(entry.getKey() + " = '"

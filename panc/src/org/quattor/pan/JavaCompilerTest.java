@@ -244,7 +244,7 @@ public class JavaCompilerTest {
 		Compiler compiler = getDefaultCompiler(objtpl, rootdir, formatter);
 		Set<Throwable> exceptions = compiler.process().getErrors();
 
-		if (expectation instanceof Class) {
+		if (expectation instanceof Class<?>) {
 
 			// Cast to an exception class.
 			Class<?> exceptionClass = (Class<?>) expectation;

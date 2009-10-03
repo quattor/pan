@@ -182,7 +182,7 @@ public class ScriptCompilerTest {
 					+ value.getClass().getSimpleName();
 		}
 
-		if (expectation instanceof Class) {
+		if (expectation instanceof Class<?>) {
 
 			// Cast to an exception class.
 			Class<?> exceptionClass = (Class<?>) expectation;

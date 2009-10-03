@@ -27,7 +27,6 @@ import static org.quattor.pan.template.Template.TemplateType.STRUCTURE;
 import static org.quattor.pan.template.Template.TemplateType.UNIQUE;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_STATEMENT_IN_STRUCT_TPL;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_STMT_IN_DECL_TPL;
-import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_TPL_NAME;
 import static org.quattor.pan.utils.MessageUtils.MSG_MISNAMED_TPL;
 import static org.quattor.pan.utils.MessageUtils.MSG_MULTIPLY_DEFINED_FUNCTION;
 import static org.quattor.pan.utils.MessageUtils.MSG_MULTIPLY_DEFINED_TYPE;
@@ -52,6 +51,7 @@ import org.quattor.pan.statement.IncludeStatement;
 import org.quattor.pan.statement.Statement;
 import org.quattor.pan.statement.TypeStatement;
 import org.quattor.pan.statement.VariableStatement;
+import org.quattor.pan.utils.SourceFile;
 
 /**
  * An immutable Template class that corresponds to a single pan language
@@ -140,6 +140,12 @@ public class Template implements Serializable {
 			.compile("^[\\w\\./+-]+$");
 
 	/**
+	 * Information about the source file from which this template was
+	 * constructed.
+	 */
+	public final SourceFile sourceFile;
+
+	/**
 	 * The source from which this template was constructed. This must be an
 	 * absolute File or null.
 	 */
@@ -199,34 +205,26 @@ public class Template implements Serializable {
 	public Template(File source, SourceRange sourceRange, TemplateType type,
 			String name, List<Statement> statements) throws SyntaxException {
 
+		try {
+			sourceFile = new SourceFile(name, SourceFile.Type.PAN, source);
+		} catch (IllegalArgumentException e) {
+			throw new SyntaxException(e.getMessage(), sourceRange, source);
+		}
+
 		// Check that the given source is an absolute path. The current
 		// directory may have changed; consequently we cannot simply generate an
 		// absolute file from the one supplied.
-		this.source = source;
-		assert ((source == null) || (source.isAbsolute()));
+		this.name = sourceFile.name;
+		this.source = sourceFile.path;
 
 		// Copy in the type of this template.
 		assert (type != null);
 		this.type = type;
 
-		// Copy in the name of this template.
-		assert (name != null);
-		this.name = name;
-
 		// If the statements is null, generate an empty list.
 		if (statements == null) {
 			statements = new LinkedList<Statement>();
 		}
-
-		// Check that this is a valid template name. Such names may be
-		// namespaced.
-		if (!isValidTemplateName(name)) {
-			throw SyntaxException.create(sourceRange, source,
-					MSG_INVALID_TPL_NAME, name);
-		}
-
-		// Check that the source file ends with the template name.
-		weakTemplateNameVerification(source, name, sourceRange);
 
 		// Create the lists of statements to run. Create two separate lists to
 		// allow faster execution.
@@ -406,43 +404,6 @@ public class Template implements Serializable {
 	public static boolean checkValidInclude(TemplateType includeeType,
 			TemplateType includedType) {
 		return allowedIncludes[includeeType.ordinal()][includedType.ordinal()];
-	}
-
-	/**
-	 * Performs a weak check of the template name, verifying that the source
-	 * location ends with the internal name of the template. This is a weak
-	 * check because no information is available about the include directory
-	 * used to lookup the template. For example the following will pass this
-	 * check, but be misnamed when the include directory is taken into account:
-	 * 
-	 * Source: /one/two/three/four.tpl
-	 * 
-	 * Name: three/four
-	 * 
-	 * Include directory: /one
-	 * 
-	 * This example passes this test, but is ultimately a badly named file. The
-	 * example would be looking for the template named "two/three/four". A full
-	 * check should always be done when loading a template.
-	 * 
-	 * @param source
-	 *            source file for the template; if null, then no check is done
-	 * @param name
-	 *            internal name of the template
-	 * @param sourceRange
-	 *            source range for any raised exceptions
-	 * @throws SyntaxException
-	 */
-	private void weakTemplateNameVerification(File source, String name,
-			SourceRange sourceRange) throws SyntaxException {
-
-		if (source != null) {
-			String uri = source.toURI().toString();
-			if (!uri.endsWith("/" + name + ".tpl")) {
-				throw SyntaxException.create(sourceRange, source,
-						MSG_MISNAMED_TPL, name);
-			}
-		}
 	}
 
 	/**

@@ -41,11 +41,11 @@ public class SyntaxException extends Exception {
 
 	private File file;
 
-	private SyntaxException(String message, SourceRange sourceRange) {
+	public SyntaxException(String message, SourceRange sourceRange) {
 		this(message, sourceRange, null);
 	}
 
-	private SyntaxException(String message, SourceRange sourceRange, File file) {
+	public SyntaxException(String message, SourceRange sourceRange, File file) {
 		super(message);
 		this.sourceRange = sourceRange;
 		this.file = file;

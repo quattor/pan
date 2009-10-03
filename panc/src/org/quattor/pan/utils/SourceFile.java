@@ -6,13 +6,19 @@ import static org.quattor.pan.utils.MessageUtils.MSG_MISNAMED_TPL;
 import static org.quattor.pan.utils.MessageUtils.MSG_SRC_FILE_NAME_OR_TYPE_IS_NULL;
 
 import java.io.File;
+import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
+
+import net.jcip.annotations.Immutable;
 
 import org.quattor.pan.exceptions.CompilerError;
 import org.quattor.pan.template.Template;
 
-public class SourceFile implements Comparable<SourceFile> {
+@Immutable
+public class SourceFile implements Comparable<SourceFile>, Serializable {
+
+	private static final long serialVersionUID = 6307480037651666260L;
 
 	/**
 	 * Source files are either a pan language template or a text file.
@@ -20,7 +26,7 @@ public class SourceFile implements Comparable<SourceFile> {
 	 * @author loomis
 	 * 
 	 */
-	enum Type {
+	public enum Type {
 		PAN, TXT
 	};
 

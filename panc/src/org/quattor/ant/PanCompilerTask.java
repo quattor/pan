@@ -890,23 +890,6 @@ public class PanCompilerTask extends Task {
 		}
 
 		/**
-		 * Method will return true if the named file exists and was modified
-		 * after the given target time.
-		 * 
-		 * @param file
-		 *            File to check
-		 * @param targetTime
-		 *            time (in milliseconds since the epoch) to use for the
-		 *            comparison
-		 * @return true if the named file exists and was modified after the
-		 *         target time
-		 */
-		public boolean isModifiedAfter(File file, long targetTime) {
-			long modtime = getModificationTime(file);
-			return ((modtime != 0L) && (modtime > targetTime));
-		}
-
-		/**
 		 * Method will return true if the named file does not exist or was
 		 * modified after the given target time.
 		 * 

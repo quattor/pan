@@ -25,8 +25,6 @@ import static org.quattor.pan.utils.MessageUtils.MSG_UNEXPECTED_EXCEPTION_WHILE_
 
 import java.io.PrintStream;
 import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.OutputKeys;
@@ -42,7 +40,9 @@ import org.quattor.pan.dml.data.HashResource;
 import org.quattor.pan.dml.data.ListResource;
 import org.quattor.pan.dml.data.Property;
 import org.quattor.pan.dml.data.Resource;
+import org.quattor.pan.dml.data.StringProperty;
 import org.quattor.pan.exceptions.CompilerError;
+import org.quattor.pan.utils.Base64;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -51,8 +51,6 @@ public class XmlDBFormatter implements Formatter {
 	private static final XmlDBFormatter instance = new XmlDBFormatter();
 
 	private static final String XMLDB_NS = XMLConstants.NULL_NS_URI;
-
-	private static final Pattern p = Pattern.compile("^[\\w\\.-]+$");
 
 	private static final String suffix = "xml";
 
@@ -140,7 +138,8 @@ public class XmlDBFormatter implements Formatter {
 		// Normally the tag name will just be the type of the element.
 		String tagName = node.getTypeAsString();
 
-		String nameCheck = null;
+		String actualElementName = null;
+		String stringContents = null;
 
 		if (nbList != 0) {
 			if (!tagName.equals("list") && !tagName.equals("nlist")) {
@@ -152,14 +151,32 @@ public class XmlDBFormatter implements Formatter {
 			atts.addAttribute(XMLDB_NS, null, "type", "CDATA", tagName);
 		}
 
+		// If this is a StringProperty it may need to have its contents encoded.
+		// Add the necessary attribute if this is the case.
+		if (node instanceof StringProperty) {
+			String s = ((Property) node).toString();
+			if (XMLFormatterUtils.isValidXMLString(s)) {
+				stringContents = s;
+			} else {
+				stringContents = Base64.encodeBytes(s.getBytes());
+				atts
+						.addAttribute(XMLDB_NS, null, "encoding", "CDATA",
+								"base64");
+			}
+		}
+
 		// Start the element. The name attribute must be passed in by the
 		// parent. Any additional attributes can also be passed in.
 		if (!(tagName.equals("list") && nbList == 0)) {
-			nameCheck = checkName(name);
-			if (!nameCheck.equals(name)) {
+			if (XMLFormatterUtils.isValidXMLName(name)) {
+				handler.startElement(XMLDB_NS, null, name, atts);
+				actualElementName = name;
+			} else {
+				String encodedName = XMLFormatterUtils.encodeAsXMLName(name);
 				atts.addAttribute(XMLDB_NS, null, "unencoded", "CDATA", name);
+				handler.startElement(XMLDB_NS, null, encodedName, atts);
+				actualElementName = encodedName;
 			}
-			handler.startElement(XMLDB_NS, null, nameCheck, atts);
 		}
 
 		// Clear the attribute structure for reuse.
@@ -190,6 +207,11 @@ public class XmlDBFormatter implements Formatter {
 				nbList--;
 			}
 
+		} else if (node instanceof StringProperty) {
+
+			handler.characters(stringContents.toCharArray(), 0, stringContents
+					.length());
+
 		} else {
 
 			String s = ((Property) node).toString();
@@ -198,40 +220,8 @@ public class XmlDBFormatter implements Formatter {
 
 		// Finish the element.
 		if (!(tagName.equals("list") && nbList == 0)) {
-			handler.endElement(XMLDB_NS, null, nameCheck);
+			handler.endElement(XMLDB_NS, null, actualElementName);
 		}
 	}
 
-	private String checkName(String name) {
-		Matcher m = p.matcher(name);
-		boolean b = m.matches();
-		if ((name.startsWith("xml")) || (!b)) {
-			name = "_".concat(data2hex(name.getBytes()));
-		} else if (name.equals("")) {
-			name = "_";
-		}
-		return name;
-	}
-
-	private static final String data2hex(byte[] data) {
-		if (data == null) {
-			return null;
-		}
-
-		int len = data.length;
-		StringBuffer buf = new StringBuffer(len * 2);
-		for (int pos = 0; pos < len; pos++) {
-			buf.append(toHexChar((data[pos] >>> 4) & 0x0F)).append(
-					toHexChar(data[pos] & 0x0F));
-		}
-		return buf.toString();
-	}
-
-	private static char toHexChar(int i) {
-		if ((0 <= i) && (i <= 9)) {
-			return (char) ('0' + i);
-		} else {
-			return (char) ('a' + (i - 10));
-		}
-	}
 }

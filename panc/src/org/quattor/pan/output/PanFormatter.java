@@ -42,6 +42,7 @@ import org.quattor.pan.dml.data.Property;
 import org.quattor.pan.dml.data.Resource;
 import org.quattor.pan.dml.data.StringProperty;
 import org.quattor.pan.exceptions.CompilerError;
+import org.quattor.pan.utils.Base64;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -132,12 +133,26 @@ public class PanFormatter implements Formatter {
 			PrintStream ps, Element node) throws SAXException {
 
 		String tagName = node.getTypeAsString();
+		String stringContents = null;
 
-		// Normally the tag name will just be the type of the element. However,
-		// for links we need to be careful.
-		if (node instanceof StringProperty && !"string".equals(tagName)) {
-			atts.addAttribute(PAN_NS, null, "type", "CDATA", tagName);
-			tagName = "string";
+		if (node instanceof StringProperty) {
+
+			// Normally the tag name will just be the type of the element.
+			// However, for links we need to be careful.
+			if (!"string".equals(tagName)) {
+				atts.addAttribute(PAN_NS, null, "type", "CDATA", tagName);
+				tagName = "string";
+			}
+
+			// Check to see if the string contents need to be encoded.
+			String s = ((Property) node).toString();
+			if (XMLFormatterUtils.isValidXMLString(s)) {
+				stringContents = s;
+			} else {
+				stringContents = Base64.encodeBytes(s.getBytes());
+				atts.addAttribute(PAN_NS, null, "encoding", "CDATA", "base64");
+			}
+
 		}
 
 		// Start the element. The name attribute must be passed in by the
@@ -166,6 +181,11 @@ public class PanFormatter implements Formatter {
 			for (Resource.Entry entry : list) {
 				writeChild(handler, atts, ps, entry.getValue());
 			}
+
+		} else if (node instanceof StringProperty) {
+
+			handler.characters(stringContents.toCharArray(), 0, stringContents
+					.length());
 
 		} else if (node instanceof Property) {
 

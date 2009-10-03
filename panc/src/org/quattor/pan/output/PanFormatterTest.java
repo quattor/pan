@@ -29,6 +29,7 @@ import java.io.PrintStream;
 import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 
+import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -41,9 +42,25 @@ import org.quattor.pan.dml.data.ListResource;
 import org.quattor.pan.dml.data.LongProperty;
 import org.quattor.pan.dml.data.StringProperty;
 import org.quattor.pan.exceptions.InvalidTermException;
+import org.quattor.pan.utils.Term;
+import org.quattor.pan.utils.TermFactory;
 import org.xml.sax.InputSource;
 
 public class PanFormatterTest {
+
+	@Test
+	public void checkInvalidStringIsEncoded() throws InvalidTermException,
+			TransformerException, IOException {
+
+		Term t = TermFactory.create("element");
+		StringProperty zerostring = StringProperty.getInstance("\u0000");
+
+		HashResource root = new HashResource();
+		root.put(t, zerostring);
+
+		Formatter formatter = PanFormatter.getInstance();
+		XMLFormatterUtilsTest.writeAndReadAsXML(formatter, root);
+	}
 
 	@Test
 	public void testPanFormatter() throws IOException, InvalidTermException {

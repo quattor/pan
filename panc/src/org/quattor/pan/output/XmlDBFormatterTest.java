@@ -31,6 +31,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
+import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -43,11 +44,27 @@ import org.quattor.pan.dml.data.ListResource;
 import org.quattor.pan.dml.data.LongProperty;
 import org.quattor.pan.dml.data.StringProperty;
 import org.quattor.pan.exceptions.InvalidTermException;
+import org.quattor.pan.utils.Term;
+import org.quattor.pan.utils.TermFactory;
 import org.xml.sax.InputSource;
 
 public class XmlDBFormatterTest {
 
 	private static final Pattern p = Pattern.compile("^[\\w\\.-]+$");
+
+	@Test
+	public void checkInvalidStringIsEncoded() throws InvalidTermException,
+			TransformerException, IOException {
+
+		Term t = TermFactory.create("element");
+		StringProperty zerostring = StringProperty.getInstance("\u0000");
+
+		HashResource root = new HashResource();
+		root.put(t, zerostring);
+
+		Formatter formatter = XmlDBFormatter.getInstance();
+		XMLFormatterUtilsTest.writeAndReadAsXML(formatter, root);
+	}
 
 	@Test
 	public void testXmlDBFormatter() throws IOException, InvalidTermException {

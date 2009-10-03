@@ -1,9 +1,15 @@
 package org.quattor.pan.utils;
 
+import static org.quattor.pan.utils.MessageUtils.MSG_ABSOLUTE_PATH_REQ;
+import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_TPL_NAME;
+import static org.quattor.pan.utils.MessageUtils.MSG_MISNAMED_TPL;
+import static org.quattor.pan.utils.MessageUtils.MSG_SRC_FILE_NAME_OR_TYPE_IS_NULL;
+
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.quattor.pan.exceptions.CompilerError;
 import org.quattor.pan.template.Template;
 
 public class SourceFile implements Comparable<SourceFile> {
@@ -34,20 +40,21 @@ public class SourceFile implements Comparable<SourceFile> {
 
 		// Check that name and type are not null.
 		if (name == null || type == null) {
-			throw new IllegalArgumentException();
+			throw CompilerError.create(MSG_SRC_FILE_NAME_OR_TYPE_IS_NULL);
 		}
 
 		// The path can be null, but if it isn't it must be an absolute path.
 		// The current working directory may have changed so we can not reliably
 		// create an absolute path from a relative one.
 		if (path != null && !path.isAbsolute()) {
-			throw new IllegalArgumentException();
+			throw CompilerError.create(MSG_ABSOLUTE_PATH_REQ);
 		}
 
 		// The name must be a valid template name, even if it is just a normal
 		// text file to be included through a file_contents() call.
 		if (!Template.isValidTemplateName(name)) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException(MessageUtils.format(
+					MSG_INVALID_TPL_NAME, name));
 		}
 
 		// Ensure that the name, type, and source are consistent. An exception
@@ -105,9 +112,30 @@ public class SourceFile implements Comparable<SourceFile> {
 
 	@Override
 	public String toString() {
-		return String.format("\"%s\" \"%s\" \"%s\"", name, location, type);
+		// TODO: Update to include general source files when format can change.
+		switch (type) {
+		case PAN:
+			// return String.format("\"%s\" \"%s\" \"%s\"", name, location,
+			// type);
+			return String.format("\"%s\" \"%s\"", name, location);
+		case TXT:
+			return "";
+		default:
+			return "";
+		}
 	}
 
+	/**
+	 * Perform some weak verification checks between the source file name, type,
+	 * and the source location. It will return the presumed loadpath (location)
+	 * of the source file.
+	 * 
+	 * @param name
+	 * @param type
+	 * @param source
+	 * @return
+	 * @throws IllegalArgumentException
+	 */
 	private static File weakTemplateNameVerification(String name, Type type,
 			File source) throws IllegalArgumentException {
 
@@ -129,7 +157,8 @@ public class SourceFile implements Comparable<SourceFile> {
 			// on different platforms.
 			String uri = source.toURI().toString();
 			if (!uri.endsWith(ending)) {
-				throw new IllegalArgumentException();
+				throw new IllegalArgumentException(MessageUtils.format(
+						MSG_MISNAMED_TPL, name));
 			}
 
 			// Strip off the ending to get the load path for this file.

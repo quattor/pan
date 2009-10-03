@@ -31,7 +31,10 @@
 
      <!-- Hard-coded file names in tests. -->
      <Match>
-       <Class name="org.quattor.pan.CompilerOptionsTest"/>
+       <Or>
+         <Class name="org.quattor.pan.CompilerOptionsTest"/>
+         <Class name="org.quattor.pan.utils.SourceFileTest"/>
+       </Or>
        <Bug pattern="DMI_HARDCODED_ABSOLUTE_FILENAME"/>
      </Match>
 

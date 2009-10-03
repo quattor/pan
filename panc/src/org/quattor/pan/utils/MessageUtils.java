@@ -391,6 +391,10 @@ public class MessageUtils {
 	
 	public final static String MSG_DIR_NOT_ALLOWED = "MSG_DIR_NOT_ALLOWED";
 
+	public final static String MSG_ABSOLUTE_PATH_REQ = "MSG_ABSOLUTE_PATH_REQ";
+
+	public final static String MSG_SRC_FILE_NAME_OR_TYPE_IS_NULL = "MSG_SRC_FILE_NAME_OR_TYPE_IS_NULL";
+
 	// Name of the resource bundle to use for compiler messages.
 	private final static String bundleName = "org.quattor.pan.Messages";
 

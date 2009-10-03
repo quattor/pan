@@ -145,6 +145,13 @@ public class BuildContext implements Context {
 	private Map<String, Template> dependencies;
 
 	/**
+	 * This set contains "other" dependencies that consist of templates that
+	 * were missing or ordinary files that have been included through the
+	 * file_contents() function.
+	 */
+	private Set<SourceFile> otherDependencies;
+
+	/**
 	 * This set contains all of the object templates that this machine
 	 * configuration depends upon.
 	 */
@@ -208,6 +215,7 @@ public class BuildContext implements Context {
 		templates = new Stack<SourceLocation>();
 		bindings = new TreeMap<Path, List<FullType>>();
 		dependencies = new HashMap<String, Template>();
+		otherDependencies = new TreeSet<SourceFile>();
 		flags = new FinalFlags();
 
 		localVariables = new LocalVariableMap();
@@ -287,9 +295,14 @@ public class BuildContext implements Context {
 
 		Set<SourceFile> sourceFiles = new TreeSet<SourceFile>();
 
+		// Include all of the standard dependencies.  
 		for (Template t : dependencies.values()) {
 			sourceFiles.add(t.sourceFile);
 		}
+
+		// Add the files that were looked-up but not found as well as the files
+		// included via the file_contents() function.
+		sourceFiles.addAll(otherDependencies);
 
 		return Collections.unmodifiableSet(sourceFiles);
 	}
@@ -346,13 +359,21 @@ public class BuildContext implements Context {
 		File tplfile = compiler.getSourceLocator().lookup(name,
 				relativeLoadpaths);
 
-		// Didn't find the template. Either return null or throw an exception
-		// depending on the lookupOnly flag. (The lookupOnly flag is used when
-		// processing the exists() function.)
+		// Didn't find the template.
 		if (tplfile == null) {
 			if (lookupOnly) {
+
+				// Files that were searched for but not found are still
+				// dependencies. Keep track of these so that they can be
+				// included in the dependency file and checked when trying to
+				// see if profiles are up-to-date.
+				otherDependencies.add(new SourceFile(name,
+						SourceFile.Type.MISSING, null));
 				return null;
 			} else {
+
+				// The lookupOnly flag was not set, so it is an error if the
+				// template has not been found.
 				throw EvaluationException.create((SourceRange) null,
 						(BuildContext) this, MSG_CANNOT_LOCATE_TEMPLATE, name);
 			}
@@ -408,7 +429,12 @@ public class BuildContext implements Context {
 
 	public File lookupFile(String name) {
 		SourceLocator locator = compiler.getSourceLocator();
-		return locator.lookup(name, "", relativeLoadpaths);
+		File path = locator.lookup(name, "", relativeLoadpaths);
+		if (path != null) {
+			SourceFile source = new SourceFile(name, SourceFile.Type.TXT, path);
+			otherDependencies.add(source);
+		}
+		return path;
 	}
 
 	public LocalVariableMap createLocalVariableMap(ListResource argv) {

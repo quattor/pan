@@ -27,7 +27,7 @@ public class SourceFile implements Comparable<SourceFile>, Serializable {
 	 * 
 	 */
 	public enum Type {
-		PAN, TXT
+		PAN, TXT, MISSING
 	};
 
 	public final String name;
@@ -42,11 +42,17 @@ public class SourceFile implements Comparable<SourceFile>, Serializable {
 			throws IllegalArgumentException {
 		this.name = name;
 		this.type = type;
-		this.path = path;
 
 		// Check that name and type are not null.
 		if (name == null || type == null) {
 			throw CompilerError.create(MSG_SRC_FILE_NAME_OR_TYPE_IS_NULL);
+		}
+
+		// The path will be ignored if the SourceFile is MISSING.
+		if (!type.equals(Type.MISSING)) {
+			this.path = path;
+		} else {
+			this.path = null;
 		}
 
 		// The path can be null, but if it isn't it must be an absolute path.
@@ -118,19 +124,31 @@ public class SourceFile implements Comparable<SourceFile>, Serializable {
 
 	@Override
 	public String toString() {
-		// TODO: Update to include general source files when format can change.
+
+		// TODO: Update dependency file format to allow read dependency mgt.
+
+		// For backward compatibility, the TXT and MISSING files are not
+		// included in the dependency file. Unfortunately adding this
+		// information requires a non-backward compatible change to the file
+		// format.
+
 		switch (type) {
 		case PAN:
-			// return String.format("\"%s\" \"%s\" \"%s\"", name, location,
-			// type);
-			String s = location.toString();
+			String s = (location != null) ? location.toString() : "";
 			if (!s.endsWith("/")) {
 				return String.format("\"%s\" \"%s/\"%n", name, s);
 			} else {
 				return String.format("\"%s\" \"%s\"%n", name, s);
 			}
 		case TXT:
-			return "";
+			// s = (location != null) ? location.toString() : "";
+			// if (!s.endsWith("/")) {
+			// return String.format("\"%s\" \"%s/\"%n", name, s);
+			// } else {
+			// return String.format("\"%s\" \"%s\"%n", name, s);
+			// }
+		case MISSING:
+			// return String.format("\"%s\" \"\"%n", name);
 		default:
 			return "";
 		}

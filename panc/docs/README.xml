@@ -534,7 +534,15 @@ variable X ?=
     <title>Change Log</title>
 
     <section>
-      <title>HEAD</title>
+      <title>Version 8.2.10</title>
+
+      <para>Although this version internally keeps track of dependencies from
+      <function>exists</function> and <function>file_contents</function>
+      function calls, these dependencies are not written to the dependency
+      file in order to keep backward compatibility. A future release will
+      update the dependency file format and make the
+      <function>exists</function> and <function>file_contents</function>
+      dependencies available to other tools. </para>
 
       <itemizedlist>
         <listitem>
@@ -545,10 +553,7 @@ variable X ?=
         <listitem>
           <para>(SF RFE #2718551) Implement a file_contents() function that
           will lookup the named file and then provide the contents as a
-          string. (Note that the implementation does not yet add dependency
-          information to the dependency file. Use of this function should be
-          used with caution until the dependency file format is changed and
-          this information is added.)</para>
+          string.</para>
         </listitem>
 
         <listitem>

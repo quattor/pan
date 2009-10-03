@@ -538,10 +538,17 @@ variable X ?=
 
       <itemizedlist>
         <listitem>
+          <para>(SF RFE #2871382) Correct a problem where binary data in
+          strings could lead to invalid XML files being produced.</para>
+        </listitem>
+
+        <listitem>
           <para>(SF RFE #2718551) Implement a file_contents() function that
           will lookup the named file and then provide the contents as a
-          string. (Note that the implementation does not yet add the named
-          file as a dependency.)</para>
+          string. (Note that the implementation does not yet add dependency
+          information to the dependency file. Use of this function should be
+          used with caution until the dependency file format is changed and
+          this information is added.)</para>
         </listitem>
 
         <listitem>

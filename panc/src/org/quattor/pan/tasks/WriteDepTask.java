@@ -27,7 +27,6 @@ import java.io.PrintStream;
 import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
@@ -39,9 +38,8 @@ import org.quattor.pan.Compiler;
 import org.quattor.pan.CompilerLogging.LoggingType;
 import org.quattor.pan.cache.Valid2Cache;
 import org.quattor.pan.exceptions.SystemException;
-import org.quattor.pan.template.Template;
-import org.quattor.pan.template.TemplateSourceComparator;
 import org.quattor.pan.utils.MessageUtils;
+import org.quattor.pan.utils.SourceFile;
 
 /**
  * Wraps the <code>WriteDepCallable</code> as a <code>Task</code>. This wrapping
@@ -100,8 +98,7 @@ public class WriteDepTask extends Task<TaskResult> {
 			unprocessed.push(objectName);
 
 			// The complete set of dependencies.
-			Set<Template> allDependencies = new TreeSet<Template>(
-					TemplateSourceComparator.getInstance());
+			Set<SourceFile> allDependencies = new TreeSet<SourceFile>();
 
 			// Use URI instances to operate on the output directory and the
 			// object name. The object name can be namespaced, so this extra
@@ -151,21 +148,28 @@ public class WriteDepTask extends Task<TaskResult> {
 						timestamp = Long.valueOf(result.timestamp);
 					}
 
-					// Write out the dependencies. Add all of the object
-					// templates encountered during the processing to the
-					// unprocessed list.
-					unprocessed.addAll(collectDependencies(allDependencies,
-							result.getDependencies()));
+					// Collect any new dependencies.
+					allDependencies.addAll(result.getDependencies());
+
+					// Add all of the referenced object templates for recursive
+					// inclusion of dependencies.
+					unprocessed.addAll(result.getObjectDependencies());
 				}
 
 			}
 
 			// Open the output file for the dependency information.
-			PrintStream ps = new PrintStream(absolutePath);
-
-			writeDependencies(ps, allDependencies);
-
-			ps.close();
+			PrintStream ps = null;
+			try {
+				ps = new PrintStream(absolutePath);
+				for (SourceFile s : allDependencies) {
+					ps.print(s.toString());
+				}
+			} finally {
+				if (ps != null) {
+					ps.close();
+				}
+			}
 
 			// Mark the end of writing dependency file.
 			taskLogger.log(Level.FINER, "END_DEPFILE", objectName);
@@ -180,82 +184,5 @@ public class WriteDepTask extends Task<TaskResult> {
 
 			return new TaskResult(TaskResult.ResultType.DEP);
 		}
-
-		/**
-		 * Write the given set of dependencies to the given stream. This method
-		 * encapsulates the line format of the dependency file.
-		 * 
-		 * @param ps
-		 *            PrintStream to write the dependencies to
-		 * @param dependencies
-		 *            list of dependencies
-		 */
-		private void writeDependencies(PrintStream ps,
-				Set<Template> dependencies) {
-
-			if (dependencies != null) {
-
-				for (Template template : dependencies) {
-					String tname = template.name;
-					String tfile = template.source.toString();
-
-					// Must strip off the template name from the file name.
-					String fsname = tname.replace('/', File.separatorChar)
-							+ ".tpl";
-
-					// There should always be a match here, so the check
-					// should never be executed.
-					int index = tfile.lastIndexOf(fsname);
-					if (index < 0) {
-						index = tfile.length();
-					}
-					tfile = tfile.substring(0, index);
-
-					ps.printf("\"%s\" \"%s\"%n", tname, tfile);
-				}
-
-			}
-
-		}
 	}
-
-	/**
-	 * Adds the given set of dependencies to the allDependencies set. The method
-	 * will return a list of the names of object templates encountered during
-	 * processing.
-	 * 
-	 * @param allDependencies
-	 *            set to add the given dependencies to
-	 * @param dependencies
-	 *            list of dependencies
-	 * 
-	 * @return list of names of object templates encountered during processing
-	 */
-	private static List<String> collectDependencies(
-			Set<Template> allDependencies, Map<String, Template> dependencies) {
-
-		// List to hold names of object templates encountered during
-		// processing.
-		List<String> objectTemplates = new LinkedList<String>();
-
-		if (dependencies != null) {
-
-			for (Template template : dependencies.values()) {
-
-				// Add the template to the complete set of dependencies.
-				allDependencies.add(template);
-
-				// If the template is an object template, then save the name
-				// for further processing by the parent.
-				if (template.type == Template.TemplateType.OBJECT) {
-					objectTemplates.add(template.name);
-				}
-
-			}
-
-		}
-
-		return objectTemplates;
-	}
-
 }

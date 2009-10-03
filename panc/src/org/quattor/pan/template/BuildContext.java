@@ -69,6 +69,7 @@ import org.quattor.pan.utils.FunctionDefinition;
 import org.quattor.pan.utils.GlobalVariable;
 import org.quattor.pan.utils.MessageUtils;
 import org.quattor.pan.utils.Path;
+import org.quattor.pan.utils.SourceFile;
 import org.quattor.pan.utils.SourceLocation;
 import org.quattor.pan.utils.SourceLocator;
 import org.quattor.pan.utils.Term;
@@ -282,8 +283,15 @@ public class BuildContext implements Context {
 	/**
 	 * Returns an unmodifiable copy of the dependencies.
 	 */
-	public Map<String, Template> getDependencies() {
-		return Collections.unmodifiableMap(dependencies);
+	public Set<SourceFile> getDependencies() {
+
+		Set<SourceFile> sourceFiles = new TreeSet<SourceFile>();
+
+		for (Template t : dependencies.values()) {
+			sourceFiles.add(t.sourceFile);
+		}
+
+		return Collections.unmodifiableSet(sourceFiles);
 	}
 
 	/**

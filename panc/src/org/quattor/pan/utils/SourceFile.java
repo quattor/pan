@@ -123,7 +123,12 @@ public class SourceFile implements Comparable<SourceFile>, Serializable {
 		case PAN:
 			// return String.format("\"%s\" \"%s\" \"%s\"", name, location,
 			// type);
-			return String.format("\"%s\" \"%s\"", name, location);
+			String s = location.toString();
+			if (!s.endsWith("/")) {
+				return String.format("\"%s\" \"%s/\"%n", name, s);
+			} else {
+				return String.format("\"%s\" \"%s\"%n", name, s);
+			}
 		case TXT:
 			return "";
 		default:

@@ -38,6 +38,7 @@ import org.quattor.pan.type.FullType;
 import org.quattor.pan.utils.FunctionDefinition;
 import org.quattor.pan.utils.GlobalVariable;
 import org.quattor.pan.utils.Path;
+import org.quattor.pan.utils.SourceFile;
 import org.quattor.pan.utils.Term;
 
 /**
@@ -85,7 +86,7 @@ public interface Context {
 	/**
 	 * Returns an unmodifiable copy of the dependencies.
 	 */
-	public Map<String, Template> getDependencies();
+	public Set<SourceFile> getDependencies();
 
 	/**
 	 * Returns an unmodifiable copy of the object dependencies.

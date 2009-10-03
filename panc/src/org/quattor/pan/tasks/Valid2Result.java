@@ -20,10 +20,10 @@
 
 package org.quattor.pan.tasks;
 
-import java.util.Map;
+import java.util.Set;
 
 import org.quattor.pan.dml.data.Element;
-import org.quattor.pan.template.Template;
+import org.quattor.pan.utils.SourceFile;
 
 /**
  * Encapsulates the results of the second validation phase.
@@ -37,14 +37,17 @@ public class Valid2Result extends TaskResult {
 
 	public final long timestamp;
 
-	Map<String, Template> dependencies;
+	Set<String> objectDependencies;
+
+	Set<SourceFile> dependencies;
 
 	public Valid2Result(Element root, long timestamp,
-			Map<String, Template> dependencies) {
+			Set<String> objectDependencies, Set<SourceFile> dependencies) {
 		super(ResultType.VALID2);
 
 		this.root = root;
 		this.timestamp = timestamp;
+		this.objectDependencies = objectDependencies;
 		this.dependencies = dependencies;
 	}
 
@@ -52,7 +55,11 @@ public class Valid2Result extends TaskResult {
 		return root;
 	}
 
-	public Map<String, Template> getDependencies() {
+	public Set<String> getObjectDependencies() {
+		return objectDependencies;
+	}
+
+	public Set<SourceFile> getDependencies() {
 		return dependencies;
 	}
 

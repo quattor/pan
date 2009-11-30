@@ -34,11 +34,11 @@ import org.quattor.pan.dml.data.Resource;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.InvalidTermException;
 import org.quattor.pan.exceptions.ValidationException;
+import org.quattor.pan.repository.SourceFile;
 import org.quattor.pan.type.FullType;
 import org.quattor.pan.utils.FunctionDefinition;
 import org.quattor.pan.utils.GlobalVariable;
 import org.quattor.pan.utils.Path;
-import org.quattor.pan.utils.SourceFile;
 import org.quattor.pan.utils.Term;
 
 /**

@@ -18,7 +18,7 @@
  $Id: RangeTest.java 3552 2008-08-03 09:55:58Z loomis $
  */
 
-package org.quattor.pan.utils;
+package org.quattor.pan.repository;
 
 import java.io.File;
 

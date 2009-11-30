@@ -18,7 +18,7 @@
  $Id: TermTest.java 3550 2008-08-02 14:54:26Z loomis $
  */
 
-package org.quattor.pan.utils;
+package org.quattor.pan.repository;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -35,6 +35,7 @@ import java.util.List;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.quattor.pan.utils.TestUtils;
 
 public class SourceLocatorTest {
 

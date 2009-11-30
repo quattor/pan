@@ -23,7 +23,7 @@ package org.quattor.pan.tasks;
 import java.util.Set;
 
 import org.quattor.pan.dml.data.Element;
-import org.quattor.pan.utils.SourceFile;
+import org.quattor.pan.repository.SourceFile;
 
 /**
  * Encapsulates the results of the second validation phase.

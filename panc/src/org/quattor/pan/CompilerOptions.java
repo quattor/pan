@@ -32,9 +32,9 @@ import java.util.regex.Pattern;
 
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.output.Formatter;
+import org.quattor.pan.repository.SourceLocator;
 import org.quattor.pan.template.Context;
 import org.quattor.pan.template.SourceRange;
-import org.quattor.pan.utils.SourceLocator;
 
 /**
  * Encapsulates the global options for the pan compiler. An instance of this

@@ -44,6 +44,7 @@ import java.util.regex.Pattern;
 
 import org.quattor.pan.exceptions.CompilerError;
 import org.quattor.pan.exceptions.SyntaxException;
+import org.quattor.pan.repository.SourceFile;
 import org.quattor.pan.statement.AssignmentStatement;
 import org.quattor.pan.statement.BindStatement;
 import org.quattor.pan.statement.FunctionStatement;
@@ -51,7 +52,6 @@ import org.quattor.pan.statement.IncludeStatement;
 import org.quattor.pan.statement.Statement;
 import org.quattor.pan.statement.TypeStatement;
 import org.quattor.pan.statement.VariableStatement;
-import org.quattor.pan.utils.SourceFile;
 
 /**
  * An immutable Template class that corresponds to a single pan language

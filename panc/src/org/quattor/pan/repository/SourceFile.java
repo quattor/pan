@@ -1,4 +1,4 @@
-package org.quattor.pan.utils;
+package org.quattor.pan.repository;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_ABSOLUTE_PATH_REQ;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_TPL_NAME;
@@ -14,6 +14,7 @@ import net.jcip.annotations.Immutable;
 
 import org.quattor.pan.exceptions.CompilerError;
 import org.quattor.pan.template.Template;
+import org.quattor.pan.utils.MessageUtils;
 
 @Immutable
 public class SourceFile implements Comparable<SourceFile>, Serializable {

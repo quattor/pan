@@ -43,9 +43,9 @@ import org.quattor.pan.cache.BuildCache;
 import org.quattor.pan.cache.CompileCache;
 import org.quattor.pan.cache.Valid1Cache;
 import org.quattor.pan.cache.Valid2Cache;
+import org.quattor.pan.repository.SourceLocator;
 import org.quattor.pan.tasks.Task;
 import org.quattor.pan.tasks.TaskResult;
-import org.quattor.pan.utils.SourceLocator;
 
 /**
  * Primary java interface for invoking the pan compiler. All external methods of

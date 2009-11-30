@@ -60,6 +60,8 @@ import org.quattor.pan.exceptions.InvalidTermException;
 import org.quattor.pan.exceptions.ReturnValueException;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.exceptions.ValidationException;
+import org.quattor.pan.repository.SourceFile;
+import org.quattor.pan.repository.SourceLocator;
 import org.quattor.pan.tasks.BuildResult;
 import org.quattor.pan.tasks.CompileResult;
 import org.quattor.pan.template.Template.TemplateType;
@@ -69,9 +71,7 @@ import org.quattor.pan.utils.FunctionDefinition;
 import org.quattor.pan.utils.GlobalVariable;
 import org.quattor.pan.utils.MessageUtils;
 import org.quattor.pan.utils.Path;
-import org.quattor.pan.utils.SourceFile;
 import org.quattor.pan.utils.SourceLocation;
-import org.quattor.pan.utils.SourceLocator;
 import org.quattor.pan.utils.Term;
 
 /**

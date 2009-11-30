@@ -17,7 +17,7 @@
  $HeadURL: https://svn.lal.in2p3.fr/LCG/QWG/panc/trunk/src/org/quattor/pan/utils/TermTest.java $
  $Id: TermTest.java 3550 2008-08-02 14:54:26Z loomis $
  */
-package org.quattor.pan.utils;
+package org.quattor.pan.repository;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_NON_ABSOLUTE_PATH_IN_INCLUDE_DIRS;
 import static org.quattor.pan.utils.MessageUtils.MSG_NON_DIRECTORY_IN_INCLUDE_DIRS;

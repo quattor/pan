@@ -38,8 +38,8 @@ import org.quattor.pan.Compiler;
 import org.quattor.pan.CompilerLogging.LoggingType;
 import org.quattor.pan.cache.Valid2Cache;
 import org.quattor.pan.exceptions.SystemException;
+import org.quattor.pan.repository.SourceFile;
 import org.quattor.pan.utils.MessageUtils;
-import org.quattor.pan.utils.SourceFile;
 
 /**
  * Wraps the <code>WriteDepCallable</code> as a <code>Task</code>. This wrapping

@@ -43,7 +43,7 @@ import org.quattor.pan.cache.BuildCache;
 import org.quattor.pan.cache.CompileCache;
 import org.quattor.pan.cache.Valid1Cache;
 import org.quattor.pan.cache.Valid2Cache;
-import org.quattor.pan.repository.SourceLocator;
+import org.quattor.pan.repository.SourceRepository;
 import org.quattor.pan.tasks.Task;
 import org.quattor.pan.tasks.TaskResult;
 
@@ -359,8 +359,8 @@ public class Compiler {
 		return v2cache;
 	}
 
-	public SourceLocator getSourceLocator() {
-		return options.templateLocator;
+	public SourceRepository getSourceRepository() {
+		return options.sourceRepository;
 	}
 
 	/**

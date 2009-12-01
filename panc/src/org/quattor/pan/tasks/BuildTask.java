@@ -35,6 +35,7 @@ import org.quattor.pan.cache.CompileCache;
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.Undef;
 import org.quattor.pan.exceptions.EvaluationException;
+import org.quattor.pan.repository.SourceFile;
 import org.quattor.pan.template.BuildContext;
 import org.quattor.pan.template.Context;
 import org.quattor.pan.template.SourceRange;
@@ -57,7 +58,8 @@ public class BuildTask extends Task<BuildResult> {
 	private static final Logger taskLogger = LoggingType.TASK.logger();
 
 	public BuildTask(Compiler compiler, String objectName) {
-		super(TaskResult.ResultType.BUILD, objectName, new CallImpl(compiler, objectName));
+		super(TaskResult.ResultType.BUILD, objectName, new CallImpl(compiler,
+				objectName));
 	}
 
 	/**
@@ -83,15 +85,19 @@ public class BuildTask extends Task<BuildResult> {
 		public BuildResult call() throws Exception {
 
 			// Locate the object template.
-			File tplFile = compiler.getSourceLocator().lookup(objectName);
+			File tplFile = null;
+			SourceFile source = compiler.getSourceRepository()
+					.retrievePanSource(objectName);
 
 			// Throw an exception if the object file cannot be found. Even if it
 			// was given on the command line, it must be accessible from the
 			// include directories otherwise inconsistencies can occur.
-			if (tplFile == null) {
+			if (SourceFile.Type.MISSING.equals(source.getType())) {
 				throw EvaluationException.create((SourceRange) null,
 						(Context) null, MSG_CANNOT_LOCATE_OBJECT_TEMPLATE,
 						objectName);
+			} else {
+				tplFile = source.getPath();
 			}
 
 			// Now actually retrieve the other object's root, waiting if the

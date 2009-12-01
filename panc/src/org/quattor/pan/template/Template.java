@@ -214,8 +214,8 @@ public class Template implements Serializable {
 		// Check that the given source is an absolute path. The current
 		// directory may have changed; consequently we cannot simply generate an
 		// absolute file from the one supplied.
-		this.name = sourceFile.name;
-		this.source = sourceFile.path;
+		this.name = sourceFile.getName();
+		this.source = sourceFile.getPath();
 
 		// Copy in the type of this template.
 		assert (type != null);

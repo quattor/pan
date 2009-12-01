@@ -129,6 +129,10 @@ public class SourceLocator {
 		return lookup(name, emptyRelativePaths);
 	}
 
+	public File lookup(String name, String suffix) {
+		return lookup(name, suffix, emptyRelativePaths);
+	}
+
 	/**
 	 * Locate a template with the given name using the defined session
 	 * directory, include directories, and LOADPATH. The LOADPATH is a list of

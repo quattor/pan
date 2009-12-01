@@ -30,9 +30,13 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
+import org.quattor.pan.exceptions.ConfigurationException;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.output.Formatter;
-import org.quattor.pan.repository.SourceLocator;
+import org.quattor.pan.repository.ParameterList;
+import org.quattor.pan.repository.SourceFile;
+import org.quattor.pan.repository.SourceRepository;
+import org.quattor.pan.repository.SourceRepositoryFactory;
 import org.quattor.pan.template.Context;
 import org.quattor.pan.template.SourceRange;
 
@@ -103,7 +107,7 @@ public class CompilerOptions {
 	 */
 	public final int deprecationLevel;
 
-	public final SourceLocator templateLocator;
+	public final SourceRepository sourceRepository;
 
 	/**
 	 * Patterns that are matched against a template name to determine if debug()
@@ -233,8 +237,22 @@ public class CompilerOptions {
 			this.debugExcludePatterns = debugExcludePatterns;
 		}
 
-		templateLocator = new SourceLocator(sessionDirectory,
-				includeDirectories);
+		ParameterList parameters = new ParameterList();
+		if (sessionDirectory != null) {
+			parameters.append("sessionDirectory", sessionDirectory.toString());
+		}
+		for (File f : includeDirectories) {
+			parameters.append("includeDirectory", f.toString());
+		}
+
+		SourceRepository value = null;
+		try {
+			value = SourceRepositoryFactory.create(parameters);
+		} catch (ConfigurationException ce) {
+			throw new RuntimeException(ce.getMessage());
+			// TODO: Add correct behavior.
+		}
+		sourceRepository = value;
 
 		this.dumpAnnotations = dumpAnnotations;
 
@@ -290,9 +308,9 @@ public class CompilerOptions {
 		// add them to the set of files to process.
 		if (objectNames != null) {
 			for (String oname : objectNames) {
-				File ofile = templateLocator.lookup(oname);
-				if (ofile != null) {
-					filesToProcess.add(ofile);
+				SourceFile source = sourceRepository.retrievePanSource(oname);
+				if (!source.isMissing()) {
+					filesToProcess.add(source.getPath());
 				} else {
 					throw EvaluationException.create((SourceRange) null,
 							(Context) null, MSG_CANNOT_LOCATE_OBJECT_TEMPLATE,
@@ -391,8 +409,8 @@ public class CompilerOptions {
 			sb.append("formatter: null\n");
 		}
 
-		sb.append("template locator: ");
-		sb.append(templateLocator.toString());
+		sb.append("source repository: ");
+		sb.append(sourceRepository.toString());
 		sb.append("\n");
 
 		return sb.toString();

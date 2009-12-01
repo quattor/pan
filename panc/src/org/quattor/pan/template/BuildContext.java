@@ -61,7 +61,7 @@ import org.quattor.pan.exceptions.ReturnValueException;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.exceptions.ValidationException;
 import org.quattor.pan.repository.SourceFile;
-import org.quattor.pan.repository.SourceLocator;
+import org.quattor.pan.repository.SourceRepository;
 import org.quattor.pan.tasks.BuildResult;
 import org.quattor.pan.tasks.CompileResult;
 import org.quattor.pan.template.Template.TemplateType;
@@ -295,7 +295,7 @@ public class BuildContext implements Context {
 
 		Set<SourceFile> sourceFiles = new TreeSet<SourceFile>();
 
-		// Include all of the standard dependencies.  
+		// Include all of the standard dependencies.
 		for (Template t : dependencies.values()) {
 			sourceFiles.add(t.sourceFile);
 		}
@@ -356,19 +356,19 @@ public class BuildContext implements Context {
 		// disk may be different for different object templates. The raw
 		// (unduplicated) value of LOADPATH can be used because it will not be
 		// changed by the code below.
-		File tplfile = compiler.getSourceLocator().lookup(name,
+		SourceRepository repository = compiler.getSourceRepository();
+		SourceFile source = repository.retrievePanSource(name,
 				relativeLoadpaths);
 
 		// Didn't find the template.
-		if (tplfile == null) {
+		if (source.isMissing()) {
 			if (lookupOnly) {
 
 				// Files that were searched for but not found are still
 				// dependencies. Keep track of these so that they can be
 				// included in the dependency file and checked when trying to
 				// see if profiles are up-to-date.
-				otherDependencies.add(new SourceFile(name,
-						SourceFile.Type.MISSING, null));
+				otherDependencies.add(source);
 				return null;
 			} else {
 
@@ -382,7 +382,8 @@ public class BuildContext implements Context {
 		// Now actually retrieve the other object's root, waiting if the
 		// result isn't yet available.
 		CompileCache ccache = compiler.getCompileCache();
-		CompileResult cresult = ccache.waitForResult(tplfile.getAbsolutePath());
+		CompileResult cresult = ccache.waitForResult(source.getPath()
+				.getAbsolutePath());
 
 		Template template = null;
 		try {
@@ -428,13 +429,15 @@ public class BuildContext implements Context {
 	}
 
 	public File lookupFile(String name) {
-		SourceLocator locator = compiler.getSourceLocator();
-		File path = locator.lookup(name, "", relativeLoadpaths);
-		if (path != null) {
-			SourceFile source = new SourceFile(name, SourceFile.Type.TXT, path);
+		SourceRepository repository = compiler.getSourceRepository();
+		SourceFile source = repository.retrieveTxtSource(name,
+				relativeLoadpaths);
+		if (!source.isMissing()) {
 			otherDependencies.add(source);
+			return source.getPath();
+		} else {
+			return null;
 		}
-		return path;
 	}
 
 	public LocalVariableMap createLocalVariableMap(ListResource argv) {

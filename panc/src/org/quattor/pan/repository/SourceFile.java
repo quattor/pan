@@ -6,6 +6,9 @@ import static org.quattor.pan.utils.MessageUtils.MSG_MISNAMED_TPL;
 import static org.quattor.pan.utils.MessageUtils.MSG_SRC_FILE_NAME_OR_TYPE_IS_NULL;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -31,13 +34,13 @@ public class SourceFile implements Comparable<SourceFile>, Serializable {
 		PAN, TXT, MISSING
 	};
 
-	public final String name;
+	private final String name;
 
-	public final Type type;
+	private final Type type;
 
-	public final File location;
+	private final File location;
 
-	public final File path;
+	private final File path;
 
 	public SourceFile(String name, Type type, File path)
 			throws IllegalArgumentException {
@@ -74,6 +77,30 @@ public class SourceFile implements Comparable<SourceFile>, Serializable {
 		// will be thrown if the values are not consistent.
 		location = weakTemplateNameVerification(name, type, path);
 
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public Type getType() {
+		return type;
+	}
+
+	public File getLocation() {
+		return location;
+	}
+
+	public File getPath() {
+		return path;
+	}
+
+	public boolean isMissing() {
+		return Type.MISSING.equals(type);
+	}
+
+	public InputStream getInputStream() throws IOException {
+		return new FileInputStream(path);
 	}
 
 	public int hashCode() {

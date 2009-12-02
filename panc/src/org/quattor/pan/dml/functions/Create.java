@@ -21,7 +21,6 @@
 package org.quattor.pan.dml.functions;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_FIRST_ARG_CREATE;
-import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_IN_COMPILE_TIME_CONTEXT;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_KEY_CREATE;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_KEY_CREATE_STRINGS;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_NO_ARGS_CREATE;
@@ -76,13 +75,7 @@ final public class Create extends BuiltInFunction {
 	@Override
 	public Element execute(Context context) {
 
-		// Quickly check to see if this is a compile-time context. This function
-		// cannot be evaluated in such a context.
-		if (context.isCompileTimeContext()) {
-			throw EvaluationException.create(sourceRange,
-					MSG_INVALID_IN_COMPILE_TIME_CONTEXT, this.getClass()
-							.getSimpleName());
-		}
+		throwExceptionIfCompileTimeContext(context);
 
 		// Retrieve the values of the arguments.
 		Element[] args = calculateArgs(context);

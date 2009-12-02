@@ -21,7 +21,6 @@
 package org.quattor.pan.dml.functions;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_ARG_IN_CONSTRUCTOR;
-import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_IN_COMPILE_TIME_CONTEXT;
 import static org.quattor.pan.utils.MessageUtils.MSG_ONE_ARG_REQ;
 
 import org.quattor.pan.dml.Operation;
@@ -78,13 +77,7 @@ final public class VariableExists extends Exists {
 	@Override
 	public Element execute(Context context) {
 
-		// Quickly check to see if this is a compile-time context. This function
-		// cannot be evaluated in such a context.
-		if (context.isCompileTimeContext()) {
-			throw EvaluationException.create(sourceRange,
-					MSG_INVALID_IN_COMPILE_TIME_CONTEXT, this.getClass()
-							.getSimpleName());
-		}
+		throwExceptionIfCompileTimeContext(context);
 
 		assert (ops[0] instanceof Variable);
 

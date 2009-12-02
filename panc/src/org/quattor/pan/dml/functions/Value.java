@@ -20,7 +20,6 @@
 
 package org.quattor.pan.dml.functions;
 
-import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_IN_COMPILE_TIME_CONTEXT;
 import static org.quattor.pan.utils.MessageUtils.MSG_ONE_STRING_ARG_REQ;
 
 import org.quattor.pan.dml.Operation;
@@ -66,12 +65,7 @@ final public class Value extends BuiltInFunction {
 
 		assert (ops.length == 1);
 
-		// Quickly check to see if this is a compile-time context. This function
-		// cannot be evaluated in such a context.
-		if (context.isCompileTimeContext()) {
-			throw EvaluationException.create(sourceRange,
-					MSG_INVALID_IN_COMPILE_TIME_CONTEXT, name);
-		}
+		throwExceptionIfCompileTimeContext(context);
 
 		Element result = null;
 		Path p = null;

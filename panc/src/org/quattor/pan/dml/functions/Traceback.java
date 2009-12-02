@@ -20,7 +20,6 @@
 
 package org.quattor.pan.dml.functions;
 
-import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_IN_COMPILE_TIME_CONTEXT;
 import static org.quattor.pan.utils.MessageUtils.MSG_ONE_STRING_ARG_REQ;
 
 import org.quattor.pan.dml.Operation;
@@ -72,28 +71,22 @@ final public class Traceback extends BuiltInFunction {
 
 		assert (ops.length == 1);
 
-		if (context.isCompileTimeContext()) {
+		// Do not allow traceback to be used in a compile time context to
+		// avoid it being optimized away.
+		throwExceptionIfCompileTimeContext(context);
 
-			// Do not allow traceback to be used in a compile time context to
-			// avoid it being optimized away.
-			throw EvaluationException.create(sourceRange,
-					MSG_INVALID_IN_COMPILE_TIME_CONTEXT, name);
-
-		} else {
-
-			// Calculate the result and print the traceback.
-			Element result = ops[0].execute(context);
-			try {
-				StringProperty sp = (StringProperty) result;
-				System.err.println(sp.getValue());
-				context.printTraceback(getSourceRange());
-			} catch (ClassCastException cce) {
-				throw EvaluationException.create(sourceRange, context,
-						MSG_ONE_STRING_ARG_REQ, name);
-			}
-			return result;
-
+		// Calculate the result and print the traceback.
+		Element result = ops[0].execute(context);
+		try {
+			StringProperty sp = (StringProperty) result;
+			System.err.println(sp.getValue());
+			context.printTraceback(getSourceRange());
+		} catch (ClassCastException cce) {
+			throw EvaluationException.create(sourceRange, context,
+					MSG_ONE_STRING_ARG_REQ, name);
 		}
+		return result;
+
 	}
 
 }

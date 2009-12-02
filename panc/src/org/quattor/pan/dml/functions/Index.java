@@ -48,7 +48,7 @@ final public class Index extends BuiltInFunction {
 
 	private Index(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
-		super(sourceRange, operations);
+		super("index", sourceRange, operations);
 	}
 
 	public static Operation getInstance(SourceRange sourceRange,

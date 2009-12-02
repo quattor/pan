@@ -45,7 +45,7 @@ final public class DebugSuppressed extends BuiltInFunction {
 
 	private DebugSuppressed(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
-		super(sourceRange, operations);
+		super("debug", sourceRange, operations);
 	}
 
 	public static Operation getInstance(SourceRange sourceRange,

@@ -49,7 +49,7 @@ abstract public class AbstractStaticMatcher extends AbstractMatcher {
 	protected AbstractStaticMatcher(SourceRange sourceRange,
 			String functionName, Operation... operations)
 			throws SyntaxException {
-		super(sourceRange, functionName, new Operation[] { operations[0] });
+		super(functionName, sourceRange, new Operation[] { operations[0] });
 
 		// The match() and matches() functions take exactly 2 or 3 arguments.
 		if (operations.length < 2 || operations.length > 3) {

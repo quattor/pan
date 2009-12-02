@@ -45,7 +45,7 @@ final public class ToLowerCase extends BuiltInFunction {
 
 	private ToLowerCase(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
-		super(sourceRange, operations);
+		super("to_lowercase", sourceRange, operations);
 	}
 
 	public static Operation getInstance(SourceRange sourceRange,

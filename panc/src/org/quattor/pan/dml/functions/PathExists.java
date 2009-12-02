@@ -48,7 +48,7 @@ final public class PathExists extends BuiltInFunction {
 
 	protected PathExists(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
-		super(sourceRange, operations);
+		super("path_exists", sourceRange, operations);
 	}
 
 	public static Operation getInstance(SourceRange sourceRange,
@@ -90,8 +90,7 @@ final public class PathExists extends BuiltInFunction {
 		// cannot be evaluated in such a context.
 		if (context.isCompileTimeContext()) {
 			throw EvaluationException.create(sourceRange,
-					MSG_INVALID_IN_COMPILE_TIME_CONTEXT, this.getClass()
-							.getSimpleName());
+					MSG_INVALID_IN_COMPILE_TIME_CONTEXT, name);
 		}
 
 		Element result = ops[0].execute(context);

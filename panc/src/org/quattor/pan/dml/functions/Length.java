@@ -47,7 +47,7 @@ final public class Length extends BuiltInFunction {
 
 	private Length(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
-		super(sourceRange, operations);
+		super("length", sourceRange, operations);
 	}
 
 	public static Operation getInstance(SourceRange sourceRange,

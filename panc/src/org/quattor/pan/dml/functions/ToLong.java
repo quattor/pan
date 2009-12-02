@@ -48,7 +48,7 @@ final public class ToLong extends BuiltInFunction {
 
 	private ToLong(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
-		super(sourceRange, operations);
+		super("to_long", sourceRange, operations);
 	}
 
 	public static Operation getInstance(SourceRange sourceRange,

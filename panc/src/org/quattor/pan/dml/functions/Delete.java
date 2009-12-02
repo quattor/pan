@@ -43,7 +43,7 @@ final public class Delete extends BuiltInFunction {
 	private static final long serialVersionUID = 2929895183002177658L;
 
 	private Delete(SourceRange sourceRange, Operation... operations) {
-		super(sourceRange, operations);
+		super("delete", sourceRange, operations);
 	}
 
 	public static Operation getInstance(SourceRange sourceRange,
@@ -72,11 +72,6 @@ final public class Delete extends BuiltInFunction {
 		assert (ops[0] instanceof SetValue);
 		((SetValue) ops[0]).execute(context, null);
 		return Undef.VALUE;
-	}
-
-	@Override
-	public String toString() {
-		return "delete()";
 	}
 
 }

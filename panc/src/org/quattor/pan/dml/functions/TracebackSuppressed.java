@@ -42,7 +42,7 @@ final public class TracebackSuppressed extends BuiltInFunction {
 
 	private TracebackSuppressed(SourceRange sourceRange,
 			Operation... operations) throws SyntaxException {
-		super(sourceRange, operations);
+		super("traceback", sourceRange, operations);
 	}
 
 	public static Operation getInstance(SourceRange sourceRange,

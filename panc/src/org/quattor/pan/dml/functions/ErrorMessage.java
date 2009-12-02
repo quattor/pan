@@ -46,7 +46,7 @@ final public class ErrorMessage extends BuiltInFunction {
 
 	private ErrorMessage(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
-		super(sourceRange, operations);
+		super("error", sourceRange, operations);
 	}
 
 	public static Operation getInstance(SourceRange sourceRange,
@@ -89,8 +89,7 @@ final public class ErrorMessage extends BuiltInFunction {
 	@Override
 	public void checkRestrictedContext() throws SyntaxException {
 		super.checkRestrictedContext();
-		throw SyntaxException.create(sourceRange, MSG_RESTRICTED_CONTEXT,
-				"error");
+		throw SyntaxException.create(sourceRange, MSG_RESTRICTED_CONTEXT, name);
 	}
 
 }

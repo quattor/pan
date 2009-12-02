@@ -39,7 +39,7 @@ abstract public class Exists extends BuiltInFunction {
 
 	protected Exists(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
-		super(sourceRange, operations);
+		super("exists", sourceRange, operations);
 	}
 
 	public static Operation getInstance(SourceRange sourceRange,

@@ -45,20 +45,16 @@ abstract public class AbstractMatcher extends BuiltInFunction {
 
 	private static final long serialVersionUID = -4891330766942615516L;
 
-	final protected String functionName;
-
-	protected AbstractMatcher(SourceRange sourceRange, String functionName,
+	protected AbstractMatcher(String name, SourceRange sourceRange,
 			Operation... operations) throws SyntaxException {
-		super(sourceRange, operations);
-		assert (functionName != null);
-		this.functionName = functionName;
+		super(name, sourceRange, operations);
 
 		// Check that static arguments are strings.
 		for (Operation op : operations) {
 			if (op instanceof Element && !(op instanceof StringProperty)) {
 				String badtype = ((Element) op).getTypeAsString();
 				throw SyntaxException.create(sourceRange,
-						MSG_ALL_STRING_ARGS_REQ, functionName, badtype);
+						MSG_ALL_STRING_ARGS_REQ, name, badtype);
 			}
 		}
 

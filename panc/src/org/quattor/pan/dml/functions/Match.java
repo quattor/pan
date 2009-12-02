@@ -94,7 +94,7 @@ final public class Match extends AbstractVariableMatcher {
 				}
 			}
 			throw EvaluationException.create(sourceRange, context,
-					MSG_ALL_STRING_ARGS_REQ, functionName, badtype);
+					MSG_ALL_STRING_ARGS_REQ, name, badtype);
 
 		} catch (EvaluationException ee) {
 			throw ee.addExceptionInfo(sourceRange, context);

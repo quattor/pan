@@ -45,7 +45,7 @@ final public class IsValueOfType extends IsOfType {
 
 	private IsValueOfType(SourceRange sourceRange, Class<? extends Element> type,
 			String name, Operation... operations) throws SyntaxException {
-		super(sourceRange, type, name, operations);
+		super(name, sourceRange, type, operations);
 	}
 
 	public static Operation getInstance(SourceRange sourceRange,

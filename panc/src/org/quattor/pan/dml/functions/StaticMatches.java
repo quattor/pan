@@ -94,7 +94,7 @@ final public class StaticMatches extends AbstractStaticMatcher {
 		} catch (ClassCastException cce) {
 
 			throw EvaluationException.create(sourceRange, context,
-					MSG_ALL_STRING_ARGS_REQ, functionName, e.getTypeAsString());
+					MSG_ALL_STRING_ARGS_REQ, name, e.getTypeAsString());
 
 		} catch (EvaluationException ee) {
 			throw ee.addExceptionInfo(sourceRange, context);

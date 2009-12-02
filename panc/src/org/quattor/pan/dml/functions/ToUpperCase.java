@@ -45,7 +45,7 @@ final public class ToUpperCase extends BuiltInFunction {
 
 	private ToUpperCase(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
-		super(sourceRange, operations);
+		super("to_uppercase", sourceRange, operations);
 	}
 
 	public static Operation getInstance(SourceRange sourceRange,

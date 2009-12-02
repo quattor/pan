@@ -44,7 +44,7 @@ final public class Traceback extends BuiltInFunction {
 
 	private Traceback(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
-		super(sourceRange, operations);
+		super("traceback", sourceRange, operations);
 	}
 
 	public static Operation getInstance(SourceRange sourceRange,
@@ -77,8 +77,7 @@ final public class Traceback extends BuiltInFunction {
 			// Do not allow traceback to be used in a compile time context to
 			// avoid it being optimized away.
 			throw EvaluationException.create(sourceRange,
-					MSG_INVALID_IN_COMPILE_TIME_CONTEXT, this.getClass()
-							.getSimpleName());
+					MSG_INVALID_IN_COMPILE_TIME_CONTEXT, name);
 
 		} else {
 
@@ -90,7 +89,7 @@ final public class Traceback extends BuiltInFunction {
 				context.printTraceback(getSourceRange());
 			} catch (ClassCastException cce) {
 				throw EvaluationException.create(sourceRange, context,
-						MSG_ONE_STRING_ARG_REQ, "traceback");
+						MSG_ONE_STRING_ARG_REQ, name);
 			}
 			return result;
 

@@ -45,7 +45,7 @@ final public class Replace extends BuiltInFunction {
 
 	private Replace(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
-		super(sourceRange, operations);
+		super("replace", sourceRange, operations);
 	}
 
 	public static Operation getInstance(SourceRange sourceRange,

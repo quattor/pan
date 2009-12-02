@@ -42,13 +42,10 @@ abstract public class IsOfType extends BuiltInFunction {
 
 	protected Class<? extends Element> type;
 
-	protected String name;
-
-	protected IsOfType(SourceRange sourceRange, Class<? extends Element> type,
-			String name, Operation... operations) throws SyntaxException {
-		super(sourceRange, operations);
+	protected IsOfType(String name, SourceRange sourceRange,
+			Class<? extends Element> type, Operation... operations) throws SyntaxException {
+		super(name, sourceRange, operations);
 		this.type = type;
-		this.name = name;
 	}
 
 	public static Operation getInstance(SourceRange sourceRange,
@@ -64,8 +61,8 @@ abstract public class IsOfType extends BuiltInFunction {
 
 		Operation op = null;
 		if (operations[0] instanceof Variable) {
-			op = IsVariableOfType
-					.getInstance(sourceRange, type, name, operations);
+			op = IsVariableOfType.getInstance(sourceRange, type, name,
+					operations);
 		} else {
 			op = IsValueOfType.getInstance(sourceRange, type, name, operations);
 		}

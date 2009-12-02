@@ -45,7 +45,7 @@ final public class Debug extends BuiltInFunction {
 
 	private Debug(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
-		super(sourceRange, operations);
+		super("debug", sourceRange, operations);
 	}
 
 	public static Operation getInstance(SourceRange sourceRange,
@@ -78,8 +78,7 @@ final public class Debug extends BuiltInFunction {
 			// Do not allow debug to be used in a compile time context to avoid
 			// it being optimized away.
 			throw EvaluationException.create(sourceRange,
-					MSG_INVALID_IN_COMPILE_TIME_CONTEXT, this.getClass()
-							.getSimpleName());
+					MSG_INVALID_IN_COMPILE_TIME_CONTEXT, name);
 
 		} else {
 
@@ -91,7 +90,7 @@ final public class Debug extends BuiltInFunction {
 				System.err.println(sp.getValue());
 			} catch (ClassCastException cce) {
 				throw EvaluationException.create(sourceRange, context,
-						MSG_ONE_STRING_ARG_REQ, "debug");
+						MSG_ONE_STRING_ARG_REQ, name);
 			}
 			return result;
 

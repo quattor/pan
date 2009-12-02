@@ -48,7 +48,7 @@ final public class Append extends BuiltInFunction {
 
 	protected Append(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
-		super(sourceRange, operations);
+		super("append", sourceRange, operations);
 	}
 
 	public static Operation getInstance(SourceRange sourceRange,
@@ -111,13 +111,13 @@ final public class Append extends BuiltInFunction {
 		// Check that the value argument is not an explicit null.
 		if (args[1] instanceof Null) {
 			throw EvaluationException.create(sourceRange,
-					MSG_VALUE_CANNOT_BE_NULL, "append");
+					MSG_VALUE_CANNOT_BE_NULL, name);
 		}
 
 		// Check that the first argument is a list.
 		if (!(args[0] instanceof ListResource)) {
 			throw EvaluationException.create(sourceRange,
-					MSG_FIRST_ARG_LIST_OR_VARIABLE_REF, "append");
+					MSG_FIRST_ARG_LIST_OR_VARIABLE_REF, name);
 		}
 
 		// The return value is the list argument.

@@ -46,7 +46,7 @@ final public class IfExists extends BuiltInFunction {
 
 	private IfExists(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
-		super(sourceRange, operations);
+		super("if_exists", sourceRange, operations);
 	}
 
 	public static Operation getInstance(SourceRange sourceRange,
@@ -74,8 +74,7 @@ final public class IfExists extends BuiltInFunction {
 		// cannot be evaluated in such a context.
 		if (context.isCompileTimeContext()) {
 			throw EvaluationException.create(sourceRange,
-					MSG_INVALID_IN_COMPILE_TIME_CONTEXT, this.getClass()
-							.getSimpleName());
+					MSG_INVALID_IN_COMPILE_TIME_CONTEXT, name);
 		}
 
 		Element element = ops[0].execute(context);

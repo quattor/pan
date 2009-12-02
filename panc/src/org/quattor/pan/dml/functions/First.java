@@ -50,7 +50,7 @@ final public class First extends BuiltInFunction {
 
 	private First(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
-		super(sourceRange, operations);
+		super("first", sourceRange, operations);
 
 	}
 
@@ -130,11 +130,6 @@ final public class First extends BuiltInFunction {
 		} else {
 			return BooleanProperty.FALSE;
 		}
-	}
-
-	@Override
-	public String toString() {
-		return "first()";
 	}
 
 }

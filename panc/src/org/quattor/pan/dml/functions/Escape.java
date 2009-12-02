@@ -43,7 +43,7 @@ final public class Escape extends BuiltInFunction {
 
 	private Escape(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
-		super(sourceRange, operations);
+		super("escape", sourceRange, operations);
 	}
 
 	public static Operation getInstance(SourceRange sourceRange,

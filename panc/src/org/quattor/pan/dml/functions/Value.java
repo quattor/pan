@@ -44,7 +44,7 @@ final public class Value extends BuiltInFunction {
 
 	private Value(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
-		super(sourceRange, operations);
+		super("value", sourceRange, operations);
 	}
 
 	public static Operation getInstance(SourceRange sourceRange,
@@ -70,8 +70,7 @@ final public class Value extends BuiltInFunction {
 		// cannot be evaluated in such a context.
 		if (context.isCompileTimeContext()) {
 			throw EvaluationException.create(sourceRange,
-					MSG_INVALID_IN_COMPILE_TIME_CONTEXT, this.getClass()
-							.getSimpleName());
+					MSG_INVALID_IN_COMPILE_TIME_CONTEXT, name);
 		}
 
 		Element result = null;

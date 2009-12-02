@@ -58,7 +58,7 @@ final public class Create extends BuiltInFunction {
 
 	private Create(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
-		super(sourceRange, operations);
+		super("create", sourceRange, operations);
 
 		// Ensure that there is an odd number of arguments. There must first be
 		// the name of the template followed by optional key-value pairs.
@@ -133,11 +133,6 @@ final public class Create extends BuiltInFunction {
 		}
 
 		return root;
-	}
-
-	@Override
-	public String toString() {
-		return "create()";
 	}
 
 	protected void executeWithNamedStructureTemplate(Context context,

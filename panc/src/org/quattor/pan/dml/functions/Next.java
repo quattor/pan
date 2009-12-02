@@ -49,7 +49,7 @@ final public class Next extends BuiltInFunction {
 	private static final long serialVersionUID = -7079453268630794478L;
 
 	private Next(SourceRange sourceRange, Operation... operations) {
-		super(sourceRange, operations);
+		super("next", sourceRange, operations);
 	}
 
 	public static Operation getInstance(SourceRange sourceRange,
@@ -130,11 +130,6 @@ final public class Next extends BuiltInFunction {
 		} else {
 			return BooleanProperty.FALSE;
 		}
-	}
-
-	@Override
-	public String toString() {
-		return "next()";
 	}
 
 }

@@ -43,7 +43,7 @@ final public class Clone extends BuiltInFunction {
 
 	private Clone(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
-		super(sourceRange, operations);
+		super("clone", sourceRange, operations);
 
 		// Check the number of arguments and the types.
 		if (operations.length != 1) {
@@ -61,11 +61,6 @@ final public class Clone extends BuiltInFunction {
 	public Element execute(Context context) {
 		Element result = ops[0].execute(context);
 		return result.duplicate();
-	}
-
-	@Override
-	public String toString() {
-		return "clone()";
 	}
 
 }

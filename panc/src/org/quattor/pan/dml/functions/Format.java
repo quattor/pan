@@ -46,12 +46,12 @@ final public class Format extends BuiltInFunction {
 
 	private Format(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
-		super(sourceRange, operations);
+		super("format", sourceRange, operations);
 
 		// There must be at least one argument.
 		if (operations.length == 0) {
 			throw SyntaxException.create(sourceRange, MSG_FIRST_STRING_ARG_REQ,
-					"format");
+					name);
 		}
 	}
 

@@ -48,7 +48,7 @@ final public class Deprecated extends BuiltInFunction {
 
 	private Deprecated(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
-		super(sourceRange, operations);
+		super("deprecated", sourceRange, operations);
 	}
 
 	public static Operation getInstance(SourceRange sourceRange,

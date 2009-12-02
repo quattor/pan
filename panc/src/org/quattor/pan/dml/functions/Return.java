@@ -43,7 +43,7 @@ final public class Return extends BuiltInFunction {
 
 	private Return(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
-		super(sourceRange, operations);
+		super("return", sourceRange, operations);
 	}
 
 	public static Operation getInstance(SourceRange sourceRange,
@@ -74,8 +74,7 @@ final public class Return extends BuiltInFunction {
 	@Override
 	public void checkRestrictedContext() throws SyntaxException {
 		super.checkRestrictedContext();
-		throw SyntaxException.create(sourceRange, MSG_RESTRICTED_CONTEXT,
-				"return");
+		throw SyntaxException.create(sourceRange, MSG_RESTRICTED_CONTEXT, name);
 	}
 
 }

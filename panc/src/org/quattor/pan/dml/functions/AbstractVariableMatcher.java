@@ -42,7 +42,7 @@ abstract public class AbstractVariableMatcher extends AbstractMatcher {
 	protected AbstractVariableMatcher(SourceRange sourceRange,
 			String functionName, Operation... operations)
 			throws SyntaxException {
-		super(sourceRange, functionName, operations);
+		super(functionName, sourceRange, operations);
 
 		// The match() and matches() functions take exactly 2 or 3 arguments.
 		if (operations.length < 2 || operations.length > 3) {

@@ -52,7 +52,7 @@ final public class Split extends BuiltInFunction {
 
 	private Split(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
-		super(sourceRange, operations);
+		super("split", sourceRange, operations);
 	}
 
 	public static Operation getInstance(SourceRange sourceRange,

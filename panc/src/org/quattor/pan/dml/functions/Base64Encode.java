@@ -45,7 +45,7 @@ final public class Base64Encode extends BuiltInFunction {
 
 	private Base64Encode(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
-		super(sourceRange, operations);
+		super("base64_encode", sourceRange, operations);
 
 		// Ensure that there is exactly one argument. Since the parser does
 		// little argument checking for function calls, this explicit check is

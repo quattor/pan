@@ -47,7 +47,7 @@ final public class Key extends BuiltInFunction {
 
 	private Key(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
-		super(sourceRange, operations);
+		super("key", sourceRange, operations);
 	}
 
 	public static Operation getInstance(SourceRange sourceRange,

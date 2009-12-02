@@ -1,7 +1,11 @@
 package org.quattor.pan.dml.functions;
 
+import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_IN_COMPILE_TIME_CONTEXT;
+
 import org.quattor.pan.dml.AbstractOperation;
 import org.quattor.pan.dml.Operation;
+import org.quattor.pan.exceptions.EvaluationException;
+import org.quattor.pan.template.Context;
 import org.quattor.pan.template.SourceRange;
 
 /**
@@ -21,8 +25,25 @@ public abstract class BuiltInFunction extends AbstractOperation {
 
 	private static final long serialVersionUID = 5506244898681055727L;
 
-	protected BuiltInFunction(SourceRange sourceRange, Operation... operations) {
+	protected final String name;
+
+	protected BuiltInFunction(String name, SourceRange sourceRange,
+			Operation... operations) {
 		super(sourceRange, operations);
+		assert (name != null);
+		this.name = name;
+	}
+
+	protected void throwExceptionIfCompileTimeContext(Context context) {
+		if (context.isCompileTimeContext()) {
+			throw EvaluationException.create(sourceRange,
+					MSG_INVALID_IN_COMPILE_TIME_CONTEXT, name);
+		}
+	}
+
+	@Override
+	public String toString() {
+		return name + "()";
 	}
 
 }

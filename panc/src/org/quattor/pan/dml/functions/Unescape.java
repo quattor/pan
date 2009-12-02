@@ -44,7 +44,7 @@ final public class Unescape extends BuiltInFunction {
 
 	private Unescape(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
-		super(sourceRange, operations);
+		super("unescape", sourceRange, operations);
 	}
 
 	public static Operation getInstance(SourceRange sourceRange,

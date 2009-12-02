@@ -74,7 +74,8 @@ final public class Function extends AbstractOperation {
 
 		// Save the old local variables. This will also create and install a new
 		// hash with the ARGV and ARGC variables set.
-		LocalVariableMap oldLocalVariables = context.createLocalVariableMap(argv);
+		LocalVariableMap oldLocalVariables = context
+				.createLocalVariableMap(argv);
 
 		// Replace the FUNCTION global variable.
 		GlobalVariable oldFunctionVariable = context.replaceGlobalVariable(
@@ -111,8 +112,7 @@ final public class Function extends AbstractOperation {
 
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName() + "(" + name + "," + ops.length
-				+ ")";
+		return name + "(" + ops.length + ")";
 	}
 
 }

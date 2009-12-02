@@ -43,7 +43,7 @@ final public class Substr extends BuiltInFunction {
 
 	private Substr(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
-		super(sourceRange, operations);
+		super("substr", sourceRange, operations);
 	}
 
 	public static Operation getInstance(SourceRange sourceRange,

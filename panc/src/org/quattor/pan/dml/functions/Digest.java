@@ -49,7 +49,7 @@ final public class Digest extends BuiltInFunction {
 
 	private Digest(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
-		super(sourceRange, operations);
+		super("digest", sourceRange, operations);
 
 	}
 
@@ -104,13 +104,13 @@ final public class Digest extends BuiltInFunction {
 			algorithm = ((StringProperty) args[0]).getValue();
 		} else {
 			throw EvaluationException.create(sourceRange,
-					MSG_FIRST_STRING_ARG_REQ, "digest");
+					MSG_FIRST_STRING_ARG_REQ, name);
 		}
 		if (args[1] instanceof StringProperty) {
 			message = ((StringProperty) args[1]).getValue();
 		} else {
 			throw EvaluationException.create(sourceRange,
-					MSG_SECOND_STRING_ARG_REQ, "digest");
+					MSG_SECOND_STRING_ARG_REQ, name);
 		}
 
 		String digest = "";
@@ -124,11 +124,6 @@ final public class Digest extends BuiltInFunction {
 		}
 
 		return StringProperty.getInstance(digest);
-	}
-
-	@Override
-	public String toString() {
-		return "digest()";
 	}
 
 }

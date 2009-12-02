@@ -45,7 +45,7 @@ final public class Splice extends BuiltInFunction {
 
 	private Splice(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
-		super(sourceRange, operations);
+		super("splice", sourceRange, operations);
 	}
 
 	public static Operation getInstance(SourceRange sourceRange,

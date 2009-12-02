@@ -48,7 +48,7 @@ final public class ToBoolean extends BuiltInFunction {
 
 	private ToBoolean(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
-		super(sourceRange, operations);
+		super("to_boolean", sourceRange, operations);
 	}
 
 	public static Operation getInstance(SourceRange sourceRange,

@@ -41,7 +41,7 @@ final public class ToString extends BuiltInFunction {
 
 	private ToString(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
-		super(sourceRange, operations);
+		super("to_string", sourceRange, operations);
 	}
 
 	public static Operation getInstance(SourceRange sourceRange,

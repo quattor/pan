@@ -49,7 +49,7 @@ final public class Merge extends BuiltInFunction {
 
 	private Merge(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
-		super(sourceRange, operations);
+		super("merge", sourceRange, operations);
 	}
 
 	public static Operation getInstance(SourceRange sourceRange,

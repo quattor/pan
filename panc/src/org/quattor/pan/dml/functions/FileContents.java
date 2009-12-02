@@ -54,7 +54,7 @@ final public class FileContents extends BuiltInFunction {
 
 	private FileContents(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
-		super(sourceRange, operations);
+		super("file_contents", sourceRange, operations);
 
 		// There must be exactly one argument.
 		if (operations.length != 1) {
@@ -84,8 +84,7 @@ final public class FileContents extends BuiltInFunction {
 		// cannot be evaluated in such a context.
 		if (context.isCompileTimeContext()) {
 			throw EvaluationException.create(sourceRange,
-					MSG_INVALID_IN_COMPILE_TIME_CONTEXT, this.getClass()
-							.getSimpleName());
+					MSG_INVALID_IN_COMPILE_TIME_CONTEXT, name);
 		}
 
 		// Calculate arguments.
@@ -96,7 +95,7 @@ final public class FileContents extends BuiltInFunction {
 		String relativeFileName = verifyRelativePath(args[0]);
 		if (relativeFileName == null) {
 			throw EvaluationException.create(sourceRange,
-					MSG_RELATIVE_FILE_REQ, "file_contents");
+					MSG_RELATIVE_FILE_REQ, name);
 		}
 
 		SourceFile srcFile = context.lookupFile(relativeFileName);
@@ -104,7 +103,7 @@ final public class FileContents extends BuiltInFunction {
 		if (!srcFile.isMissing()) {
 			if (srcFile.getPath().isDirectory()) {
 				throw EvaluationException.create(sourceRange,
-						MSG_DIR_NOT_ALLOWED, "file_contents");
+						MSG_DIR_NOT_ALLOWED, name);
 			}
 			try {
 				return readFileAsStringProperty(srcFile);
@@ -114,7 +113,7 @@ final public class FileContents extends BuiltInFunction {
 			}
 		} else {
 			throw EvaluationException.create(sourceRange, MSG_NONEXISTANT_FILE,
-					"file_contents");
+					name);
 		}
 
 	}

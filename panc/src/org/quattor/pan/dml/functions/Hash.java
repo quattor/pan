@@ -54,7 +54,7 @@ final public class Hash extends BuiltInFunction {
 
 	private Hash(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
-		super(sourceRange, operations);
+		super("nlist", sourceRange, operations);
 	}
 
 	public static Operation getInstance(SourceRange sourceRange,

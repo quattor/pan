@@ -48,7 +48,7 @@ final public class ToDouble extends BuiltInFunction {
 
 	private ToDouble(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
-		super(sourceRange, operations);
+		super("to_double", sourceRange, operations);
 	}
 
 	public static Operation getInstance(SourceRange sourceRange,

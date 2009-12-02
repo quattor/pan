@@ -20,7 +20,6 @@
 
 package org.quattor.pan.template;
 
-import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -111,13 +110,15 @@ public interface Context {
 	 */
 	public Template globalLoad(String name);
 
+	public Template localAndGlobalLoad(String name, boolean lookupOnly);
+
 	/**
 	 * A method to load a template from the global cache. This may trigger the
 	 * global cache to compile the template.
 	 */
 	public Template globalLoad(String name, boolean lookupOnly);
 
-	public File lookupFile(String name);
+	public SourceFile lookupFile(String name);
 
 	public LocalVariableMap createLocalVariableMap(ListResource argv);
 

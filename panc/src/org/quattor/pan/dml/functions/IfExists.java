@@ -85,15 +85,10 @@ final public class IfExists extends BuiltInFunction {
 			StringProperty result = (StringProperty) element;
 			String s = result.getValue();
 
-			// This must be a template name. First see if it is actually
-			// a valid template name.
 			if (Template.isValidTemplateName(s)) {
 
 				try {
-					Template template = context.localLoad(s);
-					if (template == null) {
-						template = context.globalLoad(s, true);
-					}
+					Template template = context.localAndGlobalLoad(s, true);
 					exists = (template != null);
 				} catch (EvaluationException consumed) {
 					// The load will actually trigger a compilation of

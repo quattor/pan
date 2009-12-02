@@ -338,6 +338,14 @@ public class BuildContext implements Context {
 		return globalLoad(name, false);
 	}
 
+	public Template localAndGlobalLoad(String name, boolean lookupOnly) {
+		Template template = localLoad(name);
+		if (template == null) {
+			template = globalLoad(name, lookupOnly);
+		}
+		return template;
+	}
+
 	/**
 	 * A method to load a template from the global cache. This may trigger the
 	 * global cache to compile the template.
@@ -428,16 +436,12 @@ public class BuildContext implements Context {
 		return template;
 	}
 
-	public File lookupFile(String name) {
+	public SourceFile lookupFile(String name) {
 		SourceRepository repository = compiler.getSourceRepository();
 		SourceFile source = repository.retrieveTxtSource(name,
 				relativeLoadpaths);
-		if (!source.isMissing()) {
-			otherDependencies.add(source);
-			return source.getPath();
-		} else {
-			return null;
-		}
+		otherDependencies.add(source);
+		return source;
 	}
 
 	public LocalVariableMap createLocalVariableMap(ListResource argv) {
@@ -881,11 +885,8 @@ public class BuildContext implements Context {
 
 				// Try loading the template. This may throw an
 				// EvaluationException if something goes wrong in the load.
-				Template externalTemplate = localLoad(externalObject);
-				if (externalTemplate == null) {
-					externalTemplate = globalLoad(externalObject,
-							!errorIfNotFound);
-				}
+				Template externalTemplate = localAndGlobalLoad(externalObject,
+						!errorIfNotFound);
 
 				// Check to see if the template was found.
 				if (externalTemplate != null && !errorIfNotFound) {

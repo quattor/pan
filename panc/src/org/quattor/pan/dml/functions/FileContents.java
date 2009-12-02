@@ -27,11 +27,8 @@ import static org.quattor.pan.utils.MessageUtils.MSG_ONE_ARG_REQ;
 import static org.quattor.pan.utils.MessageUtils.MSG_RELATIVE_FILE_REQ;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.charset.Charset;
+import java.io.Reader;
 
 import org.quattor.pan.dml.Operation;
 import org.quattor.pan.dml.data.Element;
@@ -39,8 +36,10 @@ import org.quattor.pan.dml.data.StringProperty;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.exceptions.SystemException;
+import org.quattor.pan.repository.SourceFile;
 import org.quattor.pan.template.Context;
 import org.quattor.pan.template.SourceRange;
+import org.quattor.pan.utils.StringUtils;
 
 /**
  * Searches for a file on the load path and reads the contents of the file into
@@ -65,8 +64,8 @@ final public class FileContents extends BuiltInFunction {
 
 		// If there is already a fixed argument, then check that it is valid.
 		if (operations[0] instanceof Element) {
-			File f = processArgument((Element) operations[0]);
-			if (f == null) {
+			String relativePath = verifyRelativePath((Element) operations[0]);
+			if (relativePath == null) {
 				throw SyntaxException.create(sourceRange,
 						MSG_RELATIVE_FILE_REQ, "file_contents");
 			}
@@ -76,71 +75,6 @@ final public class FileContents extends BuiltInFunction {
 	public static Operation getInstance(SourceRange sourceRange,
 			Operation... operations) throws SyntaxException {
 		return new FileContents(sourceRange, operations);
-	}
-
-	/**
-	 * Function to validate the argument of the function and return a File
-	 * object with the relative file name. If the argument is not valid, then
-	 * null will be returned. It is the caller's responsibility to throw an
-	 * appropriate exception.
-	 * 
-	 * @param element
-	 *            argument to validate and process
-	 * 
-	 * @return File with relative file name or null if the argument is invalid
-	 */
-	private static File processArgument(Element element) {
-
-		try {
-
-			String s = ((StringProperty) element).getValue();
-
-			// Replace all of the slashes by the platform's file separator.
-			s = s.replaceAll("/", System.getProperty("file.separator"));
-
-			// Create a File object from this and verify that it is a relative
-			// path.
-			File f = new File(s);
-			if (f.isAbsolute()) {
-				return null;
-			}
-
-			// Everything's OK, so return the created file.
-			return f;
-
-		} catch (ClassCastException e) {
-
-			// The argument was not a StringProperty so return null to indicate
-			// that the argument is not valid.
-			return null;
-		}
-
-	}
-
-	/**
-	 * Return the contents of the given absolute file as a String.
-	 * 
-	 * @param absolutePath
-	 *            absolute path for the given file
-	 * 
-	 * @return StringProperty containing the contents of the file
-	 * 
-	 * @throws IOException
-	 */
-	// TODO: This should be private.
-	public static StringProperty readFileAsString(File absolutePath)
-			throws IOException {
-		FileInputStream stream = new FileInputStream(absolutePath);
-		try {
-			FileChannel fc = stream.getChannel();
-			MappedByteBuffer bb = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc
-					.size());
-			// TODO: Determine if UTF-8 should be used instead of default.
-			String contents = Charset.defaultCharset().decode(bb).toString();
-			return StringProperty.getInstance(contents);
-		} finally {
-			stream.close();
-		}
 	}
 
 	@Override
@@ -159,25 +93,24 @@ final public class FileContents extends BuiltInFunction {
 		assert (args.length == 1);
 
 		// Get the relative file name to find.
-		File f = processArgument(args[0]);
-		if (f == null) {
+		String relativeFileName = verifyRelativePath(args[0]);
+		if (relativeFileName == null) {
 			throw EvaluationException.create(sourceRange,
 					MSG_RELATIVE_FILE_REQ, "file_contents");
 		}
 
-		// Use the lookup algorithm to convert this to an absolute file name for
-		// an existing file.
-		File srcFile = context.lookupFile(f.toString());
+		SourceFile srcFile = context.lookupFile(relativeFileName);
 
-		if (srcFile != null) {
-			if (srcFile.isDirectory()) {
+		if (!srcFile.isMissing()) {
+			if (srcFile.getPath().isDirectory()) {
 				throw EvaluationException.create(sourceRange,
 						MSG_DIR_NOT_ALLOWED, "file_contents");
 			}
 			try {
-				return readFileAsString(srcFile.getAbsoluteFile());
+				return readFileAsStringProperty(srcFile);
 			} catch (IOException e) {
-				throw new SystemException(e.getLocalizedMessage(), srcFile);
+				throw new SystemException(e.getLocalizedMessage(), srcFile
+						.getPath());
 			}
 		} else {
 			throw EvaluationException.create(sourceRange, MSG_NONEXISTANT_FILE,
@@ -185,4 +118,39 @@ final public class FileContents extends BuiltInFunction {
 		}
 
 	}
+
+	private static StringProperty readFileAsStringProperty(SourceFile source)
+			throws IOException {
+		Reader reader = source.getReader();
+		String contents = StringUtils.readCompletely(reader);
+		return StringProperty.getInstance(contents);
+	}
+
+	// TODO: Determine if the system file separator is needed
+	// TODO: Determine if empty string is valid
+	private static String verifyRelativePath(Element element) {
+
+		try {
+
+			String s = ((StringProperty) element).getValue();
+
+			// Replace all of the slashes by the platform's file separator.
+			s = s.replaceAll("/", System.getProperty("file.separator"));
+
+			// Create a File object from this and verify that it is a relative
+			// path.
+			File f = new File(s);
+			if (f.isAbsolute()) {
+				return null;
+			}
+
+			// Everything's OK, so return the created file.
+			return f.toString();
+
+		} catch (ClassCastException e) {
+			return null;
+		}
+
+	}
+
 }

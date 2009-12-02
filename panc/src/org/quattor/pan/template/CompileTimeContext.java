@@ -192,6 +192,10 @@ public class CompileTimeContext implements Context {
 		return null;
 	}
 
+	public Template localAndGlobalLoad(String name, boolean lookupOnly) {
+		// This should never be called.
+		return null;
+	}
 	/**
 	 * A method to load a template from the global cache. This may trigger the
 	 * global cache to compile the template.
@@ -209,7 +213,7 @@ public class CompileTimeContext implements Context {
 		return null;
 	}
 
-	public File lookupFile(String name) {
+	public SourceFile lookupFile(String name) {
 		// This should never be called.
 		return null;
 	}

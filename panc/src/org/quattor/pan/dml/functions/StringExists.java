@@ -126,10 +126,7 @@ final public class StringExists extends Exists {
 				if (Template.isValidTemplateName(s)) {
 
 					try {
-						Template template = context.localLoad(s);
-						if (template == null) {
-							template = context.globalLoad(s, true);
-						}
+						Template template = context.localAndGlobalLoad(s, true);
 						exists = (template != null);
 					} catch (EvaluationException consumed) {
 						// The load will actually trigger a compilation of

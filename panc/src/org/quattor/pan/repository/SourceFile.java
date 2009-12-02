@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -101,6 +103,10 @@ public class SourceFile implements Comparable<SourceFile>, Serializable {
 
 	public InputStream getInputStream() throws IOException {
 		return new FileInputStream(path);
+	}
+
+	public Reader getReader() throws IOException {
+		return new InputStreamReader(getInputStream(), "UTF-8");
 	}
 
 	public int hashCode() {

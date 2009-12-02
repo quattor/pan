@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.quattor.pan.exceptions.EvaluationException;
+import org.quattor.pan.utils.FileStatCache;
 
 /**
  * This class encapsulates the template lookup mechanism. An instance contains
@@ -48,6 +49,8 @@ public class SourceLocator {
 		SRC_FOUND, DEL_FOUND, NOT_FOUND
 	};
 
+	private final FileStatCache fileStatCache;
+
 	private final File sessionDir;
 
 	// References to this list must not be made available to clients. This
@@ -67,7 +70,7 @@ public class SourceLocator {
 	}
 
 	/**
-	 * A TemplateLocator encapsulates the template lookup mechanism. A given
+	 * A SourceLocator encapsulates the template lookup mechanism. A given
 	 * instance uses fixed values for the session directory and include
 	 * directories. A copy of the include directory list is made to ensure that
 	 * no changes are made to the list after the class is instantiated.
@@ -80,6 +83,9 @@ public class SourceLocator {
 	 *            or empty, the current working directory will be used.
 	 */
 	public SourceLocator(File sessionDirectory, List<File> includeDirectories) {
+
+		fileStatCache = new FileStatCache();
+
 		this.sessionDir = sessionDirectory;
 
 		// Create a copy to avoid any external modifications. Use the current
@@ -270,15 +276,15 @@ public class SourceLocator {
 	 * @return SearchResult indicating if the delete marker, source file, or
 	 *         nothing was found
 	 */
-	private static SearchResult lookupSingleFile(File root, String rpath,
+	private SearchResult lookupSingleFile(File root, String rpath,
 			String delFileName, String srcFileName, FileHolder fileHolder) {
 
 		File dir = new File(root, rpath);
 		File deletedFileMarker = new File(dir, delFileName);
 
-		if (!deletedFileMarker.exists()) {
+		if (!fileStatCache.exists(deletedFileMarker)) {
 			File sourceFile = new File(dir, srcFileName);
-			if (sourceFile.exists()) {
+			if (fileStatCache.exists(sourceFile)) {
 				fileHolder.file = sourceFile;
 				return SearchResult.SRC_FOUND;
 			}

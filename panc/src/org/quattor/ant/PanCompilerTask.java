@@ -21,7 +21,6 @@
 package org.quattor.ant;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
@@ -41,6 +40,7 @@ import org.quattor.pan.CompilerOptions;
 import org.quattor.pan.CompilerResults;
 import org.quattor.pan.output.Formatter;
 import org.quattor.pan.output.FormatterUtils;
+import org.quattor.pan.utils.FileStatCache;
 
 /**
  * An ant task which permits calling the pan compiler from an ant build file.
@@ -351,8 +351,6 @@ public class PanCompilerTask extends Task {
 
 		if (debugTask > 1)
 			this.debugVerbose = true;
-
-		statCache.setDebugLevel(this.debugTask, this.debugVerbose);
 	}
 
 	/**
@@ -845,110 +843,6 @@ public class PanCompilerTask extends Task {
 
 		public Pattern getExclude() {
 			return exclude;
-		}
-	}
-
-	/**
-	 * Class to cache file modification times. This class minimizes the number
-	 * of disk accesses to determine the modification times of files. This
-	 * improves the performance when the same file is requested many times.
-	 * 
-	 * @author loomis
-	 * 
-	 */
-	private static class FileStatCache {
-
-		private HashMap<File, Long> cachedTimes = new HashMap<File, Long>();
-
-		private boolean debugVerbose = false;
-
-		/**
-		 * Setting this flag will print debugging information from this class.
-		 * This is primarily useful if one wants to debug a build using the
-		 * command line interface.
-		 * 
-		 * @param debugTask
-		 *            debugVerbose flag to print task debugging information or
-		 *            set verbosity
-		 */
-		public void setDebugLevel(boolean debugTask, boolean debugVerbose) {
-			// The value of debugTask is currently not used. Just ignore it.
-			this.debugVerbose = debugVerbose;
-		}
-
-		/**
-		 * Method will return true if the named file exists and has a
-		 * modification time after the epoch.
-		 * 
-		 * @param file
-		 *            File to check
-		 * @return true if the named file exists and has a modification time
-		 *         after the epoch
-		 */
-		public boolean exists(File file) {
-			return (getModificationTime(file) > 0L);
-		}
-
-		/**
-		 * Method will return true if the named file does not exist or was
-		 * modified after the given target time.
-		 * 
-		 * @param file
-		 *            File to check
-		 * @param targetTime
-		 *            time (in milliseconds since the epoch) to use for the
-		 *            comparison
-		 * @return true if the named file doesn't exist or was modified after
-		 *         the target time
-		 */
-		public boolean isMissingOrModifiedAfter(File file, long targetTime) {
-			long modtime = getModificationTime(file);
-			return ((modtime == 0L) || (modtime > targetTime));
-		}
-
-		/**
-		 * Extracts the modification time for a file from the cache. If the
-		 * value does not yet exist, it is inserted into the cache.
-		 * 
-		 * @param file
-		 *            File for which modification time is requested
-		 * 
-		 * @return long value representing the modification time or 0L if the
-		 *         file does not exist (or an IO error occurred)
-		 */
-		private long getModificationTime(File file) {
-
-			Long modtime = cachedTimes.get(file);
-
-			if (modtime == null) {
-
-				// The modification was not in cache. Retrieve it and cache it.
-
-				// Retrieve the modification of the file from the file system.
-				// If the file does not exist, then this method will return 0L.
-				modtime = Long.valueOf(file.lastModified());
-
-				// Insert the time into the cache.
-				cachedTimes.put(file, modtime);
-
-				if (debugVerbose) {
-					System.err.println(debugIndent + "dependency '" + file
-							+ "' modification time (" + modtime
-							+ ") inserted in cache");
-				}
-
-			} else {
-
-				// The modification time was found in the cache. Emit a
-				// debugging message if request; otherwise, do nothing.
-				if (debugVerbose) {
-					System.err.println(debugIndent + "dependency '" + file
-							+ "' modification (" + modtime
-							+ ") retrieve from cache");
-				}
-			}
-
-			return modtime.longValue();
 		}
 	}
 

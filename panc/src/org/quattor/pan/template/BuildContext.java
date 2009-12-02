@@ -368,7 +368,6 @@ public class BuildContext implements Context {
 		SourceFile source = repository.retrievePanSource(name,
 				relativeLoadpaths);
 
-		// Didn't find the template.
 		if (source.isMissing()) {
 			if (lookupOnly) {
 

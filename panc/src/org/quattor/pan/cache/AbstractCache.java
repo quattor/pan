@@ -141,7 +141,6 @@ public abstract class AbstractCache<T extends TaskResult> {
 			// If we created a task and we're not going to run it immediately,
 			// make sure it gets submitted to an execution queue.
 			if (createdTask) {
-				// compiler.submit(task, TaskResult.ResultType.BUILD);
 				compiler.submit(task);
 			}
 

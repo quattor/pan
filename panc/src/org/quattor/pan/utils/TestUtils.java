@@ -25,8 +25,11 @@ import static org.junit.Assert.fail;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Date;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
@@ -408,6 +411,80 @@ public class TestUtils {
 			fail("collectTests requires a directory");
 		}
 		return tests;
+	}
+
+	/**
+	 * Ensure that the given file exists and has the current time as the
+	 * modification time.
+	 * 
+	 * @param dir
+	 *            name of the directory to use; this must already exist
+	 * @param name
+	 *            name of the file relative to the given directory
+	 * @returns the file that has had it's modification time changed (created if
+	 *          necessary)
+	 */
+	static public File touch(File dir, String name) throws IOException {
+
+		// Ensure that the directory argument exists and is a directory.
+		if (!dir.exists()) {
+			if (!dir.mkdirs()) {
+				throw new RuntimeException("could not create directory " + dir);
+			}
+		}
+		if (!dir.isDirectory()) {
+			fail(dir + " is not a directory");
+		}
+
+		// Location of the file to create/update.
+		File file = new File(dir, name);
+
+		// Create file if necessary and update modification time.
+		if (!file.exists()) {
+			OutputStream os = new FileOutputStream(file);
+			os.close();
+		}
+		if (!file.setLastModified((new Date()).getTime())) {
+			throw new RuntimeException("could not update timestamp for " + file);
+		}
+		return file;
+	}
+
+	/**
+	 * Ensure that the given relative file exists and has the current time as
+	 * the modification time. The files will be created in a subdirectory named
+	 * "rpath" of the argument dir.
+	 * 
+	 * @param dir
+	 *            name of the directory to use; this must already exist
+	 * @param name
+	 *            name of the file relative to the given directory
+	 * @returns the file that has had it's modification time changed (created if
+	 *          necessary)
+	 */
+	static public File rtouch(File dir, String name) throws IOException {
+		File rdir = new File(dir, "rpath");
+		return touch(rdir, name);
+	}
+
+	/**
+	 * Recursively delete all of the files rooted at the given directory. If the
+	 * argument is a file it is deleted. If the File corresponding to the
+	 * argument does not exist, nothing is done. The argument may not be null.
+	 * 
+	 * @param root
+	 */
+	static public void recursiveFileDelete(File root) {
+		if (root.exists()) {
+			if (root.isDirectory()) {
+				for (File f : root.listFiles()) {
+					recursiveFileDelete(f);
+				}
+			}
+			if (!root.delete()) {
+				throw new RuntimeException("could not delete file " + root);
+			}
+		}
 	}
 
 }

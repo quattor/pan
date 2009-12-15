@@ -97,7 +97,8 @@
         <javac destdir="${build.java}"
                debug="true"
                debuglevel="lines,vars,source"
-               optimize="false">
+               optimize="false"
+               target="1.5">
             <src path="${src.java}" />
             <src path="${generated}" />
             <include name="**/*.java" />

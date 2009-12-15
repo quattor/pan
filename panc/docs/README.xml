@@ -534,6 +534,26 @@ variable X ?=
     <title>Change Log</title>
 
     <section>
+      <title>Version 8.2.11</title>
+
+      <para>Although this version internally keeps track of dependencies from
+      <function>exists</function> and <function>file_contents</function>
+      function calls, these dependencies are not written to the dependency
+      file in order to keep backward compatibility. A future release will
+      update the dependency file format and make the
+      <function>exists</function> and <function>file_contents</function>
+      dependencies available to other tools.</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>(SF BUG #2909904) Error message for a missing file in
+          file_contents() should provide the file name not the function
+          name.</para>
+        </listitem>
+      </itemizedlist>
+    </section>
+
+    <section>
       <title>Version 8.2.10</title>
 
       <para>Although this version internally keeps track of dependencies from
@@ -542,7 +562,7 @@ variable X ?=
       file in order to keep backward compatibility. A future release will
       update the dependency file format and make the
       <function>exists</function> and <function>file_contents</function>
-      dependencies available to other tools. </para>
+      dependencies available to other tools.</para>
 
       <itemizedlist>
         <listitem>

@@ -107,7 +107,7 @@ final public class FileContents extends BuiltInFunction {
 			}
 		} else {
 			throw EvaluationException.create(sourceRange, MSG_NONEXISTANT_FILE,
-					name);
+					relativeFileName);
 		}
 
 	}

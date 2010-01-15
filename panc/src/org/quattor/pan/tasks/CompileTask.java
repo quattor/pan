@@ -21,8 +21,8 @@
 package org.quattor.pan.tasks;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.FileReader;
+import java.io.Reader;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -148,11 +148,11 @@ public class CompileTask extends Task<CompileResult> {
 			}
 
 			// Parse the input file and generate a Template object.
-			InputStream is = null;
+			Reader reader = null;
 			try {
-				is = new FileInputStream(tplfile);
+				reader = new FileReader(tplfile);
 
-				PanParser parser = new PanParser(is);
+				PanParser parser = new PanParser(reader);
 				parser.setFile(tplfile);
 				parser.setCompilerOptions(compilerOptions);
 				ASTTemplate ast = parser.template();
@@ -175,9 +175,9 @@ public class CompileTask extends Task<CompileResult> {
 				se.initCause(e);
 				throw se;
 			} finally {
-				if (is != null) {
+				if (reader != null) {
 					try {
-						is.close();
+						reader.close();
 					} catch (java.io.IOException consumed) {
 					}
 				}

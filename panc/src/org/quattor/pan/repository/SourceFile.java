@@ -1,5 +1,6 @@
 package org.quattor.pan.repository;
 
+import static org.quattor.pan.utils.MessageUtils.MSG_ABSENT_FILE_MUST_HAVE_NULL_PATH;
 import static org.quattor.pan.utils.MessageUtils.MSG_ABSOLUTE_PATH_REQ;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_TPL_NAME;
 import static org.quattor.pan.utils.MessageUtils.MSG_MISNAMED_TPL;
@@ -33,7 +34,24 @@ public class SourceFile implements Comparable<SourceFile>, Serializable {
 	 * 
 	 */
 	public enum Type {
-		PAN, TXT, MISSING
+		TPL(false, ".tpl"), PAN(false, ".pan"), PANX(false, ".panx"), TEXT(
+				false, ""), ABSENT_SOURCE(true, ""), ABSENT_TEXT(true, "");
+
+		private boolean absent;
+		private String extension;
+
+		private Type(boolean absent, String extension) {
+			this.absent = absent;
+			this.extension = extension;
+		}
+
+		public boolean isAbsent() {
+			return absent;
+		}
+
+		public String getExtension() {
+			return extension;
+		}
 	};
 
 	private final String name;
@@ -44,36 +62,35 @@ public class SourceFile implements Comparable<SourceFile>, Serializable {
 
 	private final File path;
 
-	public SourceFile(String name, Type type, File path)
+	public SourceFile(String name, boolean isSource, File path)
 			throws IllegalArgumentException {
+
 		this.name = name;
-		this.type = type;
+		this.path = path;
 
-		// Check that name and type are not null.
-		if (name == null || type == null) {
-			throw CompilerError.create(MSG_SRC_FILE_NAME_OR_TYPE_IS_NULL);
-		}
+		if (isSource) {
 
-		// The path will be ignored if the SourceFile is MISSING.
-		if (!type.equals(Type.MISSING)) {
-			this.path = path;
+			if (path == null) {
+				this.type = Type.ABSENT_SOURCE;
+			} else {
+				String extension = getFileExtension(path);
+				if (".tpl".equals(extension)) {
+					this.type = Type.TPL;
+				} else if (".pan".equals(extension)) {
+					this.type = Type.PAN;
+				} else if (".panx".equals(extension)) {
+					this.type = Type.PANX;
+				} else {
+					throw new IllegalArgumentException(MessageUtils.format(
+							MSG_INVALID_TPL_NAME, name));
+				}
+			}
+
 		} else {
-			this.path = null;
+			this.type = (path != null) ? Type.TEXT : Type.ABSENT_TEXT;
 		}
 
-		// The path can be null, but if it isn't it must be an absolute path.
-		// The current working directory may have changed so we can not reliably
-		// create an absolute path from a relative one.
-		if (path != null && !path.isAbsolute()) {
-			throw CompilerError.create(MSG_ABSOLUTE_PATH_REQ);
-		}
-
-		// The name must be a valid template name, even if it is just a normal
-		// text file to be included through a file_contents() call.
-		if (!Template.isValidTemplateName(name)) {
-			throw new IllegalArgumentException(MessageUtils.format(
-					MSG_INVALID_TPL_NAME, name));
-		}
+		validateFields(name, type, path);
 
 		// Ensure that the name, type, and source are consistent. An exception
 		// will be thrown if the values are not consistent.
@@ -97,8 +114,8 @@ public class SourceFile implements Comparable<SourceFile>, Serializable {
 		return path;
 	}
 
-	public boolean isMissing() {
-		return Type.MISSING.equals(type);
+	public boolean isAbsent() {
+		return type.isAbsent();
 	}
 
 	public InputStream getInputStream() throws IOException {
@@ -158,33 +175,48 @@ public class SourceFile implements Comparable<SourceFile>, Serializable {
 
 	@Override
 	public String toString() {
+		String uri = (location != null) ? location.toURI().toASCIIString() : "";
+		return String.format("%s %s %s", name, type, uri);
+	}
 
-		// TODO: Update dependency file format to allow read dependency mgt.
+	private String getFileExtension(File path) {
 
-		// For backward compatibility, the TXT and MISSING files are not
-		// included in the dependency file. Unfortunately adding this
-		// information requires a non-backward compatible change to the file
-		// format.
-
-		switch (type) {
-		case PAN:
-			String s = (location != null) ? location.toString() : "";
-			if (!s.endsWith("/")) {
-				return String.format("\"%s\" \"%s/\"%n", name, s);
-			} else {
-				return String.format("\"%s\" \"%s\"%n", name, s);
+		String extension = null;
+		if (path != null) {
+			String s = path.toString();
+			int index = s.lastIndexOf('.');
+			if (index >= 0) {
+				extension = s.substring(index);
 			}
-		case TXT:
-			// s = (location != null) ? location.toString() : "";
-			// if (!s.endsWith("/")) {
-			// return String.format("\"%s\" \"%s/\"%n", name, s);
-			// } else {
-			// return String.format("\"%s\" \"%s\"%n", name, s);
-			// }
-		case MISSING:
-			// return String.format("\"%s\" \"\"%n", name);
-		default:
-			return "";
+		}
+		return extension;
+	}
+
+	private void validateFields(String name, Type type, File path)
+			throws CompilerError {
+
+		// Check that name and type are not null.
+		if (name == null || type == null) {
+			throw CompilerError.create(MSG_SRC_FILE_NAME_OR_TYPE_IS_NULL);
+		}
+
+		// If the file is absent, then the path must be empty.
+		if (type.isAbsent() && path != null) {
+			throw CompilerError.create(MSG_ABSOLUTE_PATH_REQ);
+		}
+
+		// The path can be null, but if it isn't it must be an absolute path.
+		// The current working directory may have changed so we can not reliably
+		// create an absolute path from a relative one.
+		if (path != null && !path.isAbsolute()) {
+			throw CompilerError.create(MSG_ABSENT_FILE_MUST_HAVE_NULL_PATH);
+		}
+
+		// The name must be a valid template name, even if it is just a normal
+		// text file to be included through a file_contents() call.
+		if (!Template.isValidTemplateName(name)) {
+			throw new IllegalArgumentException(MessageUtils.format(
+					MSG_INVALID_TPL_NAME, name));
 		}
 	}
 
@@ -210,9 +242,7 @@ public class SourceFile implements Comparable<SourceFile>, Serializable {
 			// File.
 			StringBuilder sb = new StringBuilder("/");
 			sb.append(name);
-			if (type == Type.PAN) {
-				sb.append(".tpl");
-			}
+			sb.append(type.getExtension());
 			String ending = sb.toString();
 
 			// Ensure that the source File really ends with the required string.

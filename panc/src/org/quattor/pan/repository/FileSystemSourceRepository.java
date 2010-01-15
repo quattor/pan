@@ -82,19 +82,11 @@ abstract public class FileSystemSourceRepository implements SourceRepository {
 	}
 
 	private SourceFile createPanSourceFile(String name, File file) {
-		if (file != null) {
-			return new SourceFile(name, SourceFile.Type.PAN, file);
-		} else {
-			return new SourceFile(name, SourceFile.Type.MISSING, null);
-		}
+		return new SourceFile(name, true, file);
 	}
 
 	private SourceFile createTxtSourceFile(String name, File file) {
-		if (file != null) {
-			return new SourceFile(name, SourceFile.Type.TXT, file);
-		} else {
-			return new SourceFile(name, SourceFile.Type.MISSING, null);
-		}
+		return new SourceFile(name, false, file);
 	}
 
 	protected List<File> validateAndCopyIncludeDirectories(

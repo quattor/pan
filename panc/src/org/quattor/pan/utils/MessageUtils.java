@@ -394,6 +394,8 @@ public class MessageUtils {
 	public final static String MSG_ABSOLUTE_PATH_REQ = "MSG_ABSOLUTE_PATH_REQ";
 
 	public final static String MSG_SRC_FILE_NAME_OR_TYPE_IS_NULL = "MSG_SRC_FILE_NAME_OR_TYPE_IS_NULL";
+	
+	public final static String MSG_ABSENT_FILE_MUST_HAVE_NULL_PATH = "MSG_ABSENT_FILE_MUST_HAVE_NULL_PATH";
 
 	// Name of the resource bundle to use for compiler messages.
 	private final static String bundleName = "org.quattor.pan.Messages";

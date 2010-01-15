@@ -92,7 +92,7 @@ public class BuildTask extends Task<BuildResult> {
 			// Throw an exception if the object file cannot be found. Even if it
 			// was given on the command line, it must be accessible from the
 			// include directories otherwise inconsistencies can occur.
-			if (SourceFile.Type.MISSING.equals(source.getType())) {
+			if (source.getType().isAbsent()) {
 				throw EvaluationException.create((SourceRange) null,
 						(Context) null, MSG_CANNOT_LOCATE_OBJECT_TEMPLATE,
 						objectName);

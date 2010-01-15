@@ -164,7 +164,7 @@ public class FileSystemSourceRepositoryTest {
 			SourceFile source = repository.retrievePanSource(name);
 			SourceDirectory sd = SourceDirectory.valueFromMaskWithSession(i);
 
-			if (!source.isMissing()) {
+			if (!source.isAbsent()) {
 				File location = source.getLocation();
 				assertEquals(location, sd.asDirectory(tmpdir));
 			} else {
@@ -189,7 +189,7 @@ public class FileSystemSourceRepositoryTest {
 			SourceFile source = repository.retrievePanSource(name);
 			SourceDirectory sd = SourceDirectory.valueFromMaskWithoutSession(i);
 
-			if (!source.isMissing()) {
+			if (!source.isAbsent()) {
 				File location = source.getLocation();
 				assertEquals(location, sd.asDirectory(tmpdir));
 			} else {
@@ -214,7 +214,7 @@ public class FileSystemSourceRepositoryTest {
 			SourceFile source = repository.retrieveTxtSource(name);
 			SourceDirectory sd = SourceDirectory.valueFromMaskWithSession(i);
 
-			if (!source.isMissing()) {
+			if (!source.isAbsent()) {
 				File location = source.getLocation();
 				assertEquals(location, sd.asDirectory(tmpdir));
 			} else {
@@ -239,7 +239,7 @@ public class FileSystemSourceRepositoryTest {
 			SourceFile source = repository.retrieveTxtSource(name);
 			SourceDirectory sd = SourceDirectory.valueFromMaskWithoutSession(i);
 
-			if (!source.isMissing()) {
+			if (!source.isAbsent()) {
 				File location = source.getLocation();
 				assertEquals(location, sd.asDirectory(tmpdir));
 			} else {
@@ -272,7 +272,7 @@ public class FileSystemSourceRepositoryTest {
 				sd = null;
 			}
 
-			if (!source.isMissing()) {
+			if (!source.isAbsent()) {
 				File location = source.getLocation();
 				assertEquals(location, sd.asDirectory(tmpdir));
 			} else {
@@ -304,7 +304,7 @@ public class FileSystemSourceRepositoryTest {
 				sd = null;
 			}
 
-			if (!source.isMissing()) {
+			if (!source.isAbsent()) {
 				File location = source.getLocation();
 				assertEquals(location, sd.asDirectory(tmpdir));
 			} else {

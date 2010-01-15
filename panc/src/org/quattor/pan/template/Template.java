@@ -206,7 +206,7 @@ public class Template implements Serializable {
 			String name, List<Statement> statements) throws SyntaxException {
 
 		try {
-			sourceFile = new SourceFile(name, SourceFile.Type.PAN, source);
+			sourceFile = new SourceFile(name, true, source);
 		} catch (IllegalArgumentException e) {
 			throw new SyntaxException(e.getMessage(), sourceRange, source);
 		}

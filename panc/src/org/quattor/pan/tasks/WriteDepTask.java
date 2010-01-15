@@ -163,7 +163,7 @@ public class WriteDepTask extends Task<TaskResult> {
 			try {
 				ps = new PrintStream(absolutePath);
 				for (SourceFile s : allDependencies) {
-					ps.print(s.toString());
+					ps.println(s.toString());
 				}
 			} finally {
 				if (ps != null) {

@@ -28,56 +28,45 @@ import org.quattor.pan.exceptions.CompilerError;
 public class SourceFileTest {
 
 	@Test(expected = CompilerError.class)
-	public void testIllegalArguments1() {
-		new SourceFile(null, SourceFile.Type.PAN, null);
-	}
-
-	@Test(expected = CompilerError.class)
-	public void testIllegalArguments2() {
-		new SourceFile("valid.tpl", null, null);
+	public void testIllegalArguments() {
+		new SourceFile(null, true, null);
 	}
 
 	@Test
 	public void validNullPath() {
-		new SourceFile("valid.tpl", SourceFile.Type.PAN, null);
+		new SourceFile("valid.tpl", true, null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void invalidSourceFileName1() {
-		new SourceFile("/illegal-name.tpl", SourceFile.Type.PAN, null);
+		new SourceFile("/illegal-name.tpl", true, null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void invalidSourceFileName2() {
-		new SourceFile("path/.illegal-name.tpl", SourceFile.Type.PAN, null);
+		new SourceFile("path/.illegal-name.tpl", true, null);
 	}
 
 	@Test(expected = CompilerError.class)
 	public void invalidRelativePath() {
-		new SourceFile("valid.tpl", SourceFile.Type.PAN, new File(
-				"home/valid.tpl"));
+		new SourceFile("valid.tpl", true, new File("home/valid.tpl"));
 	}
 
 	@Test
 	public void matchedNameAndSource() {
-		new SourceFile("a/b/name", SourceFile.Type.PAN, new File(
-				"/home/a/b/name.tpl"));
-		new SourceFile("a/b/name.tpl", SourceFile.Type.TXT, new File(
-				"/home/a/b/name.tpl"));
-		new SourceFile("a/b/name.txt", SourceFile.Type.TXT, new File(
-				"/home/a/b/name.txt"));
+		new SourceFile("a/b/name", true, new File("/home/a/b/name.tpl"));
+		new SourceFile("a/b/name.tpl", false, new File("/home/a/b/name.tpl"));
+		new SourceFile("a/b/name.txt", false, new File("/home/a/b/name.txt"));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void mismatchedNameAndSource1() {
-		new SourceFile("a/b/name", SourceFile.Type.PAN, new File(
-				"/home/a/c/name.tpl"));
+		new SourceFile("a/b/name", true, new File("/home/a/c/name.tpl"));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void mismatchedNameAndSource2() {
-		new SourceFile("a/c/name.tpl", SourceFile.Type.TXT, new File(
-				"/home/a/b/name.tpl"));
+		new SourceFile("a/c/name.tpl", false, new File("/home/a/b/name.tpl"));
 	}
 
 }

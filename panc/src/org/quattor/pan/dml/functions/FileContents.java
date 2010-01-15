@@ -94,7 +94,7 @@ final public class FileContents extends BuiltInFunction {
 
 		SourceFile srcFile = context.lookupFile(relativeFileName);
 
-		if (!srcFile.isMissing()) {
+		if (!srcFile.isAbsent()) {
 			if (srcFile.getPath().isDirectory()) {
 				throw EvaluationException.create(sourceRange,
 						MSG_DIR_NOT_ALLOWED, name);

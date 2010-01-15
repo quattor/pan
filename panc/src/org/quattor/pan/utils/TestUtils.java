@@ -57,7 +57,7 @@ public class TestUtils {
 	private static final Pattern formatterPattern = Pattern
 			.compile("#\\s*@format\\s*=\\s*([\\w\\.]+)\\s*");
 
-	private static Pattern depline = Pattern.compile("\"(.*)\"\\s+\"(.*)\"");
+	private static Pattern depline = Pattern.compile("(.*)\\s+(.*)\\s+(.*)");
 
 	private static final XPath xpath = XPathFactory.newInstance().newXPath();
 

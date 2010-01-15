@@ -368,7 +368,7 @@ public class BuildContext implements Context {
 		SourceFile source = repository.retrievePanSource(name,
 				relativeLoadpaths);
 
-		if (source.isMissing()) {
+		if (source.isAbsent()) {
 			if (lookupOnly) {
 
 				// Files that were searched for but not found are still

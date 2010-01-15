@@ -309,7 +309,7 @@ public class CompilerOptions {
 		if (objectNames != null) {
 			for (String oname : objectNames) {
 				SourceFile source = sourceRepository.retrievePanSource(oname);
-				if (!source.isMissing()) {
+				if (!source.isAbsent()) {
 					filesToProcess.add(source.getPath());
 				} else {
 					throw EvaluationException.create((SourceRange) null,

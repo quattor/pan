@@ -10,10 +10,6 @@ public class SourceRepositoryFactory {
 	public static SourceRepository create(ParameterList parameters)
 			throws ConfigurationException {
 
-		if (parameters == null) {
-			parameters = new ParameterList();
-		}
-
 		return FileSystemSourceRepository.getInstance(parameters);
 	}
 

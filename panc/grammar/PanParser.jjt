@@ -33,7 +33,6 @@ package org.quattor.pan.parser;
 
 import org.quattor.pan.dml.data.*;
 
-@SuppressWarnings("unchecked")
 public class PanParser { 
 
   java.io.File tplFile = null;

@@ -388,14 +388,20 @@ public class MessageUtils {
 	public final static String MSG_RELATIVE_FILE_REQ = "MSG_RELATIVE_FILE_REQ";
 
 	public final static String MSG_NONEXISTANT_FILE = "MSG_NONEXISTANT_FILE";
-	
+
 	public final static String MSG_DIR_NOT_ALLOWED = "MSG_DIR_NOT_ALLOWED";
 
 	public final static String MSG_ABSOLUTE_PATH_REQ = "MSG_ABSOLUTE_PATH_REQ";
 
 	public final static String MSG_SRC_FILE_NAME_OR_TYPE_IS_NULL = "MSG_SRC_FILE_NAME_OR_TYPE_IS_NULL";
-	
+
 	public final static String MSG_ABSENT_FILE_MUST_HAVE_NULL_PATH = "MSG_ABSENT_FILE_MUST_HAVE_NULL_PATH";
+
+	public final static String MSG_INVALID_ANNOTATION_NAME_OR_KEY = "MSG_INVALID_ANNOTATION_NAME_OR_KEY";
+
+	public final static String MSG_INVALID_ANNOTATION_NULL_VALUE = "MSG_INVALID_ANNOTATION_NULL_VALUE";
+
+	public final static String MSG_INVALID_ANNOTATION_SYNTAX = "MSG_INVALID_ANNOTATION_SYNTAX";
 
 	// Name of the resource bundle to use for compiler messages.
 	private final static String bundleName = "org.quattor.pan.Messages";

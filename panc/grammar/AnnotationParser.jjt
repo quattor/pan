@@ -31,6 +31,13 @@ PARSER_BEGIN(AnnotationParser)
 
 package org.quattor.pan.parser.annotation;
 
+import org.quattor.pan.annotation.Annotation;
+
+import static org.quattor.pan.annotation.Annotation.Entry;
+
+import java.util.List;
+import java.util.LinkedList;
+
 @SuppressWarnings("unchecked")
 public class AnnotationParser {
 
@@ -62,7 +69,7 @@ TOKEN : /* The equals sign.  Absorb leading and trailing whitespace here. */
 
 TOKEN : /* Keys for annotations. */
 {
-  < KEY: ( [ "a"-"z", "A"-"Z", "_", "0"-"9", "-", "+", ".", "/" ] )+ >
+  <KEY: ( [ "a"-"z", "A"-"Z", "_", "0"-"9", "-", "." ] )+ >
 }
 
 <VSEARCH> TOKEN : /* Strings and values. */
@@ -73,7 +80,7 @@ TOKEN : /* Keys for annotations. */
   |
   < VALUE: (
              ("\\" ("\n" | "\r" | "\r\n"))*
-             (~["\n","\r", "'", "\"", "\\"])
+             (~["\n", "\r", "'", "\"", "\\"])
              ( (~["\n", "\r"])* | ("\\" ("\n" | "\r" | "\r\n")) )*
            ) > : DEFAULT
 }
@@ -95,24 +102,24 @@ TOKEN : /* Keys for annotations. */
 /*************************************************************************
 An annotation is just a sequence of key/value pairs.
 *************************************************************************/
-java.util.Map<String, String> annotation() #Annotation :
-{ java.util.HashMap<String, String> map = new java.util.HashMap<String, String>(); }
+List<Entry> annotation() #Annotation :
+{ Token n; List<Entry> entries = new LinkedList<Entry>(); }
 {
-  (pair(map))* <EOF>
+  (pair(entries))* <EOF>
   {
-    return map;
+    return entries;
   }
 }
 
 /*************************************************************************
 Definition of a single key/value pair.
 *************************************************************************/
-void pair(java.util.HashMap<String, String> map) #Pair :
+void pair(List<Entry> entries) #Pair :
 { Token t; String v; }
 {
   t=<KEY> <EQUALS> v=value()
   {
-    map.put(t.image, v);
+    entries.add(new Entry(t.image, v));
   }
 }
 
@@ -139,6 +146,6 @@ String value() #void :
   t=<VALUE>
   {
     s = t.image;
-    return replaceContinuation.matcher(s).replaceAll("");;
+    return replaceContinuation.matcher(s).replaceAll("").trim();
   }
 }

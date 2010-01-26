@@ -20,21 +20,31 @@
 
 package org.quattor.pan.parser.annotation;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
-import java.util.Map;
+import java.util.List;
 
 import org.junit.Test;
+import org.quattor.pan.annotation.Annotation;
+import org.quattor.pan.annotation.Annotation.Entry;
 
 public class AnnotationProcessorTest {
 
 	@Test
-	public void testDescMap() {
-		String s = "simple description";
-		Map<String, String> map = AnnotationProcessor.parseAsDesc(s);
-		assertTrue(map.size() == 1);
-		assertTrue(map.containsKey("desc"));
-		assertTrue("simple description".equals(map.get("desc")));
+	public void testValidDescriptions() {
+
+		String[] descriptions = { "simple description", "not\na=b" };
+
+		for (String d : descriptions) {
+			List<Entry> entries = AnnotationProcessor.parseAsDesc(d);
+
+			assertEquals(1, entries.size());
+
+			Entry entry = entries.get(0);
+			assertEquals("desc", entry.getKey());
+			assertEquals(d, entry.getValue());
+		}
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -43,63 +53,38 @@ public class AnnotationProcessorTest {
 	}
 
 	@Test
-	public void testKeyValuePairSyntax() {
-		Map<String, String> map;
+	public void testInvalidDescriptions() {
 
-		map = AnnotationProcessor.parseAsDesc("a=b");
-		assertTrue(map == null);
+		String[] pairs = { "a=b", " a=b", "a = b", "\na=b", "\n  \n a=b",
+				"a = b\nc = d", "a=b=c" };
 
-		map = AnnotationProcessor.parseAsDesc(" a=b");
-		assertTrue(map == null);
-
-		map = AnnotationProcessor.parseAsDesc("a = b");
-		assertTrue(map == null);
-
-		map = AnnotationProcessor.parseAsDesc("\na=b");
-		assertTrue(map == null);
-
-		map = AnnotationProcessor.parseAsDesc("\n  \n a=b");
-		assertTrue(map == null);
-
-		map = AnnotationProcessor.parseAsDesc("a = b\nc = d");
-		assertTrue(map == null);
-
-		map = AnnotationProcessor.parseAsDesc("a=b=c");
-		assertTrue(map == null);
-
-	}
-
-	@Test
-	public void testNotKeyValuePairSyntax() {
-
-		Map<String, String> map;
-
-		map = AnnotationProcessor.parseAsDesc("not\na=b");
-		assertTrue(map.size() == 1);
-		assertTrue(map.containsKey("desc"));
-		assertTrue("not\na=b".equals(map.get("desc")));
+		for (String s : pairs) {
+			List<Entry> entries = AnnotationProcessor.parseAsDesc(s);
+			assertNull(entries);
+		}
 	}
 
 	@Test
 	public void testHighLevelProcessing() throws ParseException {
 
-		String s = "@(simple description)";
-		Map<String, String> map = AnnotationProcessor.process(s);
-		assertTrue(map.size() == 1);
-		assertTrue(map.containsKey("desc"));
-		assertTrue("simple description".equals(map.get("desc")));
+		String[] inputs = { "@(simple description)", "@(a=b)", "@(a=b=c)" };
 
-		s = "@(a=b)";
-		map = AnnotationProcessor.process(s);
-		assertTrue(map.size() == 1);
-		assertTrue(map.containsKey("a"));
-		assertTrue("b".equals(map.get("a")));
+		Entry[] correctEntries = { new Entry("desc", "simple description"),
+				new Entry("a", "b"), new Entry("a", "b=c") };
 
-		s = "@(a=b=c)";
-		map = AnnotationProcessor.process(s);
-		assertTrue(map.size() == 1);
-		assertTrue(map.containsKey("a"));
-		assertTrue("b=c".equals(map.get("a")));
+		for (int i = 0; i < inputs.length; i++) {
+			String s = inputs[i];
+			Annotation annotation = AnnotationProcessor.process(s);
+			List<Entry> entries = annotation.getEntries();
+
+			assertEquals(1, entries.size());
+
+			Entry entry = entries.get(0);
+			Entry correctEntry = correctEntries[i];
+
+			assertEquals(correctEntry.getKey(), entry.getKey());
+			assertEquals(correctEntry.getValue(), entry.getValue());
+		}
 	}
 
 	@Test(expected = ParseException.class)
@@ -115,16 +100,6 @@ public class AnnotationProcessorTest {
 	@Test(expected = ParseException.class)
 	public void testHighLevelError() throws ParseException {
 		AnnotationProcessor.process("@(a&=b)");
-	}
-
-	@Test(expected = UnsupportedOperationException.class)
-	public void testUnmodifiableMap() throws ParseException {
-		Map<String, String> map = AnnotationProcessor.process("@(a=b)");
-		assertTrue(map.size() == 1);
-		assertTrue(map.containsKey("a"));
-		assertTrue("b".equals(map.get("a")));
-
-		map.put("bad", "bad");
 	}
 
 }

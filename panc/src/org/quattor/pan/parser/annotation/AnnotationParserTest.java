@@ -20,128 +20,132 @@
 
 package org.quattor.pan.parser.annotation;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import java.io.StringReader;
-import java.util.Map;
+import java.util.List;
 
 import org.junit.Test;
+import org.quattor.pan.annotation.Annotation.Entry;
 
 public class AnnotationParserTest {
 
-	protected Map<String, String> getAnnotationMap(String s)
-			throws ParseException {
+	protected List<Entry> getAnnotationMap(String s) throws ParseException {
+
 		AnnotationParser parser = new AnnotationParser(new StringReader(s));
 		return parser.annotation();
 	}
 
 	@Test
 	public void testAnnotationParserConstructor() throws ParseException {
-		String s = "key = value\n";
-		new AnnotationParser(new StringReader(s));
+		new AnnotationParser(new StringReader("a=b"));
 	}
 
 	@Test
 	public void testEmptyAnnotation() throws ParseException {
-		Map<String, String> map = getAnnotationMap("");
-		assertTrue(map.size() == 0);
 
-		map = getAnnotationMap("\n");
-		assertTrue(map.size() == 0);
+		String[] emptyAnnotations = { "", "\t", "\n", "\r", "\r\n" };
 
-		map = getAnnotationMap("\r");
-		assertTrue(map.size() == 0);
+		for (String s : emptyAnnotations) {
+			List<Entry> entries = getAnnotationMap(s);
+			assertEquals(0, entries.size());
+		}
 
-		map = getAnnotationMap("\r\n");
-		assertTrue(map.size() == 0);
 	}
 
 	@Test
 	public void testSimpleValues() throws ParseException {
-		Map<String, String> map = getAnnotationMap("X=X");
-		assertTrue(map.size() == 1);
-		assertTrue("X".equals(map.get("X")));
 
-		map = getAnnotationMap("X='X'");
-		assertTrue(map.size() == 1);
-		assertTrue("X".equals(map.get("X")));
+		String[] annotations = { "X=X", "X='X'", "X=\"X\"", "X =X", "X= X",
+				"X = X", "X = X " };
 
-		map = getAnnotationMap("X=\"X\"");
-		assertTrue(map.size() == 1);
-		assertTrue("X".equals(map.get("X")));
+		for (String s : annotations) {
+			List<Entry> entries = getAnnotationMap(s);
 
-		map = getAnnotationMap("X =X");
-		assertTrue(map.size() == 1);
-		assertTrue("X".equals(map.get("X")));
+			assertEquals(1, entries.size());
 
-		map = getAnnotationMap("X= X");
-		assertTrue(map.size() == 1);
-		assertTrue("X".equals(map.get("X")));
+			Entry entry = entries.get(0);
 
-		map = getAnnotationMap("X = X");
-		assertTrue(map.size() == 1);
-		assertTrue("X".equals(map.get("X")));
+			assertEquals("X", entry.getKey());
+			assertEquals("X", entry.getValue());
+		}
 
-		map = getAnnotationMap("X = X ");
-		assertTrue(map.size() == 1);
-		assertTrue("X ".equals(map.get("X")));
 	}
 
 	@Test
 	public void testContinuedValues() throws ParseException {
-		Map<String, String> map = getAnnotationMap("X=X\\\nY");
-		assertTrue(map.size() == 1);
-		assertTrue("XY".equals(map.get("X")));
 
-		map = getAnnotationMap("X=\\\nXY");
-		assertTrue(map.size() == 1);
-		assertTrue("XY".equals(map.get("X")));
+		String[] annotations = { "X=X\\\nY", "X=\\\nXY", "X=XY\\\n",
+				"X=XY\\\n\n" };
 
-		map = getAnnotationMap("X=XY\\\n");
-		assertTrue(map.size() == 1);
-		assertTrue("XY".equals(map.get("X")));
+		for (String s : annotations) {
+			List<Entry> entries = getAnnotationMap(s);
 
-		map = getAnnotationMap("X=XY\\\n\n");
-		assertTrue(map.size() == 1);
-		assertTrue("XY".equals(map.get("X")));
+			assertEquals(1, entries.size());
+
+			Entry entry = entries.get(0);
+
+			assertEquals("X", entry.getKey());
+			assertEquals("XY", entry.getValue());
+		}
+
 	}
 
 	@Test
 	public void testMultilineValues() throws ParseException {
-		Map<String, String> map = getAnnotationMap("X='X\nY'");
-		assertTrue(map.size() == 1);
-		assertTrue("X\nY".equals(map.get("X")));
 
-		map = getAnnotationMap("X=\"X\nY\"");
-		assertTrue(map.size() == 1);
-		assertTrue("X\nY".equals(map.get("X")));
+		String[] annotations = { "X='X\nY'", "X=\"X\nY\"" };
+
+		for (String s : annotations) {
+			List<Entry> entries = getAnnotationMap(s);
+
+			assertEquals(1, entries.size());
+
+			Entry entry = entries.get(0);
+
+			assertEquals("X", entry.getKey());
+			assertEquals("X\nY", entry.getValue());
+		}
+
 	}
 
 	@Test
 	public void testMultipleValues() throws ParseException {
-		Map<String, String> map = getAnnotationMap("X=X\nY=Z");
-		assertTrue(map.size() == 2);
-		assertTrue("X".equals(map.get("X")));
-		assertTrue("Z".equals(map.get("Y")));
+
+		List<Entry> entries = getAnnotationMap("X=X\nY=Z");
+
+		assertEquals(2, entries.size());
+
+		Entry entry = entries.get(0);
+
+		assertEquals("X", entry.getKey());
+		assertEquals("X", entry.getValue());
+
+		entry = entries.get(1);
+
+		assertEquals("Y", entry.getKey());
+		assertEquals("Z", entry.getValue());
 	}
 
 	@Test
 	public void testQuoteReplacement() throws ParseException {
-		Map<String, String> map = getAnnotationMap("X='X'''");
-		assertTrue(map.size() == 1);
-		assertTrue("X'".equals(map.get("X")));
 
-		map = getAnnotationMap("X='''X'");
-		assertTrue(map.size() == 1);
-		assertTrue("'X".equals(map.get("X")));
+		String[] annotations = { "X='X'''", "X='''X'", "X=\"X\"\"\"",
+				"X=\"\"\"X\"" };
+		String[] results = { "X'", "'X", "X\"", "\"X" };
 
-		map = getAnnotationMap("X=\"X\"\"\"");
-		assertTrue(map.size() == 1);
-		assertTrue("X\"".equals(map.get("X")));
+		for (int i = 0; i < annotations.length; i++) {
+			String s = annotations[i];
+			List<Entry> entries = getAnnotationMap(s);
 
-		map = getAnnotationMap("X=\"\"\"X\"");
-		assertTrue(map.size() == 1);
-		assertTrue("\"X".equals(map.get("X")));
+			assertEquals(1, entries.size());
+
+			Entry entry = entries.get(0);
+
+			assertEquals("X", entry.getKey());
+			assertEquals(results[i], entry.getValue());
+		}
+
 	}
 
 	@Test(expected = ParseException.class)

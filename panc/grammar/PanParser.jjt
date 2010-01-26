@@ -161,6 +161,8 @@ TOKEN_MGR_DECLS : {
 <DEFAULT, NAMESPACE> SPECIAL_TOKEN : /* Annotations. */
 {
   <ANNOTATION: "@" (" " | "\t" | "\f" | "\n" | "\r")* 
+                   ( [ "a"-"z", "A"-"Z", "_", "0"-"9", "-", "." ] )*
+                   (" " | "\t" | "\f" | "\n" | "\r")* 
                    ( 
                      ("(" (~[")"])* ")") | 
                      ("[" (~["]"])* "]") | 
@@ -171,7 +173,7 @@ TOKEN_MGR_DECLS : {
     Object result = a.getValue();
     if (result instanceof Exception) {
       Exception e = (Exception) result;
-      ParseException pe = new ParseException("invalid annotation syntax:\n" + e.getMessage());
+      ParseException pe = new ParseException(e.getMessage());
       pe.sourceRange = PanParserUtils.sourceRangeFromTokens(a,a);
       throw pe;
     } else {
@@ -511,14 +513,15 @@ statements.
 *************************************************************************/
 
 ASTTemplate template() #Template :
-{ Token f=null, n, b, e; }
+{ Token f=null, k, n, b, e; }
 {
 
-  [ f=<STRUCTURE> | f=<OBJECT> | f=<DECLARATION> | f=<UNIQUE> ] b=<TEMPLATE> n=templateName() e=<SEMICOLON> 
+  [ f=<STRUCTURE> | f=<OBJECT> | f=<DECLARATION> | f=<UNIQUE> ] k=<TEMPLATE> n=templateName() e=<SEMICOLON> 
   statementSequence()
   endOfFile()
   { 
-    if (f!=null) b=f;
+    b = (f!=null) ? f : k;
+    PanParserUtils.addSpecialTokens(jjtThis, b);
     jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(b,e)); 
     jjtThis.setIdentifier(n.image);
     jjtThis.setTemplateType((f!=null) ? f.kind : -1);
@@ -545,7 +548,7 @@ Statements--assignments, declarations, and includes.
 *************************************************************************/
 
 void statement() #Statement :
-{ Token b=null, e=null, t=null, i=null, f=null, s=null; }
+{ Token b=null, e=null, t=null, i=null, f=null, s=null, k=null; }
 {
   b=<SEMICOLON>
   { 
@@ -601,9 +604,10 @@ void statement() #Statement :
   }
   |
   /* Assign variable to a global variable. */
-  LOOKAHEAD(3) [ f=<FINAL> ] b=<VARIABLE> i=<IDENTIFIER> (t=<ASSIGN> | t=<ASSIGN_DEFAULT>) dml() e=<SEMICOLON>
+  LOOKAHEAD(3) [ f=<FINAL> ] k=<VARIABLE> i=<IDENTIFIER> (t=<ASSIGN> | t=<ASSIGN_DEFAULT>) dml() e=<SEMICOLON>
   { 
-    if (f!=null) b=f;
+    b = (f!=null) ? f : k;
+    PanParserUtils.addSpecialTokens(jjtThis, b);
     if (i.image.equals("loadpath")) deprecated("replace variable 'loadpath' with 'LOADPATH'", t, 0);
     jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(b,e)); 
     jjtThis.setStatementType(ASTStatement.StatementType.VARIABLE);
@@ -615,6 +619,7 @@ void statement() #Statement :
   /* Declare a new type. */
   LOOKAHEAD(2) b=<TYPE> i=<IDENTIFIER> <ASSIGN> fullTypeSpec() e=<SEMICOLON>
   { 
+    PanParserUtils.addSpecialTokens(jjtThis, b);
     jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(b,e)); 
     jjtThis.setStatementType(ASTStatement.StatementType.TYPE);
     jjtThis.setIdentifier(i.image);
@@ -623,6 +628,7 @@ void statement() #Statement :
   /* Declare a new function. */
   LOOKAHEAD(2) b=<FUNCTION> i=<IDENTIFIER> <ASSIGN> dml() e=<SEMICOLON>
   { 
+    PanParserUtils.addSpecialTokens(jjtThis, b);
     jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(b,e)); 
     jjtThis.setStatementType(ASTStatement.StatementType.FUNCTION);
     jjtThis.setIdentifier(i.image);
@@ -716,6 +722,7 @@ void fieldSpec() #FieldSpec :
 {
   p=path() (<OPTIONAL> | t=<REQUIRED>) fullTypeSpec()
   {
+    PanParserUtils.addSpecialTokens(jjtThis, p);
     jjtThis.setPath(p.image); 
     jjtThis.setRequired(t!=null); 
     jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(p,p));

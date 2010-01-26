@@ -1,13 +1,11 @@
 package org.quattor.pan.parser;
 
-import java.util.Map;
-import java.util.Map.Entry;
-
+import org.quattor.pan.annotation.Annotation;
 import org.quattor.pan.parser.annotation.AnnotationProcessor;
 
 public class AnnotationToken extends Token {
 
-	private Object map;
+	private Object value;
 
 	private static boolean dumpAnnotation = false;
 
@@ -23,15 +21,15 @@ public class AnnotationToken extends Token {
 		super(kind, image);
 
 		try {
-			map = AnnotationProcessor.process(image);
+			value = AnnotationProcessor.process(image);
 		} catch (org.quattor.pan.parser.annotation.ParseException e) {
-			map = e;
+			value = e;
 		}
 	}
 
 	@Override
 	public Object getValue() {
-		return map;
+		return value;
 	}
 
 	public static void setDumpAnnotation(boolean dump) {
@@ -40,15 +38,9 @@ public class AnnotationToken extends Token {
 
 	public void dump() {
 		if (dumpAnnotation) {
-			System.out.println("@(");
-			if (map instanceof Map<?, ?>) {
-				Map<?, ?> mymap = (Map<?, ?>) map;
-				for (Entry<?, ?> entry : mymap.entrySet()) {
-					System.out.println(entry.getKey() + " = '"
-							+ entry.getValue() + "'");
-				}
+			if (value instanceof Annotation) {
+				System.out.println(value);
 			}
-			System.out.println(")");
 		}
 	}
 }

@@ -20,6 +20,10 @@
 
 package org.quattor.pan.parser;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.quattor.pan.template.SourceRange;
 
 public class SimpleNode implements Node {
@@ -29,6 +33,8 @@ public class SimpleNode implements Node {
 	protected PanParser parser;
 
 	private SourceRange sourceRange = null;
+
+	protected List<Token> specialTokens = new LinkedList<Token>();
 
 	public SimpleNode(int i) {
 		id = i;
@@ -115,6 +121,14 @@ public class SimpleNode implements Node {
 
 	public int getId() {
 		return id;
+	}
+
+	public void addSpecialToken(Token specialToken) {
+		specialTokens.add(specialToken);
+	}
+
+	public List<Token> getSpecialTokens() {
+		return Collections.unmodifiableList(specialTokens);
 	}
 
 }

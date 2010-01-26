@@ -35,6 +35,7 @@ import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.exceptions.SystemException;
 import org.quattor.pan.parser.ASTTemplate;
 import org.quattor.pan.parser.PanParser;
+import org.quattor.pan.parser.PanParserAnnotationUtils;
 import org.quattor.pan.parser.PanParserAstUtils;
 import org.quattor.pan.parser.ParseException;
 import org.quattor.pan.template.Template;
@@ -157,6 +158,10 @@ public class CompileTask extends Task<CompileResult> {
 				parser.setCompilerOptions(compilerOptions);
 				ASTTemplate ast = parser.template();
 				template = PanParserAstUtils.convertAstToTemplate(tplfile, ast);
+
+				// TEMPORARY STATEMENT TO TRY OUT ANNOTATION DUMPING.
+				// FIXME: Provide dedicated option to activating this.
+				//PanParserAnnotationUtils.printXML(ast);
 
 			} catch (SyntaxException se) {
 				throw se.addExceptionInfo(null, tplfile);

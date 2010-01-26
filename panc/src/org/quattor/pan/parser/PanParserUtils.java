@@ -30,6 +30,12 @@ import org.quattor.pan.template.SourceRange;
 
 public class PanParserUtils {
 
+	static void addSpecialTokens(SimpleNode node, Token token) {
+		for (Token currentToken = token; currentToken.specialToken != null; currentToken = currentToken.specialToken) {
+			node.addSpecialToken(currentToken.specialToken);
+		}
+	}
+
 	static SourceRange sourceRangeFromTokens(Token start, Token end) {
 		return new SourceRange(start.beginLine, start.beginColumn, end.endLine,
 				end.endColumn);

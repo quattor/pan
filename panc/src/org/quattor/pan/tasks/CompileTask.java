@@ -161,7 +161,7 @@ public class CompileTask extends Task<CompileResult> {
 
 				// TEMPORARY STATEMENT TO TRY OUT ANNOTATION DUMPING.
 				// FIXME: Provide dedicated option to activating this.
-				//PanParserAnnotationUtils.printXML(ast);
+				PanParserAnnotationUtils.printXML(ast);
 
 			} catch (SyntaxException se) {
 				throw se.addExceptionInfo(null, tplfile);

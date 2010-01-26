@@ -14,12 +14,17 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
-import org.quattor.pan.dml.data.Property;
+import org.quattor.pan.annotation.Annotation;
+import org.quattor.pan.annotation.Annotation.Entry;
 import org.quattor.pan.exceptions.CompilerError;
+import org.quattor.pan.exceptions.SyntaxException;
+import org.quattor.pan.parser.ASTStatement.StatementType;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 public class PanParserAnnotationUtils {
+
+	public static final String PAN_ANNO_NS = "http://quattor.org/pan/annotations";
 
 	public static void printXML(ASTTemplate ast) {
 
@@ -56,8 +61,7 @@ public class PanParserAnnotationUtils {
 			handler.startDocument();
 
 			// Add the attributes for the root element.
-			atts.addAttribute("pan-annotations", null, "format", "CDATA",
-					"xmldb");
+			atts.addAttribute(PAN_ANNO_NS, null, "format", "CDATA", "xmldb");
 
 			// Process children recursively.
 			writeASTNode(handler, ast);
@@ -88,13 +92,16 @@ public class PanParserAnnotationUtils {
 
 		AttributesImpl atts = new AttributesImpl();
 
-		handler.startElement("pan-annotations", null, ast.getClass()
-				.getSimpleName(), atts);
+		String elementName = getElementInfo(ast, atts);
 
-		if (ast instanceof SimpleNode) {
-			SimpleNode node = (SimpleNode) ast;
-			for (Token t : node.getSpecialTokens()) {
-				writeSpecialToken(handler, t);
+		if (elementName != null) {
+			handler.startElement(PAN_ANNO_NS, null, elementName, atts);
+
+			if (ast instanceof SimpleNode) {
+				SimpleNode node = (SimpleNode) ast;
+				for (Token t : node.getSpecialTokens()) {
+					writeAnnotationToken(handler, t);
+				}
 			}
 		}
 
@@ -103,23 +110,103 @@ public class PanParserAnnotationUtils {
 			writeASTNode(handler, ast.jjtGetChild(i));
 		}
 
-		handler.endElement("pan-annotations", null, ast.getClass()
-				.getSimpleName());
+		if (elementName != null) {
+			handler.endElement(PAN_ANNO_NS, null, elementName);
+		}
+
 	}
 
-	private static void writeSpecialToken(TransformerHandler handler, Token t)
+	private static String getElementInfo(Node ast, AttributesImpl atts) {
+
+		String elementName = ast.getClass().getSimpleName();
+
+		if (ast instanceof ASTTemplate) {
+
+			ASTTemplate tplNode = (ASTTemplate) ast;
+
+			elementName = "template";
+
+			atts.addAttribute(PAN_ANNO_NS, null, "name", "CDATA", tplNode
+					.getIdentifier());
+			atts.addAttribute(PAN_ANNO_NS, null, "type", "CDATA", tplNode
+					.getTemplateType().toString());
+
+		} else if (ast instanceof ASTStatement) {
+
+			ASTStatement node = (ASTStatement) ast;
+
+			StatementType type = node.getStatementType();
+
+			switch (type) {
+
+			case FUNCTION: // fall through
+			case VARIABLE: // fall through
+			case TYPE:
+				elementName = node.getStatementType().toString().toLowerCase();
+
+				atts.addAttribute(PAN_ANNO_NS, null, "name", "CDATA", node
+						.getIdentifier());
+
+				break;
+
+			default:
+				elementName = null;
+
+			}
+
+		} else if (ast instanceof ASTFieldSpec) {
+
+			ASTFieldSpec node = (ASTFieldSpec) ast;
+
+			elementName = "field";
+
+			try {
+				atts.addAttribute(PAN_ANNO_NS, null, "name", "CDATA", node
+						.getKey().toString());
+			} catch (SyntaxException consumed) {
+			}
+
+			atts.addAttribute(PAN_ANNO_NS, null, "required", "CDATA", (node
+					.isRequired() ? "yes" : "no"));
+
+		} else if (ast instanceof ASTOperation) {
+			elementName = null;
+		}
+
+		return elementName;
+	}
+
+	private static void writeAnnotationToken(TransformerHandler handler, Token t)
 			throws SAXException {
 
-		AttributesImpl atts = new AttributesImpl();
+		if (t instanceof AnnotationToken) {
+			AnnotationToken token = (AnnotationToken) t;
+			Annotation annotation = (Annotation) token.getValue();
 
-		handler.startElement("pan-annotations", null, t.getClass()
-				.getSimpleName(), atts);
+			String name = annotation.getName();
 
-		String s = t.image;
-		handler.characters(s.toCharArray(), 0, s.length());
+			AttributesImpl atts = new AttributesImpl();
 
-		handler.endElement("pan-annotations", null, t.getClass()
-				.getSimpleName());
+			if (!annotation.isAnonymous()) {
+				handler.startElement(PAN_ANNO_NS, null, name, atts);
+			}
+
+			for (Entry entry : annotation.getEntries()) {
+
+				String elementName = entry.getKey();
+				char[] elementContents = entry.getValue().toCharArray();
+
+				handler.startElement(PAN_ANNO_NS, null, elementName, atts);
+				handler.characters(elementContents, 0, elementContents.length);
+				handler.endElement(PAN_ANNO_NS, null, elementName);
+
+			}
+
+			if (!annotation.isAnonymous()) {
+				handler.endElement(PAN_ANNO_NS, null, name);
+			}
+
+		}
 	}
 
 }

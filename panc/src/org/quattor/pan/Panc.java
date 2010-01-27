@@ -465,8 +465,9 @@ public class Panc {
 			} else if (opt.equals("annotation-dir")) {
 				annotationDirectory = new File(arguments.elementAt(compteur));
 				if (!annotationDirectory.isAbsolute()) {
-					annotationDirectory = new File(System.getProperty("user.dir"),
-							arguments.elementAt(compteur));
+					annotationDirectory = new File(System
+							.getProperty("user.dir"), arguments
+							.elementAt(compteur));
 				}
 				veriDir(outputDirectory);
 			} else if ((opt.equals("l")) || (opt.equals("object-load"))) {
@@ -600,6 +601,8 @@ public class Panc {
 				.printf("     --debug-exclude           pattern to disable debug/traceback functions\n");
 		System.out
 				.printf("     --dump-annotations        print annotations to standard output\n");
+		System.out
+				.printf("     --annotation-dir=PATH     where to store the annotation files\n");
 		System.out.printf(" -a, --verbose                 shows statistics\n");
 		System.out
 				.printf(" -z, --xml-write               write machine config. files (usually XML files)\n");

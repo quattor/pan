@@ -158,6 +158,16 @@
         </varlistentry>
 
         <varlistentry>
+          <term><option>--annotation-dir</option></term>
+
+          <listitem>
+            <para>Directory that will hold the files containing annotation
+            information. The directory must exist. By default, the annotation
+            information is not output.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
           <term><option>-a, --verbose</option></term>
 
           <listitem>

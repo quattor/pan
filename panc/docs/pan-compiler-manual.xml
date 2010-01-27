@@ -512,6 +512,24 @@
 
               <entry>No. Default value: true</entry>
             </row>
+
+            <row>
+              <entry>dumpAnnotations</entry>
+
+              <entry>Write the annotations to the standard output as the
+              template is compiled.</entry>
+
+              <entry>No. Default value: false</entry>
+            </row>
+
+            <row>
+              <entry>annotationDirectory</entry>
+
+              <entry>Directory which will hold files containing annotation
+              information.</entry>
+
+              <entry>No.</entry>
+            </row>
           </tbody>
         </tgroup>
       </table>

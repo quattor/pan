@@ -534,6 +534,33 @@ variable X ?=
     <title>Change Log</title>
 
     <section>
+      <title>Version 8.3.0</title>
+
+      <para><emphasis>This is a development release and not intended for
+      production use.</emphasis> Feedback on the new features is
+      welcome.</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Annotation syntax has been expanded to include named
+          annotations. The name and key values have been restricted from
+          previous releases with the characters "+/" no longer being accepted.
+          They must also not start with the string "xml", ignoring the case of
+          the letters. This may create issues with backwards compatibility if
+          annotations are used in your source files.</para>
+        </listitem>
+
+        <listitem>
+          <para>The annotation information can be written to files using the
+          <option>--annotation-dir</option> option. A template named
+          "my/path/template" will have the annotation information written to
+          the file <filename>my/path/template.annotation.xml</filename>
+          relative to the given annotation directory.</para>
+        </listitem>
+      </itemizedlist>
+    </section>
+
+    <section>
       <title>Version 8.2.11</title>
 
       <para>Although this version internally keeps track of dependencies from

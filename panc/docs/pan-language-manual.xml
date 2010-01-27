@@ -1671,18 +1671,28 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
       allow a set of key-value pairs to be associated with various
       language-level elements. This was originally intended to help with the
       generation of documentation, but the general nature of the solution may
-      lend itself to other uses. The basic syntax of an annotation is:</para>
+      lend itself to other uses.</para>
 
-      <programlisting>@(<replaceable>content</replaceable>) | @ [<replaceable>content</replaceable>] | @{<replaceable>content</replaceable>}</programlisting>
+      <para>The basic syntax of an annotation is:</para>
+
+      <programlisting>@<replaceable>name</replaceable>(<replaceable>content</replaceable>) | @<replaceable>name</replaceable>[<replaceable>content</replaceable>] | @<replaceable>name</replaceable>{<replaceable>content</replaceable>}</programlisting>
 
       <para>where <replaceable>content</replaceable> is either a set of
       key-value pairs or a block of text. The chosen delimiter (parenthesis,
       bracket, or brace) cannot appear in the enclosed
-      <replaceable>content</replaceable>. Annotations may appear before any
-      token in the pan language and are logically attached to the following
-      token. The compiler will process annotations when building machine
-      configurations, but ignore the contents. Syntactically invalid
-      annotations will cause the compilation to fail.</para>
+      <replaceable>content</replaceable>. The <replaceable>name</replaceable>
+      is optional, but if it exists must follow the same rules as for a valid
+      key (see below). Whitespace can be added before or after both the
+      <replaceable>content</replaceable> and
+      <replaceable>name</replaceable>.</para>
+
+      <para>Annotations may appear before any token in the pan language and
+      are logically attached to the following token. The compiler will process
+      annotations when building machine configurations and syntactically
+      invalid annotations will cause the compilation to fail. The compiler
+      does not impose any semantic constraints on the contents of the
+      annotations and they do not affect the processing of the configuration
+      information.</para>
 
       <para>A set of key-value pairs inside of an annotation are written
       like:</para>
@@ -1692,13 +1702,18 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
   key2 = value2
 )</programlisting>
 
-      <para>The key can be any sequence of letters, digits, and the characters
-      "_.+-/". The value associated with the key is the string starting with
-      the first non-whitespace character after the equals sign up to, but not
-      including, the end of line or terminating delimiter of the annotation.
-      The syntax is tolerant of whitespace with whitespace before the key and
-      around the equals sign being ignored. Lines consisting of only
-      whitespace are also ignored.</para>
+      <para>The <replaceable>key</replaceable> can be any sequence of letters,
+      digits, and the characters "_.-". The first character of the key must
+      either be a letter or an underscore. The key cannot start with the
+      letters "xml", ignoring the case of the letters. There may be multiple
+      key-value pairs with the same <replaceable>key</replaceable>. The value
+      associated with the key is the string starting with the first
+      non-whitespace character after the equals sign up to, but not including,
+      the end of line or terminating delimiter of the annotation. Trailing
+      whitespace of the value will be stripped if quotes are not used to
+      define the value. The syntax is tolerant of whitespace with whitespace
+      before the key and around the equals sign being ignored. Lines
+      consisting of only whitespace are also ignored.</para>
 
       <para>Long values may be split between lines by terminating intermediate
       lines with a single backslash. For example,</para>
@@ -1723,8 +1738,9 @@ value"
 )</programlisting>
 
       <para>The value consists of the three words "some", "long", and "value"
-      separated by newlines. Either single or double quotes may be used, but
-      the value itself may not contain the chosen delimiter. The quote must be
+      separated by newlines. Either single or double quotes may be used. If
+      the value contains the quote that was used, it must be escaped by
+      doubling it. E.g. "a valid value with a "" inside". The quote must be
       the first non-whitespace character after the equals sign to start a
       multi-line value.</para>
 

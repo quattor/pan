@@ -265,7 +265,7 @@ public class CompilerOptions {
 		this.dumpAnnotations = dumpAnnotations;
 		
 		this.annotationDirectory = annotationDirectory;
-		if (outputDirectory != null) {
+		if (annotationDirectory != null) {
 			checkDirectory(annotationDirectory, "annotation");
 		}
 

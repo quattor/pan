@@ -403,6 +403,8 @@ public class MessageUtils {
 
 	public final static String MSG_INVALID_ANNOTATION_SYNTAX = "MSG_INVALID_ANNOTATION_SYNTAX";
 
+	public final static String MSG_ERROR_WHILE_WRITING_OUTPUT = "MSG_ERROR_WHILE_WRITING_OUTPUT";
+
 	// Name of the resource bundle to use for compiler messages.
 	private final static String bundleName = "org.quattor.pan.Messages";
 

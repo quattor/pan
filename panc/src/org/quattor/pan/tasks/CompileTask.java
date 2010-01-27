@@ -157,11 +157,14 @@ public class CompileTask extends Task<CompileResult> {
 				parser.setFile(tplfile);
 				parser.setCompilerOptions(compilerOptions);
 				ASTTemplate ast = parser.template();
-				template = PanParserAstUtils.convertAstToTemplate(tplfile, ast);
 
-				// TEMPORARY STATEMENT TO TRY OUT ANNOTATION DUMPING.
-				// FIXME: Provide dedicated option to activating this.
-				PanParserAnnotationUtils.printXML(ast);
+				// FIXME: Annotation printing should be an asynchronous task.
+				if (compilerOptions.annotationDirectory != null) {
+					PanParserAnnotationUtils.printXML(
+							compilerOptions.annotationDirectory, ast);
+				}
+
+				template = PanParserAstUtils.convertAstToTemplate(tplfile, ast);
 
 			} catch (SyntaxException se) {
 				throw se.addExceptionInfo(null, tplfile);

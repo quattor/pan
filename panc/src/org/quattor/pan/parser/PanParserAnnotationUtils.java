@@ -2,8 +2,12 @@ package org.quattor.pan.parser;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_MISSING_SAX_TRANSFORMER;
 import static org.quattor.pan.utils.MessageUtils.MSG_UNEXPECTED_EXCEPTION_WHILE_WRITING_OUTPUT;
+import static org.quattor.pan.utils.MessageUtils.MSG_ERROR_WHILE_WRITING_OUTPUT;
 
-import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.Properties;
 
 import javax.xml.transform.OutputKeys;
@@ -18,7 +22,9 @@ import org.quattor.pan.annotation.Annotation;
 import org.quattor.pan.annotation.Annotation.Entry;
 import org.quattor.pan.exceptions.CompilerError;
 import org.quattor.pan.exceptions.SyntaxException;
+import org.quattor.pan.exceptions.SystemException;
 import org.quattor.pan.parser.ASTStatement.StatementType;
+import org.quattor.pan.utils.MessageUtils;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -26,7 +32,11 @@ public class PanParserAnnotationUtils {
 
 	public static final String PAN_ANNO_NS = "http://quattor.org/pan/annotations";
 
-	public static void printXML(ASTTemplate ast) {
+	public static void printXML(File annotationDirectory, ASTTemplate ast) {
+
+		String templateName = ast.getIdentifier();
+
+		File outputFile = setupOutputFile(annotationDirectory, templateName);
 
 		// Generate the transformer factory. Need to guarantee that we get a
 		// SAXTransformerFactory.
@@ -50,8 +60,8 @@ public class PanParserAnnotationUtils {
 			transformer.setOutputProperties(properties);
 
 			// Ok, feed SAX events to the output stream.
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			handler.setResult(new StreamResult(baos));
+			OutputStream os = new FileOutputStream(outputFile);
+			handler.setResult(new StreamResult(os));
 
 			// Create an list of attributes which can be reused on a "per-call"
 			// basis. This allows the class to remain a singleton.
@@ -70,8 +80,6 @@ public class PanParserAnnotationUtils {
 			// stream.
 			handler.endDocument();
 
-			System.err.println(baos.toString());
-
 		} catch (TransformerConfigurationException tce) {
 			Error error = CompilerError
 					.create(MSG_UNEXPECTED_EXCEPTION_WHILE_WRITING_OUTPUT);
@@ -83,8 +91,33 @@ public class PanParserAnnotationUtils {
 					.create(MSG_UNEXPECTED_EXCEPTION_WHILE_WRITING_OUTPUT);
 			error.initCause(se);
 			throw error;
+
+		} catch (FileNotFoundException e) {
+			String msg = MessageUtils.format(MSG_ERROR_WHILE_WRITING_OUTPUT,
+					outputFile);
+			SystemException exception = new SystemException(msg);
+			throw exception;
 		}
 
+	}
+
+	private static File setupOutputFile(File annotationDirectory,
+			String templateName) {
+
+		String separator = System.getProperty("file.separator");
+
+		String localizedName = templateName.replaceAll("/", separator)
+				+ ".annotation.xml";
+
+		File outputFile = new File(annotationDirectory, localizedName);
+
+		File outputDir = outputFile.getParentFile();
+
+		if (!outputDir.exists()) {
+			outputDir.mkdirs();
+		}
+
+		return outputFile;
 	}
 
 	private static void writeASTNode(TransformerHandler handler, Node ast)

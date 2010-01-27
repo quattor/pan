@@ -124,6 +124,11 @@ public class CompilerOptions {
 	public final boolean dumpAnnotations;
 
 	/**
+	 * Directory that will contain the annotation output files.
+	 */
+	public final File annotationDirectory;
+
+	/**
 	 * Construct a CompilerOptions instance to drive a Compiler run. Instances
 	 * of this class are immutable.
 	 * 
@@ -163,13 +168,16 @@ public class CompilerOptions {
 	 * @param dumpAnnotations
 	 *            flag to indicate if annotations should be dumped to the
 	 *            standard output
+	 * @param annotationDirectory
+	 *            directory that will contain annotation output files
 	 */
 	public CompilerOptions(List<Pattern> debugIncludePatterns,
 			List<Pattern> debugExcludePatterns, boolean xmlWriteEnabled,
 			boolean depWriteEnabled, int iterationLimit, int callDepthLimit,
 			Formatter formatter, File outputDirectory, File sessionDirectory,
 			List<File> includeDirectories, int nthread, boolean gzipOutput,
-			int deprecationLevel, boolean forceBuild, boolean dumpAnnotations) {
+			int deprecationLevel, boolean forceBuild, boolean dumpAnnotations,
+			File annotationDirectory) {
 
 		// Check that the iteration and call depth limits are sensible. If
 		// negative or zero set these effectively to infinity.
@@ -255,6 +263,11 @@ public class CompilerOptions {
 		sourceRepository = value;
 
 		this.dumpAnnotations = dumpAnnotations;
+		
+		this.annotationDirectory = annotationDirectory;
+		if (outputDirectory != null) {
+			checkDirectory(annotationDirectory, "annotation");
+		}
 
 	}
 

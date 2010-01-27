@@ -115,6 +115,8 @@ public class PanCompilerTask extends Task {
 	private File logfile = null;
 
 	private boolean dumpAnnotations = false;
+	
+	private File annotationDirectory = null;
 
 	// Create a cache for the modification times of the templates. In the
 	// case where all of the files are up to date, this will save repeated
@@ -162,7 +164,7 @@ public class PanCompilerTask extends Task {
 				debugExcludePatterns, xmlWriteEnabled, depWriteEnabled,
 				iterationLimit, callDepthLimit, formatter, outputDirectory,
 				sessionDirectory, includeDirectories, nthread, gzipOutput,
-				deprecationLevel, forceBuild, dumpAnnotations);
+				deprecationLevel, forceBuild, dumpAnnotations, annotationDirectory);
 
 		// If the debugging for the task is enabled, then print out the options
 		// and the arguments.
@@ -466,6 +468,10 @@ public class PanCompilerTask extends Task {
 	 */
 	public void setDumpAnnotations(boolean dumpAnnotations) {
 		this.dumpAnnotations = dumpAnnotations;
+	}
+
+	public void setAnnotationDirectory(File annotationDirectory) {
+		this.annotationDirectory = annotationDirectory;
 	}
 
 	/**

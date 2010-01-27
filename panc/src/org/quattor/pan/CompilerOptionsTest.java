@@ -47,9 +47,9 @@ public class CompilerOptionsTest {
 		includeDirectories.add(sessionDirectory);
 
 		CompilerOptions options = new CompilerOptions(null, null,
-				xmlWriteEnabled, depWriteEnabled, iterationLimit, callDepthLimit,
-				formatter, outputDirectory, sessionDirectory, includeDirectories,
-				0, false, 0, false, false);
+				xmlWriteEnabled, depWriteEnabled, iterationLimit,
+				callDepthLimit, formatter, outputDirectory, sessionDirectory,
+				includeDirectories, 0, false, 0, false, false, null);
 
 		assertTrue(xmlWriteEnabled == options.xmlWriteEnabled);
 		assertTrue(depWriteEnabled == options.depWriteEnabled);
@@ -76,9 +76,9 @@ public class CompilerOptionsTest {
 		includeDirectories.add(outputDirectory);
 
 		CompilerOptions options = new CompilerOptions(null, null,
-				xmlWriteEnabled, depWriteEnabled, iterationLimit, callDepthLimit,
-				formatter, outputDirectory, sessionDirectory, includeDirectories,
-				0, false, 0, false, false);
+				xmlWriteEnabled, depWriteEnabled, iterationLimit,
+				callDepthLimit, formatter, outputDirectory, sessionDirectory,
+				includeDirectories, 0, false, 0, false, false, null);
 
 		assertTrue(xmlWriteEnabled == options.xmlWriteEnabled);
 		assertTrue(depWriteEnabled == options.depWriteEnabled);
@@ -106,9 +106,9 @@ public class CompilerOptionsTest {
 		includeDirectories.add(sessionDirectory);
 
 		CompilerOptions options = new CompilerOptions(null, null,
-				xmlWriteEnabled, depWriteEnabled, iterationLimit, callDepthLimit,
-				formatter, outputDirectory, sessionDirectory, includeDirectories,
-				0, false, 0, false, false);
+				xmlWriteEnabled, depWriteEnabled, iterationLimit,
+				callDepthLimit, formatter, outputDirectory, sessionDirectory,
+				includeDirectories, 0, false, 0, false, false, null);
 
 		assertTrue(Integer.MAX_VALUE == options.iterationLimit);
 		assertTrue(Integer.MAX_VALUE == options.callDepthLimit);
@@ -128,9 +128,10 @@ public class CompilerOptionsTest {
 		includeDirectories.add(outputDirectory);
 		includeDirectories.add(sessionDirectory);
 
-		new CompilerOptions(null, null, xmlWriteEnabled,
-				depWriteEnabled, iterationLimit, callDepthLimit, formatter,
-				outputDirectory, sessionDirectory, includeDirectories, 0, false, 0, false, false);
+		new CompilerOptions(null, null, xmlWriteEnabled, depWriteEnabled,
+				iterationLimit, callDepthLimit, formatter, outputDirectory,
+				sessionDirectory, includeDirectories, 0, false, 0, false,
+				false, null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -147,9 +148,10 @@ public class CompilerOptionsTest {
 		includeDirectories.add(outputDirectory);
 		includeDirectories.add(sessionDirectory);
 
-		new CompilerOptions(null, null, xmlWriteEnabled,
-				depWriteEnabled, iterationLimit, callDepthLimit, formatter,
-				outputDirectory, sessionDirectory, includeDirectories, 0, false, 0, false, false);
+		new CompilerOptions(null, null, xmlWriteEnabled, depWriteEnabled,
+				iterationLimit, callDepthLimit, formatter, outputDirectory,
+				sessionDirectory, includeDirectories, 0, false, 0, false,
+				false, null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -165,9 +167,10 @@ public class CompilerOptionsTest {
 		List<File> includeDirectories = new LinkedList<File>();
 		includeDirectories.add(new File("/xxxyyy"));
 
-		new CompilerOptions(null, null, xmlWriteEnabled,
-				depWriteEnabled, iterationLimit, callDepthLimit, formatter,
-				outputDirectory, sessionDirectory, includeDirectories, 0, false, 0, false, false);
+		new CompilerOptions(null, null, xmlWriteEnabled, depWriteEnabled,
+				iterationLimit, callDepthLimit, formatter, outputDirectory,
+				sessionDirectory, includeDirectories, 0, false, 0, false,
+				false, null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -184,9 +187,10 @@ public class CompilerOptionsTest {
 		includeDirectories.add(outputDirectory);
 		includeDirectories.add(sessionDirectory);
 
-		new CompilerOptions(null, null, xmlWriteEnabled,
-				depWriteEnabled, iterationLimit, callDepthLimit, formatter,
-				outputDirectory, sessionDirectory, includeDirectories, 0, false, 0, false, false);
+		new CompilerOptions(null, null, xmlWriteEnabled, depWriteEnabled,
+				iterationLimit, callDepthLimit, formatter, outputDirectory,
+				sessionDirectory, includeDirectories, 0, false, 0, false,
+				false, null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -203,9 +207,10 @@ public class CompilerOptionsTest {
 		includeDirectories.add(outputDirectory);
 		includeDirectories.add(sessionDirectory);
 
-		new CompilerOptions(null, null, xmlWriteEnabled,
-				depWriteEnabled, iterationLimit, callDepthLimit, formatter,
-				outputDirectory, sessionDirectory, includeDirectories, 0, false, 0, false, false);
+		new CompilerOptions(null, null, xmlWriteEnabled, depWriteEnabled,
+				iterationLimit, callDepthLimit, formatter, outputDirectory,
+				sessionDirectory, includeDirectories, 0, false, 0, false,
+				false, null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -220,9 +225,10 @@ public class CompilerOptionsTest {
 		File sessionDirectory = new File(System.getProperty("user.dir"));
 		List<File> includeDirectories = new LinkedList<File>();
 
-		new CompilerOptions(null, null, xmlWriteEnabled,
-				depWriteEnabled, iterationLimit, callDepthLimit, formatter,
-				outputDirectory, sessionDirectory, includeDirectories, 0, false, 0, false, false);
+		new CompilerOptions(null, null, xmlWriteEnabled, depWriteEnabled,
+				iterationLimit, callDepthLimit, formatter, outputDirectory,
+				sessionDirectory, includeDirectories, 0, false, 0, false,
+				false, null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -238,9 +244,10 @@ public class CompilerOptionsTest {
 		List<File> includeDirectories = new LinkedList<File>();
 		includeDirectories.add(null);
 
-		new CompilerOptions(null, null, xmlWriteEnabled,
-				depWriteEnabled, iterationLimit, callDepthLimit, formatter,
-				outputDirectory, sessionDirectory, includeDirectories, 0, false, 0, false, false);
+		new CompilerOptions(null, null, xmlWriteEnabled, depWriteEnabled,
+				iterationLimit, callDepthLimit, formatter, outputDirectory,
+				sessionDirectory, includeDirectories, 0, false, 0, false,
+				false, null);
 	}
 
 }

@@ -123,6 +123,7 @@ public class Panc {
 		authorizedOpt.addElement("java-opts");
 		authorizedOptArg.addElement("java-opts");
 		authorizedOpt.addElement("dump-annotations");
+		authorizedOpt.addElement("annotation-dir");
 
 		endingOptChar.addElement("j");
 		endingOptChar.addElement("J");
@@ -403,6 +404,8 @@ public class Panc {
 
 		boolean dumpAnnotations = false;
 
+		File annotationDirectory = null;
+
 		boolean xmlWriteEnabled = true;
 
 		boolean depWriteEnabled = false;
@@ -459,6 +462,13 @@ public class Panc {
 				debugExcludePatterns.add(p);
 			} else if (opt.equals("dump-annotations")) {
 				dumpAnnotations = true;
+			} else if (opt.equals("annotation-dir")) {
+				annotationDirectory = new File(arguments.elementAt(compteur));
+				if (!annotationDirectory.isAbsolute()) {
+					annotationDirectory = new File(System.getProperty("user.dir"),
+							arguments.elementAt(compteur));
+				}
+				veriDir(outputDirectory);
 			} else if ((opt.equals("l")) || (opt.equals("object-load"))) {
 				// Do nothing; deprecated option.
 			} else if ((opt.equals("b")) || (opt.equals("no-object-load"))) {
@@ -559,7 +569,7 @@ public class Panc {
 				debugExcludePatterns, xmlWriteEnabled, depWriteEnabled,
 				iteration, callDepth, formatter, outputDirectory,
 				sessionDirectory, includeDirectories, 0, gzip, deprecation,
-				false, dumpAnnotations);
+				false, dumpAnnotations, annotationDirectory);
 
 		CompilerResults results = Compiler.run(coptions, objectOutput,
 				includeFiles);

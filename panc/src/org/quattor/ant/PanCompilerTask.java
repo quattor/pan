@@ -535,9 +535,10 @@ public class PanCompilerTask extends Task {
 			// (i.e. the largest modification time). Also check that none
 			// of the files has changed position in the load path.
 			boolean outOfDate = false;
+			Scanner scanner = null;
 			try {
 
-				Scanner scanner = new Scanner(d);
+				scanner = new Scanner(d);
 				while (scanner.hasNextLine()) {
 
 					// Get the next line. This should never throw an exception
@@ -591,6 +592,12 @@ public class PanCompilerTask extends Task {
 					System.err.println(debugIndent
 							+ "Template dependency file (" + d
 							+ ") doesn't exist");
+				}
+
+			} finally {
+
+				if (scanner != null) {
+					scanner.close();
 				}
 
 			}

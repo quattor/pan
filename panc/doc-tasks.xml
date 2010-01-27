@@ -64,9 +64,12 @@
                     <path refid="classpath.xslt1" />
                 </classpath>
 
+		<sysproperty key="java.awt.headless" value="true" />
+
                 <arg value="-buildfile" />
                 <arg file="${basedir}/build.xml" />
                 <arg value="-Dbasedir=${basedir}" />
+                <arg value="-Djava.awt.headless=true" />
                 <arg value="@{target}" />
             </java>
         </sequential>

@@ -141,8 +141,8 @@ abstract public class FileSystemSourceRepository implements SourceRepository {
 		return Collections.unmodifiableList(dirs);
 	}
 
-	protected String localizeName(String name) {
-		return name.replace('/', File.separatorChar);
+	public static String localizeName(String name) {
+		return name.replaceAll("/", File.separator);
 	}
 
 }

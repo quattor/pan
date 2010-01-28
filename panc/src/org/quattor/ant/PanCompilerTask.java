@@ -165,14 +165,12 @@ public class PanCompilerTask extends Task {
 			DependencyChecker checker = new DependencyChecker(
 					includeDirectories, ignoreDependencyPattern);
 
-			List<File> outdated = checker.outdatedObjectFiles(objectFiles,
+			outdatedFiles = checker.outdatedObjectFiles(objectFiles,
 					outputDirectory);
-
-			objectFiles.removeAll(outdated);
 
 			if (debugVerbose) {
 				System.err.println("Outdated profiles: \n");
-				for (File objectFile : outdated) {
+				for (File objectFile : outdatedFiles) {
 					System.err.println(debugIndent + objectFile + "\n");
 				}
 			}

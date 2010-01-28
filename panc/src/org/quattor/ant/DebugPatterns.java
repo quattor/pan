@@ -20,11 +20,11 @@ import org.apache.tools.ant.BuildException;
 public class DebugPatterns {
 
 	// This pattern matches all template names.
-	private static Pattern ALL = Pattern.compile(".+");
+	public final static Pattern ALL = Pattern.compile(".+");
 
 	// This pattern matches only the empty string. As an empty string is an
 	// invalid template name, this pattern will never match a valid value.
-	private static Pattern NONE = Pattern.compile("^$");
+	public final static Pattern NONE = Pattern.compile("^$");
 
 	private Pattern include;
 	private Pattern exclude;
@@ -39,7 +39,7 @@ public class DebugPatterns {
 	}
 
 	public void setInclude(String includePattern) {
-		include = Pattern.compile(includePattern);
+		include = validatePattern(includePattern);
 	}
 
 	public Pattern getExclude() {

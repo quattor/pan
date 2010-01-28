@@ -45,12 +45,27 @@ public class SourceFile implements Comparable<SourceFile>, Serializable {
 			this.extension = extension;
 		}
 
+		public boolean isSource() {
+			return (!"".equals(extension));
+		}
+
 		public boolean isAbsent() {
 			return absent;
 		}
 
 		public String getExtension() {
 			return extension;
+		}
+
+		public static boolean hasSourceFileExtension(String filename) {
+			for (Type type : Type.values()) {
+				if (type.isSource()) {
+					if (filename.endsWith(type.getExtension())) {
+						return true;
+					}
+				}
+			}
+			return false;
 		}
 	};
 

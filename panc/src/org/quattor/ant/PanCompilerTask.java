@@ -23,8 +23,6 @@ package org.quattor.ant;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Scanner;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -40,7 +38,7 @@ import org.quattor.pan.CompilerOptions;
 import org.quattor.pan.CompilerResults;
 import org.quattor.pan.output.Formatter;
 import org.quattor.pan.output.FormatterUtils;
-import org.quattor.pan.utils.FileStatCache;
+import org.quattor.pan.repository.SourceFile.Type;
 
 /**
  * An ant task which permits calling the pan compiler from an ant build file.
@@ -53,14 +51,8 @@ import org.quattor.pan.utils.FileStatCache;
  */
 public class PanCompilerTask extends Task {
 
-	/* The pattern in the dependency files. (Two double-quoted strings). */
-	private static Pattern depline = Pattern.compile("\"(.*)\"\\s+\"(.*)\"");
-
-	/* A pattern that includes everything. For debugging includes/excludes. */
-	private static Pattern allPattern = Pattern.compile(".*");
-
-	/* List of files to actually compile and process. */
-	private LinkedList<File> files = new LinkedList<File>();
+	/* List of files to actually compile and process. Should be object files! */
+	private LinkedList<File> objectFiles = new LinkedList<File>();
 
 	/* The root directory for the includes. */
 	private File includeroot = null;
@@ -115,30 +107,15 @@ public class PanCompilerTask extends Task {
 	private File logfile = null;
 
 	private boolean dumpAnnotations = false;
-	
+
 	private File annotationDirectory = null;
 
-	// Create a cache for the modification times of the templates. In the
-	// case where all of the files are up to date, this will save repeated
-	// disk reads to determine the state of files as dependencies are in
-	// common within a cluster.
-	private FileStatCache statCache = new FileStatCache();
+	private int batchSize = 0;
 
-	/**
-	 * Constructor
-	 */
 	public PanCompilerTask() {
 		setFormatter("xmldb");
 	}
 
-	/**
-	 * Launch a build with the pan compiler using the parameters and list of
-	 * file set via ant.
-	 * 
-	 * @throws BuildException
-	 *             if the 'includeroot' parameter isn't specified when using the
-	 *             'includes' parameter
-	 */
 	@Override
 	public void execute() throws BuildException {
 
@@ -164,7 +141,8 @@ public class PanCompilerTask extends Task {
 				debugExcludePatterns, xmlWriteEnabled, depWriteEnabled,
 				iterationLimit, callDepthLimit, formatter, outputDirectory,
 				sessionDirectory, includeDirectories, nthread, gzipOutput,
-				deprecationLevel, forceBuild, dumpAnnotations, annotationDirectory);
+				deprecationLevel, forceBuild, dumpAnnotations,
+				annotationDirectory);
 
 		// If the debugging for the task is enabled, then print out the options
 		// and the arguments.
@@ -174,21 +152,36 @@ public class PanCompilerTask extends Task {
 		if (debugVerbose) {
 			System.err.println("includeroot: " + includeroot);
 			System.err.println("Profiles to process : \n");
-			for (File f : files) {
-				System.err.println(debugIndent + f.toString() + "\n");
+			for (File objectFile : objectFiles) {
+				System.err.println(debugIndent + objectFile + "\n");
 			}
 		}
 
-		// Optionally check the profile dependency files and remove files which
-		// are up-to-date.
-		int total = files.size();
+		// Determine what object files are outdated. Assume that all are, unless
+		// the check is done.
+		List<File> outdatedFiles = objectFiles;
 		if (outputDirectory != null && checkDependencies) {
-			removeCurrentProfiles();
+
+			DependencyChecker checker = new DependencyChecker(
+					includeDirectories, ignoreDependencyPattern);
+
+			List<File> outdated = checker.outdatedObjectFiles(objectFiles,
+					outputDirectory);
+
+			objectFiles.removeAll(outdated);
+
+			if (debugVerbose) {
+				System.err.println("Outdated profiles: \n");
+				for (File objectFile : outdated) {
+					System.err.println(debugIndent + objectFile + "\n");
+				}
+			}
+
 		}
 
 		// Print out information on how many files will be processed.
 		if (verbose) {
-			System.out.println(files.size() + "/" + total
+			System.out.println(outdatedFiles.size() + "/" + objectFiles.size()
 					+ " object template(s) being processed");
 		}
 
@@ -197,20 +190,29 @@ public class PanCompilerTask extends Task {
 		CompilerLogging.activateLoggers(loggingFlags);
 		CompilerLogging.setLogFile(logfile);
 
-		// Run a compilation/build on the given object templates.
-		CompilerResults results = Compiler.run(options, null, files);
+		// Batch the files to process, if requested.
+		List<List<File>> batches = batchOutdatedFiles(outdatedFiles);
 
-		// Print out the results.
-		String errors = results.formatErrors();
-		if (errors != null) {
-			System.err.println(errors);
-		}
-		if (verbose) {
-			System.out.println(results.formatStats());
+		boolean hadError = false;
+		for (List<File> batch : batches) {
+
+			// Run a compilation/build on the given object templates.
+			CompilerResults results = Compiler.run(options, null, batch);
+
+			// Print out the results.
+			String errors = results.formatErrors();
+			if (errors != null) {
+				hadError = true;
+				System.err.println(errors);
+			}
+			if (verbose) {
+				System.out.println(results.formatStats());
+			}
+
 		}
 
 		// Stop build if there was an error.
-		if (errors != null) {
+		if (hadError) {
 			throw new BuildException("Compilation failed; see messages.");
 		}
 	}
@@ -224,8 +226,8 @@ public class PanCompilerTask extends Task {
 	 */
 	public void setIncludeRoot(File includeroot) {
 
-		// Do some parameter checking. The parameter must be an
-		// existing directory.
+		this.includeroot = includeroot;
+
 		if (!includeroot.exists()) {
 			throw new BuildException("includeroot doesn't exist: "
 					+ includeroot);
@@ -234,7 +236,6 @@ public class PanCompilerTask extends Task {
 			throw new BuildException("includeroot must be a directory: "
 					+ includeroot);
 		}
-		this.includeroot = includeroot;
 	}
 
 	/**
@@ -300,14 +301,13 @@ public class PanCompilerTask extends Task {
 	 *            a configured FileSet
 	 */
 	public void addConfiguredFileSet(FileSet fileset) {
-		if (fileset != null)
-			addFiles(fileset);
+		addFiles(fileset);
 	}
 
 	/**
 	 * Utility method that adds all of the files in a fileset to the list of
 	 * files to be processed. Duplicate files appear only once in the final
-	 * list. Files not ending with '.tpl' are ignored.
+	 * list. Files not ending with a valid source file extension are ignored.
 	 * 
 	 * @param fs
 	 *            FileSet from which to get the file names
@@ -322,8 +322,8 @@ public class PanCompilerTask extends Task {
 
 		// Loop over each file creating a File object.
 		for (String f : ds.getIncludedFiles()) {
-			if (f.endsWith(".tpl")) {
-				files.add(new File(basedir, f));
+			if (Type.hasSourceFileExtension(f)) {
+				objectFiles.add(new File(basedir, f));
 			}
 		}
 	}
@@ -348,35 +348,24 @@ public class PanCompilerTask extends Task {
 	 *            flag to print task debugging information
 	 */
 	public void setDebugTask(int debugTask) {
-		if (debugTask != 0)
-			this.debugTask = true;
-
-		if (debugTask > 1)
-			this.debugVerbose = true;
+		this.debugTask = (debugTask != 0);
+		this.debugVerbose = (debugTask > 1);
 	}
 
 	/**
 	 * Add the include and exclude patterns for selectively enabling/disabling
-	 * the debugging functions. (These are debug() and traceback().) An embedded
-	 * element without any attributes is treated as turning on all debugging.
-	 * That is, it is the same as:
+	 * the debugging functions (debug() and traceback()). An embedded element
+	 * without any attributes is treated as turning on all debugging. That is,
+	 * it is the same as:
 	 * 
-	 * <debug include=".*" />
+	 * <debug include=".+" exclude="^$" />
 	 * 
-	 * @param debug
+	 * @param debugPatterns
+	 *            configured instance with desired debug patterns
 	 */
-	public void addConfiguredDebug(Debug debug) {
-		Pattern include = debug.getInclude();
-		Pattern exclude = debug.getExclude();
-		if (include != null) {
-			debugIncludePatterns.add(include);
-		}
-		if (exclude != null) {
-			debugExcludePatterns.add(exclude);
-		}
-		if (include == null && exclude == null) {
-			debugIncludePatterns.add(allPattern);
-		}
+	public void addConfiguredDebug(DebugPatterns debugPatterns) {
+		debugIncludePatterns.add(debugPatterns.getInclude());
+		debugExcludePatterns.add(debugPatterns.getExclude());
 	}
 
 	/**
@@ -455,7 +444,7 @@ public class PanCompilerTask extends Task {
 	 *            name of formatter to use
 	 */
 	public void setFormatter(String name) {
-		this.formatter = FormatterUtils.getFormatterInstance(name);
+		formatter = FormatterUtils.getFormatterInstance(name);
 		if (formatter == null) {
 			throw new BuildException("unknown output formatter: " + name);
 		}
@@ -470,235 +459,13 @@ public class PanCompilerTask extends Task {
 		this.dumpAnnotations = dumpAnnotations;
 	}
 
+	/**
+	 * Set the directory in which the produced annotation files should be saved.
+	 * 
+	 * @param annotationDirectory
+	 */
 	public void setAnnotationDirectory(File annotationDirectory) {
 		this.annotationDirectory = annotationDirectory;
-	}
-
-	/**
-	 * This method will check to see if the current profiles are up-do-date. It
-	 * does this by reading the dependency file and looking to see if any of the
-	 * constituent templates have been modified. The number returned is the
-	 * number of templates which are up-to-date.
-	 * 
-	 * @return number of profiles that are current
-	 */
-	private int removeCurrentProfiles() {
-
-		// Loop over all of the files and create a list of those which
-		// are current.
-		LinkedList<File> current = new LinkedList<File>();
-		for (File f : files) {
-
-			// Map the file into the output file and the dependency
-			// file.
-			String name = f.getName();
-			if (debugTask) {
-				System.err.println("Processing " + name);
-			}
-
-			File t, d;
-			if (name.endsWith(".tpl")) {
-				t = new File(outputDirectory, name.substring(0,
-						name.length() - 4)
-						+ ".xml");
-				d = new File(outputDirectory, name.substring(0,
-						name.length() - 4)
-						+ ".xml.dep");
-			} else {
-				t = new File(outputDirectory, name + ".xml");
-				d = new File(outputDirectory, name + ".xml.dep");
-			}
-
-			// Only do detailed checking if both the output file and
-			// the dependency file exist.
-			if (!(t.exists() && d.exists())) {
-				if (debugTask)
-					System.err.println(debugIndent
-							+ "Missing profile or dependency file for " + name);
-				continue;
-			}
-
-			// The modification time of the target xml file.
-			long targetTime = t.lastModified();
-
-			// The dependency file must have been generated at the
-			// same time or after the xml file.
-			if (d.lastModified() < t.lastModified()) {
-				System.out.println("Dependency file not current: " + d);
-				continue;
-			} else if (!d.canRead()) {
-				System.out.println("Can't read dependency file: " + d);
-				continue;
-			}
-
-			// Compare the target file with the youngest of the dependencies
-			// (i.e. the largest modification time). Also check that none
-			// of the files has changed position in the load path.
-			boolean outOfDate = false;
-			Scanner scanner = null;
-			try {
-
-				scanner = new Scanner(d);
-				while (scanner.hasNextLine()) {
-
-					// Get the next line. This should never throw an exception
-					// because we've check that there actually is a line above.
-					String line = scanner.nextLine();
-
-					// Extract file information from the line.
-					Matcher matcher = depline.matcher(line);
-					if (matcher.matches()) {
-
-						// Extract the template name.
-						String tplName = matcher.group(1);
-
-						// Only processing of the dependency if it is not being
-						// ignored.
-						if (ignoreDependencyPattern == null
-								|| (!ignoreDependencyPattern.matcher(tplName)
-										.matches())) {
-
-							// Create the template file name from the template
-							// name. Ensure that the correct file separator is
-							// used for namespaced templates.
-							String tplFileName = tplName.replace('/',
-									File.separatorChar)
-									+ ".tpl";
-							String templatePath = matcher.group(2);
-
-							if (isDependencyOutOfDate(tplName, templatePath,
-									tplFileName, targetTime)) {
-								outOfDate = true;
-
-								// There is no point in checking the rest of the
-								// dependencies because we already know the file
-								// is out of date. Break out from the loop
-								// scanning the dependencies.
-								break;
-							}
-						}
-					}
-				}
-
-			} catch (java.io.FileNotFoundException fnfe) {
-
-				// This catch will be reached only if the Scanner finds that the
-				// dependency file doesn't exist. This, however, should be
-				// impossible because the existence of the dependency file was
-				// checked before this block of code.
-				outOfDate = true;
-
-				if (debugTask) {
-					System.err.println(debugIndent
-							+ "Template dependency file (" + d
-							+ ") doesn't exist");
-				}
-
-			} finally {
-
-				if (scanner != null) {
-					scanner.close();
-				}
-
-			}
-
-			// The output file is current if it is younger than the youngest
-			// dependency. If so, add this file to the list of current
-			// templates.
-			if (!outOfDate) {
-				current.add(f);
-
-				if (debugTask) {
-					System.err.println(debugIndent + "profile " + name
-							+ " up to date");
-				}
-			}
-		}
-
-		// Delete current files from the list of profiles to process.
-		files.removeAll(current);
-
-		// Send back the number which are up-to-date.
-		return current.size();
-	}
-
-	/**
-	 * A private method that checks to see if a single dependency is out of
-	 * date.
-	 * 
-	 * @param tplName
-	 *            pan name of template, used for debug printing
-	 * @param templatePath
-	 *            path where the template should be found
-	 * @param tplFileName
-	 *            name of the template file without loadpath
-	 * @param targetTime
-	 *            time to use for comparison
-	 * 
-	 * @return true if the dependency is out of date
-	 */
-	private boolean isDependencyOutOfDate(String tplName, String templatePath,
-			String tplFileName, long targetTime) {
-
-		File dep = new File(templatePath + tplFileName).getAbsoluteFile();
-
-		// Check that the dependency exists and hasn't been modified after the
-		// output file modification time.
-		if (statCache.isMissingOrModifiedAfter(dep, targetTime)) {
-
-			if (debugTask) {
-				System.err.println(debugIndent + "template " + dep
-						+ " modified since last compilation of " + tplName);
-			}
-
-			// No point in continuing since we already know the file is out of
-			// date.
-			return true;
-		}
-
-		// Check that the location hasn't changed in the path. If it has
-		// changed, then profile isn't current.
-		for (File pathdir : includeDirectories) {
-			File check = new File(pathdir, tplFileName);
-			if (statCache.exists(check)) {
-
-				// The dependency file has been found. Determine if it has
-				// moved. If so, return true; if not, return false. There is no
-				// sense in checking further into the loadpath.
-				if (!dep.equals(check)) {
-
-					if (debugTask) {
-						System.err.println(debugIndent + "Template " + dep
-								+ " moved (new=" + check + ")");
-					}
-
-					return true;
-
-				} else {
-
-					// The file has NOT moved. It must be up-to-date otherwise
-					// we would not have reached this block of code.
-					return false;
-				}
-
-			}
-		}
-
-		// If the file hasn't been found at all, then assume the file is up to
-		// date. The file may not have been found on the load path for a couple
-		// of reasons: 1) it is the object file itself which may not be on the
-		// load path and 2) the internal loadpath variable may be used to find
-		// the file. In the second case, rely on the explicit list of
-		// dependencies to pick up changes. NOTE: this check isn't 100% correct.
-		// It is possible to move templates around in the "internal" load path;
-		// these changes will not be picked up correctly.
-
-		if (debugVerbose) {
-			System.err.println(debugIndent + "template " + dep
-					+ " not found in external loadpath: assumed up-to-date");
-		}
-
-		return false;
 	}
 
 	/**
@@ -810,53 +577,36 @@ public class PanCompilerTask extends Task {
 		this.logfile = logfile;
 	}
 
+	public int getBatchSize() {
+		return batchSize;
+	}
+
+	public void setBatchSize(int batchSize) {
+		this.batchSize = (batchSize > 0) ? batchSize : 0;
+	}
+
 	/**
-	 * Class implements the debug element for the compilation task. The debug
-	 * element takes an include and/or exclude pattern for including or
-	 * excluding certain templates (based on the namespaced name) from emitting
-	 * debugging information.
+	 * This utility method will group the file into a set of equal sized batches
+	 * (except for possibly the last batch).
 	 * 
-	 * @author loomis
+	 * @param outdatedFiles
 	 * 
+	 * @return list of batched files
 	 */
-	public static class Debug {
+	private List<List<File>> batchOutdatedFiles(List<File> outdatedFiles) {
 
-		private Pattern include;
-		private Pattern exclude;
+		List<List<File>> batches = new LinkedList<List<File>>();
 
-		/**
-		 * Creates a new debug element that has no include or exclude patterns.
-		 */
-		public Debug() {
-			include = null;
-			exclude = null;
+		int total = outdatedFiles.size();
+
+		int myBatchSize = (batchSize <= 0) ? outdatedFiles.size() : batchSize;
+
+		for (int start = 0; start < total; start += myBatchSize) {
+			int end = Math.min(start + myBatchSize, total);
+			batches.add(outdatedFiles.subList(start, end));
 		}
 
-		public void setInclude(String includePattern) {
-			try {
-				include = Pattern.compile(includePattern);
-			} catch (PatternSyntaxException e) {
-				throw new BuildException("invalid include pattern: "
-						+ e.getMessage());
-			}
-		}
-
-		public Pattern getInclude() {
-			return include;
-		}
-
-		public void setExclude(String excludePattern) {
-			try {
-				exclude = Pattern.compile(excludePattern);
-			} catch (PatternSyntaxException e) {
-				throw new BuildException("invalid exclude pattern: "
-						+ e.getMessage());
-			}
-		}
-
-		public Pattern getExclude() {
-			return exclude;
-		}
+		return batches;
 	}
 
 }

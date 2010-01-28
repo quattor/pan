@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.quattor.pan.exceptions.CompilerError;
 import org.quattor.pan.exceptions.SystemException;
 
 /**
@@ -79,7 +80,8 @@ public class CompilerResults {
 			for (Throwable t : errors) {
 				results.append(t.getMessage());
 				results.append("\n");
-				if (t instanceof NullPointerException) {
+				if (t instanceof NullPointerException
+						|| t instanceof CompilerError) {
 					StackTraceElement[] frames = t.getStackTrace();
 					if (frames.length > 0) {
 						results.append(frames[0].toString());

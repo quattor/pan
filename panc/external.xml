@@ -15,6 +15,8 @@
 	<!-- junit: unit testing code -->
 	<property name="junit.home" location="${external}/junit" />
 	<property name="junit.jar" location="${junit.home}/junit-4.5.jar" />
+	<!-- this is included in external but may be separated out -->
+	<property name="hamcrest.jar" location="${junit.home}/junit-4.5.jar" />
 
 	<!-- javacc: java compiler compiler for generating pan parser -->
 	<property name="javacc.home" location="${external}/javacc" />
@@ -37,6 +39,9 @@
 
 	<!-- fop: apache formatter -->
 	<property name="fop.home" location="${external}/fop" />
+	<!-- the commons libraries may be separate... -->
+	<property name="fop.commons-logging.home" location="${external}/fop/lib" />
+	<property name="fop.commons-io.home" location="${external}/fop/lib" />
 	<property name="fop.jar" location="${fop.home}/build/fop.jar" />
 
 	<!-- offo: hyphenation rule to use when formatting docbook output -->
@@ -58,10 +63,14 @@
 		<fileset dir="${fop.home}/lib">
 			<include name="avalon-framework-*.jar" />
 			<include name="batik-all-*.jar" />
-			<include name="commons-io-*.jar" />
-			<include name="commons-logging-*.jar" />
 			<include name="xmlgraphics-commons-*.jar" />
 			<include name="xml-apis-*.jar" />
+		</fileset>
+		<fileset dir="${fop.commons-logging.home}">
+			<include name="commons-logging-*.jar" />
+		</fileset>
+		<fileset dir="${fop.commons-io.home}">
+			<include name="commons-io-*.jar" />
 		</fileset>
 		<pathelement location="${offo.fop-hyph.jar}" />
 	</path>
@@ -69,6 +78,7 @@
 	<!-- compilation path -->
 	<path id="compile.classpath">
 		<pathelement path="${junit.jar}" />
+		<pathelement path="${hamcrest.jar}" />
 		<pathelement path="${ant.jar}" />
 		<pathelement path="${jcip.jar}" />
 		<pathelement path="${findbugs.annotations.jar}" />

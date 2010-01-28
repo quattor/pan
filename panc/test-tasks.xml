@@ -25,6 +25,7 @@
 			<classpath>
 				<pathelement path="${ant-junit.jar}" />
 				<pathelement path="${junit.jar}" />
+				<pathelement path="${hamcrest.jar}" />
 			</classpath>
 		</taskdef>
 
@@ -82,6 +83,7 @@
 			</assertions>
 			<classpath>
 				<pathelement path="${junit.jar}" />
+				<pathelement path="${hamcrest.jar}" />
 				<pathelement path="${build.java}" />
 			</classpath>
 			<batchtest>
@@ -117,6 +119,7 @@
 			<auxClasspath path="${ant.jar}" />
 			<auxClasspath path="${ant-launcher.jar}" />
 			<auxClasspath path="${junit.jar}" />
+			<auxClasspath path="${hamcrest.jar}" />
 			<class location="${tmp.stage}/lib/panc.jar" />
 		</findbugs>
 	</target>

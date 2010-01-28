@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.quattor.pan.exceptions.EvaluationException;
+import org.quattor.pan.repository.SourceFile.Type;
 
 abstract public class FileSystemSourceRepository implements SourceRepository {
 
@@ -22,6 +23,23 @@ abstract public class FileSystemSourceRepository implements SourceRepository {
 		list.trimToSize();
 		emptyRelativePaths = list;
 	}
+
+	// Collect all of the possible source file types (*.tpl, *.pan, etc.).
+	protected static final List<String> sourceFileExtensions;
+	static {
+
+		ArrayList<String> extensions = new ArrayList<String>();
+
+		for (Type type : Type.values()) {
+			if (type.isSource()) {
+				extensions.add(type.getExtension());
+			}
+		}
+
+		extensions.trimToSize();
+
+		sourceFileExtensions = Collections.unmodifiableList(extensions);
+	};
 
 	protected FileSystemSourceRepository() {
 	}
@@ -52,32 +70,31 @@ abstract public class FileSystemSourceRepository implements SourceRepository {
 		}
 	}
 
-	abstract public File lookup(String name);
+	abstract public File lookupSource(String name);
 
-	abstract public File lookup(String name, String suffix);
+	abstract public File lookupSource(String name, List<String> loadpath);
 
-	abstract public File lookup(String name, List<String> loadpath);
+	abstract public File lookupText(String name);
 
-	abstract public File lookup(String name, String suffix,
-			List<String> loadpath);
+	abstract public File lookupText(String name, List<String> loadpath);
 
 	public SourceFile retrievePanSource(String name) {
-		File file = lookup(name);
+		File file = lookupSource(name);
 		return createPanSourceFile(name, file);
 	}
 
 	public SourceFile retrievePanSource(String name, List<String> loadpath) {
-		File file = lookup(name, loadpath);
+		File file = lookupSource(name, loadpath);
 		return createPanSourceFile(name, file);
 	}
 
 	public SourceFile retrieveTxtSource(String name) {
-		File file = lookup(name, "");
+		File file = lookupText(name);
 		return createTxtSourceFile(name, file);
 	}
 
 	public SourceFile retrieveTxtSource(String name, List<String> loadpath) {
-		File file = lookup(name, "", loadpath);
+		File file = lookupText(name, loadpath);
 		return createTxtSourceFile(name, file);
 	}
 
@@ -122,6 +139,10 @@ abstract public class FileSystemSourceRepository implements SourceRepository {
 		dirs.trimToSize();
 
 		return Collections.unmodifiableList(dirs);
+	}
+
+	protected String localizeName(String name) {
+		return name.replace('/', File.separatorChar);
 	}
 
 }

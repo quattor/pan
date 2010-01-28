@@ -54,25 +54,20 @@ public class FileSystemSourceRepositoryWithSessionDir extends
 
 	}
 
-	public File lookup(String name) {
-		return lookup(name, emptyRelativePaths);
+	@Override
+	public File lookupText(String name) {
+		return lookupText(name, emptyRelativePaths);
 	}
 
-	public File lookup(String name, String suffix) {
-		return lookup(name, suffix, emptyRelativePaths);
-	}
-
-	public File lookup(String name, List<String> loadpath) {
-		return lookup(name, ".tpl", loadpath);
-	}
-
-	public File lookup(String name, String suffix, List<String> loadpath) {
+	@Override
+	public File lookupText(String name, List<String> loadpath) {
 
 		assert (loadpath != null);
 		assert (loadpath.size() > 0);
 
-		String del = name + ".del"; //$NON-NLS-1$
-		String src = name + suffix;
+		String localName = localizeName(name);
+
+		String del = localName + ".del"; //$NON-NLS-1$
 
 		// Create an empty FileHolder for the result.
 		FileHolder fileHolder = new FileHolder();
@@ -96,8 +91,8 @@ public class FileSystemSourceRepositoryWithSessionDir extends
 				// a *.del file was found, or no file was found.
 				if (sessionDir != null) {
 
-					result = lookupSingleFile(sessionDir, rpath, del, src,
-							fileHolder);
+					result = lookupSingleTextFile(sessionDir, rpath, del,
+							localName, fileHolder);
 
 					switch (result) {
 					case SRC_FOUND:
@@ -112,7 +107,81 @@ public class FileSystemSourceRepositoryWithSessionDir extends
 
 				// If we make it to here, then nothing was found in the session
 				// directory. Check the usual directories.
-				result = lookupSingleFile(d, rpath, del, src, fileHolder);
+				result = lookupSingleTextFile(d, rpath, del, localName,
+						fileHolder);
+
+				switch (result) {
+				case SRC_FOUND:
+					break template_lookup;
+				case DEL_FOUND:
+					continue;
+				case NOT_FOUND:
+					// Do nothing and fall through.
+				}
+
+			}
+
+		}
+
+		// Return the found template.
+		return fileHolder.file;
+	}
+
+	@Override
+	public File lookupSource(String name) {
+		return lookupSource(name, emptyRelativePaths);
+	}
+
+	@Override
+	public File lookupSource(String name, List<String> loadpath) {
+
+		assert (loadpath != null);
+		assert (loadpath.size() > 0);
+
+		String localName = localizeName(name);
+
+		String del = localName + ".del"; //$NON-NLS-1$
+
+		// Create an empty FileHolder for the result.
+		FileHolder fileHolder = new FileHolder();
+
+		// Search through the loadpath to find the appropriate files. The loop
+		// will terminate as soon as a matching source file is found. Finding a
+		// matching *.del file will cause the next relative path to be checked.
+		//
+		// Note that the session directory check cannot be factored out even
+		// though it does not depend on the outermost loop. The session
+		// directory checks MUST be interleaved for each relative path in the
+		// loadpath. Be careful, the algorithm is complicated and uses named
+		// breaks and continue statements.
+		template_lookup: for (File d : includeDirectories) {
+			for (String rpath : loadpath) {
+
+				SearchResult result;
+
+				// If the session directory is not null, then it must be scanned
+				// first. Three results are possible: the source file was found,
+				// a *.del file was found, or no file was found.
+				if (sessionDir != null) {
+
+					result = lookupSingleSourceFile(sessionDir, rpath, del,
+							localName, fileHolder);
+
+					switch (result) {
+					case SRC_FOUND:
+						break template_lookup;
+					case DEL_FOUND:
+						continue;
+					case NOT_FOUND:
+						// Do nothing and fall through.
+					}
+
+				}
+
+				// If we make it to here, then nothing was found in the session
+				// directory. Check the usual directories.
+				result = lookupSingleSourceFile(d, rpath, del, localName,
+						fileHolder);
 
 				switch (result) {
 				case SRC_FOUND:
@@ -143,23 +212,46 @@ public class FileSystemSourceRepositoryWithSessionDir extends
 	 * @param rpath
 	 *            relative directory from the root to use
 	 * @param delFileName
-	 *            deleted file marker name
-	 * @param srcFileName
-	 *            source file name
+	 *            localized deleted file marker name
+	 * @param name
+	 *            localized template name
 	 * @param fileHolder
 	 *            holder for result if source file was found
 	 * 
 	 * @return SearchResult indicating if the delete marker, source file, or
 	 *         nothing was found
 	 */
-	private SearchResult lookupSingleFile(File root, String rpath,
-			String delFileName, String srcFileName, FileHolder fileHolder) {
+	private SearchResult lookupSingleSourceFile(File root, String rpath,
+			String delFileName, String name, FileHolder fileHolder) {
 
 		File dir = new File(root, rpath);
 		File deletedFileMarker = new File(dir, delFileName);
 
 		if (!deletedFileMarker.exists()) {
-			File sourceFile = new File(dir, srcFileName);
+
+			for (String suffix : sourceFileExtensions) {
+				File sourceFile = new File(dir, name + suffix);
+				if (sourceFile.exists()) {
+					fileHolder.file = sourceFile;
+					return SearchResult.SRC_FOUND;
+				}
+			}
+			return SearchResult.NOT_FOUND;
+		} else {
+			return SearchResult.DEL_FOUND;
+		}
+
+	}
+
+	private SearchResult lookupSingleTextFile(File root, String rpath,
+			String delFileName, String name, FileHolder fileHolder) {
+
+		File dir = new File(root, rpath);
+		File deletedFileMarker = new File(dir, delFileName);
+
+		if (!deletedFileMarker.exists()) {
+
+			File sourceFile = new File(dir, name);
 			if (sourceFile.exists()) {
 				fileHolder.file = sourceFile;
 				return SearchResult.SRC_FOUND;

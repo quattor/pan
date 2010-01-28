@@ -13,32 +13,62 @@ public class FileSystemSourceRepositoryWithoutSessionDir extends
 		this.includeDirectories = validateAndCopyIncludeDirectories(includeDirectories);
 	}
 
-	public File lookup(String name) {
-		return lookup(name, emptyRelativePaths);
+	@Override
+	public File lookupText(String name) {
+		return lookupText(name, emptyRelativePaths);
 	}
 
-	public File lookup(String name, String suffix) {
-		return lookup(name, suffix, emptyRelativePaths);
-	}
+	@Override
+	public File lookupText(String name, List<String> loadpath) {
 
-	public File lookup(String name, List<String> loadpath) {
-		return lookup(name, ".tpl", loadpath);
-	}
-
-	public File lookup(String name, String suffix, List<String> loadpath) {
-
+		assert (name != null);
 		assert (loadpath != null);
 		assert (loadpath.size() > 0);
 
-		String src = name + suffix;
+		String localName = localizeName(name);
 
 		for (File d : includeDirectories) {
 			for (String rpath : loadpath) {
 
 				File dir = new File(d, rpath);
-				File sourceFile = new File(dir, src);
+
+				File sourceFile = new File(dir, localName);
 				if (sourceFile.exists()) {
 					return sourceFile;
+				}
+
+			}
+
+		}
+
+		return null;
+	}
+
+	@Override
+	public File lookupSource(String name) {
+		return lookupSource(name, emptyRelativePaths);
+	}
+
+	@Override
+	public File lookupSource(String name, List<String> loadpath) {
+
+		assert (name != null);
+		assert (loadpath != null);
+		assert (loadpath.size() > 0);
+
+		String localName = localizeName(name);
+
+		for (File d : includeDirectories) {
+			for (String rpath : loadpath) {
+
+				File dir = new File(d, rpath);
+
+				for (String suffix : sourceFileExtensions) {
+
+					File sourceFile = new File(dir, localName + suffix);
+					if (sourceFile.exists()) {
+						return sourceFile;
+					}
 				}
 
 			}

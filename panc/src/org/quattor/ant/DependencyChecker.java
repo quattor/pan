@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
@@ -26,18 +28,20 @@ public class DependencyChecker {
 	private FileStatCache statCache = new FileStatCache();
 
 	// Collect all of the possible source file types (*.tpl, *.pan, etc.).
-	private static final Type[] sourceTypes;
+	private static final List<String> sourceFileExtensions;
 	static {
 
-		List<Type> types = new LinkedList<Type>();
+		ArrayList<String> extensions = new ArrayList<String>();
 
 		for (Type type : Type.values()) {
 			if (type.isSource()) {
-				types.add(type);
+				extensions.add(type.getExtension());
 			}
 		}
 
-		sourceTypes = types.toArray(new Type[] {});
+		extensions.trimToSize();
+
+		sourceFileExtensions = Collections.unmodifiableList(extensions);
 	};
 
 	public DependencyChecker(List<File> includeDirectories,
@@ -293,9 +297,9 @@ public class DependencyChecker {
 
 		String localTplName = tplName.replace('/', File.separatorChar);
 
-		String[] sourceFiles = new String[sourceTypes.length];
-		for (int i = 0; i < sourceTypes.length; i++) {
-			sourceFiles[i] = localTplName + sourceTypes[i].getExtension();
+		String[] sourceFiles = new String[sourceFileExtensions.size()];
+		for (int i = 0; i < sourceFileExtensions.size(); i++) {
+			sourceFiles[i] = localTplName + sourceFileExtensions.get(i);
 		}
 
 		for (File pathdir : includeDirectories) {

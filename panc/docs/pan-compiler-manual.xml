@@ -530,6 +530,15 @@
 
               <entry>No.</entry>
             </row>
+
+            <row>
+              <entry>batchSize</entry>
+
+              <entry>If set to a positive integer, the outdated templates will
+              be processed in batches of batchSize.</entry>
+
+              <entry>No. Default value: 0</entry>
+            </row>
           </tbody>
         </tgroup>
       </table>

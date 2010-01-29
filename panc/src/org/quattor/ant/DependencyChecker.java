@@ -109,7 +109,7 @@ public class DependencyChecker {
 		return outdated;
 	}
 
-	private boolean processDependencyFile(File dependencyFile, Long targetTime) {
+	public boolean processDependencyFile(File dependencyFile, Long targetTime) {
 
 		boolean outdated = false;
 
@@ -137,7 +137,7 @@ public class DependencyChecker {
 		return outdated;
 	}
 
-	private boolean processDependencyLine(String line, Long targetTime) {
+	public boolean processDependencyLine(String line, Long targetTime) {
 
 		boolean outdated = false;
 
@@ -203,22 +203,7 @@ public class DependencyChecker {
 		return outdated;
 	}
 
-	private String stripPanExtensions(String name) {
-
-		for (Type type : Type.values()) {
-			String extension = type.getExtension();
-			if (!"".equals(extension)) {
-				if (name.endsWith(extension)) {
-					int index = name.lastIndexOf(extension);
-					return name.substring(0, index);
-				}
-			}
-		}
-
-		return name;
-	}
-
-	private boolean isSourceDependencyOutdated(String tplName, Type type,
+	public boolean isSourceDependencyOutdated(String tplName, Type type,
 			String templatePath, long targetTime) {
 
 		File dep = reconstructSingleDependency(templatePath, tplName, type);
@@ -229,11 +214,11 @@ public class DependencyChecker {
 		// Check that the location hasn't changed in the path. If it has
 		// changed, then profile isn't current.
 		File foundFile = lookupSourceFile(tplName);
-		return isSingleDependencyTheSame(dep, foundFile);
+		return isSingleDependencyDifferent(dep, foundFile);
 
 	}
 
-	private boolean isTextDependencyOutdated(String tplName, Type type,
+	public boolean isTextDependencyOutdated(String tplName, Type type,
 			String templatePath, long targetTime) {
 
 		File dep = reconstructSingleDependency(templatePath, tplName, type);
@@ -244,29 +229,11 @@ public class DependencyChecker {
 		// Check that the location hasn't changed in the path. If it has
 		// changed, then profile isn't current.
 		File foundFile = lookupTextFile(tplName);
-		return isSingleDependencyTheSame(dep, foundFile);
+		return isSingleDependencyDifferent(dep, foundFile);
 
 	}
 
-	private boolean isSingleDependencyTheSame(File dep, File foundFile) {
-		if (foundFile != null) {
-			return (!dep.equals(foundFile));
-		} else {
-
-			// If the file hasn't been found at all, then assume the file is
-			// up to date. The file may not have been found on the load path
-			// because the internal loadpath variable may be used to find
-			// the file. In this case, rely on the explicit
-			// list of dependencies to pick up changes. NOTE: this check
-			// isn't 100% correct. It is possible to move templates around
-			// in the "internal" load path; these changes will not be picked
-			// up correctly.
-
-			return false;
-		}
-	}
-
-	private boolean isSingleDependencyOutdated(File dep, long targetTime) {
+	public boolean isSingleDependencyOutdated(File dep, long targetTime) {
 
 		if (dep != null) {
 			return statCache.isMissingOrModifiedAfter(dep, targetTime);
@@ -276,23 +243,7 @@ public class DependencyChecker {
 
 	}
 
-	private File reconstructSingleDependency(String templatePath,
-			String tplName, Type type) {
-
-		try {
-
-			URI path = new URI(templatePath);
-			URI fullname = new URI(tplName + type.getExtension());
-			URI fullpath = path.resolve(fullname);
-
-			return new File(fullpath).getAbsoluteFile();
-
-		} catch (URISyntaxException e) {
-			return null;
-		}
-	}
-
-	private File lookupSourceFile(String tplName) {
+	public File lookupSourceFile(String tplName) {
 
 		String localTplName = FileSystemSourceRepository.localizeName(tplName);
 
@@ -314,7 +265,7 @@ public class DependencyChecker {
 		return null;
 	}
 
-	private File lookupTextFile(String tplName) {
+	public File lookupTextFile(String tplName) {
 
 		String localTplName = FileSystemSourceRepository.localizeName(tplName);
 
@@ -327,6 +278,57 @@ public class DependencyChecker {
 		}
 
 		return null;
+	}
+
+	public static boolean isSingleDependencyDifferent(File dep, File foundFile) {
+		if (foundFile != null) {
+			return (!dep.equals(foundFile));
+		} else {
+	
+			// SPECIAL CASE:
+			//
+			// If the file hasn't been found at all, then assume the file is
+			// up to date. The file may not have been found on the load path
+			// because the internal loadpath variable may be used to find
+			// the file. In this case, rely on the explicit
+			// list of dependencies to pick up changes. NOTE: this check
+			// isn't 100% correct. It is possible to move templates around
+			// in the "internal" load path; these changes will not be picked
+			// up correctly.
+	
+			return false;
+		}
+	}
+
+	public static String stripPanExtensions(String name) {
+	
+		for (Type type : Type.values()) {
+			String extension = type.getExtension();
+			if (!"".equals(extension)) {
+				if (name.endsWith(extension)) {
+					int index = name.lastIndexOf(extension);
+					return name.substring(0, index);
+				}
+			}
+		}
+	
+		return name;
+	}
+
+	public static File reconstructSingleDependency(String templatePath,
+			String tplName, Type type) {
+	
+		try {
+	
+			URI path = new URI(templatePath);
+			URI fullname = new URI(tplName + type.getExtension());
+			URI fullpath = path.resolve(fullname);
+	
+			return new File(fullpath).getAbsoluteFile();
+	
+		} catch (URISyntaxException e) {
+			return null;
+		}
 	}
 
 }

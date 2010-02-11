@@ -124,6 +124,7 @@ public class Panc {
 		authorizedOptArg.addElement("java-opts");
 		authorizedOpt.addElement("dump-annotations");
 		authorizedOpt.addElement("annotation-dir");
+		authorizedOptArg.addElement("annotation-dir");
 
 		endingOptChar.addElement("j");
 		endingOptChar.addElement("J");
@@ -469,7 +470,7 @@ public class Panc {
 							.getProperty("user.dir"), arguments
 							.elementAt(compteur));
 				}
-				veriDir(outputDirectory);
+				veriDir(annotationDirectory);
 			} else if ((opt.equals("l")) || (opt.equals("object-load"))) {
 				// Do nothing; deprecated option.
 			} else if ((opt.equals("b")) || (opt.equals("no-object-load"))) {

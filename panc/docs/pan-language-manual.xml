@@ -59,6 +59,11 @@
     and pluses. The substrings may not be empty or begin with a period; the
     template name may not begin or end with a slash.</para>
 
+    <para>Each template must reside in a separate file with the name
+    <filename><replaceable>template-name</replaceable>.pan</filename> (or the
+    older <filename><replaceable>template-name</replaceable>.tpl</filename>).
+    </para>
+
     <section>
       <title>Object Templates</title>
 

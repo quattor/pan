@@ -290,7 +290,7 @@
       values will delete the given key from the resulting nlist.</para>
 
       <programlisting># description of CD mount entry with the device undefined
-# (in file 'mount_cdrom.tpl')
+# (in file 'mount_cdrom.pan')
 structure template mount_cdrom; 
 'device' = undef; 
 'path' = '/mnt/cdrom'; 

@@ -165,7 +165,7 @@ public class PanCompilerTask extends Task {
 			DependencyChecker checker = new DependencyChecker(
 					includeDirectories, ignoreDependencyPattern);
 
-			outdatedFiles = checker.outdatedObjectFiles(objectFiles,
+			outdatedFiles = checker.extractOutdatedFiles(objectFiles,
 					outputDirectory);
 
 			if (debugVerbose) {

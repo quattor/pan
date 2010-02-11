@@ -15,6 +15,9 @@ import java.io.Reader;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import net.jcip.annotations.Immutable;
 
@@ -40,6 +43,23 @@ public class SourceFile implements Comparable<SourceFile>, Serializable {
 		private boolean absent;
 		private String extension;
 
+		private final static List<String> extensions;
+
+		static {
+
+			ArrayList<String> values = new ArrayList<String>();
+
+			for (Type type : Type.values()) {
+				if (type.isSource()) {
+					values.add(type.getExtension());
+				}
+			}
+
+			values.trimToSize();
+
+			extensions = Collections.unmodifiableList(values);
+		}
+
 		private Type(boolean absent, String extension) {
 			this.absent = absent;
 			this.extension = extension;
@@ -56,13 +76,15 @@ public class SourceFile implements Comparable<SourceFile>, Serializable {
 		public String getExtension() {
 			return extension;
 		}
+		
+		public static List<String> getExtensions() {
+			return extensions;
+		}
 
 		public static boolean hasSourceFileExtension(String filename) {
-			for (Type type : Type.values()) {
-				if (type.isSource()) {
-					if (filename.endsWith(type.getExtension())) {
-						return true;
-					}
+			for (String extension : extensions) {
+				if (filename.endsWith(extension)) {
+					return true;
 				}
 			}
 			return false;

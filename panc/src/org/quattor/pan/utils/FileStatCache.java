@@ -28,7 +28,12 @@ public class FileStatCache {
 		return ((modtime == 0L) || (modtime > targetTime));
 	}
 
-	private long getModificationTime(File file) {
+	public boolean isMissingOrModifiedBefore(File file, long targetTime) {
+		long modtime = getModificationTime(file);
+		return ((modtime == 0L) || (modtime < targetTime));
+	}
+
+	public long getModificationTime(File file) {
 
 		Long modtime = cachedTimes.get(file);
 

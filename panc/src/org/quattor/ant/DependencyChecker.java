@@ -22,28 +22,9 @@ public class DependencyChecker {
 
 	private final Pattern ignoreDependencyPattern;
 
-	// Create a cache for the modification times of the templates. In the
-	// case where all of the files are up to date, this will save repeated
-	// disk reads to determine the state of files as dependencies are in
-	// common within a cluster.
 	private final FileStatCache statCache = new FileStatCache();
 
-	// Collect all of the possible source file types (*.tpl, *.pan, etc.).
-	private static final List<String> sourceFileExtensions;
-	static {
-
-		ArrayList<String> extensions = new ArrayList<String>();
-
-		for (Type type : Type.values()) {
-			if (type.isSource()) {
-				extensions.add(type.getExtension());
-			}
-		}
-
-		extensions.trimToSize();
-
-		sourceFileExtensions = Collections.unmodifiableList(extensions);
-	};
+	private final static Pattern NONE = Pattern.compile("^$");
 
 	public DependencyChecker(List<File> includeDirectories,
 			Pattern ignoredDependencyPattern) {
@@ -53,8 +34,8 @@ public class DependencyChecker {
 		if (includeDirectories != null) {
 			dirs.addAll(includeDirectories);
 		} else {
-			String cwd = System.getProperty("user.dir");
-			File file = new File(cwd).getAbsoluteFile();
+			String userDir = System.getProperty("user.dir");
+			File file = new File(userDir).getAbsoluteFile();
 			dirs.add(file);
 		}
 		dirs.trimToSize();
@@ -63,53 +44,48 @@ public class DependencyChecker {
 		if (ignoredDependencyPattern != null) {
 			this.ignoreDependencyPattern = ignoredDependencyPattern;
 		} else {
-			this.ignoreDependencyPattern = Pattern.compile("^$");
+			this.ignoreDependencyPattern = NONE;
 		}
 	}
 
-	public List<File> outdatedObjectFiles(List<File> objectFiles,
+	public List<File> extractOutdatedFiles(List<File> objectFiles,
 			File outputDirectory) {
 
 		LinkedList<File> outdated = new LinkedList<File>();
 
 		for (File objectFile : objectFiles) {
 
-			// Map the file into the output file and the dependency
-			// file.
 			String name = objectFile.getName();
 			name = stripPanExtensions(name);
 
 			File t = new File(outputDirectory, name + ".xml");
 			File d = new File(outputDirectory, name + ".xml.dep");
 
-			// Only do detailed checking if both the output file and
-			// the dependency file exist.
-			if (!(t.exists() && d.exists())) {
+			// Both profile and dependency files must exist.
+			if (!(statCache.exists(t) && statCache.exists(d))) {
 				outdated.add(objectFile);
 				continue;
 			}
 
 			// The modification time of the target xml file.
-			long targetTime = t.lastModified();
+			long targetTime = statCache.getModificationTime(t);
 
-			// The dependency file must have been generated at the
-			// same time or after the xml file.
-			if (d.lastModified() < t.lastModified()) {
+			// Check dependency file was generated after target file.
+			if (statCache.isMissingOrModifiedBefore(d, targetTime)) {
 				outdated.add(objectFile);
 				continue;
 			}
 
 			// Do detailed checking of the full dependency file.
-			if (processDependencyFile(d, targetTime)) {
+			if (isDependencyListOutdated(d, targetTime)) {
 				outdated.add(objectFile);
 			}
 		}
 
-		// Send back the number which are up-to-date.
 		return outdated;
 	}
 
-	public boolean processDependencyFile(File dependencyFile, Long targetTime) {
+	public boolean isDependencyListOutdated(File dependencyFile, Long targetTime) {
 
 		boolean outdated = false;
 
@@ -119,7 +95,10 @@ public class DependencyChecker {
 			scanner = new Scanner(dependencyFile);
 
 			while (scanner.hasNextLine() && !outdated) {
-				outdated = processDependencyLine(scanner.nextLine(), targetTime);
+				if (isDependencyOutdated(scanner.nextLine(), targetTime)) {
+					outdated = true;
+					break;
+				}
 			}
 
 		} catch (IOException e) {
@@ -137,99 +116,68 @@ public class DependencyChecker {
 		return outdated;
 	}
 
-	public boolean processDependencyLine(String line, Long targetTime) {
+	public boolean isDependencyOutdated(String line, Long targetTime) {
 
-		boolean outdated = false;
+		DependencyInfo info = new DependencyInfo(line);
 
-		// Format is a whitespace-separated line. The items are 1)
-		// template name (or full file name), 2) file type, and 3) full
-		// URI for parent directory. The third element is only there is
-		// the file wasn't absent.
-		String[] depInfo = line.split("\\s+");
-
-		if (depInfo.length >= 2) {
-
-			// Extract the template name.
-			String tplName = depInfo[0];
-
-			// Only processing of the dependency if it is not being
-			// ignored.
-			if (!ignoreDependencyPattern.matcher(tplName).matches()) {
-
-				// Whether a given source file is out of date depends on
-				// the type of the source file.
-				Type type = Type.valueOf(depInfo[1]);
-				switch (type) {
-
-				case TPL: // fall through
-				case PAN: // fall through
-				case PANX: { // all sources handled the same way
-
-					String templatePath = depInfo[2];
-
-					outdated = isSourceDependencyOutdated(tplName, type,
-							templatePath, targetTime);
-
-					break;
-				}
-
-				case TEXT: {
-
-					String templatePath = depInfo[2];
-
-					outdated = isTextDependencyOutdated(tplName, type,
-							templatePath, targetTime);
-
-					break;
-				}
-
-				case ABSENT_SOURCE:
-
-					outdated = (lookupSourceFile(tplName) != null);
-					break;
-
-				case ABSENT_TEXT:
-
-					outdated = (lookupTextFile(tplName) != null);
-					break;
-
-				default:
-					throw new BuildException("unknown file type: " + type);
-				}
-
-			}
+		if (ignoreDependencyPattern.matcher(info.name).matches()) {
+			return false;
 		}
 
-		return outdated;
+		switch (info.type) {
+
+		case TPL: // fall through
+		case PAN: // fall through
+		case PANX: { // all sources handled the same way
+
+			return isSourceDependencyOutdated(info, targetTime);
+
+		}
+
+		case TEXT: {
+
+			return isTextDependencyOutdated(info, targetTime);
+
+		}
+
+		case ABSENT_SOURCE:
+
+			return (lookupSourceFile(info.name) != null);
+
+		case ABSENT_TEXT:
+
+			return (lookupTextFile(info.name) != null);
+
+		default:
+			throw new BuildException("unknown file type: " + info.type);
+		}
+
 	}
 
-	public boolean isSourceDependencyOutdated(String tplName, Type type,
-			String templatePath, long targetTime) {
+	public boolean isSourceDependencyOutdated(DependencyInfo info,
+			long targetTime) {
 
-		File dep = reconstructSingleDependency(templatePath, tplName, type);
-		if (isSingleDependencyOutdated(dep, targetTime)) {
+		if (isSingleDependencyOutdated(info.file, targetTime)) {
 			return true;
 		}
 
 		// Check that the location hasn't changed in the path. If it has
 		// changed, then profile isn't current.
-		File foundFile = lookupSourceFile(tplName);
-		return isSingleDependencyDifferent(dep, foundFile);
+		File foundFile = lookupSourceFile(info.name);
+		return isSingleDependencyDifferent(info.file, foundFile);
 
 	}
 
-	public boolean isTextDependencyOutdated(String tplName, Type type,
-			String templatePath, long targetTime) {
+	public boolean isTextDependencyOutdated(DependencyInfo info, long targetTime) {
 
-		File dep = reconstructSingleDependency(templatePath, tplName, type);
-		if (isSingleDependencyOutdated(dep, targetTime)) {
+		if (isSingleDependencyOutdated(info.file, targetTime)) {
 			return true;
 		}
 
 		// Check that the location hasn't changed in the path. If it has
 		// changed, then profile isn't current.
-		File foundFile = lookupTextFile(tplName);
-		return isSingleDependencyDifferent(dep, foundFile);
+		File foundFile = lookupTextFile(info.name);
+		return isSingleDependencyDifferent(info.file, foundFile);
 
 	}
 
@@ -247,9 +195,9 @@ public class DependencyChecker {
 
 		String localTplName = FileSystemSourceRepository.localizeName(tplName);
 
-		String[] sourceFiles = new String[sourceFileExtensions.size()];
-		for (int i = 0; i < sourceFileExtensions.size(); i++) {
-			sourceFiles[i] = localTplName + sourceFileExtensions.get(i);
+		List<String> sourceFiles = new ArrayList<String>();
+		for (String extension : Type.getExtensions()) {
+			sourceFiles.add(localTplName + extension);
 		}
 
 		for (File pathdir : includeDirectories) {
@@ -284,7 +232,7 @@ public class DependencyChecker {
 		if (foundFile != null) {
 			return (!dep.equals(foundFile));
 		} else {
-	
+
 			// SPECIAL CASE:
 			//
 			// If the file hasn't been found at all, then assume the file is
@@ -295,13 +243,13 @@ public class DependencyChecker {
 			// isn't 100% correct. It is possible to move templates around
 			// in the "internal" load path; these changes will not be picked
 			// up correctly.
-	
+
 			return false;
 		}
 	}
 
 	public static String stripPanExtensions(String name) {
-	
+
 		for (Type type : Type.values()) {
 			String extension = type.getExtension();
 			if (!"".equals(extension)) {
@@ -311,24 +259,73 @@ public class DependencyChecker {
 				}
 			}
 		}
-	
+
 		return name;
 	}
 
 	public static File reconstructSingleDependency(String templatePath,
-			String tplName, Type type) {
-	
-		try {
-	
-			URI path = new URI(templatePath);
-			URI fullname = new URI(tplName + type.getExtension());
-			URI fullpath = path.resolve(fullname);
-	
-			return new File(fullpath).getAbsoluteFile();
-	
-		} catch (URISyntaxException e) {
-			return null;
+			String tplName, Type type) throws URISyntaxException {
+
+		URI path = new URI(templatePath);
+		URI fullname = new URI(tplName + type.getExtension());
+		URI fullpath = path.resolve(fullname);
+
+		return new File(fullpath).getAbsoluteFile();
+
+	}
+
+	public static class DependencyInfo {
+
+		public final String name;
+
+		public final Type type;
+
+		public final File file;
+
+		public DependencyInfo(String dependencyLine) {
+
+			// Format is a whitespace-separated line. The items are 1)
+			// template name (or full file name), 2) file type, and 3) full
+			// URI for parent directory. The third element is only there if
+			// the file wasn't absent.
+			String[] fields = dependencyLine.split("\\s+");
+
+			if (fields.length != 2 && fields.length != 3) {
+				throw new BuildException("malformed dependency line");
+			}
+
+			name = fields[0];
+			type = Type.valueOf(fields[1]);
+
+			if (fields.length == 3) {
+
+				try {
+					file = reconstructSingleDependency(fields[2], name, type);
+				} catch (URISyntaxException e) {
+					throw new BuildException(e.getMessage());
+				}
+
+			} else {
+				file = null;
+			}
+
+			validate();
+
 		}
+
+		private void validate() {
+
+			if (file == null && !type.isAbsent()) {
+				throw new BuildException(
+						"missing path information for dependency");
+			}
+
+			if (file != null && type.isAbsent()) {
+				throw new BuildException("path information for absent file");
+			}
+
+		}
+
 	}
 
 }

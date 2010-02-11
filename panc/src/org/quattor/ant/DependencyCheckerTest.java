@@ -22,11 +22,16 @@ package org.quattor.ant;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 
+import org.apache.tools.ant.BuildException;
 import org.junit.Test;
+import org.quattor.ant.DependencyChecker.DependencyInfo;
 import org.quattor.pan.repository.SourceFile.Type;
 
 public class DependencyCheckerTest {
@@ -60,7 +65,7 @@ public class DependencyCheckerTest {
 	}
 
 	@Test
-	public void checkDependencyReconstruction() {
+	public void checkDependencyReconstruction() throws URISyntaxException {
 		String schema = "file:";
 		String templatePath = "/alpha/beta/gamma/";
 		String namespace = "delta";
@@ -84,4 +89,83 @@ public class DependencyCheckerTest {
 
 		}
 	}
+
+	@Test(expected = BuildException.class)
+	public void checkTooFewFields() {
+		String line = "too-few-fields";
+		new DependencyInfo(line);
+	}
+
+	@Test(expected = BuildException.class)
+	public void checkTooManyFields() {
+		String line = "too many fields in line";
+		new DependencyInfo(line);
+	}
+
+	@Test(expected = BuildException.class)
+	public void checkMissingPath() {
+		String line = "my/profile " + Type.PAN.toString();
+		new DependencyInfo(line);
+	}
+
+	@Test
+	public void checkCorrectAbsentFileInfo() {
+		String name = "my/profile";
+		Type type = Type.ABSENT_SOURCE;
+		String line = name + " " + type.toString();
+
+		DependencyInfo info = new DependencyInfo(line);
+
+		assertEquals(name, info.name);
+		assertEquals(type, info.type);
+		assertNull(info.file);
+	}
+
+	@Test(expected = BuildException.class)
+	public void checkAbsentFileWithPath() {
+		String name = "my/profile";
+		Type type = Type.ABSENT_SOURCE;
+		String line = name + " " + type.toString() + " "
+				+ "file:/root/directory/";
+
+		new DependencyInfo(line);
+	}
+
+	@Test(expected = BuildException.class)
+	public void checkInvalidURI() {
+		String name = "my/profile";
+		Type type = Type.PAN;
+		String invalidURI = ":---";
+		String line = name + " " + type.toString() + " " + invalidURI;
+
+		new DependencyInfo(line);
+	}
+
+	@Test(expected = BuildException.class)
+	public void checkSourceFileWithoutPath() {
+		String name = "my/profile";
+		Type type = Type.PAN;
+		String line = name + " " + type.toString();
+
+		new DependencyInfo(line);
+	}
+
+	@Test
+	public void checkCorrectSourceFileInfo() throws URISyntaxException {
+		String name = "my/profile";
+		Type type = Type.PAN;
+		URI uri = new URI("file:/root/directory/");
+
+		String line = name + " " + type.toString() + " " + uri.toString();
+
+		DependencyInfo info = new DependencyInfo(line);
+
+		assertEquals(name, info.name);
+		assertEquals(type, info.type);
+
+		URI fullname = uri.resolve(name + type.getExtension());
+		File fullfile = new File(fullname);
+		assertEquals(fullfile, info.file);
+	}
+
 }

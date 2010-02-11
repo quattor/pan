@@ -15,9 +15,6 @@ import java.io.Reader;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import net.jcip.annotations.Immutable;
 
@@ -26,74 +23,12 @@ import org.quattor.pan.template.Template;
 import org.quattor.pan.utils.MessageUtils;
 
 @Immutable
+@SuppressWarnings("serial")
 public class SourceFile implements Comparable<SourceFile>, Serializable {
-
-	private static final long serialVersionUID = 6307480037651666260L;
-
-	/**
-	 * Source files are either a pan language template or a text file.
-	 * 
-	 * @author loomis
-	 * 
-	 */
-	public enum Type {
-		TPL(false, ".tpl"), PAN(false, ".pan"), PANX(false, ".panx"), TEXT(
-				false, ""), ABSENT_SOURCE(true, ""), ABSENT_TEXT(true, "");
-
-		private boolean absent;
-		private String extension;
-
-		private final static List<String> extensions;
-
-		static {
-
-			ArrayList<String> values = new ArrayList<String>();
-
-			for (Type type : Type.values()) {
-				if (type.isSource()) {
-					values.add(type.getExtension());
-				}
-			}
-
-			values.trimToSize();
-
-			extensions = Collections.unmodifiableList(values);
-		}
-
-		private Type(boolean absent, String extension) {
-			this.absent = absent;
-			this.extension = extension;
-		}
-
-		public boolean isSource() {
-			return (!"".equals(extension));
-		}
-
-		public boolean isAbsent() {
-			return absent;
-		}
-
-		public String getExtension() {
-			return extension;
-		}
-		
-		public static List<String> getExtensions() {
-			return extensions;
-		}
-
-		public static boolean hasSourceFileExtension(String filename) {
-			for (String extension : extensions) {
-				if (filename.endsWith(extension)) {
-					return true;
-				}
-			}
-			return false;
-		}
-	};
 
 	private final String name;
 
-	private final Type type;
+	private final SourceType type;
 
 	private final File location;
 
@@ -108,15 +43,15 @@ public class SourceFile implements Comparable<SourceFile>, Serializable {
 		if (isSource) {
 
 			if (path == null) {
-				this.type = Type.ABSENT_SOURCE;
+				this.type = SourceType.ABSENT_SOURCE;
 			} else {
 				String extension = getFileExtension(path);
 				if (".tpl".equals(extension)) {
-					this.type = Type.TPL;
+					this.type = SourceType.TPL;
 				} else if (".pan".equals(extension)) {
-					this.type = Type.PAN;
+					this.type = SourceType.PAN;
 				} else if (".panx".equals(extension)) {
-					this.type = Type.PANX;
+					this.type = SourceType.PANX;
 				} else {
 					throw new IllegalArgumentException(MessageUtils.format(
 							MSG_INVALID_TPL_NAME, name));
@@ -124,7 +59,7 @@ public class SourceFile implements Comparable<SourceFile>, Serializable {
 			}
 
 		} else {
-			this.type = (path != null) ? Type.TEXT : Type.ABSENT_TEXT;
+			this.type = (path != null) ? SourceType.TEXT : SourceType.ABSENT_TEXT;
 		}
 
 		validateFields(name, type, path);
@@ -139,7 +74,7 @@ public class SourceFile implements Comparable<SourceFile>, Serializable {
 		return name;
 	}
 
-	public Type getType() {
+	public SourceType getType() {
 		return type;
 	}
 
@@ -229,7 +164,7 @@ public class SourceFile implements Comparable<SourceFile>, Serializable {
 		return extension;
 	}
 
-	private void validateFields(String name, Type type, File path)
+	private void validateFields(String name, SourceType type, File path)
 			throws CompilerError {
 
 		// Check that name and type are not null.
@@ -268,7 +203,7 @@ public class SourceFile implements Comparable<SourceFile>, Serializable {
 	 * @return
 	 * @throws IllegalArgumentException
 	 */
-	private static File weakTemplateNameVerification(String name, Type type,
+	private static File weakTemplateNameVerification(String name, SourceType type,
 			File source) throws IllegalArgumentException {
 
 		File location = null;

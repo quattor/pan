@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.quattor.pan.exceptions.EvaluationException;
-import org.quattor.pan.repository.SourceFile.Type;
 
 abstract public class FileSystemSourceRepository implements SourceRepository {
 
@@ -30,7 +29,7 @@ abstract public class FileSystemSourceRepository implements SourceRepository {
 
 		ArrayList<String> extensions = new ArrayList<String>();
 
-		for (Type type : Type.values()) {
+		for (SourceType type : SourceType.values()) {
 			if (type.isSource()) {
 				extensions.add(type.getExtension());
 			}

@@ -38,7 +38,7 @@ import org.quattor.pan.CompilerOptions;
 import org.quattor.pan.CompilerResults;
 import org.quattor.pan.output.Formatter;
 import org.quattor.pan.output.FormatterUtils;
-import org.quattor.pan.repository.SourceFile.Type;
+import org.quattor.pan.repository.SourceType;
 
 /**
  * An ant task which permits calling the pan compiler from an ant build file.
@@ -320,7 +320,7 @@ public class PanCompilerTask extends Task {
 
 		// Loop over each file creating a File object.
 		for (String f : ds.getIncludedFiles()) {
-			if (Type.hasSourceFileExtension(f)) {
+			if (SourceType.hasSourceFileExtension(f)) {
 				objectFiles.add(new File(basedir, f));
 			}
 		}

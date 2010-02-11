@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 
 import org.apache.tools.ant.BuildException;
 import org.quattor.pan.repository.FileSystemSourceRepository;
-import org.quattor.pan.repository.SourceFile.Type;
+import org.quattor.pan.repository.SourceType;
 import org.quattor.pan.utils.FileStatCache;
 
 public class DependencyChecker {
@@ -126,28 +126,18 @@ public class DependencyChecker {
 
 		switch (info.type) {
 
-		case TPL: // fall through
-		case PAN: // fall through
-		case PANX: { // all sources handled the same way
-
+		case TPL:
 			return isSourceDependencyOutdated(info, targetTime);
-
-		}
-
-		case TEXT: {
-
+		case PAN:
+			return isSourceDependencyOutdated(info, targetTime);
+		case PANX:
+			return isSourceDependencyOutdated(info, targetTime);
+		case TEXT:
 			return isTextDependencyOutdated(info, targetTime);
-
-		}
-
 		case ABSENT_SOURCE:
-
 			return (lookupSourceFile(info.name) != null);
-
 		case ABSENT_TEXT:
-
 			return (lookupTextFile(info.name) != null);
-
 		default:
 			throw new BuildException("unknown file type: " + info.type);
 		}
@@ -196,7 +186,7 @@ public class DependencyChecker {
 		String localTplName = FileSystemSourceRepository.localizeName(tplName);
 
 		List<String> sourceFiles = new ArrayList<String>();
-		for (String extension : Type.getExtensions()) {
+		for (String extension : SourceType.getExtensions()) {
 			sourceFiles.add(localTplName + extension);
 		}
 
@@ -250,7 +240,7 @@ public class DependencyChecker {
 
 	public static String stripPanExtensions(String name) {
 
-		for (Type type : Type.values()) {
+		for (SourceType type : SourceType.values()) {
 			String extension = type.getExtension();
 			if (!"".equals(extension)) {
 				if (name.endsWith(extension)) {
@@ -264,7 +254,7 @@ public class DependencyChecker {
 	}
 
 	public static File reconstructSingleDependency(String templatePath,
-			String tplName, Type type) throws URISyntaxException {
+			String tplName, SourceType type) throws URISyntaxException {
 
 		URI path = new URI(templatePath);
 		URI fullname = new URI(tplName + type.getExtension());
@@ -278,7 +268,7 @@ public class DependencyChecker {
 
 		public final String name;
 
-		public final Type type;
+		public final SourceType type;
 
 		public final File file;
 
@@ -295,7 +285,7 @@ public class DependencyChecker {
 			}
 
 			name = fields[0];
-			type = Type.valueOf(fields[1]);
+			type = SourceType.valueOf(fields[1]);
 
 			if (fields.length == 3) {
 

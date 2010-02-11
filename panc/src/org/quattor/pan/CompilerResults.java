@@ -82,23 +82,38 @@ public class CompilerResults {
 				results.append("\n");
 				if (t instanceof NullPointerException
 						|| t instanceof CompilerError) {
-					StackTraceElement[] frames = t.getStackTrace();
-					if (frames.length > 0) {
-						results.append(frames[0].toString());
-						results.append("\n");
-					}
+
+					results.append(formatStackTrace(t));
+
 				} else if (t instanceof SystemException) {
+
+					results.append(formatStackTrace(t));
+
 					Throwable cause = t.getCause();
 					if (cause != null) {
+						results.append("\nCause:\n");
 						results.append(cause.getMessage());
 						results.append("\n");
 					}
+					results.append(formatStackTrace(t));
 				}
 			}
 			return results.toString();
 		} else {
 			return null;
 		}
+	}
+
+	private String formatStackTrace(Throwable t) {
+
+		StringBuilder trace = new StringBuilder("");
+
+		for (StackTraceElement element : t.getStackTrace()) {
+			trace.append(element.toString());
+			trace.append("\n");
+		}
+
+		return trace.toString();
 	}
 
 	/**

@@ -1,8 +1,8 @@
 package org.quattor.pan.parser;
 
+import static org.quattor.pan.utils.MessageUtils.MSG_ERROR_WHILE_WRITING_OUTPUT;
 import static org.quattor.pan.utils.MessageUtils.MSG_MISSING_SAX_TRANSFORMER;
 import static org.quattor.pan.utils.MessageUtils.MSG_UNEXPECTED_EXCEPTION_WHILE_WRITING_OUTPUT;
-import static org.quattor.pan.utils.MessageUtils.MSG_ERROR_WHILE_WRITING_OUTPUT;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -23,6 +23,7 @@ import org.quattor.pan.annotation.Annotation.Entry;
 import org.quattor.pan.exceptions.CompilerError;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.exceptions.SystemException;
+import org.quattor.pan.parser.ASTOperation.OperationType;
 import org.quattor.pan.parser.ASTStatement.StatementType;
 import org.quattor.pan.utils.MessageUtils;
 import org.xml.sax.SAXException;
@@ -151,7 +152,7 @@ public class PanParserAnnotationUtils {
 
 	private static String getElementInfo(Node ast, AttributesImpl atts) {
 
-		String elementName = ast.getClass().getSimpleName();
+		String elementName = null;
 
 		if (ast instanceof ASTTemplate) {
 
@@ -191,19 +192,46 @@ public class PanParserAnnotationUtils {
 
 			ASTFieldSpec node = (ASTFieldSpec) ast;
 
-			elementName = "field";
+			if (node.getInclude() == null) {
 
-			try {
+				elementName = "field";
+
+				try {
+					atts.addAttribute(PAN_ANNO_NS, null, "name", "CDATA", node
+							.getKey().toString());
+				} catch (SyntaxException consumed) {
+				}
+
+				atts.addAttribute(PAN_ANNO_NS, null, "required", "CDATA", (node
+						.isRequired() ? "yes" : "no"));
+
+			} else {
+
+				elementName = "include";
+
 				atts.addAttribute(PAN_ANNO_NS, null, "name", "CDATA", node
-						.getKey().toString());
-			} catch (SyntaxException consumed) {
+						.getInclude());
 			}
 
-			atts.addAttribute(PAN_ANNO_NS, null, "required", "CDATA", (node
-					.isRequired() ? "yes" : "no"));
+		} else if (ast instanceof ASTBaseTypeSpec) {
 
-		} else if (ast instanceof ASTOperation) {
-			elementName = null;
+			ASTBaseTypeSpec node = (ASTBaseTypeSpec) ast;
+
+			elementName = "basetype";
+
+			if (node.getIdentifier() != null) {
+				atts.addAttribute(PAN_ANNO_NS, null, "name", "CDATA", node
+						.getIdentifier());
+			}
+
+			atts.addAttribute(PAN_ANNO_NS, null, "extensible", "CDATA", (node
+					.isExtensible() ? "yes" : "no"));
+
+			if (node.getRange() != null) {
+				atts.addAttribute(PAN_ANNO_NS, null, "range", "CDATA", node
+						.getRange().toString());
+			}
+
 		}
 
 		return elementName;

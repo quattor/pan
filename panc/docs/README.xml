@@ -537,8 +537,8 @@ variable X ?=
       <title>Version 8.3.0</title>
 
       <para><emphasis>This is a development release and not intended for
-      production use.</emphasis> Feedback on the new features is
-      welcome.</para>
+      production use.</emphasis> Feedback on the new features or any strange
+      behavior is warmly welcomed.</para>
 
       <itemizedlist>
         <listitem>
@@ -556,6 +556,33 @@ variable X ?=
           "my/path/template" will have the annotation information written to
           the file <filename>my/path/template.annotation.xml</filename>
           relative to the given annotation directory.</para>
+        </listitem>
+
+        <listitem>
+          <para>The compiler will now accept source files with the extension
+          <filename>*.pan</filename> as well as <filename>*.tpl</filename>.
+          The <filename>*.pan</filename> extension is now the preferred one.
+          The next major release will remove support for the
+          <filename>*.tpl</filename> files.</para>
+        </listitem>
+
+        <listitem>
+          <para>The format of the dependency file has changed to allow correct
+          tracking of requested files that were absent as well as regular text
+          files that are included into the configuration. <emphasis>The new
+          format is not backward-compatible with previous releases!</emphasis>
+          However, the associated ant task has been updated to work with the
+          new format. After installing the new compiler, be sure to do a
+          complete, fresh build of all of the profiles.</para>
+        </listitem>
+
+        <listitem>
+          <para>Internally, much of the compiler has been refactored in
+          preparation for future changes, such as reading source information
+          from something other than a file system and producing syntactic
+          information to allow dedicated editors and debuggers. Although these
+          changes should not be visible to an end user, subtle changes of
+          behavior may have been introduced. </para>
         </listitem>
       </itemizedlist>
     </section>

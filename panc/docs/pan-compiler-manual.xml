@@ -795,8 +795,131 @@
       <title>Annotations</title>
 
       <para>The compiler supports pan language annotations and provides a
-      mechanism for recovering those annotations in a separate XML file.
-      </para>
+      mechanism for recovering those annotations in a separate XML file. While
+      the compiler permits annotations to occur in nearly any location in a
+      source file, only annotations attached to certain syntactic elements can
+      be recovered. Currently these are those before the template declaration,
+      variable declarations, function declarations, type declarations, and
+      field specifications. Examples of all are in the example file. </para>
+
+      <programlisting>@maintainer{
+  name = Jane Manager
+  email = jane.manager@example.org
+}
+@{
+  Example template that shows off the 
+  annotation features of the compiler.
+}
+object template annotations;
+
+@use{
+  type = long
+  default = 1
+  note = negative values raise an exception
+}
+variable VALUE ?= 1;
+
+@documentation{
+  desc = simple addition of two numbers
+  arg = first number to add
+  arg = second number to add
+}
+function ADD = {
+ ARGV[0] + ARGV[1];
+};
+
+type EXTERN = {
+  'info' ? string
+};
+
+@documentation{
+  Simple definition of a key value pair.
+}
+type KV_PAIR = extensible {
+
+  @{additional information fields}
+  include EXTERN
+
+  @{key for pair as string} 
+  'key' : string
+
+  @{value for pair as string}
+  'value' : string = to_string(2 + 3)
+};
+
+bind '/pair' = KV_PAIR;
+
+'/add' = ADD(1, 2);
+
+'/pair/key' = 'KEY';
+'/pair/value' = 'VALUE';</programlisting>
+
+      <para>Using the following command to process the file:</para>
+
+      <programlisting>$ panc --annotation-dir=annotations annotations.pan</programlisting>
+
+      <para>will produce the following output in the file
+      <filename>annotations.annotation.xml</filename>. Note that white space
+      and indentation have been added for clarity.</para>
+
+      <programlisting>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;template xmlns="http://quattor.org/pan/annotations" name="annotations" type="OBJECT"&gt;
+    &lt;desc&gt;
+  Example template that shows off the 
+  annotation features of the compiler.
+&lt;/desc&gt;
+
+    &lt;maintainer&gt;
+        &lt;name&gt;Jane Manager&lt;/name&gt;
+        &lt;email&gt;jane.manager@example.org&lt;/email&gt;
+    &lt;/maintainer&gt;
+
+    &lt;variable name="VALUE"&gt;
+        &lt;use&gt;
+            &lt;type&gt;long&lt;/type&gt;
+            &lt;default&gt;1&lt;/default&gt;
+            &lt;note&gt;negative values raise an exception&lt;/note&gt;
+        &lt;/use&gt;
+    &lt;/variable&gt;
+
+    &lt;function name="ADD"&gt;
+        &lt;documentation&gt;
+            &lt;desc&gt;simple addition of two numbers&lt;/desc&gt;
+            &lt;arg&gt;first number to add&lt;/arg&gt;
+            &lt;arg&gt;second number to add&lt;/arg&gt;
+        &lt;/documentation&gt;
+    &lt;/function&gt;
+
+    &lt;type name="EXTERN"&gt;
+        &lt;basetype extensible="no"&gt;
+            &lt;field name="info" required="no"&gt;
+                &lt;basetype name="string" extensible="no"/&gt;
+            &lt;/field&gt;
+        &lt;/basetype&gt;
+    &lt;/type&gt;
+
+    &lt;type name="KV_PAIR"&gt;
+        &lt;documentation&gt;
+            &lt;desc&gt;
+  Simple definition of a key value pair.
+&lt;/desc&gt;
+        &lt;/documentation&gt;
+
+        &lt;basetype extensible="yes"&gt;
+            &lt;include name="EXTERN"/&gt;
+            &lt;field name="key" required="yes"&gt;
+                &lt;desc&gt;key for pair as string&lt;/desc&gt;
+                &lt;basetype name="string" extensible="no"/&gt;
+            &lt;/field&gt;
+            &lt;field name="value" required="yes"&gt;
+                &lt;desc&gt;value for pair as string&lt;/desc&gt;
+                &lt;basetype name="string" extensible="no"/&gt;
+            &lt;/field&gt;
+        &lt;/basetype&gt;
+
+    &lt;/type&gt;
+    &lt;basetype name="KV_PAIR" extensible="no"/&gt;
+&lt;/template&gt;</programlisting>
     </section>
   </section>
 

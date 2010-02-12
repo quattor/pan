@@ -582,7 +582,19 @@ variable X ?=
           from something other than a file system and producing syntactic
           information to allow dedicated editors and debuggers. Although these
           changes should not be visible to an end user, subtle changes of
-          behavior may have been introduced. </para>
+          behavior may have been introduced.</para>
+        </listitem>
+
+        <listitem>
+          <para>The ant task also has a couple of patches contributed by
+          Morgan Stanley. The first patch ensures that file descriptors are
+          close reliably as soon as possible to avoid issues with the number
+          of file descriptors open at one time. The second patch allows the
+          build to be split into batches. The compiler is invoked separately
+          for each batch. If object profiles are referenced from others, there
+          is the possibility that individual profiles may be compiled several
+          times. The ant task currently reports the results of each batch
+          separately.</para>
         </listitem>
       </itemizedlist>
     </section>

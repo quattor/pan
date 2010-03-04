@@ -884,6 +884,11 @@ public class CompileTimeContext implements Context {
 		return null;
 	}
 
+	public Element initializeSelf() {
+		// This should never be called.
+		return null;
+	}
+
 	public boolean isSelfFinal() {
 		// This should never be called.
 		return false;

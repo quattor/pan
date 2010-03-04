@@ -1357,10 +1357,7 @@ public class BuildContext implements Context {
 
 		assert (path != null);
 
-		// Create a new self structure if there isn't one already.
-		if (self == null) {
-			self = new SelfHolder();
-		}
+		self = new SelfHolder();
 
 		// Since we're initializing to a path, the variable reference is null
 		// and the SELF variable is modifiable.
@@ -1382,6 +1379,8 @@ public class BuildContext implements Context {
 	public Element initializeSelf(String vname) {
 		assert (vname != null);
 
+		self = new SelfHolder();
+
 		self.setPath(null);
 		self.setUnmodifiable(false);
 
@@ -1400,12 +1399,21 @@ public class BuildContext implements Context {
 	}
 
 	public Element initializeSelf(Element e) {
+
+		self = new SelfHolder();
+
 		self.setElement(e);
 		self.setPath(null);
 		self.setVariable(null);
 		self.setUnmodifiable(true);
 
 		return self.getElement();
+	}
+
+	// FIXME: This must use SelfHolder subclass that throws errors.
+	public Element initializeSelf() {
+		self = new InvalidSelfHolder();
+		return null;
 	}
 
 	public boolean isSelfFinal() {
@@ -1417,9 +1425,7 @@ public class BuildContext implements Context {
 	}
 
 	public void clearSelf() {
-		self.setVariable(null);
-		self.setPath(null);
-		self.setElement(null);
+		self = null;
 	}
 
 	public SelfHolder saveSelf() {

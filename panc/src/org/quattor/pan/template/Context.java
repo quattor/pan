@@ -452,6 +452,8 @@ public interface Context {
 
 	public Element initializeSelf(Element e);
 
+	public Element initializeSelf();
+
 	public boolean isSelfFinal();
 
 	public Element getSelf();

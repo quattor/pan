@@ -17,10 +17,10 @@ import org.quattor.pan.utils.Path;
  */
 public class SelfHolder implements Cloneable {
 
-	public Element element = null;
-	public Path path = null;
-	public GlobalVariable variable = null;
-	public boolean unmodifiable = false;
+	protected Element element = null;
+	protected Path path = null;
+	protected GlobalVariable variable = null;
+	protected boolean unmodifiable = false;
 
 	@Override
 	public SelfHolder clone() {
@@ -33,6 +33,38 @@ public class SelfHolder implements Cloneable {
 		}
 
 		return copy;
+	}
+
+	public Element getElement() {
+		return element;
+	}
+
+	public void setElement(Element element) {
+		this.element = element;
+	}
+
+	public Path getPath() {
+		return path;
+	}
+
+	public void setPath(Path path) {
+		this.path = path;
+	}
+
+	public GlobalVariable getVariable() {
+		return variable;
+	}
+
+	public void setVariable(GlobalVariable variable) {
+		this.variable = variable;
+	}
+
+	public boolean isUnmodifiable() {
+		return unmodifiable;
+	}
+
+	public void setUnmodifiable(boolean unmodifiable) {
+		this.unmodifiable = unmodifiable;
 	}
 
 }

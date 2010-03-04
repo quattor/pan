@@ -1364,68 +1364,62 @@ public class BuildContext implements Context {
 
 		// Since we're initializing to a path, the variable reference is null
 		// and the SELF variable is modifiable.
-		self.variable = null;
-		self.unmodifiable = false;
+		self.setVariable(null);
+		self.setUnmodifiable(false);
 
 		// Set SELF to the value of the path, using undef if there is no value
 		// yet.
-		self.path = path;
-		self.element = getElement(path, false);
-		if (self.element == null) {
-			self.element = Undef.VALUE;
-			putElement(path, self.element);
+		self.setPath(path);
+		self.setElement(getElement(path, false));
+		if (self.getElement() == null) {
+			self.setElement(Undef.VALUE);
+			putElement(path, Undef.VALUE);
 		}
 
-		assert (self.element != null);
-		assert (self.path != null);
-
-		return self.element;
+		return self.getElement();
 	}
 
 	public Element initializeSelf(String vname) {
 		assert (vname != null);
 
-		self.path = null;
-		self.unmodifiable = false;
+		self.setPath(null);
+		self.setUnmodifiable(false);
 
-		self.variable = globalVariables.get(vname);
-		if (self.variable == null) {
-			self.variable = new GlobalVariable(false, Undef.VALUE);
-			globalVariables.put(vname, self.variable);
+		self.setVariable(globalVariables.get(vname));
+		if (self.getVariable() == null) {
+			self.setVariable(new GlobalVariable(false, Undef.VALUE));
+			globalVariables.put(vname, self.getVariable());
 		}
 
 		// Retrieve an unprotected value of the variable. Since we're going to
 		// modify SELF anyway, there is no need to force a copy if the value is
 		// modified.
-		self.element = self.variable.getUnprotectedValue();
+		self.setElement(self.getVariable().getUnprotectedValue());
 
-		assert (self.element != null);
-		assert (self.variable != null);
-
-		return self.element;
+		return self.getElement();
 	}
 
 	public Element initializeSelf(Element e) {
-		self.element = e;
-		self.path = null;
-		self.variable = null;
-		self.unmodifiable = true;
+		self.setElement(e);
+		self.setPath(null);
+		self.setVariable(null);
+		self.setUnmodifiable(true);
 
-		return self.element;
+		return self.getElement();
 	}
 
 	public boolean isSelfFinal() {
-		return self.unmodifiable;
+		return self.isUnmodifiable();
 	}
 
 	public Element getSelf() {
-		return self.element;
+		return self.getElement();
 	}
 
 	public void clearSelf() {
-		self.variable = null;
-		self.path = null;
-		self.element = null;
+		self.setVariable(null);
+		self.setPath(null);
+		self.setElement(null);
 	}
 
 	public SelfHolder saveSelf() {
@@ -1437,13 +1431,13 @@ public class BuildContext implements Context {
 	}
 
 	public void resetSelf(Element newValue) {
-		if (self.element != newValue) {
-			self.element = newValue;
+		if (self.getElement() != newValue) {
+			self.setElement(newValue);
 
-			if (self.variable != null) {
-				self.variable.setValue(newValue);
-			} else if (self.path != null) {
-				putElement(self.path, newValue);
+			if (self.getVariable() != null) {
+				self.getVariable().setValue(newValue);
+			} else if (self.getPath() != null) {
+				putElement(self.getPath(), newValue);
 			} else {
 				throw new EvaluationException(
 						"cannot modify SELF from validation function");

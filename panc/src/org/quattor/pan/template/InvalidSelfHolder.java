@@ -2,8 +2,6 @@ package org.quattor.pan.template;
 
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.exceptions.EvaluationException;
-import org.quattor.pan.utils.GlobalVariable;
-import org.quattor.pan.utils.Path;
 
 /**
  * A class that will throw an exception if SELF is accessed in any way. This is
@@ -15,8 +13,6 @@ import org.quattor.pan.utils.Path;
 public class InvalidSelfHolder extends SelfHolder {
 
 	public InvalidSelfHolder() {
-		path = null;
-		variable = null;
 		element = null;
 		unmodifiable = true;
 	}
@@ -37,33 +33,8 @@ public class InvalidSelfHolder extends SelfHolder {
 	}
 
 	@Override
-	public Path getPath() {
-		throw new EvaluationException("SELF is undefined in this context");
-	}
-
-	@Override
-	public void setPath(Path path) {
-		throw new EvaluationException("SELF is undefined in this context");
-	}
-
-	@Override
-	public GlobalVariable getVariable() {
-		throw new EvaluationException("SELF is undefined in this context");
-	}
-
-	@Override
-	public void setVariable(GlobalVariable variable) {
-		throw new EvaluationException("SELF is undefined in this context");
-	}
-
-	@Override
 	public boolean isUnmodifiable() {
 		return true;
-	}
-
-	@Override
-	public void setUnmodifiable(boolean unmodifiable) {
-		throw new EvaluationException("SELF is undefined in this context");
 	}
 
 }

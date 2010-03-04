@@ -13,9 +13,10 @@ import org.quattor.pan.utils.GlobalVariable;
  */
 public class VariableSelfHolder extends SelfHolder {
 
+	private GlobalVariable variable;
+
 	public VariableSelfHolder(GlobalVariable variable) {
 		this.variable = variable;
-		path = null;
 		unmodifiable = false;
 
 		// Retrieve an unprotected value of the variable. Since we're going to

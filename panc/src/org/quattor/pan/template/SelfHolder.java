@@ -4,8 +4,6 @@ import static org.quattor.pan.utils.MessageUtils.MSG_CLONE_NOT_SUPPORTED;
 
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.exceptions.CompilerError;
-import org.quattor.pan.utils.GlobalVariable;
-import org.quattor.pan.utils.Path;
 
 /**
  * Essentially just a structure to hold values related to the processing of the
@@ -18,8 +16,6 @@ import org.quattor.pan.utils.Path;
 public class SelfHolder implements Cloneable {
 
 	protected Element element = null;
-	protected Path path = null;
-	protected GlobalVariable variable = null;
 	protected boolean unmodifiable = false;
 
 	@Override
@@ -43,28 +39,8 @@ public class SelfHolder implements Cloneable {
 		this.element = element;
 	}
 
-	public Path getPath() {
-		return path;
-	}
-
-	public void setPath(Path path) {
-		this.path = path;
-	}
-
-	public GlobalVariable getVariable() {
-		return variable;
-	}
-
-	public void setVariable(GlobalVariable variable) {
-		this.variable = variable;
-	}
-
 	public boolean isUnmodifiable() {
 		return unmodifiable;
-	}
-
-	public void setUnmodifiable(boolean unmodifiable) {
-		this.unmodifiable = unmodifiable;
 	}
 
 }

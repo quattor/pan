@@ -15,8 +15,6 @@ public class ReadOnlySelfHolder extends SelfHolder {
 
 	public ReadOnlySelfHolder(Element element) {
 		this.element = element;
-		path = null;
-		variable = null;
 		unmodifiable = true;
 	}
 

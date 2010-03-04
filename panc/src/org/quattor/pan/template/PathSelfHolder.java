@@ -14,13 +14,13 @@ import org.quattor.pan.utils.Path;
  */
 public class PathSelfHolder extends SelfHolder {
 
-	protected Context context = null;
+	private Path path;
+	private Context context;
 
 	public PathSelfHolder(Path path, Context context) {
 		this.path = path;
 		this.context = context;
 		element = null;
-		variable = null;
 		unmodifiable = false;
 
 		element = context.getElement(path, false);

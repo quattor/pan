@@ -64,8 +64,12 @@ public class ComputedIncludeStatement extends IncludeStatement {
 
 	@Override
 	public void execute(Context context) {
+		
+		context.initializeSelf();
 
 		Element result = context.executeDmlBlock(dml);
+		
+		context.clearSelf();
 
 		// If the result is null or undef, then no template is to be included.
 		if (result instanceof Null || result instanceof Undef) {

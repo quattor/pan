@@ -145,7 +145,7 @@ abstract public class IncludeStatement extends Statement {
 		TemplateType includeeType = context.getCurrentTemplate().type;
 		TemplateType includedType = template.type;
 
-		// Check that the template type are correct for the inclusion.
+		// Check that the template types are correct for the inclusion.
 		if (!Template.checkValidInclude(includeeType, includedType)) {
 			throw new EvaluationException(includeeType
 					+ " template cannot include " + includedType + " template",
@@ -173,7 +173,7 @@ abstract public class IncludeStatement extends Statement {
 		}
 
 		// Create a nearly empty execution context. There are no global
-		// variables by default (including no 'self' variable). Only the
+		// variables by default (including no 'SELF' variable). Only the
 		// standard built-in functions are accessible.
 		Context context = new CompileTimeContext();
 

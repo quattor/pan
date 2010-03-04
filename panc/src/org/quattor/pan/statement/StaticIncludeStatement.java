@@ -65,8 +65,8 @@ public class StaticIncludeStatement extends IncludeStatement {
 	}
 
 	@Override
-	public void execute(Context thread) {
-		executeWithNamedTemplate(thread, name);
+	public void execute(Context context) {
+		executeWithNamedTemplate(context, name);
 	}
 
 	/**

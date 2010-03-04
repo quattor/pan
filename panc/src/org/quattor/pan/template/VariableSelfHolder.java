@@ -26,11 +26,6 @@ public class VariableSelfHolder extends SelfHolder {
 	}
 
 	@Override
-	public VariableSelfHolder clone() {
-		return (VariableSelfHolder) super.clone();
-	}
-
-	@Override
 	public void setElement(Element element) {
 		if (this.element != element) {
 			super.setElement(element);

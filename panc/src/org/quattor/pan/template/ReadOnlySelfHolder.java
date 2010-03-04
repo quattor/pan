@@ -18,11 +18,6 @@ public class ReadOnlySelfHolder extends SelfHolder {
 		unmodifiable = true;
 	}
 
-	@Override
-	public ReadOnlySelfHolder clone() {
-		return (ReadOnlySelfHolder) super.clone();
-	}
-
 	public void setElement(Element element) {
 		if (this.element != element) {
 			throw new EvaluationException(

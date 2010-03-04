@@ -1400,7 +1400,9 @@ public class BuildContext implements Context {
 	}
 
 	public SelfHolder saveSelf() {
-		return self.clone();
+		SelfHolder saved = self;
+		self = null;
+		return saved;
 	}
 
 	public void restoreSelf(SelfHolder self) {

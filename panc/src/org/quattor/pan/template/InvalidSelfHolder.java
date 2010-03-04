@@ -18,11 +18,6 @@ public class InvalidSelfHolder extends SelfHolder {
 	}
 
 	@Override
-	public InvalidSelfHolder clone() {
-		return (InvalidSelfHolder) super.clone();
-	}
-
-	@Override
 	public Element getElement() {
 		throw new EvaluationException("SELF is undefined in this context");
 	}

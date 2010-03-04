@@ -31,11 +31,6 @@ public class PathSelfHolder extends SelfHolder {
 	}
 
 	@Override
-	public PathSelfHolder clone() {
-		return (PathSelfHolder) super.clone();
-	}
-
-	@Override
 	public void setElement(Element element) {
 		if (this.element != element) {
 			super.setElement(element);

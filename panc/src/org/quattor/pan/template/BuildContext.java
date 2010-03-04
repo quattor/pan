@@ -1399,14 +1399,7 @@ public class BuildContext implements Context {
 	}
 
 	public Element initializeSelf(Element e) {
-
-		self = new SelfHolder();
-
-		self.setElement(e);
-		self.setPath(null);
-		self.setVariable(null);
-		self.setUnmodifiable(true);
-
+		self = new ReadOnlySelfHolder(e);
 		return self.getElement();
 	}
 

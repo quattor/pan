@@ -1,5 +1,6 @@
 package org.quattor.pan.template;
 
+import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.Undef;
 import org.quattor.pan.utils.Path;
 
@@ -32,6 +33,14 @@ public class PathSelfHolder extends SelfHolder {
 	@Override
 	public PathSelfHolder clone() {
 		return (PathSelfHolder) super.clone();
+	}
+
+	@Override
+	public void setElement(Element element) {
+		if (this.element != element) {
+			super.setElement(element);
+			context.putElement(path, element);
+		}
 	}
 
 }

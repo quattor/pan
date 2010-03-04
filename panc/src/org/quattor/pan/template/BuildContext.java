@@ -1408,18 +1408,7 @@ public class BuildContext implements Context {
 	}
 
 	public void resetSelf(Element newValue) {
-		if (self.getElement() != newValue) {
-			self.setElement(newValue);
-
-			if (self.getVariable() != null) {
-				self.getVariable().setValue(newValue);
-			} else if (self.getPath() != null) {
-				putElement(self.getPath(), newValue);
-			} else {
-				throw new EvaluationException(
-						"cannot modify SELF from validation function");
-			}
-		}
+		self.setElement(newValue);
 	}
 
 	public void setRelativeLoadpaths(List<String> rpaths) {

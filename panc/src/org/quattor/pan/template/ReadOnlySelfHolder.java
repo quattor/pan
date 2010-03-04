@@ -2,8 +2,6 @@ package org.quattor.pan.template;
 
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.exceptions.EvaluationException;
-import org.quattor.pan.utils.GlobalVariable;
-import org.quattor.pan.utils.Path;
 
 /**
  * Essentially just a structure to hold values related to the processing of the
@@ -27,39 +25,11 @@ public class ReadOnlySelfHolder extends SelfHolder {
 		return (ReadOnlySelfHolder) super.clone();
 	}
 
-	public Element getElement() {
-		return element;
-	}
-
 	public void setElement(Element element) {
 		if (this.element != element) {
 			throw new EvaluationException(
 					"cannot modify SELF from validation function");
 		}
-	}
-
-	public Path getPath() {
-		return path;
-	}
-
-	public void setPath(Path path) {
-		this.path = path;
-	}
-
-	public GlobalVariable getVariable() {
-		return variable;
-	}
-
-	public void setVariable(GlobalVariable variable) {
-		this.variable = variable;
-	}
-
-	public boolean isUnmodifiable() {
-		return unmodifiable;
-	}
-
-	public void setUnmodifiable(boolean unmodifiable) {
-		this.unmodifiable = unmodifiable;
 	}
 
 }

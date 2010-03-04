@@ -1357,21 +1357,7 @@ public class BuildContext implements Context {
 
 		assert (path != null);
 
-		self = new SelfHolder();
-
-		// Since we're initializing to a path, the variable reference is null
-		// and the SELF variable is modifiable.
-		self.setVariable(null);
-		self.setUnmodifiable(false);
-
-		// Set SELF to the value of the path, using undef if there is no value
-		// yet.
-		self.setPath(path);
-		self.setElement(getElement(path, false));
-		if (self.getElement() == null) {
-			self.setElement(Undef.VALUE);
-			putElement(path, Undef.VALUE);
-		}
+		self = new PathSelfHolder(path, this);
 
 		return self.getElement();
 	}

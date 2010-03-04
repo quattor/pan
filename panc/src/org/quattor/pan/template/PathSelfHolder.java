@@ -1,0 +1,37 @@
+package org.quattor.pan.template;
+
+import org.quattor.pan.dml.data.Undef;
+import org.quattor.pan.utils.Path;
+
+/**
+ * Essentially just a structure to hold values related to the processing of the
+ * SELF variable. This is treated as a separate structure because we must save
+ * (restore) these values when entering (exiting) a structure template.
+ * 
+ * @author loomis
+ * 
+ */
+public class PathSelfHolder extends SelfHolder {
+
+	protected Context context = null;
+
+	public PathSelfHolder(Path path, Context context) {
+		this.path = path;
+		this.context = context;
+		element = null;
+		variable = null;
+		unmodifiable = false;
+
+		element = context.getElement(path, false);
+		if (element == null) {
+			context.putElement(path, Undef.VALUE);
+			element = Undef.VALUE;
+		}
+	}
+
+	@Override
+	public PathSelfHolder clone() {
+		return (PathSelfHolder) super.clone();
+	}
+
+}

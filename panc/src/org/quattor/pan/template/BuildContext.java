@@ -1365,21 +1365,13 @@ public class BuildContext implements Context {
 	public Element initializeSelf(String vname) {
 		assert (vname != null);
 
-		self = new SelfHolder();
-
-		self.setPath(null);
-		self.setUnmodifiable(false);
-
-		self.setVariable(globalVariables.get(vname));
-		if (self.getVariable() == null) {
-			self.setVariable(new GlobalVariable(false, Undef.VALUE));
-			globalVariables.put(vname, self.getVariable());
+		GlobalVariable variable = globalVariables.get(vname);
+		if (variable == null) {
+			variable = new GlobalVariable(false, Undef.VALUE);
+			globalVariables.put(vname, variable);
 		}
 
-		// Retrieve an unprotected value of the variable. Since we're going to
-		// modify SELF anyway, there is no need to force a copy if the value is
-		// modified.
-		self.setElement(self.getVariable().getUnprotectedValue());
+		self = new VariableSelfHolder(variable);
 
 		return self.getElement();
 	}

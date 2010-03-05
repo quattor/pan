@@ -23,7 +23,6 @@ import org.quattor.pan.annotation.Annotation.Entry;
 import org.quattor.pan.exceptions.CompilerError;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.exceptions.SystemException;
-import org.quattor.pan.parser.ASTOperation.OperationType;
 import org.quattor.pan.parser.ASTStatement.StatementType;
 import org.quattor.pan.utils.MessageUtils;
 import org.xml.sax.SAXException;

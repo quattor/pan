@@ -665,36 +665,12 @@ public class BuildContext implements Context {
 		if (globalVariables.containsKey(name)) {
 
 			GlobalVariable gvar = globalVariables.get(name);
-			if (!gvar.getFinalFlag()) {
-				gvar.setValue(value);
-				gvar.setFinalFlag(finalFlag);
-			} else {
-				throw new EvaluationException(
-						"attempt to modify final global variable named " + name);
-			}
+			gvar.setValue(value);
+			gvar.setFinalFlag(finalFlag);
 
 		} else if (value != null) {
 			GlobalVariable gvar = new GlobalVariable(finalFlag, value);
 			globalVariables.put(name, gvar);
-		}
-	}
-
-	/**
-	 * Mark the global variable as final.
-	 * 
-	 */
-	public void setGlobalVariableAsFinal(String name) {
-
-		assert (name != null);
-
-		// Normal processing: just pull out the existing variable and set the
-		// flag.
-		GlobalVariable gvar = globalVariables.get(name);
-		try {
-			gvar.setFinalFlag(true);
-		} catch (NullPointerException npe) {
-			throw CompilerError.create(
-					MessageUtils.MSG_FINAL_FOR_NON_EXISTANT_VARIABLE, name);
 		}
 	}
 

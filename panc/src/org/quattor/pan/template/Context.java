@@ -260,12 +260,6 @@ public interface Context {
 	public void setGlobalVariable(String name, Element value, boolean finalFlag);
 
 	/**
-	 * Mark the global variable as final.
-	 * 
-	 */
-	public void setGlobalVariableAsFinal(String name);
-
-	/**
 	 * Register a Resource iterator in the context.
 	 */
 	public void setIterator(Resource resource, Resource.Iterator iterator);

@@ -403,14 +403,6 @@ public class CompileTimeContext implements Context {
 	}
 
 	/**
-	 * Mark the global variable as final.
-	 * 
-	 */
-	public void setGlobalVariableAsFinal(String name) {
-		// This should never be called.
-	}
-
-	/**
 	 * Register a Resource iterator in the context.
 	 */
 	public void setIterator(Resource resource, Resource.Iterator iterator) {

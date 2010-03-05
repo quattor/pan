@@ -65,20 +65,15 @@ public class ConstantVariableStatement extends VariableStatement {
 			Element currentValue = variable.getValue();
 			assert (currentValue != null);
 
-			if (!conditional) {
+			if (!conditional || currentValue instanceof Undef
+					|| currentValue instanceof Null) {
 
 				variable.setValue(value);
 				variable.setFinalFlag(!modifiable);
 
 			} else {
 
-				if (currentValue instanceof Undef
-						|| currentValue instanceof Null) {
-
-					variable.setValue(value);
-					variable.setFinalFlag(!modifiable);
-
-				} else if (!modifiable) {
+				if (conditional && !modifiable) {
 
 					// Strange case where real value exists, but need to
 					// make the value immutable.

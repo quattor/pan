@@ -81,32 +81,24 @@ public class ComputedVariableStatement extends VariableStatement {
 			SelfHolder selfHolder = new VariableSelfHolder(variable);
 			context.initializeSelfHolder(selfHolder);
 
-			Element self = selfHolder.getElement();
-			assert (self != null);
+			Element currentValue = variable.getValue();
+			assert (currentValue != null);
 
-			if (!conditional) {
+			if (!conditional || currentValue instanceof Undef
+					|| currentValue instanceof Null) {
 
-				// Not a conditional statement. Always run the DML and set the
-				// value. If the value is immutable, we'll waste a little
-				// processing before throwing the exception.
 				Element result = context.executeDmlBlock(dml);
-				context.setGlobalVariable(name, result, !modifiable);
+
+				variable.setValue(result);
+				variable.setFinalFlag(!modifiable);
 
 			} else {
 
-				// Reuse the value of SELF from above to determine whether or
-				// not to calculate a new value. If the value didn't exist, it
-				// will now have an Undef value and will be recalculated.
-				if (self instanceof Undef || self instanceof Null) {
-
-					Element result = context.executeDmlBlock(dml);
-					context.setGlobalVariable(name, result, !modifiable);
-
-				} else if (!modifiable) {
+				if (conditional && !modifiable) {
 
 					// Strange case where real value exists, but need to
 					// make the value immutable.
-					context.setGlobalVariableAsFinal(name);
+					variable.setFinalFlag(!modifiable);
 
 				}
 			}

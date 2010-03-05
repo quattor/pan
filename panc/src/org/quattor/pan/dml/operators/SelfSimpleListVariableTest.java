@@ -37,6 +37,8 @@ import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.template.BuildContext;
 import org.quattor.pan.template.CompileTimeContext;
 import org.quattor.pan.template.Context;
+import org.quattor.pan.template.PathSelfHolder;
+import org.quattor.pan.template.ReadOnlySelfHolder;
 import org.quattor.pan.utils.Path;
 import org.quattor.pan.utils.TermFactory;
 
@@ -59,7 +61,7 @@ public class SelfSimpleListVariableTest extends AbstractOperationTestUtils {
 
 		Operation op = ListVariable.getInstance(null, "SELF");
 
-		context.initializeSelf(Undef.getInstance());
+		context.initializeSelfHolder(new ReadOnlySelfHolder(Undef.VALUE));
 		op.execute(context);
 	}
 
@@ -78,7 +80,7 @@ public class SelfSimpleListVariableTest extends AbstractOperationTestUtils {
 
 		Context context = new BuildContext();
 		Path path = new Path("/a");
-		context.initializeSelf(path);
+		context.initializeSelfHolder(new PathSelfHolder(path, context));
 
 		Operation op = ListVariable.getInstance(null, "SELF");
 
@@ -106,7 +108,7 @@ public class SelfSimpleListVariableTest extends AbstractOperationTestUtils {
 		value.append(ok);
 		value = (ListResource) value.protect();
 		context.putElement(path, value);
-		context.initializeSelf(path);
+		context.initializeSelfHolder(new PathSelfHolder(path, context));
 
 		Operation op = ListVariable.getInstance(null, "SELF");
 
@@ -137,7 +139,7 @@ public class SelfSimpleListVariableTest extends AbstractOperationTestUtils {
 
 		// Set the path to the given string property.
 		context.putElement(path, bad);
-		context.initializeSelf(path);
+		context.initializeSelfHolder(new PathSelfHolder(path, context));
 
 		Operation op = ListVariable.getInstance(null, "SELF");
 

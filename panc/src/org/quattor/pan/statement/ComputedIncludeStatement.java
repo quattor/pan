@@ -27,6 +27,8 @@ import org.quattor.pan.dml.data.StringProperty;
 import org.quattor.pan.dml.data.Undef;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.template.Context;
+import org.quattor.pan.template.InvalidSelfHolder;
+import org.quattor.pan.template.SelfHolder;
 import org.quattor.pan.template.SourceRange;
 
 /**
@@ -64,11 +66,12 @@ public class ComputedIncludeStatement extends IncludeStatement {
 
 	@Override
 	public void execute(Context context) {
-		
-		context.initializeSelf();
+
+		SelfHolder selfHolder = new InvalidSelfHolder();
+		context.initializeSelfHolder(selfHolder);
 
 		Element result = context.executeDmlBlock(dml);
-		
+
 		context.clearSelf();
 
 		// If the result is null or undef, then no template is to be included.

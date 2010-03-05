@@ -26,6 +26,8 @@ import org.quattor.pan.dml.data.Undef;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.template.Context;
+import org.quattor.pan.template.PathSelfHolder;
+import org.quattor.pan.template.SelfHolder;
 import org.quattor.pan.template.SourceRange;
 import org.quattor.pan.utils.Path;
 
@@ -76,7 +78,9 @@ public class AbsoluteAssignmentStatement extends ComputedAssignmentStatement {
 			// NOTE: we must also put this into the tree so that we can maintain
 			// backward compatability when value() is called with the path
 			// currently being assigned.
-			Element self = context.initializeSelf(path);
+			SelfHolder selfHolder = new PathSelfHolder(path, context);
+			context.initializeSelfHolder(selfHolder);
+			Element self = selfHolder.getElement();
 			assert (self != null);
 
 			// If the value is defined, check to see if the path is marked as
@@ -90,7 +94,8 @@ public class AbsoluteAssignmentStatement extends ComputedAssignmentStatement {
 
 			if (!conditional || (self instanceof Undef)) {
 
-				Element result = context.executeDmlBlock(dml);;
+				Element result = context.executeDmlBlock(dml);
+				;
 
 				// Set the value.
 				if (result != null) {

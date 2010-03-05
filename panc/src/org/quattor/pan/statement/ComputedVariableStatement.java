@@ -27,7 +27,10 @@ import org.quattor.pan.dml.data.Undef;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.template.Context;
+import org.quattor.pan.template.SelfHolder;
 import org.quattor.pan.template.SourceRange;
+import org.quattor.pan.template.VariableSelfHolder;
+import org.quattor.pan.utils.GlobalVariable;
 
 /**
  * Sets a global variable to a constant or computed value.
@@ -74,7 +77,11 @@ public class ComputedVariableStatement extends VariableStatement {
 			// Get the value to use for the SELF variable. Will need this in all
 			// cases anyway. Use the method that doesn't duplicate the value.
 			// Children of the SELF can be set directly.
-			Element self = context.initializeSelf(this.name);
+			GlobalVariable variable = context.retrieveGlobalVariable(this.name);
+			SelfHolder selfHolder = new VariableSelfHolder(variable);
+			context.initializeSelfHolder(selfHolder);
+
+			Element self = selfHolder.getElement();
 			assert (self != null);
 
 			if (!conditional) {

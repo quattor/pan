@@ -733,6 +733,15 @@ public class BuildContext implements Context {
 		return (gvar != null) ? gvar.getValue() : null;
 	}
 
+	public GlobalVariable retrieveGlobalVariable(String name) {
+		GlobalVariable variable = globalVariables.get(name);
+		if (variable == null) {
+			variable = new GlobalVariable(false, Undef.VALUE);
+			globalVariables.put(name, variable);
+		}
+		return variable;
+	}
+
 	public void pushTemplate(Template template, SourceRange sourceRange,
 			Level logLevel, String logMessage) {
 
@@ -1083,7 +1092,8 @@ public class BuildContext implements Context {
 		IteratorMap oldIterators = createIteratorMap();
 
 		// Initialize the SELF reference to the local self value.
-		initializeSelf(self);
+		SelfHolder selfHolder = new ReadOnlySelfHolder(self);
+		initializeSelfHolder(selfHolder);
 
 		try {
 
@@ -1353,33 +1363,8 @@ public class BuildContext implements Context {
 		return isCompileTimeContext;
 	}
 
-	public Element initializeSelf(Path path) {
-		self = new PathSelfHolder(path, this);
-		return self.getElement();
-	}
-
-	public Element initializeSelf(String vname) {
-		assert (vname != null);
-
-		GlobalVariable variable = globalVariables.get(vname);
-		if (variable == null) {
-			variable = new GlobalVariable(false, Undef.VALUE);
-			globalVariables.put(vname, variable);
-		}
-
-		self = new VariableSelfHolder(variable);
-
-		return self.getElement();
-	}
-
-	public Element initializeSelf(Element e) {
-		self = new ReadOnlySelfHolder(e);
-		return self.getElement();
-	}
-
-	public Element initializeSelf() {
-		self = new InvalidSelfHolder();
-		return null;
+	public void initializeSelfHolder(SelfHolder selfHolder) {
+		self = selfHolder;
 	}
 
 	public boolean isSelfFinal() {

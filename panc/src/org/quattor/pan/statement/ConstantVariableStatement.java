@@ -27,6 +27,7 @@ import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.template.Context;
 import org.quattor.pan.template.SourceRange;
+import org.quattor.pan.utils.GlobalVariable;
 
 /**
  * Sets a global variable to a constant or computed value.
@@ -59,29 +60,29 @@ public class ConstantVariableStatement extends VariableStatement {
 			// Get the value to use for the SELF variable. Will need this in all
 			// cases anyway. Use the method that doesn't duplicate the value.
 			// Children of the SELF can be set directly.
-			Element self = context.initializeSelf(name);
-			assert (self != null);
+			GlobalVariable variable = context.retrieveGlobalVariable(name);
+
+			Element currentValue = variable.getValue();
+			assert (currentValue != null);
 
 			if (!conditional) {
 
-				context.setGlobalVariable(name, value, !modifiable);
+				variable.setValue(value);
+				variable.setFinalFlag(!modifiable);
 
 			} else {
 
-				// Pull out the current value (if it exists) to determine if the
-				// value should be set.
-				Element currentValue = context.getGlobalVariable(name);
-
-				if (currentValue == null || currentValue instanceof Undef
+				if (currentValue instanceof Undef
 						|| currentValue instanceof Null) {
 
-					context.setGlobalVariable(name, value, !modifiable);
+					variable.setValue(value);
+					variable.setFinalFlag(!modifiable);
 
 				} else if (!modifiable) {
 
 					// Strange case where real value exists, but need to
 					// make the value immutable.
-					context.setGlobalVariableAsFinal(name);
+					variable.setFinalFlag(!modifiable);
 
 				}
 			}

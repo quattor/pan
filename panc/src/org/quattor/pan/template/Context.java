@@ -290,6 +290,8 @@ public interface Context {
 	 */
 	public Element getGlobalVariable(String name);
 
+	public GlobalVariable retrieveGlobalVariable(String name);
+
 	public void pushTemplate(Template template, SourceRange sourceRange,
 			Level logLevel, String logMessage);
 
@@ -446,13 +448,7 @@ public interface Context {
 	 */
 	public boolean isCompileTimeContext();
 
-	public Element initializeSelf(Path path);
-
-	public Element initializeSelf(String vname);
-
-	public Element initializeSelf(Element e);
-
-	public Element initializeSelf();
+	public void initializeSelfHolder(SelfHolder selfHolder);
 
 	public boolean isSelfFinal();
 

@@ -196,6 +196,7 @@ public class CompileTimeContext implements Context {
 		// This should never be called.
 		return null;
 	}
+
 	/**
 	 * A method to load a template from the global cache. This may trigger the
 	 * global cache to compile the template.
@@ -443,6 +444,11 @@ public class CompileTimeContext implements Context {
 		return null;
 	}
 
+	public GlobalVariable retrieveGlobalVariable(String name) {
+		// This should never be called.
+		return null;
+	}
+
 	public void pushTemplate(Template template, SourceRange sourceRange,
 			Level logLevel, String logMessage) {
 
@@ -612,7 +618,8 @@ public class CompileTimeContext implements Context {
 		IteratorMap oldIterators = createIteratorMap();
 
 		// Initialize the SELF reference to the local self value.
-		initializeSelf(self);
+		SelfHolder selfHolder = new ReadOnlySelfHolder(self);
+		initializeSelfHolder(selfHolder);
 
 		try {
 
@@ -869,24 +876,8 @@ public class CompileTimeContext implements Context {
 		return true;
 	}
 
-	public Element initializeSelf(Path path) {
+	public void initializeSelfHolder(SelfHolder selfHolder) {
 		// This should never be called.
-		return null;
-	}
-
-	public Element initializeSelf(String vname) {
-		// This should never be called.
-		return null;
-	}
-
-	public Element initializeSelf(Element e) {
-		// This should never be called.
-		return null;
-	}
-
-	public Element initializeSelf() {
-		// This should never be called.
-		return null;
 	}
 
 	public boolean isSelfFinal() {

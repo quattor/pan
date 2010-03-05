@@ -1354,11 +1354,7 @@ public class BuildContext implements Context {
 	}
 
 	public Element initializeSelf(Path path) {
-
-		assert (path != null);
-
 		self = new PathSelfHolder(path, this);
-
 		return self.getElement();
 	}
 
@@ -1381,7 +1377,6 @@ public class BuildContext implements Context {
 		return self.getElement();
 	}
 
-	// FIXME: This must use SelfHolder subclass that throws errors.
 	public Element initializeSelf() {
 		self = new InvalidSelfHolder();
 		return null;

@@ -1,5 +1,7 @@
 package org.quattor.pan.template;
 
+import static org.quattor.pan.utils.MessageUtils.MSG_CANNOT_MODIFY_SELF;
+
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.exceptions.EvaluationException;
 
@@ -20,8 +22,7 @@ public class ReadOnlySelfHolder extends SelfHolder {
 
 	public void setElement(Element element) {
 		if (this.element != element) {
-			throw new EvaluationException(
-					"cannot modify SELF from validation function");
+			throw new EvaluationException(MSG_CANNOT_MODIFY_SELF);
 		}
 	}
 

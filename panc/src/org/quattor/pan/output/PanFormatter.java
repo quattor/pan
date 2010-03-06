@@ -23,11 +23,8 @@ package org.quattor.pan.output;
 import static org.quattor.pan.utils.MessageUtils.MSG_UNEXPECTED_EXCEPTION_WHILE_WRITING_OUTPUT;
 
 import java.io.PrintStream;
-import java.util.Properties;
 
 import javax.xml.XMLConstants;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
@@ -73,13 +70,6 @@ public class PanFormatter implements Formatter {
 		try {
 
 			TransformerHandler handler = XmlUtils.getSaxTransformerHandler();
-
-			// Set parameters of the embedded transformer.
-			Transformer transformer = handler.getTransformer();
-			Properties properties = new Properties();
-			properties.setProperty(OutputKeys.INDENT, "yes");
-			properties.setProperty(OutputKeys.METHOD, "xml");
-			transformer.setOutputProperties(properties);
 
 			// Ok, feed SAX events to the output stream.
 			handler.setResult(new StreamResult(ps));

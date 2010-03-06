@@ -182,7 +182,7 @@ public class PanParserAnnotationUtils {
 			addNameAttribute(atts, node.getIdentifier());
 			addSourceRangeAttribute(atts, node);
 			addAttribute(atts, "extensible", node.isExtensible());
-			addAttribute(atts, "range", node.getRange().toString());
+			addAttribute(atts, "range", node.getRange());
 
 		}
 

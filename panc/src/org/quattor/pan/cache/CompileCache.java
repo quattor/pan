@@ -104,6 +104,9 @@ public class CompileCache extends AbstractCache<CompileResult> {
 		}
 
 		public void process(ASTTemplate ast, Template template) {
+
+			Task<TaskResult> task;
+
 			if (template.type == TemplateType.OBJECT) {
 
 				String objectName = template.name;
@@ -111,7 +114,7 @@ public class CompileCache extends AbstractCache<CompileResult> {
 				if (doXML) {
 					Formatter formatter = compiler.options.formatter;
 					File outputDirectory = compiler.options.outputDirectory;
-					Task<TaskResult> task = new WriteXmlTask(formatter,
+					task = new WriteXmlTask(formatter,
 							compiler.options.gzipOutput, compiler, objectName,
 							outputDirectory);
 					compiler.submit(task);
@@ -119,19 +122,20 @@ public class CompileCache extends AbstractCache<CompileResult> {
 
 				if (doDep) {
 					File outputDirectory = compiler.options.outputDirectory;
-					Task<TaskResult> task = new WriteDepTask(compiler,
-							objectName, outputDirectory);
-					compiler.submit(task);
-				}
-
-				boolean doAnno = (compiler.options.annotationDirectory != null);
-				if (doAnno) {
-					Task<TaskResult> task = new WriteAnnotationTask(
-							compiler.options.annotationDirectory, ast);
+					task = new WriteDepTask(compiler, objectName,
+							outputDirectory);
 					compiler.submit(task);
 				}
 
 			}
+
+			boolean doAnno = (compiler.options.annotationDirectory != null);
+			if (doAnno) {
+				task = new WriteAnnotationTask(
+						compiler.options.annotationDirectory, ast);
+				compiler.submit(task);
+			}
+
 		}
 	}
 

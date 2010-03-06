@@ -173,7 +173,7 @@ public class BuildContext implements Context {
 	 * @param objectTemplate
 	 *            An "object" Template to construct
 	 */
-	private BuildContext(Compiler compiler, Template objectTemplate) {
+	public BuildContext(Compiler compiler, Template objectTemplate) {
 
 		// Set the root to an empty hash.
 		root = new HashResource();

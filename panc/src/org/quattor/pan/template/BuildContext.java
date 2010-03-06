@@ -121,8 +121,6 @@ public class BuildContext implements Context {
 
 	private final FinalFlags flags;
 
-	private final boolean isCompileTimeContext;
-
 	private boolean checkObjectDependencies;
 
 	public final int deprecationLevel;
@@ -162,7 +160,7 @@ public class BuildContext implements Context {
 	 * Constructs a new Context object intended for testing.
 	 */
 	public BuildContext() {
-		this(null, emptyTemplate, false);
+		this(null, emptyTemplate);
 	}
 
 	/**
@@ -175,25 +173,7 @@ public class BuildContext implements Context {
 	 * @param objectTemplate
 	 *            An "object" Template to construct
 	 */
-	public BuildContext(Compiler compiler, Template objectTemplate) {
-
-		this(compiler, objectTemplate, false);
-	}
-
-	/**
-	 * Constructs a new context for the given root element. The function, type,
-	 * and variable hashes are initially empty. (In particular, the object
-	 * variable is not automatically defined.
-	 * 
-	 * @param compiler
-	 *            reference to the compiler and options
-	 * @param objectTemplate
-	 *            An "object" Template to construct
-	 * @param isCompileTimeContext
-	 *            Flag to indicate if this is a compile-time context
-	 */
-	private BuildContext(Compiler compiler, Template objectTemplate,
-			boolean isCompileTimeContext) {
+	private BuildContext(Compiler compiler, Template objectTemplate) {
 
 		// Set the root to an empty hash.
 		root = new HashResource();
@@ -236,9 +216,6 @@ public class BuildContext implements Context {
 		this.objectTemplate = objectTemplate;
 		dependencies.put(objectTemplate.name, objectTemplate);
 		objectDependencies.add(objectTemplate.name);
-
-		// Set the compile-time flag.
-		this.isCompileTimeContext = isCompileTimeContext;
 
 		// Always start with object dependency checking. This should be turned
 		// off only after the build phase is complete.
@@ -1340,7 +1317,7 @@ public class BuildContext implements Context {
 	 * @return flag indicating if this is a compile-time context
 	 */
 	public boolean isCompileTimeContext() {
-		return isCompileTimeContext;
+		return false;
 	}
 
 	public void initializeSelfHolder(SelfHolder selfHolder) {

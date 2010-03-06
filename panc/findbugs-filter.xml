@@ -21,7 +21,7 @@
 			<Class name="org.quattor.pan.dml.operators.SubTest" />
 			<Class name="org.quattor.pan.dml.operators.DivTest" />
 			<Class name="org.quattor.pan.dml.functions.ToDoubleTest" />
-			<Class name="org.quattor.pan.template.ObjectContextTest" />
+			<Class name="org.quattor.pan.template.CompileTimeContextTest" />
 		</Or>
 		<Bug pattern="FE_FLOATING_POINT_EQUALITY" />
 	</Match>

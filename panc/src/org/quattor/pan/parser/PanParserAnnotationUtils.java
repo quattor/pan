@@ -1,20 +1,13 @@
 package org.quattor.pan.parser;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_ERROR_WHILE_WRITING_OUTPUT;
-import static org.quattor.pan.utils.MessageUtils.MSG_MISSING_SAX_TRANSFORMER;
 import static org.quattor.pan.utils.MessageUtils.MSG_UNEXPECTED_EXCEPTION_WHILE_WRITING_OUTPUT;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.util.Properties;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
@@ -24,7 +17,9 @@ import org.quattor.pan.exceptions.CompilerError;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.exceptions.SystemException;
 import org.quattor.pan.parser.ASTStatement.StatementType;
+import org.quattor.pan.template.SourceRange;
 import org.quattor.pan.utils.MessageUtils;
+import org.quattor.pan.utils.XmlUtils;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -38,53 +33,21 @@ public class PanParserAnnotationUtils {
 
 		File outputFile = setupOutputFile(annotationDirectory, templateName);
 
-		// Generate the transformer factory. Need to guarantee that we get a
-		// SAXTransformerFactory.
-		TransformerFactory factory = TransformerFactory.newInstance();
-		if (!factory.getFeature(SAXTransformerFactory.FEATURE)) {
-			throw CompilerError.create(MSG_MISSING_SAX_TRANSFORMER);
-		}
-
 		try {
 
-			// Can safely cast the factory to a SAX-specific one. Get the
-			// handler to feed with SAX events.
-			SAXTransformerFactory saxfactory = (SAXTransformerFactory) factory;
-			TransformerHandler handler = saxfactory.newTransformerHandler();
-
-			// Set parameters of the embedded transformer.
-			Transformer transformer = handler.getTransformer();
-			Properties properties = new Properties();
-			properties.setProperty(OutputKeys.INDENT, "yes");
-			properties.setProperty(OutputKeys.METHOD, "xml");
-			transformer.setOutputProperties(properties);
+			TransformerHandler handler = XmlUtils.getSaxTransformerHandler();
 
 			// Ok, feed SAX events to the output stream.
-			OutputStream os = new FileOutputStream(outputFile);
-			handler.setResult(new StreamResult(os));
+			Writer writer = new FileWriter(outputFile);
+			handler.setResult(new StreamResult(writer));
 
-			// Create an list of attributes which can be reused on a "per-call"
-			// basis. This allows the class to remain a singleton.
-			AttributesImpl atts = new AttributesImpl();
-
-			// Begin the document and start the root element.
 			handler.startDocument();
-
-			// Add the attributes for the root element.
-			atts.addAttribute(PAN_ANNO_NS, null, "format", "CDATA", "xmldb");
 
 			// Process children recursively.
 			writeASTNode(handler, ast);
 
-			// Close the document. This will flush and close the underlying
-			// stream.
+			// Flushes and closes the underlying stream.
 			handler.endDocument();
-
-		} catch (TransformerConfigurationException tce) {
-			Error error = CompilerError
-					.create(MSG_UNEXPECTED_EXCEPTION_WHILE_WRITING_OUTPUT);
-			error.initCause(tce);
-			throw error;
 
 		} catch (SAXException se) {
 			Error error = CompilerError
@@ -92,7 +55,7 @@ public class PanParserAnnotationUtils {
 			error.initCause(se);
 			throw error;
 
-		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
 			String msg = MessageUtils.format(MSG_ERROR_WHILE_WRITING_OUTPUT,
 					outputFile);
 			SystemException exception = new SystemException(msg);
@@ -159,10 +122,9 @@ public class PanParserAnnotationUtils {
 
 			elementName = "template";
 
-			atts.addAttribute(PAN_ANNO_NS, null, "name", "CDATA", tplNode
-					.getIdentifier());
-			atts.addAttribute(PAN_ANNO_NS, null, "type", "CDATA", tplNode
-					.getTemplateType().toString());
+			addNameAttribute(atts, tplNode.getIdentifier());
+			addSourceRangeAttribute(atts, tplNode);
+			addAttribute(atts, "type", tplNode.getTemplateType());
 
 		} else if (ast instanceof ASTStatement) {
 
@@ -177,8 +139,8 @@ public class PanParserAnnotationUtils {
 			case TYPE:
 				elementName = node.getStatementType().toString().toLowerCase();
 
-				atts.addAttribute(PAN_ANNO_NS, null, "name", "CDATA", node
-						.getIdentifier());
+				addNameAttribute(atts, node.getIdentifier());
+				addSourceRangeAttribute(atts, node);
 
 				break;
 
@@ -196,20 +158,19 @@ public class PanParserAnnotationUtils {
 				elementName = "field";
 
 				try {
-					atts.addAttribute(PAN_ANNO_NS, null, "name", "CDATA", node
-							.getKey().toString());
+					addNameAttribute(atts, node.getKey());
 				} catch (SyntaxException consumed) {
 				}
-
-				atts.addAttribute(PAN_ANNO_NS, null, "required", "CDATA", (node
-						.isRequired() ? "yes" : "no"));
+				addSourceRangeAttribute(atts, node);
+				addAttribute(atts, "required", node.isRequired());
 
 			} else {
 
 				elementName = "include";
 
-				atts.addAttribute(PAN_ANNO_NS, null, "name", "CDATA", node
-						.getInclude());
+				addNameAttribute(atts, node.getInclude());
+				addSourceRangeAttribute(atts, node);
+
 			}
 
 		} else if (ast instanceof ASTBaseTypeSpec) {
@@ -218,18 +179,10 @@ public class PanParserAnnotationUtils {
 
 			elementName = "basetype";
 
-			if (node.getIdentifier() != null) {
-				atts.addAttribute(PAN_ANNO_NS, null, "name", "CDATA", node
-						.getIdentifier());
-			}
-
-			atts.addAttribute(PAN_ANNO_NS, null, "extensible", "CDATA", (node
-					.isExtensible() ? "yes" : "no"));
-
-			if (node.getRange() != null) {
-				atts.addAttribute(PAN_ANNO_NS, null, "range", "CDATA", node
-						.getRange().toString());
-			}
+			addNameAttribute(atts, node.getIdentifier());
+			addSourceRangeAttribute(atts, node);
+			addAttribute(atts, "extensible", node.isExtensible());
+			addAttribute(atts, "range", node.getRange().toString());
 
 		}
 
@@ -267,6 +220,30 @@ public class PanParserAnnotationUtils {
 			}
 
 		}
+	}
+
+	public static void addAttribute(AttributesImpl atts, String name,
+			Object value) {
+		if (value != null) {
+			atts.addAttribute(PAN_ANNO_NS, null, name, "CDATA", value
+					.toString());
+		}
+	}
+
+	public static void addAttribute(AttributesImpl atts, String name,
+			boolean value) {
+		Boolean bvalue = Boolean.valueOf(value);
+		addAttribute(atts, name, bvalue);
+	}
+
+	public static void addNameAttribute(AttributesImpl atts, Object value) {
+		addAttribute(atts, "name", value);
+	}
+
+	public static void addSourceRangeAttribute(AttributesImpl atts,
+			SimpleNode node) {
+		SourceRange sourceRange = node.getSourceRange();
+		addAttribute(atts, "source-range", sourceRange);
 	}
 
 }

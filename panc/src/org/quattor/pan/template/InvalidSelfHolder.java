@@ -1,5 +1,7 @@
 package org.quattor.pan.template;
 
+import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_SELF_REF_IN_INCLUDE;
+
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.exceptions.EvaluationException;
 
@@ -19,12 +21,12 @@ public class InvalidSelfHolder extends SelfHolder {
 
 	@Override
 	public Element getElement() {
-		throw new EvaluationException("SELF is undefined in this context");
+		throw new EvaluationException(MSG_INVALID_SELF_REF_IN_INCLUDE);
 	}
 
 	@Override
 	public void setElement(Element element) {
-		throw new EvaluationException("SELF is undefined in this context");
+		throw new EvaluationException(MSG_INVALID_SELF_REF_IN_INCLUDE);
 	}
 
 	@Override

@@ -35,7 +35,7 @@ import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.utils.Term;
 import org.quattor.pan.utils.TermFactory;
 
-public class ObjectContextTest {
+public class CompileTimeContextTest {
 
 	@Test
 	public void setVariableXLong() throws SyntaxException {

@@ -44,8 +44,6 @@ import org.quattor.pan.template.SourceRange;
  */
 final public class Index extends BuiltInFunction {
 
-	private static final long serialVersionUID = 9061253275629368212L;
-
 	private Index(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super("index", sourceRange, operations);

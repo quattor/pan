@@ -42,8 +42,6 @@ import org.quattor.pan.template.SourceRange;
  */
 abstract public class AbstractStaticMatcher extends AbstractMatcher {
 
-	private static final long serialVersionUID = -7356044353565880354L;
-
 	final Pattern pattern;
 
 	protected AbstractStaticMatcher(SourceRange sourceRange,

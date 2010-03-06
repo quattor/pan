@@ -34,8 +34,6 @@ import org.quattor.pan.template.SourceRange;
  */
 public class StaticIncludeStatement extends IncludeStatement {
 
-	private static final long serialVersionUID = 553201261645277704L;
-
 	private final String name;
 
 	/**

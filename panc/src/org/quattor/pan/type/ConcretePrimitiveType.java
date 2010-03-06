@@ -36,8 +36,6 @@ import org.quattor.pan.template.Context;
  */
 public class ConcretePrimitiveType extends PrimitiveType {
 
-	private static final long serialVersionUID = 8794765251498924191L;
-
 	private final String name;
 
 	private final Class<? extends Element> elementType;

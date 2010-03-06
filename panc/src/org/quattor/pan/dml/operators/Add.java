@@ -48,11 +48,6 @@ import org.quattor.pan.utils.MessageUtils;
 final public class Add extends AbstractOperation {
 
 	/**
-	 * Identifier for serialization.
-	 */
-	private static final long serialVersionUID = -7904908385189213950L;
-
-	/**
 	 * Create a new add operation. The source range must be supplied.
 	 * 
 	 * @param sourceRange

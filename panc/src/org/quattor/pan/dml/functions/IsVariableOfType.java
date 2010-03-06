@@ -40,8 +40,6 @@ import org.quattor.pan.template.SourceRange;
  */
 final public class IsVariableOfType extends IsOfType {
 
-	private static final long serialVersionUID = 3268757849018085297L;
-
 	private IsVariableOfType(SourceRange sourceRange,
 			Class<? extends Element> type, String name, Operation... operations)
 			throws SyntaxException {

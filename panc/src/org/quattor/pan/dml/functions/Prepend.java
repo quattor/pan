@@ -44,8 +44,6 @@ import org.quattor.pan.template.SourceRange;
  */
 final public class Prepend extends BuiltInFunction {
 
-	private static final long serialVersionUID = -1381770731099829766L;
-
 	protected Prepend(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super("prepend", sourceRange, operations);

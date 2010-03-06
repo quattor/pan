@@ -31,8 +31,6 @@ import net.jcip.annotations.Immutable;
 @Immutable
 abstract public class NumberProperty extends Property {
 
-	private static final long serialVersionUID = 7614195834501343311L;
-
 	protected NumberProperty(Number value) {
 		super(value);
 	}

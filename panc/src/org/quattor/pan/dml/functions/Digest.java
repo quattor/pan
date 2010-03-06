@@ -45,8 +45,6 @@ import org.quattor.pan.template.SourceRange;
  */
 final public class Digest extends BuiltInFunction {
 
-	private static final long serialVersionUID = 1122818972495613569L;
-
 	private Digest(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super("digest", sourceRange, operations);

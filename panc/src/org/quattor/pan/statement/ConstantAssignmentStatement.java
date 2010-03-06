@@ -38,8 +38,6 @@ import org.quattor.pan.utils.Path;
  */
 public class ConstantAssignmentStatement extends AssignmentStatement {
 
-	private static final long serialVersionUID = 6876660264664417932L;
-
 	protected final Element value;
 
 	/**
@@ -59,8 +57,8 @@ public class ConstantAssignmentStatement extends AssignmentStatement {
 	 *            flag indicating if the path can be further modified (i.e.
 	 *            'final' functionality)
 	 */
-	protected ConstantAssignmentStatement(SourceRange sourceRange,
-			Path path, Element value, boolean conditional, boolean modifiable)
+	protected ConstantAssignmentStatement(SourceRange sourceRange, Path path,
+			Element value, boolean conditional, boolean modifiable)
 			throws SyntaxException {
 
 		super(sourceRange, path, conditional, modifiable);

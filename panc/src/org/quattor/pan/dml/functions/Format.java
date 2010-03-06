@@ -42,8 +42,6 @@ import org.quattor.pan.template.SourceRange;
  */
 final public class Format extends BuiltInFunction {
 
-	private static final long serialVersionUID = 1053594650245882162L;
-
 	private Format(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super("format", sourceRange, operations);

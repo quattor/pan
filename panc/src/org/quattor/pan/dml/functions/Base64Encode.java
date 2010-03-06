@@ -41,8 +41,6 @@ import org.quattor.pan.utils.MessageUtils;
  */
 final public class Base64Encode extends BuiltInFunction {
 
-	private static final long serialVersionUID = -4186687727025535298L;
-
 	private Base64Encode(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super("base64_encode", sourceRange, operations);

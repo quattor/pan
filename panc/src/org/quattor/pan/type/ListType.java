@@ -43,8 +43,6 @@ import org.quattor.pan.utils.TermFactory;
  */
 public class ListType extends CompositeType {
 
-	private static final long serialVersionUID = -8882564417155996095L;
-
 	/**
 	 * Constructor for LinkType takes another BaseType as the type of the list.
 	 * The method does not check for circular references. Be careful not to

@@ -25,8 +25,6 @@ import static org.quattor.pan.utils.MessageUtils.MSG_MIN_MUST_BE_LESS_OR_EQUAL_T
 import static org.quattor.pan.utils.MessageUtils.MSG_MIN_RANGE_VALUE_CANNOT_BE_NEGATIVE;
 import static org.quattor.pan.utils.MessageUtils.MSG_MIN_RANGE_VALUE_IS_NOT_VALID_LONG;
 
-import java.io.Serializable;
-
 import org.quattor.pan.exceptions.EvaluationException;
 
 /**
@@ -36,9 +34,7 @@ import org.quattor.pan.exceptions.EvaluationException;
  * 
  */
 // FIXME: Should this throw SyntaxExceptions rather than EvaluationExceptions?
-public class Range implements Serializable {
-
-	private static final long serialVersionUID = 2879164571801135202L;
+public class Range {
 
 	private final long min;
 

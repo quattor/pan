@@ -32,8 +32,6 @@ import org.quattor.pan.template.SourceRange;
  */
 abstract public class Variable extends AbstractOperation {
 
-	private static final long serialVersionUID = 984705949650882409L;
-
 	protected final String identifier;
 
 	protected final boolean lookupOnly;

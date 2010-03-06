@@ -35,8 +35,6 @@ import org.quattor.pan.utils.Range;
 @Immutable
 final public class DoubleProperty extends NumberProperty {
 
-	private static final long serialVersionUID = -1321326531527084560L;
-
 	private DoubleProperty(Double value) {
 		super(value);
 	}

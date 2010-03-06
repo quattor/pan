@@ -41,8 +41,6 @@ import org.quattor.pan.template.SourceRange;
  */
 final public class Replace extends BuiltInFunction {
 
-	private static final long serialVersionUID = -8078235668327497870L;
-
 	private Replace(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super("replace", sourceRange, operations);

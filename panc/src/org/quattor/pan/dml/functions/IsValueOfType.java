@@ -41,10 +41,9 @@ import org.quattor.pan.template.SourceRange;
  */
 final public class IsValueOfType extends IsOfType {
 
-	private static final long serialVersionUID = 7325660746215281042L;
-
-	private IsValueOfType(SourceRange sourceRange, Class<? extends Element> type,
-			String name, Operation... operations) throws SyntaxException {
+	private IsValueOfType(SourceRange sourceRange,
+			Class<? extends Element> type, String name, Operation... operations)
+			throws SyntaxException {
 		super(name, sourceRange, type, operations);
 	}
 
@@ -56,8 +55,7 @@ final public class IsValueOfType extends IsOfType {
 		// little argument checking for function calls, this explicit check is
 		// needed.
 		if (operations.length != 1) {
-			throw SyntaxException
-					.create(sourceRange, MSG_ONE_ARG_REQ, name);
+			throw SyntaxException.create(sourceRange, MSG_ONE_ARG_REQ, name);
 		}
 
 		// This should not have a Variable as the argument.

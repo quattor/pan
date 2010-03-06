@@ -39,8 +39,6 @@ import org.quattor.pan.template.SourceRange;
  */
 final public class Clone extends BuiltInFunction {
 
-	private static final long serialVersionUID = -6808488062279747110L;
-
 	private Clone(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super("clone", sourceRange, operations);

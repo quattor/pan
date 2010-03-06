@@ -40,8 +40,6 @@ import org.quattor.pan.template.SourceRange;
  */
 final public class Debug extends BuiltInFunction {
 
-	private static final long serialVersionUID = 206676840856467241L;
-
 	private Debug(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super("debug", sourceRange, operations);

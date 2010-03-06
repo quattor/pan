@@ -35,7 +35,6 @@ import static org.quattor.pan.utils.MessageUtils.MSG_ONLY_REL_ASSIGNMENT_ALLOWED
 import static org.quattor.pan.utils.MessageUtils.MSG_TEMPLATE_CONTAINS_NON_STATIC_STATEMENTS;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -63,9 +62,7 @@ import org.quattor.pan.statement.VariableStatement;
  * @author loomis
  * 
  */
-public class Template implements Serializable {
-
-	private static final long serialVersionUID = -1382481475232386071L;
+public class Template {
 
 	/**
 	 * An enumeration of the possible template types. An ordinary template can

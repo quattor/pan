@@ -44,8 +44,6 @@ import org.quattor.pan.utils.MessageUtils;
  */
 final public class LogicalEQ extends AbstractOperation {
 
-	private static final long serialVersionUID = 805589996272458968L;
-
 	private LogicalEQ(SourceRange sourceRange, Operation... operations) {
 		super(sourceRange, operations);
 		assert (operations.length == 2);

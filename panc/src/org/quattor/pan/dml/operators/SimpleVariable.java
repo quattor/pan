@@ -37,8 +37,6 @@ import org.quattor.pan.utils.MessageUtils;
  */
 public class SimpleVariable extends Variable {
 
-	private static final long serialVersionUID = 7924181632989560156L;
-
 	final private static Operation[] emptyOps = new Operation[] {};
 
 	public SimpleVariable(SourceRange sourceRange, String identifier,

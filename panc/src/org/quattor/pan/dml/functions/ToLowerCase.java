@@ -41,8 +41,6 @@ import org.quattor.pan.template.SourceRange;
  */
 final public class ToLowerCase extends BuiltInFunction {
 
-	private static final long serialVersionUID = -5620812552488708637L;
-
 	private ToLowerCase(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super("to_lowercase", sourceRange, operations);

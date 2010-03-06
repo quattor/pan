@@ -38,12 +38,11 @@ import org.quattor.pan.template.SourceRange;
  */
 abstract public class IsOfType extends BuiltInFunction {
 
-	private static final long serialVersionUID = 1553219803766983227L;
-
 	protected Class<? extends Element> type;
 
 	protected IsOfType(String name, SourceRange sourceRange,
-			Class<? extends Element> type, Operation... operations) throws SyntaxException {
+			Class<? extends Element> type, Operation... operations)
+			throws SyntaxException {
 		super(name, sourceRange, operations);
 		this.type = type;
 	}

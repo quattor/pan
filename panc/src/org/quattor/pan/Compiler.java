@@ -395,10 +395,9 @@ public class Compiler {
 	 * @author loomis
 	 * 
 	 */
+	@SuppressWarnings("serial")
 	public static class ThrowableComparator implements Serializable,
 			Comparator<Throwable> {
-
-		private static final long serialVersionUID = 19868677418966733L;
 
 		public int compare(Throwable o1, Throwable o2) {
 			if (o1 == o2) {

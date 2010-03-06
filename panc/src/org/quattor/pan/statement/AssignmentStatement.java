@@ -44,8 +44,6 @@ import org.quattor.pan.utils.Path;
  */
 abstract public class AssignmentStatement extends Statement {
 
-	private static final long serialVersionUID = -3066427950732309886L;
-
 	protected final Path path;
 
 	protected final boolean conditional;

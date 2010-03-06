@@ -43,8 +43,6 @@ import org.quattor.pan.template.SourceRange;
  */
 final public class Key extends BuiltInFunction {
 
-	private static final long serialVersionUID = -381159455021638916L;
-
 	private Key(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super("key", sourceRange, operations);

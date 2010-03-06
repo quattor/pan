@@ -41,8 +41,6 @@ import org.quattor.pan.template.SourceRange;
  */
 final public class StaticMatch extends AbstractStaticMatcher {
 
-	private static final long serialVersionUID = -5656129770814999379L;
-
 	private StaticMatch(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super(sourceRange, "match", operations);

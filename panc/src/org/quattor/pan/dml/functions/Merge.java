@@ -45,8 +45,6 @@ import org.quattor.pan.utils.TermFactory;
  */
 final public class Merge extends BuiltInFunction {
 
-	private static final long serialVersionUID = 3470302946421858343L;
-
 	private Merge(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super("merge", sourceRange, operations);

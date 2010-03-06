@@ -34,8 +34,6 @@ import org.quattor.pan.dml.data.StringProperty;
  */
 public class DMLTest extends DML {
 
-	private static final long serialVersionUID = -8816349187436479672L;
-
 	public DMLTest() {
 		super(null);
 	}

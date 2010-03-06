@@ -29,9 +29,8 @@ import org.quattor.pan.utils.MessageUtils;
  * @author loomis
  * 
  */
+@SuppressWarnings("serial")
 public class ConfigurationException extends Exception {
-
-	private static final long serialVersionUID = -5178408787782445383L;
 
 	protected ConfigurationException(String message) {
 		super(message);

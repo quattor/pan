@@ -35,8 +35,6 @@ import org.quattor.pan.template.TypeMap;
  */
 public abstract class PrimitiveType extends BaseType {
 
-	private static final long serialVersionUID = -5618422465203455133L;
-
 	public PrimitiveType() {
 		super((String) null, (SourceRange) null);
 	}

@@ -20,8 +20,6 @@
 
 package org.quattor.pan.template;
 
-import java.io.Serializable;
-
 /**
  * Defines a range of characters within a source pan template that is used to
  * provide detailed error messages.
@@ -29,9 +27,7 @@ import java.io.Serializable;
  * @author loomis
  * 
  */
-public class SourceRange implements Serializable {
-
-	private static final long serialVersionUID = -6198037365465118223L;
+public class SourceRange {
 
 	private final int beginLine;
 

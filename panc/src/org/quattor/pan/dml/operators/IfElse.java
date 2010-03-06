@@ -41,8 +41,6 @@ import org.quattor.pan.utils.MessageUtils;
  */
 final public class IfElse extends AbstractOperation {
 
-	private static final long serialVersionUID = -7433685902230120533L;
-
 	private IfElse(SourceRange sourceRange, Operation... operations) {
 		super(sourceRange, operations);
 		assert (operations.length == 2 || operations.length == 3);

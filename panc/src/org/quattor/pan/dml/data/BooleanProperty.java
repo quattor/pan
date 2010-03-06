@@ -35,8 +35,6 @@ import net.jcip.annotations.Immutable;
 @Immutable
 final public class BooleanProperty extends Property {
 
-	private static final long serialVersionUID = -2316815635657551116L;
-
 	public static final BooleanProperty TRUE = new BooleanProperty(true);
 
 	public static final BooleanProperty FALSE = new BooleanProperty(false);

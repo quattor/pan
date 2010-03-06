@@ -40,8 +40,6 @@ import org.quattor.pan.utils.MessageUtils;
  */
 final public class BitNot extends AbstractOperation {
 
-	private static final long serialVersionUID = 6988141591196577275L;
-
 	private BitNot(SourceRange sourceRange, Operation... operations) {
 		super(sourceRange, operations);
 		assert (operations.length == 1);

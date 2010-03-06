@@ -39,8 +39,6 @@ import org.quattor.pan.utils.Path;
  */
 final public class Value extends BuiltInFunction {
 
-	private static final long serialVersionUID = -6947483878006922177L;
-
 	private Value(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super("value", sourceRange, operations);

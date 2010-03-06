@@ -37,8 +37,6 @@ import org.quattor.pan.template.SourceRange;
  */
 final public class SelfSimpleVariable extends SimpleVariable {
 
-	private static final long serialVersionUID = 7924181632989560153L;
-
 	public SelfSimpleVariable(SourceRange sourceRange, boolean lookupOnly) {
 		super(sourceRange, "SELF", lookupOnly);
 	}

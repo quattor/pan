@@ -35,8 +35,6 @@ import org.quattor.pan.exceptions.EvaluationException;
 @Immutable
 public class Undef extends TransientElement {
 
-	private static final long serialVersionUID = -7348523954284783730L;
-
 	public static final Undef VALUE = new Undef();
 
 	private Undef() {

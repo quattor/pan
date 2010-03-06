@@ -37,8 +37,6 @@ import org.quattor.pan.template.SourceRange;
  */
 final public class ToString extends BuiltInFunction {
 
-	private static final long serialVersionUID = 7791566689300024082L;
-
 	private ToString(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super("to_string", sourceRange, operations);

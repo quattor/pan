@@ -49,8 +49,6 @@ import org.quattor.pan.utils.StringUtils;
  */
 final public class FileContents extends BuiltInFunction {
 
-	private static final long serialVersionUID = 1053594650245882162L;
-
 	private FileContents(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super("file_contents", sourceRange, operations);

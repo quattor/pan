@@ -41,8 +41,6 @@ import org.quattor.pan.utils.Term;
 abstract public class Resource extends PersistentElement implements
 		Iterable<Resource.Entry> {
 
-	private static final long serialVersionUID = -286462158480644418L;
-
 	/**
 	 * Retrieve the Element associated with the given Term (either an index or
 	 * string key).

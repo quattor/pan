@@ -44,8 +44,6 @@ import org.quattor.pan.template.SourceRange;
  */
 final public class ToDouble extends BuiltInFunction {
 
-	private static final long serialVersionUID = 292969849514335203L;
-
 	private ToDouble(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super("to_double", sourceRange, operations);
@@ -95,8 +93,8 @@ final public class ToDouble extends BuiltInFunction {
 			} else if (property instanceof DoubleProperty) {
 				value = result;
 			} else {
-				throw CompilerError.create(MSG_UNKNOWN_PROPERTY_TYPE,
-						property.getClass());
+				throw CompilerError.create(MSG_UNKNOWN_PROPERTY_TYPE, property
+						.getClass());
 			}
 			return value;
 		} catch (ClassCastException cce) {

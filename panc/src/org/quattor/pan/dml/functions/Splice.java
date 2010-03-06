@@ -41,8 +41,6 @@ import org.quattor.pan.template.SourceRange;
  */
 final public class Splice extends BuiltInFunction {
 
-	private static final long serialVersionUID = -3995154264496870850L;
-
 	private Splice(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super("splice", sourceRange, operations);

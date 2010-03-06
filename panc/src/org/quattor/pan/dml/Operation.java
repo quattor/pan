@@ -20,8 +20,6 @@
 
 package org.quattor.pan.dml;
 
-import java.io.Serializable;
-
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
@@ -31,13 +29,10 @@ import org.quattor.pan.template.Context;
  * All DML (data manipulation language) components implement this interface and
  * act as operators.
  * 
- * All classes implementing this interface must be serializable, so that
- * expressions can be serialized to disk as necessary.
- * 
  * @author loomis
  * 
  */
-public interface Operation extends Serializable {
+public interface Operation {
 
 	/**
 	 * Execute this operation within the given context. If an error occurs, an

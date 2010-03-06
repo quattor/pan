@@ -40,8 +40,6 @@ import org.quattor.pan.template.SourceRange;
  */
 final public class Delete extends BuiltInFunction {
 
-	private static final long serialVersionUID = 2929895183002177658L;
-
 	private Delete(SourceRange sourceRange, Operation... operations) {
 		super("delete", sourceRange, operations);
 	}

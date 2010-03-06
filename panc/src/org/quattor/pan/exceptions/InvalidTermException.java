@@ -38,9 +38,8 @@ import org.quattor.pan.utils.Term;
  * @author loomis
  * 
  */
+@SuppressWarnings("serial")
 public class InvalidTermException extends Exception {
-
-	private static final long serialVersionUID = -2965583355690905034L;
 
 	private String errorPath = null;
 

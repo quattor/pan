@@ -40,8 +40,6 @@ import org.quattor.pan.utils.MessageUtils;
  */
 final public class BitIOR extends AbstractOperation {
 
-	private static final long serialVersionUID = -4363523123163300591L;
-
 	private BitIOR(SourceRange sourceRange, Operation... operations) {
 		super(sourceRange, operations);
 		assert (operations.length == 2);

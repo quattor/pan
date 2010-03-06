@@ -33,6 +33,4 @@ import net.jcip.annotations.Immutable;
 @Immutable
 abstract public class TransientElement extends Element {
 
-	private static final long serialVersionUID = -2665790417849267703L;
-
 }

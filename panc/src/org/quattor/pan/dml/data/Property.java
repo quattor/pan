@@ -40,8 +40,6 @@ import java.io.IOException;
  */
 abstract public class Property extends PersistentElement {
 
-	private static final long serialVersionUID = -7411568375393012496L;
-
 	private final Object value;
 
 	private volatile int hashcode;

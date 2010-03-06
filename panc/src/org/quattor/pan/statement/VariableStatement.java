@@ -47,8 +47,6 @@ import org.quattor.pan.utils.TermFactory;
  */
 abstract public class VariableStatement extends Statement {
 
-	private static final long serialVersionUID = 2069895358732680110L;
-
 	/**
 	 * This array contains the names of 'automatic' variables. These names are
 	 * reserved by the pan compiler and cannot be set directly by the user.

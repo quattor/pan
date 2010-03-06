@@ -44,8 +44,6 @@ import org.quattor.pan.utils.MessageUtils;
  */
 final public class LogicalLT extends AbstractOperation {
 
-	private static final long serialVersionUID = 5765673786558509905L;
-
 	private LogicalLT(SourceRange sourceRange, Operation... operations) {
 		super(sourceRange, operations);
 		assert (operations.length == 2);

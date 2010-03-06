@@ -29,8 +29,6 @@ import org.quattor.pan.template.SourceRange;
 
 public class ConstantLoadpathStatement extends ConstantVariableStatement {
 
-	private static final long serialVersionUID = -1502991641692626913L;
-
 	protected ConstantLoadpathStatement(SourceRange sourceRange, Element value,
 			boolean conditional, boolean modifiable) throws SyntaxException {
 

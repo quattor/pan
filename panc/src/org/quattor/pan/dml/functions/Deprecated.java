@@ -44,8 +44,6 @@ import org.quattor.pan.template.SourceRange;
  */
 final public class Deprecated extends BuiltInFunction {
 
-	private static final long serialVersionUID = 1275270827009537028L;
-
 	private Deprecated(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super("deprecated", sourceRange, operations);

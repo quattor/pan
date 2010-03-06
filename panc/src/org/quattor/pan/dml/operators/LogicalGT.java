@@ -44,8 +44,6 @@ import org.quattor.pan.utils.MessageUtils;
  */
 final public class LogicalGT extends AbstractOperation {
 
-	private static final long serialVersionUID = 8375790691781978705L;
-
 	private LogicalGT(SourceRange sourceRange, Operation... operations) {
 		super(sourceRange, operations);
 		assert (operations.length == 2);

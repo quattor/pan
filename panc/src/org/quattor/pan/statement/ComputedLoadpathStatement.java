@@ -30,8 +30,6 @@ import org.quattor.pan.template.SourceRange;
 
 public class ComputedLoadpathStatement extends ComputedVariableStatement {
 
-	private static final long serialVersionUID = 8951482632090028672L;
-
 	protected ComputedLoadpathStatement(SourceRange sourceRange, Operation dml,
 			boolean conditional, boolean modifiable) throws SyntaxException {
 

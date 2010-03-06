@@ -46,8 +46,6 @@ import org.quattor.pan.template.SourceRange;
  */
 final public class First extends BuiltInFunction {
 
-	private static final long serialVersionUID = 3245450045377851071L;
-
 	private First(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super("first", sourceRange, operations);

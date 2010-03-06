@@ -27,7 +27,6 @@ import static org.quattor.pan.utils.MessageUtils.MSG_PATH_INVALID_BRACES;
 import static org.quattor.pan.utils.MessageUtils.MSG_PATH_INVALID_FIRST_TERM;
 import static org.quattor.pan.utils.MessageUtils.MSG_PATH_MISSING_TERM;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -47,9 +46,7 @@ import org.quattor.pan.template.Template;
  * @author loomis
  * 
  */
-public class Path implements Serializable, Comparable<Path> {
-
-	private static final long serialVersionUID = 1437462627140413828L;
+public class Path implements Comparable<Path> {
 
 	/**
 	 * An enumeration containing the three different types of paths. Note that

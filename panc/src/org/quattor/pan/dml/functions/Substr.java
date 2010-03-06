@@ -39,8 +39,6 @@ import org.quattor.pan.template.SourceRange;
  */
 final public class Substr extends BuiltInFunction {
 
-	private static final long serialVersionUID = 7217886681703368679L;
-
 	private Substr(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super("substr", sourceRange, operations);

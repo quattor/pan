@@ -48,8 +48,6 @@ import org.quattor.pan.template.Template.TemplateType;
  */
 abstract public class IncludeStatement extends Statement {
 
-	private static final long serialVersionUID = -3506119667158615650L;
-
 	/**
 	 * A Pattern which defines valid, namespaced template names. The Pattern is
 	 * valid for both object and non-object template names.

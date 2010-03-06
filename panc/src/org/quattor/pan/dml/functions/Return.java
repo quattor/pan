@@ -39,8 +39,6 @@ import org.quattor.pan.template.SourceRange;
  */
 final public class Return extends BuiltInFunction {
 
-	private static final long serialVersionUID = 5737634318804016544L;
-
 	private Return(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super("return", sourceRange, operations);

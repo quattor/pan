@@ -35,8 +35,6 @@ import org.quattor.pan.template.SourceRange;
  */
 final public class List extends BuiltInFunction {
 
-	private static final long serialVersionUID = -4930138773967987824L;
-
 	private List(SourceRange sourceRange, Operation... operations) {
 		super("list", sourceRange, operations);
 	}

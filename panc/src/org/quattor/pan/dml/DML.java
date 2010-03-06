@@ -39,8 +39,6 @@ import org.quattor.pan.template.SourceRange;
  */
 public class DML extends AbstractOperation {
 
-	private static final long serialVersionUID = -7076165554770202108L;
-
 	/**
 	 * Create new DML instance from variable list of arguments (as operations).
 	 * 

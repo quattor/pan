@@ -29,6 +29,4 @@ package org.quattor.pan.dml.data;
  */
 abstract public class PersistentElement extends Element {
 
-	private static final long serialVersionUID = -298195786323539427L;
-
 }

@@ -55,8 +55,6 @@ import org.quattor.pan.utils.Term;
  */
 public class RecordType extends BaseType {
 
-	private static final long serialVersionUID = 4318432075570917341L;
-
 	private final boolean extensible;
 
 	private final Range range;

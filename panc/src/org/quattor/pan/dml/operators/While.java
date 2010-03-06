@@ -44,8 +44,6 @@ import org.quattor.pan.utils.MessageUtils;
  */
 final public class While extends AbstractOperation {
 
-	private static final long serialVersionUID = 7265237520941236406L;
-
 	private While(SourceRange sourceRange, Operation... operations) {
 		super(sourceRange, operations);
 		assert (operations.length == 2);
@@ -69,8 +67,8 @@ final public class While extends AbstractOperation {
 				}
 
 			} catch (ClassCastException cce) {
-				throw SyntaxException.create(sourceRange,
-						MSG_INVALID_LOOP_TEST);
+				throw SyntaxException
+						.create(sourceRange, MSG_INVALID_LOOP_TEST);
 			}
 		}
 

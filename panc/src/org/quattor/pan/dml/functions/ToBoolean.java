@@ -44,8 +44,6 @@ import org.quattor.pan.template.SourceRange;
  */
 final public class ToBoolean extends BuiltInFunction {
 
-	private static final long serialVersionUID = -1021153332721083427L;
-
 	private ToBoolean(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super("to_boolean", sourceRange, operations);
@@ -89,8 +87,8 @@ final public class ToBoolean extends BuiltInFunction {
 			} else if (property instanceof BooleanProperty) {
 				value = result;
 			} else {
-				throw CompilerError.create(MSG_UNKNOWN_PROPERTY_TYPE,
-						property.getClass());
+				throw CompilerError.create(MSG_UNKNOWN_PROPERTY_TYPE, property
+						.getClass());
 			}
 			return value;
 		} catch (ClassCastException cce) {

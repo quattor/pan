@@ -45,8 +45,6 @@ import org.quattor.pan.utils.TermFactory;
  */
 public class SetValue extends AbstractOperation {
 
-	private static final long serialVersionUID = 426484166958731379L;
-
 	/**
 	 * This array contains the names of 'automatic' variables. These names are
 	 * reserved by the pan compiler and cannot be set directly by the user.

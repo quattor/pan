@@ -40,8 +40,6 @@ import org.quattor.pan.utils.EscapeUtils;
  */
 final public class Unescape extends BuiltInFunction {
 
-	private static final long serialVersionUID = -1271344857149355633L;
-
 	private Unescape(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super("unescape", sourceRange, operations);

@@ -20,8 +20,6 @@
 
 package org.quattor.pan.utils;
 
-import java.io.Serializable;
-
 import org.quattor.pan.exceptions.InvalidTermException;
 
 /**
@@ -30,7 +28,7 @@ import org.quattor.pan.exceptions.InvalidTermException;
  * @author loomis
  * 
  */
-public interface Term extends Comparable<Term>, Serializable {
+public interface Term extends Comparable<Term> {
 
 	/**
 	 * A utility function to determine if this Term is a key (String value).

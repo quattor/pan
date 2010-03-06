@@ -41,8 +41,6 @@ import org.quattor.pan.template.Template;
  */
 final public class IfExists extends BuiltInFunction {
 
-	private static final long serialVersionUID = 1723787654494815387L;
-
 	private IfExists(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super("if_exists", sourceRange, operations);

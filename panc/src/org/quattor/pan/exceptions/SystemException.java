@@ -30,9 +30,8 @@ import java.io.File;
  * @author loomis
  * 
  */
+@SuppressWarnings("serial")
 public class SystemException extends RuntimeException {
-
-	private static final long serialVersionUID = -7915782464204592952L;
 
 	private File file;
 

@@ -42,8 +42,6 @@ import org.quattor.pan.utils.MessageUtils;
  */
 final public class UnaryPlus extends AbstractOperation {
 
-	private static final long serialVersionUID = -8377697132469649013L;
-
 	private UnaryPlus(SourceRange sourceRange, Operation... operations) {
 		super(sourceRange, operations);
 		assert (operations.length == 1);

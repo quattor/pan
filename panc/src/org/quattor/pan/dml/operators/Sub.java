@@ -44,8 +44,6 @@ import org.quattor.pan.utils.MessageUtils;
  */
 final public class Sub extends AbstractOperation {
 
-	private static final long serialVersionUID = -6008819617633856316L;
-
 	private Sub(SourceRange sourceRange, Operation... operations) {
 		super(sourceRange, operations);
 		assert (operations.length == 2);

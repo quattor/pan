@@ -43,8 +43,6 @@ import org.quattor.pan.utils.Path;
  */
 public class LinkType extends CompositeType {
 
-	private static final long serialVersionUID = 2119033974854791767L;
-
 	/**
 	 * Constructor for LinkType takes another BaseType as the type of the link.
 	 * The method does not check for circular references. Be careful not to

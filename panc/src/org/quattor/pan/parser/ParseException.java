@@ -32,9 +32,8 @@ import org.quattor.pan.template.SourceRange;
  * You can modify this class to customize your error reporting mechanisms so
  * long as you retain the public fields.
  */
+@SuppressWarnings("serial")
 public class ParseException extends RuntimeException {
-
-	private static final long serialVersionUID = -8370438513010676546L;
 
 	/**
 	 * This constructor is used by the method "generateParseException" in the

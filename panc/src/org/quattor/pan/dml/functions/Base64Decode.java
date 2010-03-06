@@ -41,8 +41,6 @@ import org.quattor.pan.utils.MessageUtils;
  */
 final public class Base64Decode extends BuiltInFunction {
 
-	private static final long serialVersionUID = 3108545676278205687L;
-
 	private Base64Decode(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super("base64_decode", sourceRange, operations);

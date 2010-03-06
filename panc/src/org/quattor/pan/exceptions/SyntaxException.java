@@ -33,9 +33,8 @@ import org.quattor.pan.utils.MessageUtils;
  * @author loomis
  * 
  */
+@SuppressWarnings("serial")
 public class SyntaxException extends Exception {
-
-	private static final long serialVersionUID = -2498483721079053634L;
 
 	private SourceRange sourceRange;
 

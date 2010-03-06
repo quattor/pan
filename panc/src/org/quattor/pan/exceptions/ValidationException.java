@@ -36,9 +36,8 @@ import org.quattor.pan.utils.Term;
  * @author loomis
  * 
  */
+@SuppressWarnings("serial")
 public class ValidationException extends RuntimeException {
-
-	private static final long serialVersionUID = 1566876188209797320L;
 
 	private File objectTemplate;
 

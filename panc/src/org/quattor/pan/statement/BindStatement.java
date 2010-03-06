@@ -36,8 +36,6 @@ import org.quattor.pan.utils.Path;
  */
 public class BindStatement extends Statement {
 
-	private static final long serialVersionUID = -2990576311126608312L;
-
 	private final Path path;
 
 	private final FullType fullType;

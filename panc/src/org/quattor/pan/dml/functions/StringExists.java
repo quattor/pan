@@ -47,8 +47,6 @@ import org.quattor.pan.utils.Path;
  */
 final public class StringExists extends Exists {
 
-	private static final long serialVersionUID = -6240697592303196473L;
-
 	protected StringExists(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super(sourceRange, operations);

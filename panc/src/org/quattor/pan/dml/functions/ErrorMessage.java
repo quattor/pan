@@ -42,8 +42,6 @@ import org.quattor.pan.template.SourceRange;
  */
 final public class ErrorMessage extends BuiltInFunction {
 
-	private static final long serialVersionUID = -2617127833778210110L;
-
 	private ErrorMessage(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super("error", sourceRange, operations);

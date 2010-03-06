@@ -46,8 +46,6 @@ import org.quattor.pan.template.SourceRange;
  */
 final public class Next extends BuiltInFunction {
 
-	private static final long serialVersionUID = -7079453268630794478L;
-
 	private Next(SourceRange sourceRange, Operation... operations) {
 		super("next", sourceRange, operations);
 	}

@@ -429,27 +429,4 @@ public class PathTest {
 		p.compareTo(null);
 	}
 
-	@Test
-	public void testSerialization() throws SyntaxException,
-			java.io.IOException, java.io.FileNotFoundException,
-			java.lang.ClassNotFoundException {
-
-		Path p1 = new Path("alpha:beta/gamma/");
-		File tmp = File.createTempFile("pan", null, getTmpdir());
-		tmp.deleteOnExit();
-
-		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(
-				tmp));
-		oos.writeObject(p1);
-		oos.close();
-
-		ObjectInputStream ois = new ObjectInputStream(new FileInputStream(tmp));
-		Path p2 = (Path) ois.readObject();
-		ois.close();
-
-		// Verify that the two objects are equal but not the same.
-		assertFalse(p1 == p2);
-		assertTrue(p1.equals(p2));
-	}
-
 }

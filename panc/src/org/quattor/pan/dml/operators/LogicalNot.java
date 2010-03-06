@@ -40,8 +40,6 @@ import org.quattor.pan.utils.MessageUtils;
  */
 final public class LogicalNot extends AbstractOperation {
 
-	private static final long serialVersionUID = -6063514009116642409L;
-
 	private LogicalNot(SourceRange sourceRange, Operation... operations) {
 		super(sourceRange, operations);
 		assert (operations.length == 1);

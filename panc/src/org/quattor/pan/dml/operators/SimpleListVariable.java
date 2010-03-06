@@ -41,8 +41,6 @@ import org.quattor.pan.template.SourceRange;
  */
 public class SimpleListVariable extends ListVariable {
 
-	private static final long serialVersionUID = 9200368545869091877L;
-
 	final private static Operation[] emptyOps = new Operation[] {};
 
 	public SimpleListVariable(SourceRange sourceRange, String identifier) {

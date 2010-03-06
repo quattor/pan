@@ -43,8 +43,6 @@ import org.quattor.pan.template.SourceRange;
  */
 final public class Matches extends AbstractVariableMatcher {
 
-	private static final long serialVersionUID = -5960488213788503698L;
-
 	private Matches(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super(sourceRange, "matches", operations);

@@ -43,8 +43,6 @@ import org.quattor.pan.utils.Path;
  */
 final public class PathExists extends BuiltInFunction {
 
-	private static final long serialVersionUID = -6558349830495601454L;
-
 	protected PathExists(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super("path_exists", sourceRange, operations);

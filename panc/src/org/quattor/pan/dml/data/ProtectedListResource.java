@@ -12,8 +12,6 @@ import org.quattor.pan.utils.Term;
 
 public class ProtectedListResource extends ListResource {
 
-	private static final long serialVersionUID = -8455129313412227028L;
-
 	private final ListResource baseList;
 
 	public ProtectedListResource(ListResource baseList) {

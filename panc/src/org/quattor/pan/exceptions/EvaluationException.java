@@ -35,9 +35,8 @@ import org.quattor.pan.utils.MessageUtils;
  * @author loomis
  * 
  */
+@SuppressWarnings("serial")
 public class EvaluationException extends RuntimeException {
-
-	private static final long serialVersionUID = 4507134370497526551L;
 
 	private SourceRange sourceRange;
 

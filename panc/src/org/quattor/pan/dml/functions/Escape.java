@@ -39,8 +39,6 @@ import org.quattor.pan.utils.EscapeUtils;
  */
 final public class Escape extends BuiltInFunction {
 
-	private static final long serialVersionUID = 8180765159789159922L;
-
 	private Escape(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super("escape", sourceRange, operations);

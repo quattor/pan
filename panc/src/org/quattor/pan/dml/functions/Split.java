@@ -48,8 +48,6 @@ import org.quattor.pan.utils.TermFactory;
  */
 final public class Split extends BuiltInFunction {
 
-	private static final long serialVersionUID = -4743371083676590935L;
-
 	private Split(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super("split", sourceRange, operations);

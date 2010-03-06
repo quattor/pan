@@ -42,8 +42,6 @@ import org.quattor.pan.utils.Term;
  */
 public class HashType extends CompositeType {
 
-	private static final long serialVersionUID = 7564508335085499352L;
-
 	/**
 	 * Constructor for HashType takes another BaseType as the type of the hash.
 	 * The method does not check for circular references. Be careful not to

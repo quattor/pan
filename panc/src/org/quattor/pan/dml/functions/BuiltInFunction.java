@@ -23,8 +23,6 @@ import org.quattor.pan.template.SourceRange;
  */
 public abstract class BuiltInFunction extends AbstractOperation {
 
-	private static final long serialVersionUID = 5506244898681055727L;
-
 	protected final String name;
 
 	protected BuiltInFunction(String name, SourceRange sourceRange,

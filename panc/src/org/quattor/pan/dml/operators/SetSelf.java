@@ -49,8 +49,6 @@ import org.quattor.pan.utils.Term;
  */
 public class SetSelf extends SetValue {
 
-	private static final long serialVersionUID = 426484166958731379L;
-
 	public SetSelf(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super(sourceRange, "SELF", operations);

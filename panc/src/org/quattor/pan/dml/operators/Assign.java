@@ -39,8 +39,6 @@ import org.quattor.pan.template.SourceRange;
  */
 final public class Assign extends AbstractOperation {
 
-	private static final long serialVersionUID = -1998355450850171964L;
-
 	public Assign(SourceRange sourceRange, Operation... operations) {
 		super(sourceRange, operations);
 		assert (operations.length >= 2);
@@ -49,9 +47,8 @@ final public class Assign extends AbstractOperation {
 		// operations.
 		for (int i = 1; i < operations.length; i++) {
 			if (!(operations[i] instanceof SetValue)) {
-				throw CompilerError.create(
-						MSG_INVALID_OPERATION_IN_ASSIGN, operations[i]
-								.getClass());
+				throw CompilerError.create(MSG_INVALID_OPERATION_IN_ASSIGN,
+						operations[i].getClass());
 			}
 		}
 	}

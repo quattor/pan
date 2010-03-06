@@ -41,8 +41,6 @@ import org.quattor.pan.template.SourceRange;
  */
 final public class DebugSuppressed extends BuiltInFunction {
 
-	private static final long serialVersionUID = -8039740420900142367L;
-
 	private DebugSuppressed(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super("debug", sourceRange, operations);

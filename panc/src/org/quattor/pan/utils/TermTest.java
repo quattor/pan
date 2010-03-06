@@ -20,16 +20,9 @@
 
 package org.quattor.pan.utils;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.quattor.pan.utils.TestUtils.getTmpdir;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.Arrays;
 import java.util.List;
 
@@ -188,28 +181,6 @@ public class TermTest {
 	public void testNullOrdering() {
 		Term t = TermFactory.create("alpha");
 		t.compareTo(null);
-	}
-
-	@Test
-	public void testSerialization() throws java.io.IOException,
-			java.io.FileNotFoundException, java.lang.ClassNotFoundException {
-
-		Term t1 = TermFactory.create("alpha");
-		File tmp = File.createTempFile("pan", null, getTmpdir());
-		tmp.deleteOnExit();
-
-		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(
-				tmp));
-		oos.writeObject(t1);
-		oos.close();
-
-		ObjectInputStream ois = new ObjectInputStream(new FileInputStream(tmp));
-		Term t2 = (Term) ois.readObject();
-		ois.close();
-
-		// Verify that the two objects are equal but not the same.
-		assertFalse(t1 == t2);
-		assertTrue(t1.equals(t2));
 	}
 
 }

@@ -37,8 +37,6 @@ import org.quattor.pan.template.SourceRange;
  */
 abstract public class AbstractVariableMatcher extends AbstractMatcher {
 
-	private static final long serialVersionUID = 6892350137490907041L;
-
 	protected AbstractVariableMatcher(SourceRange sourceRange,
 			String functionName, Operation... operations)
 			throws SyntaxException {

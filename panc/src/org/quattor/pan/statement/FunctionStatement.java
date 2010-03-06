@@ -33,8 +33,6 @@ import org.quattor.pan.template.SourceRange;
  */
 public class FunctionStatement extends Statement {
 
-	private static final long serialVersionUID = 2153788823191157797L;
-
 	private final String name;
 
 	private final Operation function;

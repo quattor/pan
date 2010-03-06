@@ -41,8 +41,6 @@ import org.quattor.pan.template.SourceRange;
  */
 final public class VariableExists extends Exists {
 
-	private static final long serialVersionUID = 3669331052511806968L;
-
 	private VariableExists(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super(sourceRange, operations);

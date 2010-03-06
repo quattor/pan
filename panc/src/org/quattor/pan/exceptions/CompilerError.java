@@ -30,9 +30,8 @@ import org.quattor.pan.utils.MessageUtils;
  * @author loomis
  * 
  */
+@SuppressWarnings("serial")
 public class CompilerError extends Error {
-
-	private static final long serialVersionUID = 2402849639079700893L;
 
 	/**
 	 * Creates a raw CompilerError directly from an unlocalized message. This

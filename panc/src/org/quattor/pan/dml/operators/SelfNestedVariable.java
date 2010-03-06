@@ -44,8 +44,6 @@ import org.quattor.pan.utils.Term;
  */
 public class SelfNestedVariable extends NestedVariable {
 
-	private static final long serialVersionUID = 8697587866473321966L;
-
 	public SelfNestedVariable(SourceRange sourceRange, boolean lookupOnly,
 			Operation... operations) {
 		super(sourceRange, "SELF", lookupOnly, operations);

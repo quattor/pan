@@ -40,8 +40,6 @@ import org.quattor.pan.utils.MessageUtils;
  */
 final public class BitAnd extends AbstractOperation {
 
-	private static final long serialVersionUID = -4785115212260147189L;
-
 	private BitAnd(SourceRange sourceRange, Operation... ops) {
 		super(sourceRange, ops);
 		assert (ops.length == 2);

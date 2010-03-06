@@ -44,8 +44,6 @@ import org.quattor.pan.utils.MessageUtils;
  */
 final public class LogicalNE extends AbstractOperation {
 
-	private static final long serialVersionUID = -3415897494664247229L;
-
 	private LogicalNE(SourceRange sourceRange, Operation... operations) {
 		super(sourceRange, operations);
 		assert (operations.length == 2);

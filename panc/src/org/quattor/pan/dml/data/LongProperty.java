@@ -39,8 +39,6 @@ import org.quattor.pan.utils.TermFactory;
 @Immutable
 final public class LongProperty extends NumberProperty implements Term {
 
-	private static final long serialVersionUID = 4646471606056168544L;
-
 	private LongProperty(Long value) {
 		super(value);
 	}

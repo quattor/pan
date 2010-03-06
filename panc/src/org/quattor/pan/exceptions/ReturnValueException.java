@@ -30,9 +30,8 @@ import org.quattor.pan.dml.data.Element;
  * @author loomis
  * 
  */
+@SuppressWarnings("serial")
 public class ReturnValueException extends RuntimeException {
-
-	private static final long serialVersionUID = 4729033113488928031L;
 
 	final private Element element;
 

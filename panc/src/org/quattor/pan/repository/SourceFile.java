@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -23,8 +22,7 @@ import org.quattor.pan.template.Template;
 import org.quattor.pan.utils.MessageUtils;
 
 @Immutable
-@SuppressWarnings("serial")
-public class SourceFile implements Comparable<SourceFile>, Serializable {
+public class SourceFile implements Comparable<SourceFile> {
 
 	private final String name;
 
@@ -59,7 +57,8 @@ public class SourceFile implements Comparable<SourceFile>, Serializable {
 			}
 
 		} else {
-			this.type = (path != null) ? SourceType.TEXT : SourceType.ABSENT_TEXT;
+			this.type = (path != null) ? SourceType.TEXT
+					: SourceType.ABSENT_TEXT;
 		}
 
 		validateFields(name, type, path);
@@ -203,8 +202,8 @@ public class SourceFile implements Comparable<SourceFile>, Serializable {
 	 * @return
 	 * @throws IllegalArgumentException
 	 */
-	private static File weakTemplateNameVerification(String name, SourceType type,
-			File source) throws IllegalArgumentException {
+	private static File weakTemplateNameVerification(String name,
+			SourceType type, File source) throws IllegalArgumentException {
 
 		File location = null;
 

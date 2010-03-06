@@ -43,8 +43,6 @@ import org.quattor.pan.utils.GlobalVariable;
  */
 final public class Function extends AbstractOperation {
 
-	private static final long serialVersionUID = -2196877545584935474L;
-
 	private String name = null;
 
 	public Function(SourceRange sourceRange, String name,

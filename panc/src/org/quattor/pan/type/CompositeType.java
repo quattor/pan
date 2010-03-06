@@ -33,8 +33,6 @@ import org.quattor.pan.utils.Range;
  */
 public abstract class CompositeType extends BaseType {
 
-	private static final long serialVersionUID = 5605846304150260905L;
-
 	protected final BaseType baseType;
 
 	protected final Range range;

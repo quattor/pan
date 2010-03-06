@@ -20,8 +20,6 @@
 
 package org.quattor.pan.statement;
 
-import java.io.Serializable;
-
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.template.Context;
 import org.quattor.pan.template.SourceRange;
@@ -29,14 +27,11 @@ import org.quattor.pan.template.SourceRange;
 /**
  * Provides the superclass of all declarative statements in the pan
  * configuration language. All declarative pan statements operate on the Context
- * of a particular machine profile through the <code>execute</code> method.
- * The arguments and flags for each statement are expected to be different, but
- * this is not important for evaluating the configuration.
+ * of a particular machine profile through the <code>execute</code> method. The
+ * arguments and flags for each statement are expected to be different, but this
+ * is not important for evaluating the configuration.
  * 
  * All statements must be immutable.
- * 
- * All statements must be serializable so that object file versions of the
- * template can be written to disk.
  * 
  * Subclasses are expected to throw an exception (SyntaxException or
  * EvaluationException) if illegal parameters are passed to the constructor.
@@ -46,9 +41,7 @@ import org.quattor.pan.template.SourceRange;
  * @author loomis
  * 
  */
-abstract public class Statement implements Serializable {
-
-	private static final long serialVersionUID = 1276863681119794796L;
+abstract public class Statement {
 
 	private final SourceRange sourceRange;
 
@@ -82,7 +75,6 @@ abstract public class Statement implements Serializable {
 	 * 
 	 * @throws EvaluationException
 	 */
-	abstract public void execute(Context context)
-			throws EvaluationException;
+	abstract public void execute(Context context) throws EvaluationException;
 
 }

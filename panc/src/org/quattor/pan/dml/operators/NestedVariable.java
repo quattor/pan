@@ -40,8 +40,6 @@ import org.quattor.pan.utils.Term;
  */
 public class NestedVariable extends Variable {
 
-	private static final long serialVersionUID = -7495863748315190894L;
-
 	public NestedVariable(SourceRange sourceRange, String identifier,
 			boolean lookupOnly, Operation... operations) {
 		super(sourceRange, identifier, lookupOnly, operations);

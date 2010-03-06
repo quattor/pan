@@ -37,8 +37,6 @@ import org.quattor.pan.utils.GlobalVariable;
  */
 public class ConstantVariableStatement extends VariableStatement {
 
-	private static final long serialVersionUID = 5298022869411977030L;
-
 	protected final Element value;
 
 	protected ConstantVariableStatement(SourceRange sourceRange, String name,

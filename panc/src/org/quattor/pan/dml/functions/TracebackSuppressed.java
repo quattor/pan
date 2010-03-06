@@ -38,8 +38,6 @@ import org.quattor.pan.template.SourceRange;
  */
 final public class TracebackSuppressed extends BuiltInFunction {
 
-	private static final long serialVersionUID = -4910619175676750399L;
-
 	private TracebackSuppressed(SourceRange sourceRange,
 			Operation... operations) throws SyntaxException {
 		super("traceback", sourceRange, operations);

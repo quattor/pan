@@ -35,8 +35,6 @@ import org.quattor.pan.utils.Path;
  */
 abstract public class ComputedAssignmentStatement extends AssignmentStatement {
 
-	private static final long serialVersionUID = -6528529422555807437L;
-
 	protected final Operation dml;
 
 	/**

@@ -44,8 +44,6 @@ import org.quattor.pan.template.SourceRange;
  */
 final public class ToLong extends BuiltInFunction {
 
-	private static final long serialVersionUID = 3792598812768663172L;
-
 	private ToLong(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super("to_long", sourceRange, operations);
@@ -95,8 +93,8 @@ final public class ToLong extends BuiltInFunction {
 			} else if (property instanceof LongProperty) {
 				value = result;
 			} else {
-				throw CompilerError.create(MSG_UNKNOWN_PROPERTY_TYPE,
-						property.getClass());
+				throw CompilerError.create(MSG_UNKNOWN_PROPERTY_TYPE, property
+						.getClass());
 			}
 			return value;
 		} catch (ClassCastException cce) {

@@ -53,8 +53,6 @@ import org.quattor.pan.utils.TermFactory;
  */
 final public class Create extends BuiltInFunction {
 
-	private static final long serialVersionUID = 1700204818503882062L;
-
 	private Create(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super("create", sourceRange, operations);

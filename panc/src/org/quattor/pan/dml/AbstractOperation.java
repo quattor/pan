@@ -37,8 +37,6 @@ import org.quattor.pan.utils.TermFactory;
  */
 abstract public class AbstractOperation implements Operation {
 
-	private static final long serialVersionUID = -5184177657624540883L;
-
 	/**
 	 * Source location of this operation and its arguments.
 	 */

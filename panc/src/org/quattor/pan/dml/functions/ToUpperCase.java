@@ -41,8 +41,6 @@ import org.quattor.pan.template.SourceRange;
  */
 final public class ToUpperCase extends BuiltInFunction {
 
-	private static final long serialVersionUID = 1574524645660413851L;
-
 	private ToUpperCase(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super("to_uppercase", sourceRange, operations);

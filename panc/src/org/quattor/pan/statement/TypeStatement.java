@@ -34,8 +34,6 @@ import org.quattor.pan.type.FullType;
  */
 public class TypeStatement extends Statement {
 
-	private static final long serialVersionUID = -8272825197852178772L;
-
 	private final String name;
 
 	private final FullType fullType;

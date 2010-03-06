@@ -45,8 +45,6 @@ import org.quattor.pan.utils.Term;
  */
 public class ListResource extends Resource {
 
-	private static final long serialVersionUID = 9153878005017517633L;
-
 	private List<Element> list;
 
 	public ListResource() {

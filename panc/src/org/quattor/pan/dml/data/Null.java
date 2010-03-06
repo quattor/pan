@@ -38,8 +38,6 @@ import org.quattor.pan.exceptions.EvaluationException;
 @Immutable
 public class Null extends TransientElement {
 
-	private static final long serialVersionUID = -7557373617481446262L;
-
 	public static final Null VALUE = new Null();
 
 	private Null() {

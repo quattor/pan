@@ -43,8 +43,6 @@ import org.quattor.pan.utils.Path;
  */
 public class RelativeAssignmentStatement extends ComputedAssignmentStatement {
 
-	private static final long serialVersionUID = -2100809273274847860L;
-
 	/**
 	 * This constructor creates a new AssignmentStatement which assigns a the
 	 * result of a DML block to the associated path.

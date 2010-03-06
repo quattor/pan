@@ -22,8 +22,6 @@ package org.quattor.pan.type;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_CANNOT_INCLUDE_TYPE;
 
-import java.io.Serializable;
-
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.ValidationException;
@@ -37,9 +35,7 @@ import org.quattor.pan.template.TypeMap;
  * @author loomis
  * 
  */
-public abstract class Type implements Serializable {
-
-	private static final long serialVersionUID = -2981871739120046094L;
+public abstract class Type {
 
 	protected final String source;
 

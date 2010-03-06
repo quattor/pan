@@ -44,8 +44,6 @@ import org.quattor.pan.template.SourceRange;
  */
 final public class Append extends BuiltInFunction {
 
-	private static final long serialVersionUID = 5803166359104659514L;
-
 	protected Append(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super("append", sourceRange, operations);

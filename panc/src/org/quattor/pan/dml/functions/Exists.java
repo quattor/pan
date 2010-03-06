@@ -35,8 +35,6 @@ import org.quattor.pan.template.SourceRange;
  */
 abstract public class Exists extends BuiltInFunction {
 
-	private static final long serialVersionUID = 1666754642817759286L;
-
 	protected Exists(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super("exists", sourceRange, operations);

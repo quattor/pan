@@ -44,8 +44,6 @@ import org.quattor.pan.utils.MessageUtils;
  */
 final public class Mult extends AbstractOperation {
 
-	private static final long serialVersionUID = 5841992671604962315L;
-
 	private Mult(SourceRange sourceRange, Operation... operations) {
 		super(sourceRange, operations);
 		assert (operations.length == 2);

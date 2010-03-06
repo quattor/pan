@@ -45,8 +45,6 @@ import org.quattor.pan.utils.MessageUtils;
  */
 final public class Div extends AbstractOperation {
 
-	private static final long serialVersionUID = -5388407841213257347L;
-
 	private Div(SourceRange sourceRange, Operation... operations) {
 		super(sourceRange, operations);
 		assert (operations.length == 2);
@@ -67,10 +65,8 @@ final public class Div extends AbstractOperation {
 				NumberProperty b = (NumberProperty) ops[1];
 				result = execute(sourceRange, a, b);
 			} catch (ClassCastException cce) {
-				throw new EvaluationException(
-						MessageUtils
-						.format(MSG_INVALID_ARGS_DIV),
-						sourceRange);
+				throw new EvaluationException(MessageUtils
+						.format(MSG_INVALID_ARGS_DIV), sourceRange);
 			} catch (EvaluationException ee) {
 				throw SyntaxException.create(sourceRange, ee);
 			}
@@ -91,10 +87,8 @@ final public class Div extends AbstractOperation {
 			NumberProperty b = (NumberProperty) args[1];
 			return execute(sourceRange, a, b);
 		} catch (ClassCastException cce) {
-			throw new EvaluationException(
-					MessageUtils
-					.format(MSG_INVALID_ARGS_DIV),
-					sourceRange);
+			throw new EvaluationException(MessageUtils
+					.format(MSG_INVALID_ARGS_DIV), sourceRange);
 		}
 
 	}

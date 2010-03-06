@@ -40,8 +40,6 @@ import org.quattor.pan.template.SourceRange;
  */
 public class ComputedIncludeStatement extends IncludeStatement {
 
-	private static final long serialVersionUID = -2710422082140840315L;
-
 	private final Operation dml;
 
 	/**

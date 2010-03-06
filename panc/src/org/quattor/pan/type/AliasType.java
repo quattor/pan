@@ -42,8 +42,6 @@ import org.quattor.pan.utils.Range;
  */
 public class AliasType extends BaseType {
 
-	private static final long serialVersionUID = -7582744809817175384L;
-
 	private final String identifier;
 
 	private final Range range;

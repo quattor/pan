@@ -13,8 +13,6 @@ import org.quattor.pan.utils.Term;
 
 public class ProtectedHashResource extends HashResource {
 
-	private static final long serialVersionUID = 6050739954052910954L;
-
 	private final HashResource baseHash;
 
 	public ProtectedHashResource(HashResource baseHash) {

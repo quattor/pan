@@ -47,8 +47,6 @@ import org.quattor.pan.utils.Term;
 @Immutable
 abstract public class Element implements Operation {
 
-	private static final long serialVersionUID = -9192717034633002369L;
-
 	/**
 	 * Returns true for all Element objects except Null.
 	 * 

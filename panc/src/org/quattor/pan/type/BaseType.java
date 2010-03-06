@@ -45,8 +45,6 @@ import org.quattor.pan.template.SourceRange;
  */
 public abstract class BaseType extends Type {
 
-	private static final long serialVersionUID = -1967404203740412112L;
-
 	private static final Map<String, FullType> builtins;
 
 	static {
@@ -63,8 +61,8 @@ public abstract class BaseType extends Type {
 		types.put("nlist", new FullType(new ConcretePrimitiveType("nlist",
 				HashResource.class)));
 		// Remove this unnecessary alias for the nlist type.
-//		types.put("hash", new FullType(new ConcretePrimitiveType("hash",
-//				HashResource.class)));
+		// types.put("hash", new FullType(new ConcretePrimitiveType("hash",
+		// HashResource.class)));
 		types.put("list", new FullType(new ConcretePrimitiveType("list",
 				ListResource.class)));
 		types.put("long", new FullType(new ConcretePrimitiveType("long",

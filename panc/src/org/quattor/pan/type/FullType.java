@@ -41,8 +41,6 @@ import org.quattor.pan.template.TypeMap;
  */
 public class FullType extends Type {
 
-	private static final long serialVersionUID = 7965942216097481088L;
-
 	private final BaseType baseType;
 
 	private final Element defaultValue;

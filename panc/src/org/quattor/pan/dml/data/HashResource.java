@@ -47,8 +47,6 @@ import org.quattor.pan.utils.TermFactory;
  */
 public class HashResource extends Resource {
 
-	private static final long serialVersionUID = -186896590390538530L;
-
 	private Map<String, Element> map;
 
 	public HashResource() {

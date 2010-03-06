@@ -40,8 +40,6 @@ import org.quattor.pan.utils.GlobalVariable;
  */
 public class ComputedVariableStatement extends VariableStatement {
 
-	private static final long serialVersionUID = 2464770021826458523L;
-
 	protected final Operation dml;
 
 	/**

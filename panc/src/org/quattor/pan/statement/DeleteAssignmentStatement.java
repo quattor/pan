@@ -35,8 +35,6 @@ import org.quattor.pan.utils.Path;
  */
 public class DeleteAssignmentStatement extends AssignmentStatement {
 
-	private static final long serialVersionUID = 6876660264664417932L;
-
 	/**
 	 * This constructor creates a new AbsoluteAssignmentStatement that assigns a
 	 * constant value (Element) to the associated path.

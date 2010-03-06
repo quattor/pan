@@ -50,8 +50,6 @@ import org.quattor.pan.utils.TermFactory;
  */
 final public class Hash extends BuiltInFunction {
 
-	private static final long serialVersionUID = -6064933972980342705L;
-
 	private Hash(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super("nlist", sourceRange, operations);

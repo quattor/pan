@@ -173,6 +173,10 @@ public class CompilerStatistics {
 		sb.append(" compiled, ");
 
 		// Output statistics.
+		sb.append(doneTasks.get(TaskResult.ResultType.ANNOTATION).get());
+		sb.append("/");
+		sb.append(startedTasks.get(TaskResult.ResultType.ANNOTATION).get());
+		sb.append(" anno., ");
 		sb.append(doneTasks.get(TaskResult.ResultType.XML).get());
 		sb.append("/");
 		sb.append(startedTasks.get(TaskResult.ResultType.XML).get());

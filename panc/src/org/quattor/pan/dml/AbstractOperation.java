@@ -81,6 +81,20 @@ abstract public class AbstractOperation implements Operation {
 	}
 
 	/**
+	 * Default implementation recursively calls this method on all of the
+	 * contained operations (arguments). Subclasses that reference SELF should
+	 * override this method and throw a SyntaxException.
+	 * 
+	 * @throws SyntaxException
+	 *             if operation references SELF
+	 */
+	public void checkInvalidSelfContext() throws SyntaxException {
+		for (Operation op : ops) {
+			op.checkInvalidSelfContext();
+		}
+	}
+
+	/**
 	 * A utility method which calls <code>execute</code> on each of this
 	 * operation's arguments and returns an array of the results.
 	 * 

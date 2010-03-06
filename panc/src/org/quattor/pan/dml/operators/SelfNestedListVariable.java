@@ -22,6 +22,7 @@ package org.quattor.pan.dml.operators;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_CANNOT_MODIFY_SELF;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_IN_COMPILE_TIME_CONTEXT;
+import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_SELF_REF_IN_INCLUDE;
 import static org.quattor.pan.utils.MessageUtils.MSG_SELF_IS_UNDEFINED;
 
 import org.quattor.pan.dml.Operation;
@@ -32,6 +33,7 @@ import org.quattor.pan.dml.data.Undef;
 import org.quattor.pan.exceptions.CompilerError;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.InvalidTermException;
+import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.template.Context;
 import org.quattor.pan.template.SourceRange;
 import org.quattor.pan.utils.Term;
@@ -51,6 +53,12 @@ public class SelfNestedListVariable extends NestedListVariable {
 			Operation... operations) {
 		super(sourceRange, "SELF", operations);
 		assert (operations.length > 0);
+	}
+
+	@Override
+	public void checkInvalidSelfContext() throws SyntaxException {
+		throw SyntaxException.create(sourceRange,
+				MSG_INVALID_SELF_REF_IN_INCLUDE);
 	}
 
 	@Override

@@ -52,6 +52,22 @@ public class SelfNestedListVariableTest extends AbstractOperationTestUtils {
 	private static Term[] terms = { TermFactory.create(0L),
 			TermFactory.create("a") };
 
+	@Test
+	public void verifyCorrectType() throws SyntaxException {
+
+		Operation op = ListVariable.getInstance(null, "SELF", ops);
+
+		assertTrue(op instanceof SelfNestedListVariable);
+	}
+
+	@Test(expected = SyntaxException.class)
+	public void testInvalidSelfContext() throws SyntaxException {
+
+		Operation op = ListVariable.getInstance(null, "SELF", ops);
+
+		op.checkInvalidSelfContext();
+	}
+
 	@Test(expected = EvaluationException.class)
 	public void testNotInCompileTimeContext() {
 

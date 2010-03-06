@@ -38,7 +38,7 @@ import org.quattor.pan.template.Context;
  * 
  */
 public interface Operation extends Serializable {
-	
+
 	/**
 	 * Execute this operation within the given context. If an error occurs, an
 	 * EvaluationException will be thrown with the details.
@@ -64,4 +64,17 @@ public interface Operation extends Serializable {
 	 *             if this operation cannot be run within a restricted context
 	 */
 	public void checkRestrictedContext() throws SyntaxException;
+
+	/**
+	 * This method will check that if a given reference to SELF occurs in an
+	 * invalid context. Currently this is only the include statement that
+	 * doesn't define a value for SELF. (It doesn't really make sense as there
+	 * is no value being assigned.) For operations that do not reference SELF,
+	 * this should be a no-op. For those that do, a SyntaxException should be
+	 * thrown.
+	 * 
+	 * @throws SyntaxException
+	 *             if this operation references SELF
+	 */
+	public void checkInvalidSelfContext() throws SyntaxException;
 }

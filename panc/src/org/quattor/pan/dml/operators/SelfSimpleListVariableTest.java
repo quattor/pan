@@ -44,6 +44,22 @@ import org.quattor.pan.utils.TermFactory;
 
 public class SelfSimpleListVariableTest extends AbstractOperationTestUtils {
 
+	@Test
+	public void verifyCorrectType() throws SyntaxException {
+
+		Operation op = ListVariable.getInstance(null, "SELF");
+
+		assertTrue(op instanceof SelfSimpleListVariable);
+	}
+
+	@Test(expected = SyntaxException.class)
+	public void testInvalidSelfContext() throws SyntaxException {
+
+		Operation op = ListVariable.getInstance(null, "SELF");
+
+		op.checkInvalidSelfContext();
+	}
+
 	@Test(expected = EvaluationException.class)
 	public void testNotInCompileTimeContext() {
 

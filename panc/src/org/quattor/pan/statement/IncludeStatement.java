@@ -84,6 +84,10 @@ abstract public class IncludeStatement extends Statement {
 	static public IncludeStatement newIncludeStatement(SourceRange sourceRange,
 			Operation dml) throws SyntaxException {
 
+		// Check that the DML doesn't contain a reference to SELF. If it doesn't
+		// the method will throw a SyntaxException.
+		dml.checkInvalidSelfContext();
+
 		Element element = runDefaultDml(dml);
 
 		if (element == null) {

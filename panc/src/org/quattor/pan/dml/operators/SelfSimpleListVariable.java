@@ -22,6 +22,7 @@ package org.quattor.pan.dml.operators;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_CANNOT_MODIFY_SELF;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_IN_COMPILE_TIME_CONTEXT;
+import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_SELF_REF_IN_INCLUDE;
 import static org.quattor.pan.utils.MessageUtils.MSG_REFERENCED_VARIABLE_NOT_LIST;
 import static org.quattor.pan.utils.MessageUtils.MSG_SELF_IS_UNDEFINED;
 
@@ -31,6 +32,7 @@ import org.quattor.pan.dml.data.Null;
 import org.quattor.pan.dml.data.Undef;
 import org.quattor.pan.exceptions.CompilerError;
 import org.quattor.pan.exceptions.EvaluationException;
+import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.template.Context;
 import org.quattor.pan.template.SourceRange;
 
@@ -46,6 +48,12 @@ final public class SelfSimpleListVariable extends SimpleListVariable {
 
 	public SelfSimpleListVariable(SourceRange sourceRange) {
 		super(sourceRange, "SELF");
+	}
+
+	@Override
+	public void checkInvalidSelfContext() throws SyntaxException {
+		throw SyntaxException.create(sourceRange,
+				MSG_INVALID_SELF_REF_IN_INCLUDE);
 	}
 
 	@Override

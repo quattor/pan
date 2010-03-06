@@ -27,6 +27,7 @@ import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_ATTEMPT_TO_SET_RELA
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_EMPTY_RELATIVE_PATH;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_VALIDATION_FUNCTION_RETURN_TYPE;
 import static org.quattor.pan.utils.MessageUtils.MSG_NO_VALUE_FOR_PATH;
+import static org.quattor.pan.utils.MessageUtils.MSG_SELF_IS_UNDEFINED;
 import static org.quattor.pan.utils.MessageUtils.MSG_VALIDATION_FAILED_BECAUSE_OF_EXCEPTION;
 
 import java.io.File;
@@ -114,7 +115,7 @@ public class BuildContext implements Context {
 
 	private List<String> relativeLoadpaths;
 
-	private SelfHolder self = new SelfHolder();
+	private SelfHolder self;
 
 	private IteratorMap iteratorMap;
 
@@ -225,6 +226,9 @@ public class BuildContext implements Context {
 		// short, so use a TreeSet to save memory. Iteration performance should
 		// be fine.
 		objectDependencies = new TreeSet<String>();
+
+		// Self should initially be null.
+		self = null;
 
 		// Set the object template and add it as a dependency.
 		assert (objectTemplate != null);
@@ -1344,11 +1348,19 @@ public class BuildContext implements Context {
 	}
 
 	public boolean isSelfFinal() {
-		return self.isUnmodifiable();
+		try {
+			return self.isUnmodifiable();
+		} catch (NullPointerException e) {
+			throw CompilerError.create(MSG_SELF_IS_UNDEFINED);
+		}
 	}
 
 	public Element getSelf() {
-		return self.getElement();
+		try {
+			return self.getElement();
+		} catch (NullPointerException e) {
+			throw CompilerError.create(MSG_SELF_IS_UNDEFINED);
+		}
 	}
 
 	public void clearSelf() {

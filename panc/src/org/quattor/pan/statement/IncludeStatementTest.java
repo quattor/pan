@@ -22,10 +22,21 @@ package org.quattor.pan.statement;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
+import org.quattor.pan.dml.Operation;
+import org.quattor.pan.dml.data.LongProperty;
+import org.quattor.pan.dml.data.StringProperty;
+import org.quattor.pan.dml.operators.NestedVariable;
+import org.quattor.pan.dml.operators.SetSelf;
+import org.quattor.pan.dml.operators.Variable;
+import org.quattor.pan.exceptions.SyntaxException;
 
 public class IncludeStatementTest extends StatementTestUtils {
+
+	private static Operation[] ops = { LongProperty.getInstance(0L),
+			StringProperty.getInstance("a") };
 
 	@Test
 	public void legalNames() throws Exception {
@@ -44,5 +55,30 @@ public class IncludeStatementTest extends StatementTestUtils {
 		assertFalse(IncludeStatement.validIdentifier("a//b"));
 		assertFalse(IncludeStatement.validIdentifier("a/"));
 		assertFalse(IncludeStatement.validIdentifier(""));
+	}
+
+	@Test
+	public void illegalSelfReference() throws SyntaxException {
+
+		Operation[] operations = {
+				new SetSelf(null, StringProperty.getInstance("OK")),
+				Variable.getInstance(null, "SELF"),
+				Variable.getInstance(null, "SELF", ops),
+				NestedVariable.getInstance(null, "SELF"),
+				NestedVariable.getInstance(null, "SELF", ops), };
+
+		for (Operation op : operations) {
+
+			try {
+				IncludeStatement.newIncludeStatement(null, op);
+
+				fail("include statement did not throw SyntaxException for operation of type "
+						+ op.getClass().getSimpleName());
+			} catch (SyntaxException e) {
+				// OK
+			}
+
+		}
+
 	}
 }

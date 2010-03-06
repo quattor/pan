@@ -24,6 +24,7 @@ import static org.quattor.pan.utils.MessageUtils.MSG_CANNOT_MODIFY_SELF;
 import static org.quattor.pan.utils.MessageUtils.MSG_ILLEGAL_SELF_REF;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_EXECUTE_METHOD_CALLED;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_IN_COMPILE_TIME_CONTEXT;
+import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_SELF_REF_IN_INCLUDE;
 
 import org.quattor.pan.dml.Operation;
 import org.quattor.pan.dml.data.Element;
@@ -62,6 +63,12 @@ public class SetSelf extends SetValue {
 	}
 
 	@Override
+	public void checkInvalidSelfContext() throws SyntaxException {
+		throw SyntaxException.create(sourceRange,
+				MSG_INVALID_SELF_REF_IN_INCLUDE);
+	}
+
+	@Override
 	public Element execute(Context context) {
 
 		// This operation is intended to only be called from an Assign
@@ -90,11 +97,6 @@ public class SetSelf extends SetValue {
 			throw ee.addExceptionInfo(sourceRange, context);
 		}
 
-		// Duplicate the result only if necessary. Within a DML block,
-		// duplicating the element is only necessary if the value we are going
-		// to set has parents. This is to avoid any possibility of creating
-		// cyclic data structures. This requirement essentially comes down to
-		// checking if the number of terms is positive.
 		Element dupResult = result;
 		if (result != null) {
 			dupResult = result.duplicate();

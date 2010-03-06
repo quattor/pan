@@ -21,9 +21,11 @@
 package org.quattor.pan.dml.operators;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_IN_COMPILE_TIME_CONTEXT;
+import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_SELF_REF_IN_INCLUDE;
 
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.exceptions.EvaluationException;
+import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.template.Context;
 import org.quattor.pan.template.SourceRange;
 
@@ -39,6 +41,12 @@ final public class SelfSimpleVariable extends SimpleVariable {
 
 	public SelfSimpleVariable(SourceRange sourceRange, boolean lookupOnly) {
 		super(sourceRange, "SELF", lookupOnly);
+	}
+
+	@Override
+	public void checkInvalidSelfContext() throws SyntaxException {
+		throw SyntaxException.create(sourceRange,
+				MSG_INVALID_SELF_REF_IN_INCLUDE);
 	}
 
 	@Override

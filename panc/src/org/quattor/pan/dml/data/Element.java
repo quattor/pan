@@ -224,6 +224,13 @@ abstract public class Element implements Operation {
 	}
 
 	/**
+	 * The default implementation does nothing. This should not need to be
+	 * overridden as all data elements explicitly make no reference to SELF.
+	 */
+	public void checkInvalidSelfContext() throws SyntaxException {
+	}
+
+	/**
 	 * This method indicates if the given Element is protected. A protected
 	 * element may not be written to and concerns just resources. The default
 	 * implementation just returns false. This should be sufficient except for

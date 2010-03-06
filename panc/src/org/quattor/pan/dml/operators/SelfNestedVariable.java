@@ -21,6 +21,7 @@
 package org.quattor.pan.dml.operators;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_IN_COMPILE_TIME_CONTEXT;
+import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_SELF_REF_IN_INCLUDE;
 import static org.quattor.pan.utils.MessageUtils.MSG_UNDEFINED_VAR;
 
 import org.quattor.pan.dml.Operation;
@@ -28,6 +29,7 @@ import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.Undef;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.InvalidTermException;
+import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.template.Context;
 import org.quattor.pan.template.SourceRange;
 import org.quattor.pan.utils.MessageUtils;
@@ -51,6 +53,12 @@ public class SelfNestedVariable extends NestedVariable {
 	}
 
 	@Override
+	public void checkInvalidSelfContext() throws SyntaxException {
+		throw SyntaxException.create(sourceRange,
+				MSG_INVALID_SELF_REF_IN_INCLUDE);
+	}
+
+	@Override
 	public Element execute(Context context) {
 
 		// Quickly check to see if this is a compile-time context. This function
@@ -61,13 +69,12 @@ public class SelfNestedVariable extends NestedVariable {
 							.getSimpleName());
 		}
 
-		// Look up the variable. This may be null if we're running at
-		// compile-time.
+		// Look up the variable.
 		Element result = context.getSelf();
 		assert (result != null);
 
 		// If there are some operations in this Value operation, create a list
-		// will all of the terms and do the recursive lookup of the value.
+		// with all of the terms and do the recursive lookup of the value.
 		Term[] terms = null;
 		if (!(result instanceof Undef)) {
 			try {

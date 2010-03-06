@@ -20,36 +20,25 @@
 
 package org.quattor.pan.dml.operators;
 
-import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
 import org.junit.Test;
 import org.quattor.pan.dml.AbstractOperationTestUtils;
 import org.quattor.pan.dml.Operation;
-import org.quattor.pan.dml.data.Element;
-import org.quattor.pan.dml.data.ListResource;
 import org.quattor.pan.dml.data.LongProperty;
 import org.quattor.pan.dml.data.StringProperty;
 import org.quattor.pan.dml.data.Undef;
 import org.quattor.pan.exceptions.EvaluationException;
-import org.quattor.pan.exceptions.InvalidTermException;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.template.BuildContext;
 import org.quattor.pan.template.CompileTimeContext;
 import org.quattor.pan.template.Context;
-import org.quattor.pan.template.PathSelfHolder;
 import org.quattor.pan.template.ReadOnlySelfHolder;
-import org.quattor.pan.utils.Path;
-import org.quattor.pan.utils.Term;
-import org.quattor.pan.utils.TermFactory;
 
 public class SelfNestedVariableTest extends AbstractOperationTestUtils {
 
 	private static Operation[] ops = { LongProperty.getInstance(0L),
 			StringProperty.getInstance("a") };
-
-	private static Term[] terms = { TermFactory.create(0L),
-			TermFactory.create("a") };
 
 	@Test
 	public void verifyCorrectType() throws SyntaxException {

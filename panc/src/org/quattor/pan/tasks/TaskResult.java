@@ -38,7 +38,7 @@ public class TaskResult {
 	 * 
 	 */
 	public static enum ResultType {
-		COMPILED, BUILD, VALID1, VALID2, XML, DEP
+		COMPILED, BUILD, VALID1, VALID2, XML, DEP, ANNOTATION
 	}
 
 	public final ResultType type;

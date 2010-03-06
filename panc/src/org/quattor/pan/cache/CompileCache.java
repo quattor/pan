@@ -25,10 +25,12 @@ import java.util.concurrent.Future;
 
 import org.quattor.pan.Compiler;
 import org.quattor.pan.output.Formatter;
+import org.quattor.pan.parser.ASTTemplate;
 import org.quattor.pan.tasks.CompileResult;
 import org.quattor.pan.tasks.CompileTask;
 import org.quattor.pan.tasks.Task;
 import org.quattor.pan.tasks.TaskResult;
+import org.quattor.pan.tasks.WriteAnnotationTask;
 import org.quattor.pan.tasks.WriteDepTask;
 import org.quattor.pan.tasks.WriteXmlTask;
 import org.quattor.pan.template.Template;
@@ -101,7 +103,7 @@ public class CompileCache extends AbstractCache<CompileResult> {
 			this.doDep = doDep;
 		}
 
-		public void process(Template template) {
+		public void process(ASTTemplate ast, Template template) {
 			if (template.type == TemplateType.OBJECT) {
 
 				String objectName = template.name;
@@ -119,6 +121,13 @@ public class CompileCache extends AbstractCache<CompileResult> {
 					File outputDirectory = compiler.options.outputDirectory;
 					Task<TaskResult> task = new WriteDepTask(compiler,
 							objectName, outputDirectory);
+					compiler.submit(task);
+				}
+
+				boolean doAnno = (compiler.options.annotationDirectory != null);
+				if (doAnno) {
+					Task<TaskResult> task = new WriteAnnotationTask(
+							compiler.options.annotationDirectory, ast);
 					compiler.submit(task);
 				}
 

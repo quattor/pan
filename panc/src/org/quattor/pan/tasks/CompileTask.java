@@ -35,7 +35,6 @@ import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.exceptions.SystemException;
 import org.quattor.pan.parser.ASTTemplate;
 import org.quattor.pan.parser.PanParser;
-import org.quattor.pan.parser.PanParserAnnotationUtils;
 import org.quattor.pan.parser.PanParserAstUtils;
 import org.quattor.pan.parser.ParseException;
 import org.quattor.pan.template.Template;
@@ -95,29 +94,36 @@ public class CompileTask extends Task<CompileResult> {
 
 		public CompileResult call() throws Exception {
 
-			// Log the beginning of the template load.
-			taskLogger.log(Level.FINER, "START_COMPILE", tplfile
-					.getAbsolutePath());
+			try {
 
-			// Compile the template.
-			Template template = compile(tplfile, compilerOptions);
+				// Log the beginning of the template load.
+				taskLogger.log(Level.FINER, "START_COMPILE", tplfile
+						.getAbsolutePath());
 
-			// Either the load or compilation was successful or an exception was
-			// thrown. Hence, we should always have a non-null template value at
-			// this point.
-			assert (template != null);
+				ASTTemplate ast = compile(tplfile, compilerOptions);
+				Template template = PanParserAstUtils.convertAstToTemplate(
+						tplfile, ast);
 
-			// If this is an object template, then (maybe) start a build.
-			postCompileProcessor.process(template);
+				// Either the load or compilation was successful or an exception
+				// was thrown. Hence, we should always have a non-null template
+				// value at this point.
+				assert (template != null);
 
-			// Create the result and return it.
-			CompileResult result = new CompileResult(template);
+				// If this is an object template, then (maybe) start a build.
+				postCompileProcessor.process(ast, template);
 
-			// Log the end of template load.
-			taskLogger.log(Level.FINER, "END_COMPILE", tplfile
-					.getAbsolutePath());
+				// Create the result and return it.
+				CompileResult result = new CompileResult(template);
 
-			return result;
+				// Log the end of template load.
+				taskLogger.log(Level.FINER, "END_COMPILE", tplfile
+						.getAbsolutePath());
+
+				return result;
+
+			} catch (SyntaxException se) {
+				throw se.addExceptionInfo(null, tplfile);
+			}
 		}
 
 		/**
@@ -137,10 +143,10 @@ public class CompileTask extends Task<CompileResult> {
 		 *             cause is the underlying exception
 		 * 
 		 */
-		public static Template compile(File tplfile,
+		public static ASTTemplate compile(File tplfile,
 				CompilerOptions compilerOptions) throws Exception {
 
-			Template template = null;
+			ASTTemplate ast = null;
 
 			// Ensure that the file can actually be read.
 			if (!tplfile.canRead()) {
@@ -156,18 +162,8 @@ public class CompileTask extends Task<CompileResult> {
 				PanParser parser = new PanParser(reader);
 				parser.setFile(tplfile);
 				parser.setCompilerOptions(compilerOptions);
-				ASTTemplate ast = parser.template();
+				ast = parser.template();
 
-				// FIXME: Annotation printing should be an asynchronous task.
-				if (compilerOptions.annotationDirectory != null) {
-					PanParserAnnotationUtils.printXML(
-							compilerOptions.annotationDirectory, ast);
-				}
-
-				template = PanParserAstUtils.convertAstToTemplate(tplfile, ast);
-
-			} catch (SyntaxException se) {
-				throw se.addExceptionInfo(null, tplfile);
 			} catch (ParseException pe) {
 				pe.file = tplfile;
 				throw pe;
@@ -193,9 +189,9 @@ public class CompileTask extends Task<CompileResult> {
 
 			// Unless an exception was thrown, we should always have a non-null
 			// value.
-			assert (template != null);
+			assert (ast != null);
 
-			return template;
+			return ast;
 		}
 	}
 

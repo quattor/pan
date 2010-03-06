@@ -10,7 +10,7 @@ import org.quattor.pan.dml.data.Element;
  * @author loomis
  * 
  */
-public class SelfHolder {
+abstract public class SelfHolder {
 
 	protected Element element = null;
 	protected boolean unmodifiable = false;

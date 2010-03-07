@@ -1,18 +1,23 @@
 package org.quattor.pan;
 
 import static org.quattor.pan.CompilerLogging.LoggingType.MEMORY;
+import static org.quattor.pan.tasks.TaskResult.ResultType.ANNOTATION;
+import static org.quattor.pan.tasks.TaskResult.ResultType.COMPILED;
+import static org.quattor.pan.tasks.TaskResult.ResultType.DEP;
+import static org.quattor.pan.tasks.TaskResult.ResultType.XML;
+import static org.quattor.pan.utils.MessageUtils.MSG_STATISTICS_TEMPLATE;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.quattor.pan.tasks.TaskResult;
+import org.quattor.pan.tasks.TaskResult.ResultType;
+import org.quattor.pan.utils.MessageUtils;
 
 /**
  * Provides statistics about a run of the pan compiler. These statistics can be
@@ -27,7 +32,7 @@ public class CompilerStatistics {
 
 	private long buildTime;
 
-	private int fileCount;
+	private long fileCount;
 
 	private final AtomicLong heapUsed;
 
@@ -37,9 +42,9 @@ public class CompilerStatistics {
 
 	private final AtomicLong nonHeapTotal;
 
-	private final Map<TaskResult.ResultType, AtomicInteger> startedTasks;
+	private final Map<ResultType, AtomicLong> startedTasks;
 
-	private final Map<TaskResult.ResultType, AtomicInteger> doneTasks;
+	private final Map<ResultType, AtomicLong> doneTasks;
 
 	/**
 	 * Creates an object to keep track of statistics during the run of the pan
@@ -49,13 +54,13 @@ public class CompilerStatistics {
 		buildTime = -1L;
 
 		// Create maps containing the counters for the types of tasks.
-		startedTasks = new TreeMap<TaskResult.ResultType, AtomicInteger>();
-		doneTasks = new TreeMap<TaskResult.ResultType, AtomicInteger>();
+		startedTasks = new TreeMap<ResultType, AtomicLong>();
+		doneTasks = new TreeMap<ResultType, AtomicLong>();
 
 		// Initialize all of the counters to zero.
-		for (TaskResult.ResultType t : TaskResult.ResultType.values()) {
-			startedTasks.put(t, new AtomicInteger(0));
-			doneTasks.put(t, new AtomicInteger(0));
+		for (ResultType t : ResultType.values()) {
+			startedTasks.put(t, new AtomicLong(0));
+			doneTasks.put(t, new AtomicLong(0));
 		}
 
 		heapUsed = new AtomicLong(-1);
@@ -84,7 +89,7 @@ public class CompilerStatistics {
 	 * @param fileCount
 	 *            number of processed files
 	 */
-	public void setFileCount(int fileCount) {
+	public void setFileCount(long fileCount) {
 		this.fileCount = fileCount;
 	}
 
@@ -95,7 +100,7 @@ public class CompilerStatistics {
 	 * @param type
 	 *            type of task that was started
 	 */
-	public void incrementStartedTasks(TaskResult.ResultType type) {
+	public void incrementStartedTasks(ResultType type) {
 		startedTasks.get(type).incrementAndGet();
 	}
 
@@ -106,7 +111,7 @@ public class CompilerStatistics {
 	 * @param type
 	 *            type of task that finished
 	 */
-	public void incrementFinishedTasks(TaskResult.ResultType type) {
+	public void incrementFinishedTasks(ResultType type) {
 		doneTasks.get(type).incrementAndGet();
 	}
 
@@ -159,51 +164,21 @@ public class CompilerStatistics {
 	 * 
 	 * @return statistics as a String value
 	 */
-	public String getResults(int totalErrors) {
-		StringBuilder sb = new StringBuilder();
+	public String getResults(long totalErrors) {
 
-		// Number of templates to process.
-		sb.append(fileCount);
-		sb.append(" templates\n");
+		Object[] info = { fileCount, doneTasks.get(COMPILED).get(),
+				startedTasks.get(COMPILED).get(),
+				doneTasks.get(ANNOTATION).get(),
+				startedTasks.get(ANNOTATION).get(), doneTasks.get(XML).get(),
+				startedTasks.get(XML).get(), doneTasks.get(DEP).get(),
+				startedTasks.get(DEP).get(), totalErrors, buildTime,
+				convertToMB(heapUsed.get()), convertToMB(heapTotal.get()),
+				convertToMB(nonHeapUsed.get()), convertToMB(nonHeapTotal.get()) };
 
-		// Compilation statistics.
-		sb.append(doneTasks.get(TaskResult.ResultType.COMPILED).get());
-		sb.append("/");
-		sb.append(startedTasks.get(TaskResult.ResultType.COMPILED).get());
-		sb.append(" compiled, ");
-
-		// Output statistics.
-		sb.append(doneTasks.get(TaskResult.ResultType.ANNOTATION).get());
-		sb.append("/");
-		sb.append(startedTasks.get(TaskResult.ResultType.ANNOTATION).get());
-		sb.append(" annotations, ");
-		sb.append(doneTasks.get(TaskResult.ResultType.XML).get());
-		sb.append("/");
-		sb.append(startedTasks.get(TaskResult.ResultType.XML).get());
-		sb.append(" xml, ");
-		sb.append(doneTasks.get(TaskResult.ResultType.DEP).get());
-		sb.append("/");
-		sb.append(startedTasks.get(TaskResult.ResultType.DEP).get());
-		sb.append(" dependency\n");
-
-		// Errors.
-
-		// General statistics. The shift by 20 bits divides by 1024^2 to convert
-		// from number of bytes to number of megabytes.
-		sb.append(totalErrors);
-		sb.append(" errors, ");
-		sb.append(buildTime);
-		sb.append(" ms, ");
-		sb.append(heapUsed.get() >> 20);
-		sb.append(" MB/");
-		sb.append(heapTotal.get() >> 20);
-		sb.append(" MB heap, ");
-		sb.append(nonHeapUsed.get() >> 20);
-		sb.append(" MB/");
-		sb.append(nonHeapTotal.get() >> 20);
-		sb.append(" MB nonheap\n");
-
-		return sb.toString();
+		return MessageUtils.format(MSG_STATISTICS_TEMPLATE, info);
 	}
 
+	private static Long convertToMB(long value) {
+		return Long.valueOf(value >> 20);
+	}
 }

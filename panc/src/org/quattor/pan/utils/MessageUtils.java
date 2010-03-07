@@ -407,6 +407,8 @@ public class MessageUtils {
 
 	public final static String MSG_INVALID_SELF_REF_IN_INCLUDE = "MSG_INVALID_SELF_REF_IN_INCLUDE";
 
+	public final static String MSG_STATISTICS_TEMPLATE = "MSG_STATISTICS_TEMPLATE";
+
 	// Name of the resource bundle to use for compiler messages.
 	private final static String bundleName = "org.quattor.pan.Messages";
 

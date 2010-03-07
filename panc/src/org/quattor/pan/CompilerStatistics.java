@@ -176,7 +176,7 @@ public class CompilerStatistics {
 		sb.append(doneTasks.get(TaskResult.ResultType.ANNOTATION).get());
 		sb.append("/");
 		sb.append(startedTasks.get(TaskResult.ResultType.ANNOTATION).get());
-		sb.append(" anno., ");
+		sb.append(" annotations, ");
 		sb.append(doneTasks.get(TaskResult.ResultType.XML).get());
 		sb.append("/");
 		sb.append(startedTasks.get(TaskResult.ResultType.XML).get());
@@ -184,7 +184,7 @@ public class CompilerStatistics {
 		sb.append(doneTasks.get(TaskResult.ResultType.DEP).get());
 		sb.append("/");
 		sb.append(startedTasks.get(TaskResult.ResultType.DEP).get());
-		sb.append(" dep\n");
+		sb.append(" dependency\n");
 
 		// Errors.
 

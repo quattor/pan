@@ -225,7 +225,6 @@ public class Path implements Comparable<Path> {
 	 * existing paths. The first argument cannot be an external path. The second
 	 * argument may be null.
 	 */
-	// FIXME: Change method signature to use array.
 	public Path(Path root, Term[] terms) throws SyntaxException {
 
 		// Check that the root path is not an external path.

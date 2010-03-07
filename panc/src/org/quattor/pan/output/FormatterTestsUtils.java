@@ -22,7 +22,7 @@ package org.quattor.pan.output;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.Vector;
 import java.util.zip.GZIPOutputStream;
 
@@ -107,7 +107,7 @@ public class FormatterTestsUtils {
 	 *            the parent of the created child
 	 * @param parentName
 	 *            name of the parent
-	 * @throws InvalidTermException 
+	 * @throws InvalidTermException
 	 */
 	public void createChild(String name, Element value, Element parent,
 			String parentName) throws InvalidTermException {
@@ -182,15 +182,15 @@ public class FormatterTestsUtils {
 	 * @param flagGzip
 	 *            the flag indicating the necessity of a compression
 	 */
-	public static PrintStream createOutput(OutputStream os, boolean flagGzip)
+	public static PrintWriter createOutput(OutputStream os, boolean flagGzip)
 			throws IOException {
 
-		PrintStream ps;
+		PrintWriter ps;
 
 		if (flagGzip) {
-			ps = new PrintStream(new GZIPOutputStream(os));
+			ps = new PrintWriter(new GZIPOutputStream(os));
 		} else {
-			ps = new PrintStream(os);
+			ps = new PrintWriter(os);
 		}
 		return ps;
 	}

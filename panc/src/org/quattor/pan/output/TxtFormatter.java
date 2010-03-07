@@ -20,7 +20,7 @@
 
 package org.quattor.pan.output;
 
-import java.io.PrintStream;
+import java.io.PrintWriter;
 
 import org.quattor.pan.dml.data.Element;
 
@@ -57,7 +57,7 @@ public class TxtFormatter extends PanTxtFormatter {
 	}
 
 	@Override
-	public void write(Element root, String rootname, PrintStream ps) {
+	public void write(Element root, String rootname, PrintWriter ps) {
 		int level = 0;
 
 		readChild(root, ps, level, rootname);
@@ -65,17 +65,17 @@ public class TxtFormatter extends PanTxtFormatter {
 	}
 
 	@Override
-	public void writeBegin(PrintStream ps, String nbTab, String name, int n,
+	public void writeBegin(PrintWriter ps, String nbTab, String name, int n,
 			String s) {
 		ps.printf("%s+-%s\n", nbTab, name);
 	}
 
 	@Override
-	public void writeEnd(PrintStream ps, String s1, String s) {
+	public void writeEnd(PrintWriter ps, String s1, String s) {
 	}
 
 	@Override
-	public void writeProperties(PrintStream ps, String nbTab, String name,
+	public void writeProperties(PrintWriter ps, String nbTab, String name,
 			String type, String value) {
 		ps.printf("%s$ %s : (%s) '%s'\n", nbTab, name, type, value);
 	}

@@ -30,7 +30,7 @@ public class XmlUtils {
 			if (!factory.getFeature(SAXTransformerFactory.FEATURE)) {
 				throw CompilerError.create(MSG_MISSING_SAX_TRANSFORMER);
 			}
-			factory.setAttribute("indent-number", new Integer(4));
+			factory.setAttribute("indent-number", Integer.valueOf(4));
 
 			// Can safely cast the factory to a SAX-specific one. Get the
 			// handler to feed with SAX events.

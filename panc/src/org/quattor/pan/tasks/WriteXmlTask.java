@@ -25,7 +25,7 @@ import static org.quattor.pan.utils.MessageUtils.MSG_CANNOT_CREATE_OUTPUT_DIRECT
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.net.URI;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
@@ -133,7 +133,7 @@ public class WriteXmlTask extends Task<TaskResult> {
 				os = new GZIPOutputStream(new FileOutputStream(absolutePath));
 			}
 
-			PrintStream ps = new PrintStream(os);
+			PrintWriter ps = new PrintWriter(os);
 			formatter.write(root, "profile", ps);
 			ps.close();
 

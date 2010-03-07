@@ -22,7 +22,7 @@ package org.quattor.pan.output;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_UNEXPECTED_EXCEPTION_WHILE_WRITING_OUTPUT;
 
-import java.io.PrintStream;
+import java.io.PrintWriter;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.sax.TransformerHandler;
@@ -65,7 +65,7 @@ public class XmlDBFormatter implements Formatter {
 		return key;
 	}
 
-	public void write(Element root, String rootName, PrintStream ps) {
+	public void write(Element root, String rootName, PrintWriter ps) {
 
 		try {
 
@@ -103,7 +103,7 @@ public class XmlDBFormatter implements Formatter {
 	}
 
 	private void writeChild(TransformerHandler handler, AttributesImpl atts,
-			PrintStream ps, Element node, String name, Integer nbList)
+			PrintWriter ps, Element node, String name, Integer nbList)
 			throws SAXException {
 
 		// Normally the tag name will just be the type of the element.

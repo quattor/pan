@@ -20,7 +20,7 @@
 
 package org.quattor.pan.output;
 
-import java.io.PrintStream;
+import java.io.PrintWriter;
 
 import org.quattor.pan.dml.data.Element;
 
@@ -58,6 +58,6 @@ public interface Formatter {
 	 * @param ps
 	 *            the PrintStream used to write the file
 	 */
-	public void write(Element root, String rootName, PrintStream ps);
+	public void write(Element root, String rootName, PrintWriter ps);
 
 }

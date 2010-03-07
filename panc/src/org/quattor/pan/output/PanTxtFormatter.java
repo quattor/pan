@@ -20,7 +20,7 @@
 
 package org.quattor.pan.output;
 
-import java.io.PrintStream;
+import java.io.PrintWriter;
 
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.Property;
@@ -36,9 +36,9 @@ abstract public class PanTxtFormatter implements Formatter {
 	 * @param rootName
 	 *            name of the root element
 	 * @param ps
-	 *            the PrintStream
+	 *            the PrintWriter
 	 */
-	public abstract void write(Element root, String rootName, PrintStream ps);
+	public abstract void write(Element root, String rootName, PrintWriter ps);
 
 	/**
 	 * Reads each child.
@@ -46,7 +46,7 @@ abstract public class PanTxtFormatter implements Formatter {
 	 * @param element
 	 *            element to treat
 	 * @param ps
-	 *            PrintStream
+	 *            PrintWriter
 	 * 
 	 * @param level
 	 *            Level of the node in the tree
@@ -54,7 +54,7 @@ abstract public class PanTxtFormatter implements Formatter {
 	 * @param name
 	 *            name of the element
 	 */
-	public void readChild(Element element, PrintStream ps, int level,
+	public void readChild(Element element, PrintWriter ps, int level,
 			String name) {
 		String nbTab = tabMaker(level);
 
@@ -82,10 +82,10 @@ abstract public class PanTxtFormatter implements Formatter {
 	}
 
 	/**
-	 * Writes in the PrintStream.
+	 * Writes in the PrintWriter.
 	 * 
 	 * @param ps
-	 *            PrintStream
+	 *            PrintWriter
 	 * @param nbTab
 	 *            number of tab to write before text
 	 * @param name
@@ -95,26 +95,26 @@ abstract public class PanTxtFormatter implements Formatter {
 	 * @param type
 	 *            type of the element
 	 */
-	public abstract void writeBegin(PrintStream ps, String nbTab, String name,
+	public abstract void writeBegin(PrintWriter ps, String nbTab, String name,
 			int level, String type);
 
 	/**
-	 * Writes end tags in the PrintStream for PanFormatter.
+	 * Writes end tags in the PrintWriter for PanFormatter.
 	 * 
 	 * @param ps
-	 *            PrintStream
+	 *            PrintWriter
 	 * @param nbTab
 	 *            number of tab to write before text
 	 * @param type
 	 *            type of the element
 	 */
-	public abstract void writeEnd(PrintStream ps, String nbTab, String type);
+	public abstract void writeEnd(PrintWriter ps, String nbTab, String type);
 
 	/**
-	 * Writes in the PrintStream.
+	 * Writes in the PrintWriter.
 	 * 
 	 * @param ps
-	 *            PrintStream
+	 *            PrintWriter
 	 * @param nbTab
 	 *            number of tab to write before text
 	 * @param name
@@ -124,7 +124,7 @@ abstract public class PanTxtFormatter implements Formatter {
 	 * @param value
 	 *            value of the element
 	 */
-	public abstract void writeProperties(PrintStream ps, String nbTab,
+	public abstract void writeProperties(PrintWriter ps, String nbTab,
 			String name, String type, String value);
 
 	/**

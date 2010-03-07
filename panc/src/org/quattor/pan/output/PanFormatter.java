@@ -22,7 +22,7 @@ package org.quattor.pan.output;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_UNEXPECTED_EXCEPTION_WHILE_WRITING_OUTPUT;
 
-import java.io.PrintStream;
+import java.io.PrintWriter;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.sax.TransformerHandler;
@@ -65,7 +65,7 @@ public class PanFormatter implements Formatter {
 		return key;
 	}
 
-	public void write(Element root, String rootName, PrintStream ps) {
+	public void write(Element root, String rootName, PrintWriter ps) {
 
 		try {
 
@@ -101,7 +101,7 @@ public class PanFormatter implements Formatter {
 	}
 
 	private void writeChild(TransformerHandler handler, AttributesImpl atts,
-			PrintStream ps, Element node) throws SAXException {
+			PrintWriter ps, Element node) throws SAXException {
 
 		String tagName = node.getTypeAsString();
 		String stringContents = null;

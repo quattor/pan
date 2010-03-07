@@ -26,7 +26,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
+import java.io.PrintWriter;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -49,7 +49,7 @@ public class XMLFormatterUtilsTest {
 		ByteArrayOutputStream baos = null;
 		try {
 			baos = new ByteArrayOutputStream();
-			PrintStream ps = new PrintStream(baos);
+			PrintWriter ps = new PrintWriter(baos);
 			formatter.write(root, "profile", ps);
 		} finally {
 			if (baos != null) {

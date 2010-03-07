@@ -25,7 +25,7 @@ import static org.junit.Assert.assertFalse;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -156,7 +156,7 @@ public class XmlDBFormatterTest {
 		// Creation of the output in a ByteArrayOutputStream
 		Formatter s = XmlDBFormatter.getInstance();
 
-		PrintStream pos = FormatterTestsUtils.createOutput(baos, optionzip);
+		PrintWriter pos = FormatterTestsUtils.createOutput(baos, optionzip);
 		s.write(rootTree, rootName, pos);
 		pos.close();
 

@@ -20,7 +20,7 @@
 
 package org.quattor.pan.output;
 
-import java.io.PrintStream;
+import java.io.PrintWriter;
 
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.Property;
@@ -57,7 +57,7 @@ public class DotFormatter implements Formatter {
 		return key;
 	}
 
-	public void write(Element root, String rootName, PrintStream ps) {
+	public void write(Element root, String rootName, PrintWriter ps) {
 
 		writeHeader(rootName, ps);
 		writeRoot(rootName, root, ps);
@@ -65,7 +65,7 @@ public class DotFormatter implements Formatter {
 
 	}
 
-	private void writeRoot(String myName, Element node, PrintStream ps) {
+	private void writeRoot(String myName, Element node, PrintWriter ps) {
 
 		String tagName = node.getTypeAsString();
 
@@ -94,7 +94,7 @@ public class DotFormatter implements Formatter {
 	}
 
 	private void writeChild(String parentPath, String myName, Element node,
-			PrintStream ps) {
+			PrintWriter ps) {
 
 		String type = node.getTypeAsString();
 
@@ -126,13 +126,13 @@ public class DotFormatter implements Formatter {
 
 	}
 
-	private void writeHeader(String rootName, PrintStream ps) {
+	private void writeHeader(String rootName, PrintWriter ps) {
 		ps.append("digraph \"" + rootName + "\" {\n" + "bgcolor = beige\n"
 				+ "node [ color = black, shape = box, fontname=Helvetica ]\n"
 				+ "edge [ color = black ]\n");
 	}
 
-	private void writeFooter(PrintStream ps) {
+	private void writeFooter(PrintWriter ps) {
 		ps.append("}\n");
 	}
 

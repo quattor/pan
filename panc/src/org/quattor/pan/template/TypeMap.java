@@ -1,11 +1,14 @@
 package org.quattor.pan.template;
 
+import static org.quattor.pan.utils.MessageUtils.MSG_DUPLICATE_TYPE;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.type.BaseType;
 import org.quattor.pan.type.FullType;
+import org.quattor.pan.utils.MessageUtils;
 
 public class TypeMap {
 
@@ -71,11 +74,9 @@ public class TypeMap {
 		// Oops, the type was already defined. Create a descriptive error
 		// message and abort the processing.
 		if (previous != null) {
-			StringBuilder sb = new StringBuilder();
-			sb.append("duplicate type name");
-			sb.append("; previously defined in " + previous.getSource());
-			sb.append(" at " + previous.getSourceRange());
-			throw new EvaluationException(sb.toString());
+			String msg = MessageUtils.format(MSG_DUPLICATE_TYPE, name, previous
+					.getSource(), previous.getSourceRange());
+			throw new EvaluationException(msg);
 		}
 
 	}

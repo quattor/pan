@@ -88,9 +88,9 @@
       <literal>define</literal> keyword can be simply removed from source
       templates. The <literal>description</literal> and
       <literal>descro</literal> clauses can be replaced with comments
-      (starting with a pound sign and continuing until the end of the line).
-      Statements using the <literal>delete</literal> keyword should be changed
-      from:</para>
+      (starting with a pound sign and continuing until the end of the line) or
+      with annotations. Statements using the <literal>delete</literal> keyword
+      should be changed from:</para>
 
       <programlisting>delete '/my/path';</programlisting>
 
@@ -428,7 +428,7 @@
     <section>
       <title>Global Variable Existence Tests</title>
 
-      <para>Other that changes because of deprecated features, there is only
+      <para>Other than changes because of deprecated features, there is only
       one features of panc v8 that requires some changes to pan code. This
       involves how global variables are handled and respond to the
       <function>exists</function> function. In panc v8, as soon as a variable
@@ -534,6 +534,49 @@ variable X ?=
     <title>Change Log</title>
 
     <section>
+      <title>Version 8.3.1</title>
+
+      <para><emphasis>This is a development release and not intended for
+      production use. However it is a release candidate, so please do try the
+      compiler on your production systems to see if any problems arise.
+      Particular attention should be paid to dependency management.</emphasis>
+      Feedback on the new features or any strange behavior is warmly
+      welcomed.</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>(SF Bug #2950443) Fixes a bug in which a duplicate function
+          definition did not provide the traceback to the second definition.
+          </para>
+        </listitem>
+
+        <listitem>
+          <para>(SF Bug #2953804) Fixes a bug in which references to SELF in
+          the the DML block of an include statement caused a null pointer
+          exception. Direct references to SELF will now throw a syntax
+          exception; runtime references to SELF will cause an evaluation
+          exception.</para>
+        </listitem>
+
+        <listitem>
+          <para>The problems with indenting xml output from the pan language
+          compiler has been worked around. With this release, the pan, xmldb,
+          and annotation output files are all indented. This may cause
+          spurious differences in the output files between the 8.3.1 and
+          earlier releases of the compiler. Comparisons should be done
+          ignoring whitespace.</para>
+        </listitem>
+
+        <listitem>
+          <para>The annotation output files now contain information about the
+          source location. This information can be used to link back to source
+          locations for the definitions of variables, functions, and
+          types.</para>
+        </listitem>
+      </itemizedlist>
+    </section>
+
+    <section>
       <title>Version 8.3.0</title>
 
       <para><emphasis>This is a development release and not intended for
@@ -563,7 +606,7 @@ variable X ?=
           <filename>*.pan</filename> as well as <filename>*.tpl</filename>.
           The <filename>*.pan</filename> extension is now the preferred one.
           The next major release will remove support for the
-          <filename>*.tpl</filename> files.</para>
+          <filename>*.tpl</filename> files. (SF RFE#2860652)</para>
         </listitem>
 
         <listitem>
@@ -573,7 +616,8 @@ variable X ?=
           format is not backward-compatible with previous releases!</emphasis>
           However, the associated ant task has been updated to work with the
           new format. After installing the new compiler, be sure to do a
-          complete, fresh build of all of the profiles.</para>
+          complete, fresh build of all of the profiles. (SF RFE #2855050, SF
+          RFE #2718551)</para>
         </listitem>
 
         <listitem>

@@ -409,6 +409,10 @@ public class MessageUtils {
 
 	public final static String MSG_STATISTICS_TEMPLATE = "MSG_STATISTICS_TEMPLATE";
 
+	public final static String MSG_DUPLICATE_FUNCTION = "MSG_DUPLICATE_FUNCTION";
+
+	public final static String MSG_DUPLICATE_TYPE = "MSG_DUPLICATE_TYPE";
+
 	// Name of the resource bundle to use for compiler messages.
 	private final static String bundleName = "org.quattor.pan.Messages";
 

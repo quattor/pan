@@ -1,11 +1,14 @@
 package org.quattor.pan.template;
 
+import static org.quattor.pan.utils.MessageUtils.MSG_DUPLICATE_FUNCTION;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import org.quattor.pan.dml.Operation;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.utils.FunctionDefinition;
+import org.quattor.pan.utils.MessageUtils;
 
 public class FunctionMap {
 
@@ -60,12 +63,9 @@ public class FunctionMap {
 		// Oops, the function was already defined. Create a descriptive error
 		// message and abort the processing.
 		if (previous != null) {
-			StringBuilder sb = new StringBuilder();
-			sb.append("duplicate function definition: " + name + "\n");
-			sb.append("previous definition [" + previous.template.source + ":"
-					+ previous.sourceRange + "]\n");
-			throw new EvaluationException(sb.toString(), sourceRange,
-					template.source);
+			String msg = MessageUtils.format(MSG_DUPLICATE_FUNCTION, name,
+					previous.template.source, previous.sourceRange);
+			throw new EvaluationException(msg);
 		}
 
 	}

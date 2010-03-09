@@ -21,6 +21,7 @@
 package org.quattor.pan.statement;
 
 import org.quattor.pan.dml.Operation;
+import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.template.Context;
 import org.quattor.pan.template.SourceRange;
 
@@ -71,8 +72,12 @@ public class FunctionStatement extends Statement {
 
 	@Override
 	public void execute(Context context) {
-		context.setFunction(name, function, context.getCurrentTemplate(),
-				getSourceRange());
+		try {
+			context.setFunction(name, function, context.getCurrentTemplate(),
+					getSourceRange());
+		} catch (EvaluationException ee) {
+			throw ee.addExceptionInfo(getSourceRange(), context);
+		}
 	}
 
 	/**

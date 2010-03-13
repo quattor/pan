@@ -37,6 +37,23 @@
 				</executions>
 			</plugin>
 
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<systemPropertyVariables>
+						<panc.tmpdir>${project.build.directory}/test-tmp/tmpdir</panc.tmpdir>
+						<panc.testdir>${basedir}/src/test/pan</panc.testdir>
+						<buildDirectory></buildDirectory>
+					</systemPropertyVariables>
+					<excludes>
+						<exclude>**/TestUtils.java</exclude>
+						<exclude>**/ScriptCompilerTest.java</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+
 		</plugins>
 
 	</build>

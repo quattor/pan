@@ -76,7 +76,14 @@ public class TestUtils {
 			fail("panc.tmpdir property must be defined");
 		}
 
+		if (!tmpdir.endsWith("/")) {
+			tmpdir = tmpdir + "/";
+		}
+
 		File tmpfile = new File(tmpdir);
+		if (!tmpfile.exists()) {
+			tmpfile.mkdirs();
+		}
 		if (!tmpfile.isAbsolute()) {
 			fail("panc.tmpdir must be an absolute path");
 		}
@@ -104,10 +111,12 @@ public class TestUtils {
 
 		File testfile = new File(testdir);
 		if (!testfile.isAbsolute()) {
-			fail("panc.testdir must be an absolute path");
+			fail("panc.testdir (" + testfile.toString()
+					+ ") must be an absolute path");
 		}
 		if (!testfile.isDirectory()) {
-			fail("panc.testdir must be an existing directory");
+			fail("panc.testdir (" + testfile.toString()
+					+ ") must be an existing directory");
 		}
 
 		return testfile;

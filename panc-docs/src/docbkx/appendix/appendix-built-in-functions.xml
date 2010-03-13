@@ -1,0 +1,2730 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix version="5.0" xml:id="appendix-functions"
+          xmlns="http://docbook.org/ns/docbook"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          xmlns:xi="http://www.w3.org/2001/XInclude"
+          xmlns:svg="http://www.w3.org/2000/svg"
+          xmlns:mml="http://www.w3.org/1998/Math/MathML"
+          xmlns:html="http://www.w3.org/1999/xhtml"
+          xmlns:db="http://docbook.org/ns/docbook">
+  <title>Built-In Function Reference</title>
+
+  <refentry xml:id="append">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>append</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>append</refname>
+
+      <refpurpose>adds a value to the end of a list</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>list <function>append</function></funcdef>
+
+          <paramdef>element <parameter>value</parameter></paramdef>
+        </funcprototype>
+
+        <funcprototype>
+          <funcdef>list <function>append</function></funcdef>
+
+          <paramdef>list <parameter>target</parameter></paramdef>
+
+          <paramdef>element <parameter>value</parameter></paramdef>
+        </funcprototype>
+
+        <funcprototype>
+          <funcdef>list <function>append</function></funcdef>
+
+          <paramdef>variable_reference
+          <parameter>target</parameter></paramdef>
+
+          <paramdef>element <parameter>value</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>The <function>append</function> function will add the given value
+      to the end of the target list. There are three variants of this
+      function. For all of the variants, an explicit <literal>null</literal>
+      value is illegal and will terminate the compilation with an
+      error.</para>
+
+      <para>The first variant takes a single argument and always operates on
+      <varname>SELF</varname>. It will directly modify the value of
+      <varname>SELF</varname> and give the modified list
+      (<varname>SELF</varname>) as the return value. If
+      <varname>SELF</varname> does not exist, is <literal>undef</literal>, or
+      is <literal>null</literal>, then an empty list will be created and the
+      given value appended to that list. If <varname>SELF</varname> exists but
+      is not a list, an error will terminate the compilation. This variant
+      cannot be used to create a compile-time constant.</para>
+
+      <programlisting># /result will have the values 1 and 2 in that order
+'/result' = list(1);
+'/result' = append(2);</programlisting>
+
+      <para>The second variant takes two arguments. The first argument is a
+      list value, either a literal list value or a list calculated from a DML
+      block. This version will create a copy of the given list and append the
+      given value to the copy. The modified copy is returned. If the target is
+      not a list, then an error will terminate the compilation. This variant
+      can be used to create a compile-time constant as long as the target
+      expression does not reference information outside of the DML block by
+      using, for example, the <function>value</function> function.</para>
+
+      <programlisting># /result will have the values 1 and 2 in that order
+# /x will only have the value 1
+'/x' = list(1);
+'/result' = append(value('/x'), 2);</programlisting>
+
+      <para>The third variant also takes two arguments, where the first value
+      is a variable reference. This variant will take precedence over the
+      second variant. This variant will directly modify the referenced
+      variable and return the modified list. If the referenced variable does
+      not exist, it will be created. As for the other forms, if the referenced
+      target exists and is not a list, then an error will terminate the
+      compilation. <varname>SELF</varname> or descendants of
+      <varname>SELF</varname> can be used as the target. This variant can be
+      used to create a compile-time constant if the referenced variable is an
+      <emphasis>existing</emphasis> local variable. Referencing a global
+      variable (except via <varname>SELF</varname>) is not permitted as
+      modifying global variables from within a DML block is forbidden.</para>
+
+      <programlisting># /result will have the values 1 and 2 in that order
+'/result' = {
+  append(x, 1); # will create local variable x
+  append(x, 2);
+};</programlisting>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="base64_decode">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>base64_decode</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>base64_decode</refname>
+
+      <refpurpose>decodes a string that has been encoded in base64
+      format</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>string <function>base64_decode</function></funcdef>
+
+          <paramdef>string <parameter>encoded</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>The <function>base64_decode</function> function will return the
+      unencoded value of the base64 (RFC 2045) encoded argument. If the
+      argument is not a valid base64 encoded value a fatal error will
+      occur.</para>
+
+      <programlisting># /result have the string value 'hello world'
+'/result' = base64_decode('aGVsbG8gd29ybGQ=');</programlisting>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="base64_encode">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>base64_encode</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>base64_encode</refname>
+
+      <refpurpose>encodes a string in base64 format</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>string <function>base64_encode</function></funcdef>
+
+          <paramdef>string <parameter>unencoded</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>The <function>base64_encode</function> function will return the
+      base64 (RFC 2045) encoded format of the argument.</para>
+
+      <programlisting># /result have the string value 'aGVsbG8gd29ybGQ='
+'/result' = base64_encode('hello world');</programlisting>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="clone">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>clone</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>clone</refname>
+
+      <refpurpose>returns a clone (copy) of the argument</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>element <function>clone</function></funcdef>
+
+          <paramdef>element <parameter>arg</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>The <function>clone</function> function may return a clone (copy)
+      of the argument. If the argument is a resource, the result will be a
+      "deep" copy of the argument; subsequent changes to the argument will not
+      affect the clone and vice versa. Because properties are immutable
+      internally, this function will not actually copy a property instead
+      returning the argument itself.</para>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="create">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>create</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>create</refname>
+
+      <refpurpose>create an nlist from a structure template</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>nlist <function>create</function></funcdef>
+
+          <paramdef>string <parameter>tpl_name</parameter></paramdef>
+
+          <paramdef>...</paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>The <function>create</function> function will return an nlist from
+      the named structure template. The optional additional arguments are key,
+      value pairs that will be added to the returned nlist, perhaps
+      overwriting values from the structure template. The keys must be strings
+      that contain valid nlist keys (see Path Literals Section). The values can be any element. Null
+      values will delete the given key from the resulting nlist.</para>
+
+      <programlisting># description of CD mount entry with the device undefined
+# (in file 'mount_cdrom.pan')
+structure template mount_cdrom; 
+'device' = undef; 
+'path' = '/mnt/cdrom'; 
+'type' = 'iso9660'; 
+'options' = list('noauto', 'owner', 'ro'); 
+
+# use from within another template
+'/system/mounts/0' = create('mount_cdrom', 'device', 'hdc'); 
+
+# the above is equivalent to the following two lines
+'/system/mounts/0' = create('mount_cdrom'); 
+'/system/mounts/0/device' = 'hdc';</programlisting>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="debug">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>debug</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>debug</refname>
+
+      <refpurpose>print debugging information to the console</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>string <function>debug</function></funcdef>
+
+          <paramdef>string <parameter>msg</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>This function will print the given string to the console (on
+      stdout) and return the message as the result. This functionality must be
+      activated either from the command line or via a compiler option (see
+      compiler manual for details). If this is not activated, the function
+      will not evaluate the argument and will return undef.</para>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="delete">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>delete</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>delete</refname>
+
+      <refpurpose>delete the element identified by the variable
+      expression</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>undef <function>delete</function></funcdef>
+
+          <paramdef>variable_expression <parameter>arg</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>This function will delete the element identified by the variable
+      expression given in the argument and return undef. The variable
+      expression can be a simple or subscripted variable reference (e.g. x,
+      x[0], x['abc'][1], etc.). Only variables local to a DML block can be
+      modified with this function. Attempts to modify a global variable will
+      cause a fatal error. For subscripted variable references, this function
+      has the same effect as assigning the variable reference to null.</para>
+
+      <programlisting># /result will contain the list ('a', 'c') 
+'/result' = { 
+  x = list('a', 'b', 'c'); 
+  delete(x[1]); 
+  x; 
+}; </programlisting>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="deprecated">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>deprecated</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>deprecated</refname>
+
+      <refpurpose>print deprecation warning to console</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>string <function>deprecated</function></funcdef>
+
+          <paramdef>long<parameter> level</parameter></paramdef>
+
+          <paramdef>string <parameter>msg</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>This function will print the given string to the console (on
+      stderr) and return the message as the result, if
+      <parameter>level</parameter> is less than or equal to the deprecation
+      level given as a compiler option. If the message is not printed, the
+      function returns undef. The value of <parameter>level</parameter> must
+      be non-negative.</para>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="digest">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>digest</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>digest</refname>
+
+      <refpurpose>creates a digest of a message using the specified
+      algorithm</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>string <function>digest</function></funcdef>
+
+          <paramdef>string <parameter>algorithm</parameter></paramdef>
+
+          <paramdef>string <parameter>message</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>This function returns a digest of the message using the specified
+      algorithm. The valid algorithms are: <literal>MD2</literal>,
+      <literal>MD5</literal>, <literal>SHA</literal>,
+      <literal>SHA-1</literal>, <literal>SHA-256</literal>,
+      <literal>SHA-384</literal>, and <literal>SHA-512</literal>. The
+      algorithm name is not case sensitive.</para>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="error">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>error</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>error</refname>
+
+      <refpurpose>print message to console and abort compilation</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>void <function>error</function></funcdef>
+
+          <paramdef>string <parameter>msg</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>This function prints the given message to the console (stderr) and
+      aborts the compilation. This function cannot appear neither in variable
+      subscripts nor in function arguments; a fatal error will occur if found
+      in either place.</para>
+
+      <programlisting># a user-defined function requiring one argument
+function foo = { 
+
+  if (ARGC != 1) {
+    error("foo(): wrong number of arguments: " + to_string(ARGC));
+  };
+
+  # normal processing... 
+};</programlisting>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="escape">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>escape</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>escape</refname>
+
+      <refpurpose>escape non-alphanumeric characters to allow use as nlist
+      key</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>string <function>escape</function></funcdef>
+
+          <paramdef>string <parameter>str</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>This function escapes non-alphanumeric characters in the argument
+      so that it can be used inside paths, for instance as an nlist key.
+      Non-alphanumeric characters are replaced by an underscore followed by
+      the hex value of the character. If the string begins with a digit, the
+      initial digit is also escaped. If the argument is the empty string, the
+      returned value is a single underscore '_'.</para>
+
+      <programlisting># /result will have the value '1_2b1'
+'/result' = escape('1+1'); </programlisting>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="exists">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>exists</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>exists</refname>
+
+      <refpurpose>determines if a variable expression, path, or template
+      exists</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>boolean <function>exists</function></funcdef>
+
+          <paramdef>variable_expression <parameter>var</parameter></paramdef>
+        </funcprototype>
+
+        <funcprototype>
+          <funcdef>boolean <function>exists</function></funcdef>
+
+          <paramdef>string <parameter>path</parameter></paramdef>
+        </funcprototype>
+
+        <funcprototype>
+          <funcdef>boolean <function>exists</function></funcdef>
+
+          <paramdef>string <parameter>tpl</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>This function will return a boolean indicating whether a variable
+      expression, path, or template exists. If the argument is a variable
+      expression (with or without subscripts) then this function will return
+      true if the given variable exists; the value of referenced variable is
+      not used. If the argument is not a variable reference, the argument is
+      evaluated; the value must be a string. If the resulting string is a
+      valid external or absolute path, the path is checked. Otherwise, the
+      string is interpreted as a template name and the existence of this
+      template is checked.</para>
+
+      <para>Note that if the argument is a variable expression, only the
+      existence of the variable is checked. For example, the following code
+      will always leave <varname>r</varname> with a value of
+      <literal>true</literal>.</para>
+
+      <programlisting>v = '/some/absolute/path';
+r = exists(v);</programlisting>
+
+      <para>If you want to test the path, remove the ambiguity by using a
+      construct like the following:</para>
+
+      <programlisting>v = '/some/absolute/path';
+r = exists(v+'');</programlisting>
+
+      <para>The value of <varname>r</varname> in this case will be
+      <literal>true</literal> if <literal>/some/absolute/path</literal> exists
+      or <literal>false</literal> otherwise.</para>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="file_contents">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>file_contents</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>file_contents</refname>
+
+      <refpurpose>provide contents of file as a string</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>string <function>file_contents</function></funcdef>
+
+          <paramdef>string <parameter>filename</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>This function will return a string containing the contents of the
+      named file. The file is located using the standard source file lookup
+      algorithm. Because the load path is used to find the file, this function
+      may not be used to create a compile-time constant. If the file cannot be
+      found, an error will be raised.</para>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="first">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>first</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>first</refname>
+
+      <refpurpose>initialize an iterator over a resource and return first
+      entry</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>boolean <function>first</function></funcdef>
+
+          <paramdef>resource <parameter>r</parameter></paramdef>
+
+          <paramdef>variable_expression <parameter>key</parameter></paramdef>
+
+          <paramdef>variable_expression
+          <parameter>value</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>This function resets the iterator associated with
+      <varname>r</varname> so that it points to the beginning of the resource.
+      It will return <literal>false</literal> if the resource is empty;
+      <literal>true</literal>, otherwise. If the resource is not empty, then
+      it will also set the variable identified by <varname>key</varname> to
+      the child's index and the variable identified by
+      <varname>value</varname> to the child's value. Either
+      <varname>key</varname> or <varname>value</varname> may be
+      <literal>undef</literal>, in which case no assignment is made. For a
+      list resource <varname>key</varname> is the child's numeric index; for
+      an nlist resource, the string value of the key itself. An example of
+      using <function>first</function> with a list:</para>
+
+      <programlisting># compute the sum of the elements inside numlist 
+numlist = list(1, 2, 4, 8); 
+sum = 0; 
+ok = first(numlist, k, v); 
+while (ok) { 
+  sum = sum + v; 
+  ok = next(numlist, k, v); 
+}; 
+# value of sum will be 15</programlisting>
+
+      <para>An example of using <function>first</function> with an
+      nlist:</para>
+
+      <programlisting># put the list of all the keys of table inside keys 
+table = nlist("a", 1, "b", 2, "c", 3); 
+keys = list(); 
+ok = first(table, k, v); 
+  while (ok) { 
+  keys[length(keys)] = k;
+  ok = next(table, k, v);
+}; 
+# keys will be ("a", "b", "c") </programlisting>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="format">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>format</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>format</refname>
+
+      <refpurpose xml:id="func_format_purpose">format a string by replacing
+      references to parameters</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>string <function>format</function></funcdef>
+
+          <paramdef>string <parameter>fmt</parameter></paramdef>
+
+          <paramdef>property <parameter>param</parameter></paramdef>
+
+          <paramdef>...</paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>The <function>format</function> function will replace all
+      references within the <parameter>fmt</parameter> string with the values
+      of the referenced properties. This provides functionality similar to the
+      c-language's <function>printf</function> function. The syntax of the
+      <parameter>fmt</parameter> string follows that provided in the java
+      language; see the <classname>Formatter</classname> entry for full
+      details.</para>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="if_exists">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>if_exists</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>if_exists</refname>
+
+      <refpurpose>check if a template exists, returning template name if it
+      does</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>string|undef <function>if_exists</function></funcdef>
+
+          <paramdef>string <parameter>tpl</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>The <function>if_exists</function> function checks if the named
+      template exists on the current load path. If it does, the function
+      returns the name of the template. If it does not,
+      <literal>undef</literal> is returned. This can be used to conditionally
+      include a template:</para>
+
+      <programlisting>include {if_exists('my/conditional/template')};</programlisting>
+
+      <para>This function should be used with caution as this brings in
+      dependencies based on the state of the file system and may cause
+      dependency checking to be inaccurate.</para>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="index">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>index</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>index</refname>
+
+      <refpurpose>finds substring within a string or element within a
+      resource</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>long <function>index</function></funcdef>
+
+          <paramdef>string <parameter>sub</parameter></paramdef>
+
+          <paramdef>string <parameter>arg</parameter></paramdef>
+
+          <paramdef choice="opt">long <parameter>start</parameter></paramdef>
+        </funcprototype>
+
+        <funcprototype>
+          <funcdef>long <function>index</function></funcdef>
+
+          <paramdef>property <parameter>sub</parameter></paramdef>
+
+          <paramdef>string <parameter>list</parameter></paramdef>
+
+          <paramdef choice="opt">long <parameter>start</parameter></paramdef>
+        </funcprototype>
+
+        <funcprototype>
+          <funcdef>string <function>index</function></funcdef>
+
+          <paramdef>property <parameter>sub</parameter></paramdef>
+
+          <paramdef>nlist <parameter>arg</parameter></paramdef>
+
+          <paramdef choice="opt">long <parameter>start</parameter></paramdef>
+        </funcprototype>
+
+        <funcprototype>
+          <funcdef>long <function>index</function></funcdef>
+
+          <paramdef>nlist <parameter>sub</parameter></paramdef>
+
+          <paramdef>list <parameter>arg</parameter></paramdef>
+
+          <paramdef choice="opt">long <parameter>start</parameter></paramdef>
+        </funcprototype>
+
+        <funcprototype>
+          <funcdef>string <function>index</function></funcdef>
+
+          <paramdef>nlist <parameter>sub</parameter></paramdef>
+
+          <paramdef>nlist <parameter>arg</parameter></paramdef>
+
+          <paramdef choice="opt">long <parameter>start</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>The <function>index</function> function returns the location of a
+      substring within a string or an element within a resource. In detail the
+      five different forms perform the following actions.</para>
+
+      <para>The first form searches for the given substring inside the given
+      string and returns its position from the beginning of the string or
+      <literal>-1</literal> if not found; if the third argument is given,
+      starts initially from that position.</para>
+
+      <programlisting>'/s1' = index('foo', 'abcfoodefoobar'); # 3 
+'/s2' = index('f0o', 'abcfoodefoobar'); # -1 
+'/s3' = index('foo', 'abcfoodefoobar', 4); # 8 </programlisting>
+
+      <para>The second form searches for the given property inside the given
+      list of properties and returns its position or <literal>-1</literal> if
+      not found; if the third argument is given, starts initially from that
+      position; it is an error if <varname>sub</varname> and
+      <varname>arg</varname>’s children are not of the same type.</para>
+
+      <programlisting># search in a list of strings (result = 2)
+"/l1" = index("foo", list("Foo", "FOO", "foo", "bar")); 
+
+# search in a list of longs (result = 3)
+"/l2" = index(1, list(3, 1, 4, 1, 6), 2);</programlisting>
+
+      <para>The third form searches for the given property inside the given
+      named list of properties and returns its name or the empty string if not
+      found; if the third argument is given, skips that many matching
+      children; it is an error if <varname>sub</varname> and
+      <varname>arg</varname>’s children are not of the same type.</para>
+
+      <programlisting># simple color table
+'/table' = nlist('red', 0xf00, 'green', 0x0f0, 'blue', 0x00f); 
+
+# result will be the string 'green'
+'/name1' = index(0x0f0, value('/table')); 
+
+# result will be the empty string
+'/name2' = index(0x0f0, value('/table'), 1);</programlisting>
+
+      <para>The fourth form searches for the given nlist inside the given list
+      of nlists and returns its position or <literal>-1</literal> if not
+      found. The comparison is done by comparing all the children of
+      <varname>sub</varname>, these children must all be properties. If the
+      third argument is given, starts initially from that position. It is an
+      error if <varname>sub</varname> and <varname>arg</varname>’s children
+      are not of the same type or if their common children don’t have the same
+      type.</para>
+
+      <programlisting># search a record in a list of records (result = 1, the second nlist)
+'/l1' = index(
+              nlist('key', 'foo'), 
+              list(
+                   nlist('key', 'bar', 'val', 101), 
+                   nlist('key', 'foo', 'val', 102)
+                  )
+             ); </programlisting>
+
+      <para>The last form searches for the given nlist inside the given nlist
+      of nlists and returns its name or the empty string if not found. If the
+      third argument is given, the function skips that many matching children.
+      It is an error if <varname>sub</varname> and <varname>arg</varname>’s
+      children are not of the same type or if their common children don’t have
+      the same type.</para>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="is_boolean">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>is_boolean</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>is_boolean</refname>
+
+      <refpurpose>checks to see if the argument is a double</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>boolean <function>is_boolean</function></funcdef>
+
+          <paramdef>element <parameter>arg</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>The <function>is_boolean</function> function will return
+      <literal>true</literal> if the argument is a boolean value; it will
+      return <literal>false</literal> otherwise.</para>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="is_defined">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>is_defined</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>is_defined</refname>
+
+      <refpurpose>checks to see if the argument is anything but
+      <literal>undef</literal> or <literal>null</literal></refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>boolean <function>is_defined</function></funcdef>
+
+          <paramdef>element <parameter>arg</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>The <function>is_defined</function> function will return a
+      <literal>true</literal> value if the argument is anything but
+      <literal>undef</literal> or <literal>null</literal>; it will return
+      <literal>false</literal> otherwise.</para>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="is_double">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>is_double</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>is_double</refname>
+
+      <refpurpose>checks to see if the argument is a double</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>boolean <function>is_double</function></funcdef>
+
+          <paramdef>element <parameter>arg</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>The <function>is_double</function> function will return
+      <literal>true</literal> if the argument is a double value; it will
+      return <literal>false</literal> otherwise.</para>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="is_list">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>is_list</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>is_list</refname>
+
+      <refpurpose>checks to see if the argument is a double</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>boolean <function>is_list</function></funcdef>
+
+          <paramdef>element <parameter>arg</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>The <function>is_list</function> function will return
+      <literal>true</literal> if the argument is a list; it will return
+      <literal>false</literal> otherwise.</para>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="is_long">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>is_long</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>is_long</refname>
+
+      <refpurpose>checks to see if the argument is a long</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>boolean <function>is_long</function></funcdef>
+
+          <paramdef>element <parameter>arg</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>The <function>is_long</function> function will return
+      <literal>true</literal> if the argument is a long value; it will return
+      <literal>false</literal> otherwise.</para>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="is_nlist">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>is_nlist</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>is_nlist</refname>
+
+      <refpurpose>checks to see if the argument is an nlist</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>boolean <function>is_nlist</function></funcdef>
+
+          <paramdef>element <parameter>arg</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>The <function>is_nlist</function> function will return
+      <literal>true</literal> if the argument is an nlist; it will return
+      <literal>false</literal> otherwise.</para>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="is_null">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>is_null</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>is_null</refname>
+
+      <refpurpose>checks to see if the argument is
+      <literal>null</literal></refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>boolean <function>is_null</function></funcdef>
+
+          <paramdef>element <parameter>arg</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>The <function>is_null</function> function will return a
+      <literal>true</literal> value if the argument is
+      <literal>null</literal>; it will return <literal>false</literal>
+      otherwise.</para>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="is_number">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>is_number</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>is_number</refname>
+
+      <refpurpose>checks to see if the argument is a number</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>boolean <function>is_number</function></funcdef>
+
+          <paramdef>element <parameter>arg</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>The <function>is_number</function> function will return a
+      <literal>true</literal> value if the argument is a number (long or
+      double); it will return <literal>false</literal> otherwise.</para>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="is_property">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>is_property</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>is_property</refname>
+
+      <refpurpose>checks to see if the argument is a property</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>boolean <function>is_property</function></funcdef>
+
+          <paramdef>element <parameter>arg</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>The <function>is_property</function> function will return a
+      <literal>true</literal> value if the argument is a property (atomic
+      value); it will return <literal>false</literal> otherwise.</para>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="is_resource">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>is_resource</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>is_resource</refname>
+
+      <refpurpose>checks to see if the argument is a resource</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>boolean <function>is_resource</function></funcdef>
+
+          <paramdef>element <parameter>arg</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>The <function>is_resource</function> function will return a
+      <literal>true</literal> value if the argument is a resource
+      (collection); it will return <literal>false</literal> otherwise.</para>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="is_string">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>is_string</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>is_string</refname>
+
+      <refpurpose>checks to see if the argument is a string</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>boolean <function>is_string</function></funcdef>
+
+          <paramdef>element <parameter>arg</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>The <function>is_string</function> function will return
+      <literal>true</literal> if the argument is a string value; it will
+      return <literal>false</literal> otherwise.</para>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="key">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>key</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>key</refname>
+
+      <refpurpose>returns name of child based on the index</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>string <function>key</function></funcdef>
+
+          <paramdef>nlist <parameter>resource</parameter></paramdef>
+
+          <paramdef>long <parameter>index</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>This function returns the name of the child identified by its
+      index, this can be used to iterate through all the children of an nlist.
+      The index corresponds to the key's position in the list of all keys,
+      sorted in lexical order. The first index is 0.</para>
+
+      <programlisting>'/table' = nlist('red', 0xf00, 'green', 0x0f0, 'blue', 0x00f); 
+
+'/keys' = { 
+
+  tbl = value('/table'); 
+  res = ''; 
+  len = length(tbl); 
+  idx = 0; 
+  while (idx &lt; len) { 
+    res = res + key(tbl, idx) + ' '; 
+    idx = idx + 1; 
+  }; 
+
+  if (length(res) &gt; 0) splice(res, -1, 1); 
+  return(res); 
+}; 
+# /keys will be the string 'blue green red ' </programlisting>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="length">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>length</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>length</refname>
+
+      <refpurpose>returns size of a string or resource</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>long <function>length</function></funcdef>
+
+          <paramdef>string <parameter>str</parameter></paramdef>
+        </funcprototype>
+
+        <funcprototype>
+          <funcdef>long <function>length</function></funcdef>
+
+          <paramdef>resource <parameter>res</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>Returns the size of the given string or the number of children of
+      the given resource.</para>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="list">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>list</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>list</refname>
+
+      <refpurpose>create a new list consisting of the function
+      arguments</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>list <function>list</function></funcdef>
+
+          <paramdef>element <parameter>elem</parameter></paramdef>
+
+          <paramdef>...</paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>Returns a newly created list containing the function
+      arguments.</para>
+
+      <programlisting># creates an empty list
+'/empty' = list();
+
+# define list of two DNS servers
+'/dns' = list('137.138.16.5', '137.138.17.6');</programlisting>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="match">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>match</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>match</refname>
+
+      <refpurpose>checks if a regular expression matches a string</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>boolean <function>match</function></funcdef>
+
+          <paramdef>string <parameter>target</parameter></paramdef>
+
+          <paramdef>string <parameter>regex</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>This function checks if the given string matches the regular
+      expression.</para>
+
+      <programlisting># device_t is a string that can only be "disk", "cd" or "net" 
+type device_t = string with match(self, ’ˆ(disk|cd|net)$’);</programlisting>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="matches">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>matches</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>matches</refname>
+
+      <refpurpose>checks if a regular expression matches a string</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>string[] <function>matches</function></funcdef>
+
+          <paramdef>string <parameter>target</parameter></paramdef>
+
+          <paramdef>string <parameter>regex</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>This function matches the given string against the regular
+      expression and returns the list of captured substrings, the first one
+      (at index 0) being the complete matched string.</para>
+
+      <programlisting># IPv4 address in dotted number notation 
+type ipv4 = string with { 
+  result = matches(self, ’ˆ(\d+)\.(\d+)\.(\d+)\.(\d+)$’); 
+  if (length(result) == 0) 
+  return("bad string"); 
+  i = 1; 
+  while (i &lt;= 4) { 
+    x = to_long(result[i]); 
+    if (x &gt; 255) return("chunk " + to_string(i) + " too big: " + result[i]); 
+    i = i + 1; 
+  };
+  return(true); 
+};</programlisting>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="merge">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>merge</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>merge</refname>
+
+      <refpurpose>combine two resources into a single one</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>resource <function>merge</function></funcdef>
+
+          <paramdef>resource <parameter>res1</parameter></paramdef>
+
+          <paramdef>resource <parameter>res2</parameter></paramdef>
+
+          <paramdef>...</paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>This function returns the resource which combines the resources
+      given as arguments, all of which must be of the same type: either all
+      lists or all nlists. If more than one nlist has a child of the same
+      name, an error occurs.</para>
+
+      <programlisting># /z will contain the list 'a', 'b', 'c', 'd', 'e'
+'/x' = list('a', 'b', 'c'); 
+'/y' = list('d', 'e'); 
+'/z' = merge (value('/x'), value('/y'));</programlisting>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="nlist">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>nlist</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>nlist</refname>
+
+      <refpurpose>create an nlist from the arguments</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>nlist <function>nlist</function></funcdef>
+
+          <paramdef>string <parameter>key</parameter></paramdef>
+
+          <paramdef>element <parameter>property</parameter></paramdef>
+
+          <paramdef>...</paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>The <function>nlist</function> function returns a new nlist
+      consisting of the passed arguments; the arguments must be key value
+      pairs. All of the keys must be strings and have values that are legal
+      path terms (see Path Literals Section).</para>
+
+      <programlisting># resulting nlist associates name with long value
+'/result' = nlist(
+  'one', 1,
+  'two', 2,
+  'three', 3,
+};</programlisting>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="next">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>next</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>next</refname>
+
+      <refpurpose>increment iterator over a resource</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>boolean <function>next</function></funcdef>
+
+          <paramdef>resource <parameter>res</parameter></paramdef>
+
+          <paramdef>identifier <parameter>key</parameter></paramdef>
+
+          <paramdef>identifier <parameter>value</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>This function increments the iterator associated with
+      <varname>res</varname> so that it points to the next child element. The
+      key and value of the next child are stored in the named variables
+      <varname>key</varname> and <varname>value</varname>, either of which
+      could be <literal>undef</literal>. The function returns
+      <literal>true</literal> if the child exists, or <literal>false</literal>
+      otherwise.</para>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="path_exists">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>path_exists</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>path_exists</refname>
+
+      <refpurpose>determines if a path exists</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>boolean <function>path_exists</function></funcdef>
+
+          <paramdef>string <parameter>path</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>This function will return a boolean indicating whether the given
+      path exists. The path must be an absolute or external path. This
+      function should be used in preference to the <function>exists</function>
+      function to avoid an ambiguity in handling the argument to
+      <function>exists</function> as a path or variable reference.</para>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="prepend">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>prepend</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>prepend</refname>
+
+      <refpurpose>adds a value to the beginning of a list</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>list <function>prepend</function></funcdef>
+
+          <paramdef>element <parameter>value</parameter></paramdef>
+        </funcprototype>
+
+        <funcprototype>
+          <funcdef>list <function>prepend</function></funcdef>
+
+          <paramdef>list <parameter>target</parameter></paramdef>
+
+          <paramdef>element <parameter>value</parameter></paramdef>
+        </funcprototype>
+
+        <funcprototype>
+          <funcdef>list <function>prepend</function></funcdef>
+
+          <paramdef>variable_reference
+          <parameter>target</parameter></paramdef>
+
+          <paramdef>element <parameter>value</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>The <function>prepend</function> function will add the given value
+      to the beginning of the target list. There are three variants of this
+      function. For all of the variants, an explicit <literal>null</literal>
+      value is illegal and will terminate the compilation with an
+      error.</para>
+
+      <para>The first variant takes a single argument and always operates on
+      <varname>SELF</varname>. It will directly modify the value of
+      <varname>SELF</varname> and give the modified list
+      (<varname>SELF</varname>) as the return value. If
+      <varname>SELF</varname> does not exist, is <literal>undef</literal>, or
+      is <literal>null</literal>, then an empty list will be created and the
+      given value prepended to that list. If <varname>SELF</varname> exists
+      but is not a list, an error will terminate the compilation. This variant
+      cannot be used to create a compile-time constant.</para>
+
+      <programlisting># /result will have the values 2 and 1 in that order
+'/result' = list(1);
+'/result' = prepend(2);</programlisting>
+
+      <para>The second variant takes two arguments. The first argument is a
+      list value, either a literal list value or a list calculated from a DML
+      block. This version will create a copy of the given list and prepend the
+      given value to the copy. The modified copy is returned. If the target is
+      not a list, then an error will terminate the compilation. This variant
+      can be used to create a compile-time constant as long as the target
+      expression does not reference information outside of the DML block by
+      using, for example, the <function>value</function> function.</para>
+
+      <programlisting># /result will have the values 2 and 1 in that order
+# /x will only have the value 1
+'/x' = list(1);
+'/result' = prepend(value('/x'), 2);</programlisting>
+
+      <para>The third variant also takes two arguments, where the first value
+      is a variable reference. This variant will take precedence over the
+      second variant. This variant will directly modify the referenced
+      variable and return the modified list. If the referenced variable does
+      not exist, it will be created. As for the other forms, if the referenced
+      target exists and is not a list, then an error will terminate the
+      compilation. <varname>SELF</varname> or descendants of
+      <varname>SELF</varname> can be used as the target. This variant can be
+      used to create a compile-time constant if the referenced variable is an
+      <emphasis>existing</emphasis> local variable. Referencing a global
+      variable (except via <varname>SELF</varname>) is not permitted as
+      modifying global variables from within a DML block is forbidden.</para>
+
+      <programlisting># /result will have the values 2 and 1 in that order
+'/result' = {
+  prepend(x, 1); # will create local variable x
+  prepend(x, 2);
+};</programlisting>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="replace">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>replace</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>replace</refname>
+
+      <refpurpose>replace all occurrences of a regular expression</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>string <function>replace</function></funcdef>
+
+          <paramdef>string <parameter>regex</parameter></paramdef>
+
+          <paramdef>string <parameter>repl</parameter></paramdef>
+
+          <paramdef>string<parameter> target</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>The <function>replace</function> function will replace all
+      occurrences of the given regular expression with the replacement string.
+      The regular expression is specified using the standard pan regular
+      expression syntax. The replacement string may contain references to
+      groups identified within the regular expression. The group references
+      are indicated with a dollar sign ($) followed by the group number. A
+      literal dollar sign can be obtained by preceding it with a
+      backslash.</para>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="return">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>return</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>return</refname>
+
+      <refpurpose>exit DML block with given value</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>element <function>return</function></funcdef>
+
+          <paramdef>element <parameter>value</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>This function interrupts the processing of the current DML block
+      and returns from it with the given value. This is often used in
+      user-defined functions.</para>
+
+      <programlisting>function facto = { 
+  if (ARGV[0] &lt; 2) return(1); 
+  return(ARGV[0] * facto(ARGV[0] - 1)); 
+};</programlisting>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="splice">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>splice</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>splice</refname>
+
+      <refpurpose>insert string or list into another</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>string <function>splice</function></funcdef>
+
+          <paramdef>string <parameter>str</parameter></paramdef>
+
+          <paramdef>long <parameter>start</parameter></paramdef>
+
+          <paramdef>long <parameter>length</parameter></paramdef>
+
+          <paramdef choice="opt">string <parameter>repl</parameter></paramdef>
+        </funcprototype>
+
+        <funcprototype>
+          <funcdef>list <function>splice</function></funcdef>
+
+          <paramdef>list <parameter>list</parameter></paramdef>
+
+          <paramdef>long <parameter>start</parameter></paramdef>
+
+          <paramdef>long <parameter>length</parameter></paramdef>
+
+          <paramdef choice="opt">list <parameter>repl</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>The first form of this function deletes the substring identified
+      by <varname>start</varname> and <varname>length</varname> and, if a
+      fourth argument is given, inserts <varname>repl</varname>.</para>
+
+      <programlisting>'/s1' = splice('abcde', 2, 0, '12');  # ab12cde 
+'/s2' = splice('abcde', -2, 1);       # abce 
+'/s3' = splice('abcde', 2, 2, 'XXX'); # abXXXe </programlisting>
+
+      <para>The second form of this function deletes the children of the given
+      list identified by <varname>start</varname> and
+      <varname>length</varname> and, if a fourth argument is given, replaces
+      them with the contents of <varname>repl</varname>.</para>
+
+      <programlisting># will be the list 'a', 'b', 1, 2, 'c', 'd', 'e' 
+'/l1' = splice(list('a','b','c','d','e'), 2, 0, list(1,2)); 
+
+# will be the list 'a', 'b', 'c', 'e' 
+'/l2' = splice(list('a','b','c','d','e'), -2, 1); 
+
+# will be the list 'a', 'b', 'XXX', 'e'
+'/l3' = splice(list('a','b','c','d','e'), 2, 2, list('XXX'));</programlisting>
+
+      <important>
+        <para>This function will <emphasis>not</emphasis> modify the arguments
+        directly. Instead a copy of the input string or list is created,
+        modified, and returned by the function. If you ignore the return
+        value, then the function call will have no effect.</para>
+      </important>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="split">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>split</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>split</refname>
+
+      <refpurpose>split a string using a regular expression</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>string[] <function>split</function></funcdef>
+
+          <paramdef>string <parameter>regex</parameter></paramdef>
+
+          <paramdef>string <parameter>target</parameter></paramdef>
+        </funcprototype>
+
+        <funcprototype>
+          <funcdef>string[] <function>split</function></funcdef>
+
+          <paramdef>string <parameter>regex</parameter></paramdef>
+
+          <paramdef>long <parameter>limit</parameter></paramdef>
+
+          <paramdef>string <parameter>target</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>The <function>split</function> function will split the
+      <parameter>target</parameter> string around matches of the given regular
+      expression. The regular expression is specified using the standard pan
+      regular expression syntax. If the <parameter>limit</parameter> parameter
+      is not specified, a default value of 0 is used. If the
+      <parameter>limit</parameter> parameter is negative, then the function
+      will match all occurrences of the regular expression and return the
+      result. A value of 0 will do the same, except that empty strings at the
+      end of the sequence will be removed. A positive value will return an
+      array with at most <parameter>limit</parameter> entries. That is, the
+      regular expression will be matched at most
+      <parameter>limit</parameter>-1 times; the unmatched part of the string
+      will be returned in the last element of the list.</para>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="substr">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>substr</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>substr</refname>
+
+      <refpurpose>extract a substring from a string</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>string <function>substr</function></funcdef>
+
+          <paramdef>string <parameter>target</parameter></paramdef>
+
+          <paramdef>long <parameter>start</parameter></paramdef>
+        </funcprototype>
+
+        <funcprototype>
+          <funcdef>string <function>substr</function></funcdef>
+
+          <paramdef>string <parameter>target</parameter></paramdef>
+
+          <paramdef>long <parameter>start</parameter></paramdef>
+
+          <paramdef>long <parameter>length</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>This function returns the part of the given string characterised
+      by its <parameter>start</parameter> position (starting from 0) and its
+      <parameter>length</parameter>. If <parameter>length</parameter> is
+      omitted, returns everything to the end of the string. If
+      <parameter>start</parameter> is negative, starts that far from the end
+      of the string; if <parameter>length</parameter> is negative, leaves that
+      many characters off the end of the string.</para>
+
+      <programlisting>"/s1" = substr("abcdef", 2); # cdef 
+"/s2" = substr("abcdef", 1, 1); # b 
+"/s3" = substr("abcdef", 1, -1); # bcde 
+"/s4" = substr("abcdef", -4); # cdef 
+"/s5" = substr("abcdef", -4, 1); # c 
+"/s6" = substr("abcdef", -4, -1); # cde</programlisting>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="to_boolean">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>to_boolean</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>to_boolean</refname>
+
+      <refpurpose>convert argument to a boolean value</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>boolean <function>to_boolean</function></funcdef>
+
+          <paramdef>property <parameter>prop</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>This function converts the given property into a boolean value.
+      The numeric values 0 and 0.0 are considered <literal>false</literal>;
+      other numbers, <literal>true</literal>. The empty string and the string
+      "false" (ignoring case) will return <literal>false</literal>; all other
+      strings will return <literal>true</literal>. The function will not
+      accept resources.</para>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="to_double">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>to_double</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>to_double</refname>
+
+      <refpurpose>convert argument to a double value</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>double <function>to_double</function></funcdef>
+
+          <paramdef>property <parameter>prop</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>This function converts the given property into a double.</para>
+
+      <para>If the argument is a string, then the string will be parsed to
+      determine the double value. Any valid literal double syntax can be used.
+      Strings that do not represent a valid double value will cause a fatal
+      error.</para>
+
+      <para>If the argument is a boolean, then the function will return
+      <literal>0.0</literal> or <literal>1.0</literal> depending on whether
+      the boolean value is <literal>false</literal> or
+      <literal>true</literal>, respectively.</para>
+
+      <para>If the argument is a long, then the corresponding double value
+      will be returned.</para>
+
+      <para>If the argument is a double, then the value is returned
+      directly.</para>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="to_long">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>to_long</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>to_long</refname>
+
+      <refpurpose>convert argument to a long value</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>long <function>to_long</function></funcdef>
+
+          <paramdef>property <parameter>prop</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>This function converts the given property into a long
+      value.</para>
+
+      <para>If the argument is a string, then the string will be parsed to
+      determine the long value. The string may represent a long value as an
+      octal, decimal, or hexadecimal value. The syntax is exactly the same as
+      for specifying literal long values. String values that cannot be parsed
+      as a long value will result in an error.</para>
+
+      <para>If the argument is a boolean, then the return value will be either
+      <literal>0</literal> or <literal>1</literal> depending on whether the
+      boolean is <literal>false</literal> or <literal>true</literal>,
+      respectively.</para>
+
+      <para>If the argument is a double value, then the double value is
+      rounded to the nearest long value.</para>
+
+      <para>If the argument is a long value, it is returned directly.</para>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="to_lowercase">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>to_lowercase</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>to_lowercase</refname>
+
+      <refpurpose>change all uppercase letters to lowercase</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>string <function>to_lowercase</function></funcdef>
+
+          <paramdef>string <parameter>target</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>The <function>to_lowercase</function> function will convert all
+      uppercase letters in the <parameter>target</parameter> to lowercase. The
+      United States (US) locale is forced for the conversion to guarantee
+      consistent behavior independent of the current default locale.</para>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="to_string">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>to_string</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>to_string</refname>
+
+      <refpurpose>convert argument to a string value</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>string <function>to_string</function></funcdef>
+
+          <paramdef>element <parameter>elem</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>This function will convert the argument into a string. The
+      function will create a reasonable human-readable representation of all
+      data types, including lists and nlists.</para>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="to_uppercase">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>to_uppercase</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>to_uppercase</refname>
+
+      <refpurpose>change all lowercase letters to uppercase</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>string <function>to_uppercase</function></funcdef>
+
+          <paramdef>string <parameter>target</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>The to_uppercase function will convert all lowercase letters in
+      the target to uppercase. The United States (US) locale is forced for the
+      conversion to guarantee consistent behavior independent of the current
+      default locale.</para>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="traceback">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>traceback</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>traceback</refname>
+
+      <refpurpose>print message and traceback to console</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>string <function>traceback</function></funcdef>
+
+          <paramdef>string <parameter>msg</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>Prints the argument and a traceback from the current execution
+      point to the console (stderr). Value returned is the argument. An
+      argument that is not a string will cause a fatal error; the traceback
+      will still be printed. This may be selectively enabled or disabled via a
+      compiler option. See the compiler manual for details.</para>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="unescape">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>unescape</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>unescape</refname>
+
+      <refpurpose>replaces escaped characters with ASCII
+      characters</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>string <function>unescape</function></funcdef>
+
+          <paramdef>string <parameter>str</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>This function replaces escaped characters in the given string
+      <varname>str</varname> to get back the original string. This is the
+      inverse of the <function>escape</function> function.</para>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="value">
+    <info>
+      <productnumber>@VERSION@</productnumber>
+
+      <productname>panc</productname>
+
+      <date>@DATE@</date>
+    </info>
+
+    <refmeta>
+      <refentrytitle>value</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>value</refname>
+
+      <refpurpose>retrieve a value specified by a path</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>element <function>value</function></funcdef>
+
+          <paramdef>string <parameter>path</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>This function returns the element identified by the given path,
+      which can be an external path. An error occurs if there is no such
+      element.</para>
+
+      <programlisting># /y will be 200
+'/x' = 100; 
+'/y' = 2 * value('/x');</programlisting>
+    </refsection>
+  </refentry>
+</appendix>

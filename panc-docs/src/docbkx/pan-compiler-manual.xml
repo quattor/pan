@@ -1,0 +1,1123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<article version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xlink="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:mml="http://www.w3.org/1998/Math/MathML"
+         xmlns:html="http://www.w3.org/1999/xhtml"
+         xmlns:db="http://docbook.org/ns/docbook">
+  <title>Pan Compiler Manual</title>
+
+  <info>
+    <author>
+      <personname><firstname>Charles</firstname><surname>Loomis</surname></personname>
+    </author>
+
+    <abstract>
+      <para>The pan compiler transforms a set of files written in the pan
+      configuration language into a set of machine configuration profiles.
+      Those profiles (written in XML) are then used by other parts of the
+      Quattor fabric management system to achieve the desired configuration of
+      the fabric. This document describes how to obtain the compiler, how to
+      use it (alone and with other tools), and how to troubleshoot common
+      problems.</para>
+    </abstract>
+  </info>
+
+  <section>
+    <title>Introduction</title>
+
+    <para>The pan compiler interprets machine configurations written in the
+    pan configuration language and produces "machine profiles" that describe
+    each machine's configuration. In the Quattor fabric management framework,
+    a service on a client machine retrieves its machine profile and uses the
+    information to update the machine's configuration. The configuration
+    typically includes the software packages installed on the machine, what
+    services run on the machine, and how those services are configured.</para>
+
+    <para>The word "compiler" is actually a misnomer because the actual
+    compilation of pan templates (files written in the pan configuration
+    language) is a small part of the work. The process of generating a machine
+    profile passes through five stages: compilation of pan templates,
+    execution of those templates, insertion of default values, validation of
+    configuration information, and finally serialization of the machine
+    profile.</para>
+
+    <para>This document describes the Java-implementation of a pan language
+    compiler (versions 7 and greater) that replaces an earlier
+    c-implementation (versions 6 and smaller). The compiler was reimplemented
+    to take better advantage of multi-CPU machines and reduce memory
+    consumption; the eventual aim is to reduce the time it takes to produce a
+    set of machine profiles.</para>
+  </section>
+
+  <section>
+    <title>Getting the Pan Compiler</title>
+
+    <para>The pan compiler is open-source and available under the Apache2
+    license. The compiler itself is written in Java and requires a Java 1.5
+    (or more recent) runtime or development kit to be installed in order to
+    run. The log file analysis scripts included in the distribution are
+    written in Perl 5 and obviously require Perl to be installed.</para>
+
+    <para>The pan compiler versions follow the usual major, minor, patch
+    format, for example, 7.2.3. Changes in the major version number indicate
+    significant changes in the compiler functionality that may break backwards
+    compatibility. Even-numbered minor versions indicate
+    <emphasis>production</emphasis> versions of the compiler and odd-numbered
+    minor versions indicate <emphasis>development</emphasis> versions.
+    Generally, compiler versions that change only the minor version number are
+    backward compatible. The patch version number is incremented for bug fixes
+    or minor fixes to documentation.</para>
+
+    <section>
+      <title>Binary Packages</title>
+
+      <para>Binary packages for all releases are available from SourceForge in
+      a variety of formats:</para>
+
+      <programlisting>http://sourceforge.net/projects/quattor/files/</programlisting>
+
+      <para>The same location also contains documentation for the compiler.
+      The document is also bundled in the distribution files. </para>
+    </section>
+
+    <section>
+      <title>Sources</title>
+
+      <para>The source for the pan compiler is managed through a subversion
+      repository. The mainline development ("trunk") can be checked out with a
+      subversion client with the command:</para>
+
+      <programlisting>svn checkout https://quattor.svn.sourceforge.net/svnroot/quattor/trunk/panc</programlisting>
+
+      <para>As this is the active development branch, code checked out from it
+      may or may not work. For use in a production environment, check out a
+      specific version of the compiler with a command like:</para>
+
+      <programlisting>svn checkout https://quattor.svn.sourceforge.net/svnroot/quattor/tags/panc/8.2.9</programlisting>
+
+      <para>where the tags correspond to the version of the compiler. Unless
+      you have special requirements, use the latest
+      <emphasis>production</emphasis> version of the compiler. All of the tags
+      can be found by pointing a web browser at the subversion
+      repository.</para>
+
+      <section>
+        <title>Building</title>
+
+        <para>Correctly building the Java-implementation of the pan compiler
+        requires version 1.5.0 or later of a Java Development Kit (JDK). Many
+        linux distributions include the GNU implementation of Java.
+        <emphasis>The GNU implementation cannot build or run the pan compiler
+        correctly.</emphasis> Full versions of Java for linux, Solaris, and
+        Windows can be obtained from Sun.</para>
+
+        <para>The build of the compiler is done via <command>ant</command>
+        that also depends on Java. For <command>ant</command> to find the
+        correct version of the compiler, the environment variable
+        <envar>JAVA_HOME</envar> should be defined:</para>
+
+        <para><programlisting>export JAVA_HOME=&lt;path to java area&gt;</programlisting></para>
+
+        <para>or</para>
+
+        <programlisting>setenv JAVA_HOME &lt;path to java area&gt; </programlisting>
+
+        <para>depending on the type of shell that you use. After that, the
+        entire build can be accomplished with:</para>
+
+        <para><programlisting>./external/apache-ant/bin/ant --noconfig</programlisting></para>
+
+        <para>where the current working directory is the root of the directory
+        checked out from subversion. The default build will compile all of the
+        java sources, run the unit tests, and package the compiler. Tarballs
+        (plain, gzipped, and bzipped) as well as a zip file are created on all
+        platforms. The build will also create an RPM on platforms that support
+        it and a DMG file for Mac OS X. The final packages can be found in the
+        <filename>build/pkgs</filename> subdirectory.</para>
+      </section>
+    </section>
+  </section>
+
+  <section>
+    <title>Installation</title>
+
+    <para>The proper installation of the pan compiler depends on how it will
+    be used. If it will be used from the command line (either directly or
+    through another program), then the full installation from a binary package
+    should be done. However, if the compiler will be run via
+    <command>ant</command>, then one really only needs to install the
+    <filename>panc.jar</filename> file.</para>
+
+    <section>
+      <title>Full Package Installation</title>
+
+      <para>Once you have a binary distribution of the compiler (either
+      building it from source or downloading a pre-built version),
+      installation of the java compiler should be relatively painless. The
+      binary packages include the code, scripts, and documentation of the
+      compiler.</para>
+
+      <formalpara>
+        <title>Tarballs/Zip File</title>
+
+        <para>Untar/unzip the package in a convenient area and redefine the
+        <envar>PATH</envar> variable to include the <filename>bin</filename>
+        subdirectory. You should then have access to <command>panc</command>
+        and the various log file analysis scripts from the command
+        line.</para>
+      </formalpara>
+
+      <formalpara>
+        <title>RPM</title>
+
+        <para>Simply using the command <command>rpm</command> (as root) to
+        install the package will be enough. The scripts and binaries will be
+        installed in the standard locations on the system. The RPM is not
+        relocatable. If you need to install the compiler as a regular user,
+        use one of the machine-independent packages.</para>
+      </formalpara>
+
+      <formalpara>
+        <title>DMG</title>
+
+        <para>Mount the DMG file and double-click on the package file. This
+        will walk you through an installation wizard. Once installed, the
+        commands will be accessible with the standard environment. You will
+        need administrator access to install the Mac OS X package. If you
+        don't have this, use one of the machine-independent formats
+        instead.</para>
+      </formalpara>
+
+      <para>Using the compiler requires Java 1.5.0 or later to be installed on
+      the system. If you want to run the compiler from ant, then you must have
+      ant version 1.7.0 or later installed on your system.</para>
+    </section>
+
+    <section>
+      <title>Eclipse Integration</title>
+
+      <para>To integrate the compiler in an Integrated Development Environment
+      (IDE) like eclipse, only the file <filename>panc.jar</filename> is
+      needed, presuming that the compiler will be called via the ant task.
+      Build files that reference the compiler must define the panc task and
+      then may use the task to invoke the compiler. See the documentation for
+      invoking the compiler from ant.</para>
+    </section>
+  </section>
+
+  <section>
+    <title>Running the Compiler</title>
+
+    <para>The performance of the compiler can degrade markedly if there is not
+    sufficient memory to do a particular compile and build. Moreover, the
+    default memory allocation and vary wildly depending on how and when the
+    compiler is invoked. Similarly, there are other options that may improve
+    the performance of the compiler. For instance, it is usually advisable to
+    use the <option>-server</option> option.</para>
+
+    <section>
+      <title>Command Line Invocation</title>
+
+      <para>The compiler can be invoked from the command line by using
+      <command>panc</command>. This is a script that is installed with the pan
+      compiler package that invokes a Java virtual machine and the compiler.
+      The script options have been designed to be as compatible with previous
+      versions of the <command>panc</command> command as possible.</para>
+
+      <para>The full list of options can be obtained with the
+      <option>--help</option> option or by looking on the relevant man
+      page.</para>
+    </section>
+
+    <section>
+      <title>Invocation via <command>java</command> Command</title>
+
+      <para>If the Java compiler class is being directly invoked via the
+      <command>java</command> command, then the option <option>-Xmx</option>
+      must be used to change the VM memory available (for any reasonably sized
+      compilation). For example to start <command>java</command> with 1024 MB
+      of memory, the following command and options can be used:</para>
+
+      <programlisting>java -Xmx1024M org.quattor.pan.Compiler [options...]</programlisting>
+
+      <para>The same can be done for other options.</para>
+    </section>
+
+    <section>
+      <title>Invocation via Ant</title>
+
+      <para>Using an ant task to invoke the compiler allows the compiler to be
+      easily integrated with other machine management tasks. To use the pan
+      compiler within an ant build file, the pan compiler task must be
+      defined. This can be done with a task like:</para>
+
+      <programlisting>&lt;target name="define.panc.task"&gt;
+
+  &lt;taskdef resource="org/quattor/ant/panc-ant.xml"&gt;
+    &lt;classpath&gt;
+      &lt;pathelement path="${panc.jar}" /&gt;
+    &lt;/classpath&gt;
+  &lt;/taskdef&gt;
+
+&lt;/target&gt;</programlisting>
+
+      <para>where the property <property>${panc.jar}</property> points to the
+      jar file <filename>panc.jar</filename> distributed with the pan compiler
+      release.</para>
+
+      <para>Running the compiler can be done with a task like the
+      following:</para>
+
+      <programlisting>&lt;target name="compile.cluster.profiles"&gt;
+
+  &lt;!-- Define the load path.  By default this is just the cluster area. --&gt;
+  &lt;path id="pan.loadpath"&gt;
+    &lt;dirset dir="${basedir}" includes="**/*" /&gt;
+  &lt;/path&gt;
+
+  &lt;panc ...options... &gt;
+    &lt;path refid="pan.loadpath" /&gt;
+    &lt;fileset dir="${basedir}/profiles" casesensitive="yes" includes="*.pan" /&gt;
+  &lt;/panc&gt;
+
+&lt;/target&gt;</programlisting>
+
+      <para>where <literal>...options...</literal> is replaced with valid
+      options for the pan compiler ant task.</para>
+
+      <para>The following table summarizes the ant task attributes. Complete
+      information can be found by looking at the javadoc information for the
+      <classname>org.quattor.pan.ant.PanCompilerTask</classname> class in the
+      javadoc distributed with the release.</para>
+
+      <table>
+        <title>Ant Task Attributes</title>
+
+        <tgroup cols="3">
+          <thead>
+            <row>
+              <entry align="center">Attribute</entry>
+
+              <entry align="center">Description</entry>
+
+              <entry>Required</entry>
+            </row>
+          </thead>
+
+          <tbody>
+            <row>
+              <entry>callDepthLimit</entry>
+
+              <entry>Maximum number of recursive calls.</entry>
+
+              <entry>No. Default value: 5000</entry>
+            </row>
+
+            <row>
+              <entry>checkDependencies</entry>
+
+              <entry>Whether or not to check dependencies and only build
+              profiles that have not changed.</entry>
+
+              <entry>No. Default value: true</entry>
+            </row>
+
+            <row>
+              <entry>debugTask</entry>
+
+              <entry>Emit debugging messages for the ant task itself. If the
+              value is 1, then normal debugging is turned on; if the value is
+              greater than 1 then verbose debugging is turned on. A value of
+              zero turns off the task debugging.</entry>
+
+              <entry>No. Default value: 0</entry>
+            </row>
+
+            <row>
+              <entry>deprecationLevel</entry>
+
+              <entry>Set deprecation level. A negative number turns off
+              deprecation warnings. 0 prints warnings for deprecated features
+              for next release, 1 for second release, etc.</entry>
+
+              <entry>No. Default value: 0</entry>
+            </row>
+
+            <row>
+              <entry>depWriteEnabled</entry>
+
+              <entry>Whether or not to write dependency file.</entry>
+
+              <entry>No. Default value: false</entry>
+            </row>
+
+            <row>
+              <entry>dumpAnnotations</entry>
+
+              <entry>Whether or not to write annotation information to the
+              standard output.</entry>
+
+              <entry>No. Default value: false</entry>
+            </row>
+
+            <row>
+              <entry>forceBuild</entry>
+
+              <entry>Force the build of all given object templates.</entry>
+
+              <entry>No. Default value: false</entry>
+            </row>
+
+            <row>
+              <entry>formatter</entry>
+
+              <entry>The formatter to use for the output file. The accepted
+              values are: "pan", "xmldb", "text", and "dot".</entry>
+
+              <entry>No. Default value: pan</entry>
+            </row>
+
+            <row>
+              <entry>gzipOutput</entry>
+
+              <entry>Whether or not to gzip the (XML) output file.</entry>
+
+              <entry>No. Default value: no</entry>
+            </row>
+
+            <row>
+              <entry>ignoreDependencyPattern</entry>
+
+              <entry>A pattern which will select dependencies to ignore during
+              the task's dependency calculation. The pattern will be matched
+              against the namespaced template name.</entry>
+
+              <entry>No. Default value: null</entry>
+            </row>
+
+            <row>
+              <entry>includeRoot</entry>
+
+              <entry>Directory to use as the root of the compilation.</entry>
+
+              <entry>Yes.</entry>
+            </row>
+
+            <row>
+              <entry>includes</entry>
+
+              <entry>Set of directories below the include root to use in the
+              compilation. This is a "glob".</entry>
+
+              <entry>Yes.</entry>
+            </row>
+
+            <row>
+              <entry>iterationLimit</entry>
+
+              <entry>Set the maximum number of iterations. This is a failsafe
+              to avoid infinite loops.</entry>
+
+              <entry>No. Default value: 5000</entry>
+            </row>
+
+            <row>
+              <entry>logfile</entry>
+
+              <entry>The name of the file to use for logging information. This
+              value must be defined in order to enable logging.</entry>
+
+              <entry>Yes, if logging attribute is used.</entry>
+            </row>
+
+            <row>
+              <entry>logging</entry>
+
+              <entry>Enable different types of logging. The possible values
+              are: "all", "none", "include", "call", "task", and "memory".
+              Multiple values may be included as a comma-separated list. The
+              value "none" will override any other setting.</entry>
+
+              <entry>No.</entry>
+            </row>
+
+            <row>
+              <entry>nthread</entry>
+
+              <entry>Number of threads to use while compiling. Use 0 to set
+              the number of threads to the number of CPUs/cores on the
+              machine.</entry>
+
+              <entry>No. Default value: 0</entry>
+            </row>
+
+            <row>
+              <entry>outputDirectory</entry>
+
+              <entry>The directory that will contain the output of the
+              compilation.</entry>
+
+              <entry>Yes.</entry>
+            </row>
+
+            <row>
+              <entry>sessionDirectory</entry>
+
+              <entry>Set the session directory for the build.</entry>
+
+              <entry>No.</entry>
+            </row>
+
+            <row>
+              <entry>verbose</entry>
+
+              <entry>Whether to include a summary of the compilation,
+              including number of profiles compiled and overall memory
+              utilization.</entry>
+
+              <entry>No. Default value: false</entry>
+            </row>
+
+            <row>
+              <entry>xmlWriteEnabled</entry>
+
+              <entry>Whether or not to write the output files from the
+              compilation.</entry>
+
+              <entry>No. Default value: true</entry>
+            </row>
+
+            <row>
+              <entry>dumpAnnotations</entry>
+
+              <entry>Write the annotations to the standard output as the
+              template is compiled.</entry>
+
+              <entry>No. Default value: false</entry>
+            </row>
+
+            <row>
+              <entry>annotationDirectory</entry>
+
+              <entry>Directory which will hold files containing annotation
+              information.</entry>
+
+              <entry>No.</entry>
+            </row>
+
+            <row>
+              <entry>batchSize</entry>
+
+              <entry>If set to a positive integer, the outdated templates will
+              be processed in batches of batchSize.</entry>
+
+              <entry>No. Default value: 0</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+
+      <section>
+        <title>Nested Elements</title>
+
+        <section>
+          <title>Debug Element</title>
+
+          <para>The debug element is used to enable debugging output from the
+          <function>debug</function> and <function>traceback</function>
+          functions. The element takes the <literal>include</literal> and
+          <literal>exclude</literal> attributes, both of which are optional.
+          The <literal>debug</literal> element may appear multiple times
+          within the task with the final list of <literal>include</literal>
+          and <literal>exclude</literal> patterns being the union of all of
+          those specified in the elements. The values for the attributes are
+          regular expressions. For example,</para>
+
+          <programlisting>&lt;debug include="xen/.*" exclude=".*unwanted.*" /&gt;</programlisting>
+
+          <para>will cause <function>debug</function> and
+          <function>traceback</function> functions in the xen namespace to
+          emit messages as long as the template name does not contain the
+          string "unwanted". A special case is,</para>
+
+          <programlisting>&lt;debug&gt;</programlisting>
+
+          <para>that behaves exactly like:</para>
+
+          <programlisting>&lt;debug include=".*" exclude="^$" /&gt;</programlisting>
+
+          <para>That is, it will turn on debugging in all templates, unless
+          excluded via another <literal>debug</literal> element.</para>
+        </section>
+
+        <section>
+          <title>Fileset</title>
+
+          <para>Nested <literal>fileset</literal> elements specify the list of
+          files to process with the compiler. These are standard ant element
+          and take all of the usual attributes.</para>
+        </section>
+
+        <section>
+          <title>Path</title>
+
+          <para>A nested <literal>path</literal> element specifies the list of
+          include directories to use during the compilation. This is a
+          standard ant element and takes all of the usual attributes.</para>
+        </section>
+      </section>
+
+      <section>
+        <title>Setting JVM Parameters</title>
+
+        <para>If the compiler is invoked via the pan compiler ant task, then
+        the memory option can be added with the <envar>ANT_OPTS</envar>
+        environmental variable.</para>
+
+        <para><programlisting>export <envar>ANT_OPTS</envar>="-Xmx1024M"</programlisting></para>
+
+        <para>or</para>
+
+        <para><programlisting>setenv <envar>ANT_OPTS</envar> "-Xmx1024M"</programlisting></para>
+
+        <para>depending on whether you use a c-shell or a bourne shell. Other
+        options can be similarly added to the environmental variable. (The
+        value is a space-separated list.)</para>
+      </section>
+    </section>
+
+    <section>
+      <title>Invocation Inside Eclipse</title>
+
+      <para>If you use the default VM to run the pan compiler ant task, then
+      you will need to increase the memory when starting eclipse. From the
+      command line you can add the VM arguments like:</para>
+
+      <para><programlisting>eclipse -vmargs -Xmx&lt;memory size&gt;</programlisting></para>
+
+      <para>You may also need to increase the memory in the "permanent"
+      generation for a Sun VM with</para>
+
+      <para><programlisting>eclipse -vmargs -XX:MaxPermSize=&lt;memory size&gt;</programlisting></para>
+
+      <para>This will increase the memory available to eclipse and to all
+      tasks using the default virtual machine. For Max OS X, you will have to
+      edit the application "ini" file. See the eclipse instructions for how to
+      do this.</para>
+
+      <para>If you invoke a new Java virtual machine for each build, then you
+      can change the ant arguments via the run parameters. From within the
+      "ant" view, right-click on the appropriate ant build file, and then
+      select "Run As -&gt; Ant Build...". In the pop-up window, select the JRE
+      tab. In the "VM arguments" panel, add the <option>-Xmx</option> option.
+      The next build will use these options. Other VM options can be changed
+      in the same way.</para>
+
+      <para>The options can also be set using the "Window -&gt; Preferences
+      -&gt; Java -&gt; Installed JREs" panel. Select the JRE you want use,
+      click edit and add the additional parameters in the "DefaultVM
+      arguments" field.</para>
+    </section>
+  </section>
+
+  <section>
+    <title>Simple Example</title>
+
+    <para>To verify that the pan compiler is properly installed and works
+    correctly, try to compile the following example. Create a file called
+    <filename>test-one.pan</filename> with the following contents:</para>
+
+    <programlisting>object template test-one;
+
+'/result/a' = 1;
+'/result/b' = 2;</programlisting>
+
+    <para>and create a similar file called
+    <filename>test-two.pan</filename>:</para>
+
+    <programlisting>object template test-two;
+
+'/result/a' = 'one';
+'/result/b' = 'two';</programlisting>
+
+    <para>Using the panc command with the following options should produce
+    output similar to the following.</para>
+
+    <screen>$ panc --verbose test-one.pan test-two.pan
+
+2 templates <co linkends="input-files" xml:id="input-files-co" />
+2/2 compiled, <co linkends="compiled" xml:id="compiled-co" /> 2/2 xml, <co
+        linkends="built" xml:id="built-co" /> 0/0 dep <co
+        linkends="output-file" xml:id="output-file-co" />
+0 errors, <co linkends="errors" xml:id="errors-co" /> 166 ms, <co
+        linkends="time" xml:id="time-co" /> 0 MB/63 MB heap, <co
+        linkends="heap" xml:id="heap-co" /> 12 MB/116 MB nonheap <co
+        linkends="nonheap" xml:id="nonheap-co" /></screen>
+
+    <calloutlist>
+      <callout arearefs="input-files-co" xml:id="input-files">
+        <para>Number of individual pan templates passed to the compiler for
+        processing.</para>
+      </callout>
+
+      <callout arearefs="compiled-co" xml:id="compiled">
+        <para>The number of templates that were successfully compiled and the
+        total number processed by the compiler.</para>
+      </callout>
+
+      <callout arearefs="built-co" xml:id="built">
+        <para>The total number of machine configuration files written and the
+        number of object templates processed.</para>
+      </callout>
+
+      <callout arearefs="output-file-co" xml:id="output-file">
+        <para>The total number of dependency files written and the total
+        number of object templates processed.</para>
+      </callout>
+
+      <callout arearefs="errors-co" xml:id="errors">
+        <para>The total number of unique errors that occurred during
+        processing.</para>
+      </callout>
+
+      <callout arearefs="time-co" xml:id="time">
+        <para>The total time (in milliseconds) for processing all of the
+        object templates. This is "real" time as opposed to CPU time.</para>
+      </callout>
+
+      <callout arearefs="heap-co" xml:id="heap">
+        <para>The maximum amount of heap memory used during the processing and
+        the maximum available to the Java Virtual Machine, respectively. Both
+        numbers are given in megabytes.</para>
+      </callout>
+
+      <callout arearefs="nonheap-co" xml:id="nonheap">
+        <para>The maximum amount of non-heap memory used during the processing
+        and the maximum available to the Java Virtual Machine, respectively.
+        Both numbers are given in megabytes.</para>
+      </callout>
+    </calloutlist>
+
+    <para>In addition, two output files should have been created:
+    <filename>test-one.xml</filename> and <filename>test-two.xml</filename>.
+    The contents of test-one.xml should be (indentation has been added for
+    clarity):</para>
+
+    <programlisting>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;nlist format="pan" name="profile"&gt;
+  &lt;nlist name="result"&gt;
+    &lt;long name="a"&gt;1&lt;/long&gt;
+    &lt;long name="b"&gt;2&lt;/long&gt;
+  &lt;/nlist&gt;
+&lt;/nlist&gt;</programlisting>
+
+    <para>and the contents of the other is similar.</para>
+  </section>
+
+  <section>
+    <title>Implementation-specific Functionality</title>
+
+    <section>
+      <title>Logging</title>
+
+      <para>It is possible to log various activities of the pan compiler. The
+      types of logging that can be specified are:</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>task</term>
+
+          <listitem>
+            <para>Task logging can be used to extract information about how
+            long the various processing phases last for a particular object
+            template. The build phases one will see in the log file are:
+            execute, defaults, valid1, valid2, xml, and dep. There is also a
+            build stage that combines the execute and defaults stages.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>call</term>
+
+          <listitem>
+            <para>Call logging allows the full inclusion graph to be
+            reconstructed, including function calls. Each include is logged
+            even if the include would not actually include a file because the
+            included file is a declaration or unique template that has already
+            been included.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>include</term>
+
+          <listitem>
+            <para>Include logging only logs the inclusion of templates and
+            does not log function calls.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>memory</term>
+
+          <listitem>
+            <para>Memory logging show the memory usage during template
+            processing. This can be used to see the progression of memory
+            utilization and can be correlated with other activities if other
+            types of logging are enabled.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>all</term>
+
+          <listitem>
+            <para>Turns all types of logging on.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>none</term>
+
+          <listitem>
+            <para>Turns all types of logging off.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>Note that a log file name must also be specified, otherwise the
+      logging information will not be saved.</para>
+    </section>
+
+    <section>
+      <title>Annotations</title>
+
+      <para>The compiler supports pan language annotations and provides a
+      mechanism for recovering those annotations in a separate XML file. While
+      the compiler permits annotations to occur in nearly any location in a
+      source file, only annotations attached to certain syntactic elements can
+      be recovered. Currently these are those before the template declaration,
+      variable declarations, function declarations, type declarations, and
+      field specifications. Examples of all are in the example file. </para>
+
+      <programlisting>@maintainer{
+  name = Jane Manager
+  email = jane.manager@example.org
+}
+@{
+  Example template that shows off the 
+  annotation features of the compiler.
+}
+object template annotations;
+
+@use{
+  type = long
+  default = 1
+  note = negative values raise an exception
+}
+variable VALUE ?= 1;
+
+@documentation{
+  desc = simple addition of two numbers
+  arg = first number to add
+  arg = second number to add
+}
+function ADD = {
+ ARGV[0] + ARGV[1];
+};
+
+type EXTERN = {
+  'info' ? string
+};
+
+@documentation{
+  Simple definition of a key value pair.
+}
+type KV_PAIR = extensible {
+
+  @{additional information fields}
+  include EXTERN
+
+  @{key for pair as string} 
+  'key' : string
+
+  @{value for pair as string}
+  'value' : string = to_string(2 + 3)
+};
+
+bind '/pair' = KV_PAIR;
+
+'/add' = ADD(1, 2);
+
+'/pair/key' = 'KEY';
+'/pair/value' = 'VALUE';</programlisting>
+
+      <para>Using the following command to process the file:</para>
+
+      <programlisting>$ panc --annotation-dir=annotations annotations.pan</programlisting>
+
+      <para>will produce the following output in the file
+      <filename>annotations.annotation.xml</filename>. Note that white space
+      and indentation have been added for clarity.</para>
+
+      <programlisting>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;template xmlns="http://quattor.org/pan/annotations" name="annotations" type="OBJECT"&gt;
+    &lt;desc&gt;
+  Example template that shows off the 
+  annotation features of the compiler.
+&lt;/desc&gt;
+
+    &lt;maintainer&gt;
+        &lt;name&gt;Jane Manager&lt;/name&gt;
+        &lt;email&gt;jane.manager@example.org&lt;/email&gt;
+    &lt;/maintainer&gt;
+
+    &lt;variable name="VALUE"&gt;
+        &lt;use&gt;
+            &lt;type&gt;long&lt;/type&gt;
+            &lt;default&gt;1&lt;/default&gt;
+            &lt;note&gt;negative values raise an exception&lt;/note&gt;
+        &lt;/use&gt;
+    &lt;/variable&gt;
+
+    &lt;function name="ADD"&gt;
+        &lt;documentation&gt;
+            &lt;desc&gt;simple addition of two numbers&lt;/desc&gt;
+            &lt;arg&gt;first number to add&lt;/arg&gt;
+            &lt;arg&gt;second number to add&lt;/arg&gt;
+        &lt;/documentation&gt;
+    &lt;/function&gt;
+
+    &lt;type name="EXTERN"&gt;
+        &lt;basetype extensible="no"&gt;
+            &lt;field name="info" required="no"&gt;
+                &lt;basetype name="string" extensible="no"/&gt;
+            &lt;/field&gt;
+        &lt;/basetype&gt;
+    &lt;/type&gt;
+
+    &lt;type name="KV_PAIR"&gt;
+        &lt;documentation&gt;
+            &lt;desc&gt;
+  Simple definition of a key value pair.
+&lt;/desc&gt;
+        &lt;/documentation&gt;
+
+        &lt;basetype extensible="yes"&gt;
+            &lt;include name="EXTERN"/&gt;
+            &lt;field name="key" required="yes"&gt;
+                &lt;desc&gt;key for pair as string&lt;/desc&gt;
+                &lt;basetype name="string" extensible="no"/&gt;
+            &lt;/field&gt;
+            &lt;field name="value" required="yes"&gt;
+                &lt;desc&gt;value for pair as string&lt;/desc&gt;
+                &lt;basetype name="string" extensible="no"/&gt;
+            &lt;/field&gt;
+        &lt;/basetype&gt;
+
+    &lt;/type&gt;
+    &lt;basetype name="KV_PAIR" extensible="no"/&gt;
+&lt;/template&gt;</programlisting>
+    </section>
+  </section>
+
+  <section>
+    <title>Trouble Shooting</title>
+
+    <section>
+      <title>Compilation Problems</title>
+
+      <para>In a production environment, the number of templates and their
+      complexity will be must greater. Often something goes wrong with the
+      compilation or build resulting in one or more errors appearing on the
+      console (standard error stream). There are four categories of
+      errors:</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>Syntax Error</term>
+
+          <listitem>
+            <para>These include any errors that can be caught during the
+            compilation of a single template. These include lexing, parsing,
+            and syntax errors, but also semantic errors like absolute
+            assignment statements appearing in a structure template that can
+            be caught at compilation time.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Evaluation Error</term>
+
+          <listitem>
+            <para>These are the most common; these include any error that
+            happens during the "execution" phase of processing like
+            mathematical errors, primitive type conflicts, and the like.
+            Usually the name of the template and the location where the error
+            occurred will be included in the error message.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Validation Error</term>
+
+          <listitem>
+            <para>Validation errors occur during the "validation" phase and
+            indicate that the generated machine profile violates the defined
+            schema. Information about what type specification was violated and
+            the offending path will be included in the error message.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>System Error</term>
+
+          <listitem>
+            <para>These include low-level problems like problems reading from
+            or writing to the file system.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>In general, the errors try to indicate as precisely as possible
+      the problem. Usually the name of the source file as well as the location
+      inside the file (line and column numbers) are indicated. For most
+      evaluation exceptions, a traceback is also provided. Validation errors
+      are the most terse, giving only the element causing the problem and the
+      location of the type definition that has been violated.</para>
+
+      <para>There is one further class of errors called "compiler errors".
+      These indicate an error in the logic of the compiler itself and should
+      be accompanied by a detailed error message and a Java traceback. All
+      compiler errors should be reported as a bug. The bug report should
+      include the template that caused the problem along with the full Java
+      traceback. Hopefully, you will not encounter these errors.</para>
+    </section>
+
+    <section>
+      <title>Common Problems</title>
+
+      <qandaset>
+        <qandadiv>
+          <qandaentry>
+            <question>
+              <para>"Java Heap Space" warnings appear on console.</para>
+
+              <para>If you see messages that refer to "Java Heap Space" while
+              running the compiler, then the java virtual machine does not
+              have enough memory to compile the given templates. You must
+              increase the amount of memory allocated to the java virtual
+              machine when you start the compiler. See the section Running the
+              Compiler for how to specify the VM memory.</para>
+            </question>
+          </qandaentry>
+
+          <qandaentry>
+            <question>
+              <para>The compilation is extremely slow.</para>
+
+              <para>If the compilation appears to be slow, check that the
+              compiler is not thrashing because of a limited amount of memory.
+              With the verbose option set, successful compilations will
+              produce a summary like:</para>
+
+              <screen>2 templates
+2/2 compiled, 2/2 xml, 0/0 dep
+0 errors, 166 ms, 0 MB/63 MB heap, 12 MB/116 MB nonheap</screen>
+
+              <para>The last line with gives the maximum amount of heap memory
+              used and the maximum available (the value marked "heap"). If the
+              maximum used is more than about 80% of the maximum available,
+              then you should consider increasing the memory allocated to the
+              java virtual machine. See the section Running the Compiler for
+              how to specify the VM memory.</para>
+            </question>
+          </qandaentry>
+
+          <qandaentry>
+            <question>
+              <para>"missing modifyThread Permission" warnings appear on
+              console.</para>
+
+              <para>The java-implementation of the pan language compiler is
+              completely multi-threaded. Internally, it controls several
+              thread pools to handle compilation, execution, and serialization
+              in parallel. At the end of a compilation, the compiler will
+              normally destroy the thread pools that were created. The java
+              security model requires that a program have the "modifyThread"
+              permission to destroy threads. In some environments (notably
+              Eclipse), this permission may not be given to the compiler. If
+              this is the case, then the message "WARNING: missing
+              modifyThread permission" is printed on the standard error.
+              Lacking this permission causes a "thread leak", but the effects
+              are minor unless an extremely large number of templates are
+              being compiled. If this is the case, then you should either
+              change the configuration to grant this permission to the
+              compiler, or work in an environment that grants it by default
+              (e.g. using ant from the command line).</para>
+
+              <para>This problem is fixed if using Java6. If you have several
+              JREs installed, be sure to configure Eclipse to use Java 6. Go
+              to Window → Preferences → Java → Installed JREs. If you don't
+              see the JRE you want (and you have it installed), use the
+              "Search" button to have eclipse configure the new JRE for you.
+              Make sure you select it after it is found.</para>
+            </question>
+          </qandaentry>
+
+          <qandaentry>
+            <question>
+              <para>Unnecessary rebuild of clusters</para>
+
+              <para>It can happen that a cluster is always rebuilt when you
+              run ant, even if there was no change in the dependencies. In
+              this case, you may suspect a Java issue with optimizations
+              enabled by default (JIT). The only workaround is to disable
+              these optimizations by adding the option -Xint to Java VM when
+              running ant. It is achieved differently depending how you
+              started ant:</para>
+
+              <itemizedlist>
+                <listitem>
+                  <para>From command line: define environment variable
+                  ANT_OPTS.</para>
+                </listitem>
+
+                <listitem>
+                  <para>From Eclipse: right click on build.xml in ant pane,
+                  choose Run As... → External Tools... and then click on JRE
+                  tab. Be sure to use a separate JRE (if possible Java 6 or
+                  later) and add option in the options area.</para>
+                </listitem>
+              </itemizedlist>
+
+              <para>This problem has been seen on Windows only, with Java 5
+              and Java 6.</para>
+            </question>
+          </qandaentry>
+        </qandadiv>
+      </qandaset>
+    </section>
+  </section>
+
+  <section>
+    <title>Bug Reporting</title>
+
+    <para>Bug reports can be filed in the standard Quattor bug tracking system
+    on SourceForge. When submitting a bug, please use the following options to
+    be sure that the bug is noticed as soon as possible.</para>
+
+    <screen>Project: quattor
+Category: panc
+Assigned to: loomisc</screen>
+
+    <para>to ensure that the bug is treated as soon as possible. Bug fixes are
+    generally rolled into the next planned release. Major releases are
+    scheduled every six months. Bug fix releases are planned monthly, if
+    needed.</para>
+  </section>
+
+  <xi:include href="appendix/appendix-commands.xml" xpointer="element(/1)" />
+</article>

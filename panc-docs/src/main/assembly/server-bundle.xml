@@ -1,0 +1,38 @@
+<assembly>
+	<id>server-bundle</id>
+	
+	<includeBaseDirectory>false</includeBaseDirectory>
+
+	<formats>
+		<format>zip</format>
+	</formats>
+
+	<fileSets>
+		<fileSet>
+			<directory>target/docbkx/html</directory>
+			<outputDirectory>html</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>src/docbkx</directory>
+			<outputDirectory>html</outputDirectory>
+			<includes>
+				<include>slipstream.css</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>src/docbkx/ReferenceManual/images</directory>
+			<outputDirectory>html/images</outputDirectory>
+			<includes>
+				<include>**/*.png</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>target/docbkx/pdf</directory>
+			<outputDirectory>pdf</outputDirectory>
+			<includes>
+				<include>**/*.pdf</include>
+			</includes>
+		</fileSet>
+	</fileSets>
+
+</assembly>

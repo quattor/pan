@@ -10,7 +10,13 @@
 	<name>panc-docs</name>
 	<url>http://quattor.org/</url>
 
-        <pluginRepositories>
+        <parent>
+	  <groupId>org.quattor.pan</groupId>
+	  <artifactId>pan</artifactId>
+	  <version>8.3.2-SNAPSHOT</version>
+	</parent>
+
+	<pluginRepositories>
                 <pluginRepository>
                         <id>docbkx.snapshots</id>
                         <name>Maven Plugin Snapshots</name>

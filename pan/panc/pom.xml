@@ -9,6 +9,12 @@
 	<name>panc</name>
 	<url>http://quattor.org/</url>
 
+	<parent>
+	  <groupId>org.quattor.pan</groupId>
+	  <artifactId>pan</artifactId>
+	  <version>8.3.2-SNAPSHOT</version>
+	</parent>
+
 	<profiles>
 		<profile>
 			<activation>
@@ -21,7 +27,6 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>rpm-maven-plugin</artifactId>
-						<version>2.0.1</version>
 						<executions>
 							<execution>
 								<goals>
@@ -41,38 +46,7 @@
 		<plugins>
 
 			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.2-beta-5</version>
-			</plugin>
-
-			<plugin>
-				<artifactId>maven-clean-plugin</artifactId>
-				<version>2.4</version>
-			</plugin>
-
-			<plugin>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<version>2.5</version>
-			</plugin>
-
-			<plugin>
-				<artifactId>maven-install-plugin</artifactId>
-				<version>2.3</version>
-			</plugin>
-
-			<plugin>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.4.2</version>
-			</plugin>
-
-			<plugin>
-				<artifactId>maven-site-plugin</artifactId>
-				<version>2.1</version>
-			</plugin>
-
-			<plugin>
 				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.1</version>
 				<executions>
 					<execution>
 						<id>copy-documentation</id>
@@ -83,7 +57,7 @@
 								<artifactItem>
 									<groupId>org.quattor.pan</groupId>
 									<artifactId>panc-docs</artifactId>
-									<version>1.0-SNAPSHOT</version>
+									<version>8.3.2-SNAPSHOT</version>
 									<classifier>bundle</classifier>
 									<type>zip</type>
 									<outputDirectory>${project.build.directory}/docs</outputDirectory>
@@ -99,19 +73,8 @@
 			</plugin>
 
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.1</version>
-				<configuration>
-					<target>1.5</target>
-					<source>1.5</source>
-				</configuration>
-			</plugin>
-
-			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>javacc-maven-plugin</artifactId>
-				<version>2.6</version>
 				<executions>
 					<execution>
 						<id>javacc</id>
@@ -125,7 +88,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.5</version>
 				<configuration>
 					<systemPropertyVariables>
 						<panc.tmpdir>${project.build.directory}/test-tmp/tmpdir</panc.tmpdir>
@@ -142,7 +104,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.3</version>
 				<configuration>
 					<useDefaultManifestFile>true</useDefaultManifestFile>
 					<archive>
@@ -180,7 +141,6 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>rpm-maven-plugin</artifactId>
-				<version>2.0.1</version>
 				<configuration>
 					<copyright>CNRS</copyright>
 					<distribution>Quattor</distribution>
@@ -255,7 +215,6 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.5</version>
 				<executions>
 					<execution>
 						<id>add-javacc-sources</id>
@@ -282,7 +241,6 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>findbugs-maven-plugin</artifactId>
-				<version>2.3.1</version>
 				<configuration>
 					<excludeFilterFile>${basedir}/src/test/findbugs/findbugs-exclude.xml</excludeFilterFile>
 				</configuration>
@@ -307,7 +265,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.7</version>
+			<version>4.8.1</version>
 			<scope>test</scope>
 		</dependency>
 

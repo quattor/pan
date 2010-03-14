@@ -34,7 +34,6 @@ import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.exceptions.SystemException;
 import org.quattor.pan.parser.ASTTemplate;
-import org.quattor.pan.parser.PanParser;
 import org.quattor.pan.parser.PanParserAstUtils;
 import org.quattor.pan.parser.ParseException;
 import org.quattor.pan.template.Template;
@@ -131,7 +130,7 @@ public class CompileTask extends Task<CompileResult> {
 		 *            file to compile
 		 * @param compilerOptions
 		 *            compiler options to use for compilation
-		 * @throws ParserException
+		 * @throws ParseException
 		 *             for low-level parsing errors
 		 * @throws SyntaxException
 		 *             for files which parse correctly but contain higher-level

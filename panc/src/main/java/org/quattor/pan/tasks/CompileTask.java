@@ -33,6 +33,7 @@ import org.quattor.pan.cache.CompileCache.PostCompileProcessor;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.exceptions.SystemException;
+import org.quattor.pan.parser.PanParser;
 import org.quattor.pan.parser.ASTTemplate;
 import org.quattor.pan.parser.PanParserAstUtils;
 import org.quattor.pan.parser.ParseException;

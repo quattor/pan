@@ -39,8 +39,6 @@ import org.quattor.pan.parser.PanParserAstUtils;
 import org.quattor.pan.parser.ParseException;
 import org.quattor.pan.template.Template;
 
-import sun.tools.jstat.ParserException;
-
 /**
  * Wraps the <code>CompileCallable</code> as a <code>Task</code>. This wrapping
  * is done to make sure that the <code>CompileCallable</code> is fully

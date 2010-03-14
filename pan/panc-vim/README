@@ -10,7 +10,7 @@ au BufRead,BufNewFile *.tpl set filetype=pan
 au BufRead,BufNewFile *.pan set filetype=pan
 
 Download the file pan.vim from the quattor website:
-https://quattor.svn.sourceforge.net/svnroot/quattor/trunk/panc-vim/pan.vim
+https://quattor.svn.sourceforge.net/svnroot/quattor/trunk/pan/panc-vim/pan.vim
 
 and copy it to the ${HOME}/.vim/syntax directory.
 

@@ -12,9 +12,9 @@
 	<profiles>
 		<profile>
 			<activation>
-				<os>
-					<family>Linux</family>
-				</os>
+				<file>
+					<exists>/bin/rpm</exists>
+				</file>
 			</activation>
 			<build>
 				<plugins>

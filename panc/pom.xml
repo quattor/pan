@@ -146,6 +146,7 @@
 							<sources>
 								<source>
 									<location>target/panc-${project.version}.jar</location>
+									<destination>panc.jar</destination>
 								</source>
 							</sources>
 						</mapping>
@@ -156,7 +157,40 @@
 							<groupname>wheel</groupname>
 							<sources>
 								<source>
-									<location>src/main/scripts/*</location>
+									<location>src/main/scripts</location>
+								</source>
+							</sources>
+						</mapping>
+						<mapping>
+							<directory>/usr/share/doc/html</directory>
+							<filemode>655</filemode>
+							<username>root</username>
+							<groupname>wheel</groupname>
+							<sources>
+								<source>
+									<location>target/docs/html</location>
+								</source>
+							</sources>
+						</mapping>
+						<mapping>
+							<directory>/usr/share/doc/pdf</directory>
+							<filemode>655</filemode>
+							<username>root</username>
+							<groupname>wheel</groupname>
+							<sources>
+								<source>
+									<location>target/docs/pdf</location>
+								</source>
+							</sources>
+						</mapping>
+						<mapping>
+							<directory>/usr/man/man1</directory>
+							<filemode>655</filemode>
+							<username>root</username>
+							<groupname>wheel</groupname>
+							<sources>
+								<source>
+									<location>target/docs/man/man1</location>
 								</source>
 							</sources>
 						</mapping>

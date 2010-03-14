@@ -269,6 +269,15 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.quattor.pan</groupId>
+			<artifactId>panc-docs</artifactId>
+			<version>8.3.2-SNAPSHOT</version>
+			<classifier>bundle</classifier>
+			<type>zip</type>
+			<scope>package</scope>
+		</dependency>
+
 	</dependencies>
 
 </project>

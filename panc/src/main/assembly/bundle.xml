@@ -1,0 +1,49 @@
+<assembly>
+	<id>bundle</id>
+
+	<includeBaseDirectory>false</includeBaseDirectory>
+
+	<formats>
+		<format>zip</format>
+		<format>tar</format>
+		<format>tar.gz</format>
+	</formats>
+
+	<fileSets>
+		<fileSet>
+			<directory>target</directory>
+			<outputDirectory>lib</outputDirectory>
+			<includes>
+				<include>*.jar</include>
+			</includes>
+			<fileMode>0755</fileMode>
+			<directoryMode>0755</directoryMode>
+		</fileSet>
+		<fileSet>
+			<directory>src/main/scripts</directory>
+			<outputDirectory>bin</outputDirectory>
+			<includes>
+				<include>*</include>
+			</includes>
+			<fileMode>0755</fileMode>
+			<directoryMode>0755</directoryMode>
+		</fileSet>
+		<fileSet>
+			<directory>target/docs</directory>
+			<outputDirectory>docs</outputDirectory>
+			<includes>
+				<include>html/**/*</include>
+				<include>pdf/**/*</include>
+			</includes>
+			<fileMode>0644</fileMode>
+			<directoryMode>0755</directoryMode>
+		</fileSet>
+		<fileSet>
+			<directory>target/docs/man</directory>
+			<outputDirectory>man</outputDirectory>
+			<fileMode>0644</fileMode>
+			<directoryMode>0755</directoryMode>
+		</fileSet>
+	</fileSets>
+
+</assembly>

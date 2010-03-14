@@ -1,1 +1,0 @@
-template inc_ordinary;

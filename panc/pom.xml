@@ -145,7 +145,7 @@
 							<groupname>wheel</groupname>
 							<sources>
 								<source>
-									<location>target/panc-{$project.version}.jar</location>
+									<location>target/panc-${project.version}.jar</location>
 								</source>
 							</sources>
 						</mapping>

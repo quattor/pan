@@ -1,6 +1,6 @@
 <assembly>
-	<id>server-bundle</id>
-	
+	<id>bundle</id>
+
 	<includeBaseDirectory>false</includeBaseDirectory>
 
 	<formats>
@@ -16,11 +16,11 @@
 			<directory>src/docbkx</directory>
 			<outputDirectory>html</outputDirectory>
 			<includes>
-				<include>slipstream.css</include>
+				<include>pan.css</include>
 			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>src/docbkx/ReferenceManual/images</directory>
+			<directory>src/docbkx/images</directory>
 			<outputDirectory>html/images</outputDirectory>
 			<includes>
 				<include>**/*.png</include>
@@ -32,6 +32,10 @@
 			<includes>
 				<include>**/*.pdf</include>
 			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>target/docbkx/man</directory>
+			<outputDirectory>man</outputDirectory>
 		</fileSet>
 	</fileSets>
 

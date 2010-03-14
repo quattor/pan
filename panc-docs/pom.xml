@@ -111,8 +111,7 @@
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
 					<descriptors>
-						<descriptor>src/main/assembly/client-bundle.xml</descriptor>
-						<descriptor>src/main/assembly/server-bundle.xml</descriptor>
+						<descriptor>src/main/assembly/bundle.xml</descriptor>
 					</descriptors>
 				</configuration>
 

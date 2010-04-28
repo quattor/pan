@@ -285,8 +285,9 @@
       the named structure template. The optional additional arguments are key,
       value pairs that will be added to the returned nlist, perhaps
       overwriting values from the structure template. The keys must be strings
-      that contain valid nlist keys (see Path Literals Section). The values can be any element. Null
-      values will delete the given key from the resulting nlist.</para>
+      that contain valid nlist keys (see Path Literals Section). The values
+      can be any element. Null values will delete the given key from the
+      resulting nlist.</para>
 
       <programlisting># description of CD mount entry with the device undefined
 # (in file 'mount_cdrom.pan')
@@ -1012,13 +1013,27 @@ ok = first(table, k, v);
       type.</para>
 
       <programlisting># search a record in a list of records (result = 1, the second nlist)
-'/l1' = index(
-              nlist('key', 'foo'), 
+'/ll1' = index(
+              nlist('key', 'foo'),
               list(
-                   nlist('key', 'bar', 'val', 101), 
-                   nlist('key', 'foo', 'val', 102)
+                   nlist('key', 'bar', 'val', 101),
+                   nlist('key', 'foo')
                   )
-             ); </programlisting>
+             );
+
+# search a record in a list of records starting at index (result = 1, the second nlist)
+'/ll2' = index(
+              nlist('key', 'foo'),
+              list(
+                   nlist('key', 'bar', 'val', 101),
+                   nlist('key', 'foo'),
+                   nlist('key', 'bar', 'val', 101),
+                   nlist('key', 'foo'),
+                   nlist('key', 'bar', 'val', 101),
+                   nlist('key', 'foo')
+                  ),
+              1
+             );</programlisting>
 
       <para>The last form searches for the given nlist inside the given nlist
       of nlists and returns its name or the empty string if not found. If the
@@ -1026,6 +1041,29 @@ ok = first(table, k, v);
       It is an error if <varname>sub</varname> and <varname>arg</varname>’s
       children are not of the same type or if their common children don’t have
       the same type.</para>
+
+      <programlisting># search for matching nlist (result = 'b')
+'/nn1' = index(
+              nlist('key', 'foo'),
+              nlist(
+                   'a', nlist('key', 'bar', 'val', 101),
+                   'b', nlist('key', 'foo')
+                  )
+             );
+
+# skip first match and return index of second match (result='d')
+'/nn2' = index(
+              nlist('key', 'foo'),
+              nlist(
+                   'a', nlist('key', 'bar', 'val', 101),
+                   'b', nlist('key', 'foo'),
+                   'c', nlist('key', 'bar', 'val', 101),
+                   'd', nlist('key', 'foo'),
+                   'e', nlist('key', 'bar', 'val', 101),
+                   'f', nlist('key', 'foo')
+                  ),
+              1
+             );</programlisting>
     </refsection>
   </refentry>
 

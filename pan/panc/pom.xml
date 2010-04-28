@@ -57,7 +57,8 @@
 								<artifactItem>
 									<groupId>org.quattor.pan</groupId>
 									<artifactId>panc-docs</artifactId>
-									<version>8.3.2-SNAPSHOT</version>
+									<!-- The versions between this and compiler should always match. -->
+									<version>${project.version}</version>
 									<classifier>bundle</classifier>
 									<type>zip</type>
 									<outputDirectory>${project.build.directory}/docs</outputDirectory>

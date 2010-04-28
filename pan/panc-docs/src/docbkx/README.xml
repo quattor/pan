@@ -534,6 +534,26 @@ variable X ?=
     <title>Change Log</title>
 
     <section>
+      <title>Version 8.4.0</title>
+
+      <para>This is a production release containing the recent development
+      features.</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>(SF Bug #2991355) Fixes the index function documentation to
+          correspond to the real behavior of the function. Unit tests added to
+          validate the function's behavior.</para>
+        </listitem>
+
+        <listitem>
+          <para>(SF Bug #2993548) Fixes a bug the panc script in which the
+          check for the existence of the panc.jar file is inverted.</para>
+        </listitem>
+      </itemizedlist>
+    </section>
+
+    <section>
       <title>Version 8.3.1</title>
 
       <para><emphasis>This is a development release and not intended for
@@ -546,8 +566,8 @@ variable X ?=
       <itemizedlist>
         <listitem>
           <para>(SF Bug #2950443) Fixes a bug in which a duplicate function
-          definition did not provide the traceback to the second definition.
-          </para>
+          definition did not provide the traceback to the second
+          definition.</para>
         </listitem>
 
         <listitem>

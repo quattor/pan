@@ -9,16 +9,16 @@
 		<format>tar.gz</format>
 	</formats>
 
-	<fileSets>
-		<fileSet>
-			<directory>target</directory>
+	<files>
+		<file>
+			<source>target/panc-${project.version}.jar</source>
+			<destName>panc.jar</destName>
 			<outputDirectory>lib</outputDirectory>
-			<includes>
-				<include>*.jar</include>
-			</includes>
 			<fileMode>0755</fileMode>
-			<directoryMode>0755</directoryMode>
-		</fileSet>
+		</file>
+	</files>
+
+	<fileSets>
 		<fileSet>
 			<directory>src/main/scripts</directory>
 			<outputDirectory>bin</outputDirectory>

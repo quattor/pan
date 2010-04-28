@@ -10,9 +10,9 @@
 	<url>http://quattor.org/</url>
 
 	<parent>
-	  <groupId>org.quattor.pan</groupId>
-	  <artifactId>pan</artifactId>
-	  <version>8.4.0-SNAPSHOT</version>
+		<groupId>org.quattor.pan</groupId>
+		<artifactId>pan</artifactId>
+		<version>8.4.0-SNAPSHOT</version>
 	</parent>
 
 	<profiles>
@@ -123,6 +123,7 @@
 					<descriptors>
 						<descriptor>src/main/assembly/bundle.xml</descriptor>
 					</descriptors>
+					<appendAssemblyId>false</appendAssemblyId>
 				</configuration>
 
 				<executions>

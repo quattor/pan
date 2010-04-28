@@ -77,7 +77,7 @@ done
 if $panc_show_version ; then
     panc_jar_path="`dirname $0`/../lib/panc.jar";
 	compiler_class="org.quattor.pan.Compiler"
-	if [ -x $panc_jar_path ]; then
+	if [ ! -x $panc_jar_path ]; then
 	    echo "ERROR: cannot find pan compiler jar file; tried " $panc_jar_path
 	    exit 1;
 	fi;
@@ -85,7 +85,7 @@ if $panc_show_version ; then
 elif $launch_panc ; then
     panc_jar_path="`dirname $0`/../lib/panc.jar";
 	panc_class="org.quattor.pan.Panc"
-	if [ -x $panc_jar_path ]; then
+	if [ ! -x $panc_jar_path ]; then
 	    echo "ERROR: cannot find pan compiler jar file; tried " $panc_jar_path
 	    exit 1;
 	fi;

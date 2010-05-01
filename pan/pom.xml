@@ -39,6 +39,19 @@
 		</pluginRepository>
 	</pluginRepositories>
 
+	<distributionManagement>
+		<repository>
+			<id>sourceforge</id>
+			<name>SourceForge</name>
+			<url>sftp://loomisc,quattor@frs.sourceforge.net:/home/frs/project/q/qu/quattor/test-releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>sourceforge</id>
+			<name>SourceForge</name>
+			<url>sftp://loomisc,quattor@frs.sourceforge.net:/home/frs/project/q/qu/quattor/test-snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
 	<build>
 		<pluginManagement>
 			<plugins>

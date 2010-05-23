@@ -43,6 +43,12 @@
 
 	<build>
 
+		<resources>
+			<resource>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+
 		<plugins>
 
 			<plugin>

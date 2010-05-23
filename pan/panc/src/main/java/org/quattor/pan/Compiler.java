@@ -21,11 +21,13 @@
 package org.quattor.pan;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
-import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -36,8 +38,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.quattor.pan.cache.BuildCache;
 import org.quattor.pan.cache.CompileCache;
@@ -67,24 +67,25 @@ public class Compiler {
 	 */
 	public static final String version;
 
-	// This block of code extracts the version from the subversion HeadURL. It
-	// assumes that the repository is organized such that all tags are below a
-	// "tags" subdirectory and that each tag has the form "0.1.2".
+	// This block of code extracts the version from a resource file.  Any error
+	// will result in the value being set to "unknown".
 	static {
-		String svnurl = "$HeadURL$";
 
-		Matcher trunk = Pattern.compile(".*/trunk/panc/.*").matcher(svnurl);
-		Matcher tag = Pattern.compile(".*/tags/panc/(\\d+\\.\\d+\\.\\d+)/.*")
-				.matcher(svnurl);
+		Properties defaults = new Properties();
+		defaults.setProperty("version", "unknown");
 
-		if (trunk.matches()) {
-			Calendar now = Calendar.getInstance();
-			version = String.format("0.%1$tY%1$tm%1$td.%1$tH%1$tM%1$tS", now);
-		} else if (tag.matches()) {
-			version = tag.group(1);
-		} else {
-			version = "unknown";
+		Properties values = new Properties(defaults);
+
+		InputStream is = Compiler.class
+				.getResourceAsStream("version.properties");
+
+		try {
+			values.load(is);
+		} catch (IOException consumed) {
+		} catch (NullPointerException consumed) {
 		}
+
+		version = values.getProperty("version");
 	}
 
 	private final TreeMap<TaskResult.ResultType, ThreadPoolExecutor> executors;

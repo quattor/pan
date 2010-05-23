@@ -8,6 +8,8 @@
          xmlns:db="http://docbook.org/ns/docbook">
   <title>Pan Tutorial</title>
 
+  <subtitle>Version <?eval ${project.version}?></subtitle>
+
   <info>
     <author>
       <personname><firstname>Charles</firstname><surname>Loomis</surname></personname>
@@ -22,6 +24,10 @@
       declarative syntax, type checking, and extensive schema
       validation.</para>
     </abstract>
+
+    <productnumber><?eval ${project.version}?></productnumber>
+
+    <date><?eval ${buildTimestamp}?></date>
   </info>
 
   <section>
@@ -1662,7 +1668,7 @@ bind '/software/components/torque' = config_torque;
       <literal>declaration</literal> and <literal>unique</literal> templates,
       respectively, to avoid any performance penalty for including these files
       repeatedly. Usually a system administrator would only include the
-      <filename>config.tpl</filename> file directly. </para>
+      <filename>config.tpl</filename> file directly.</para>
 
       <para>Distributions of templates usually go one step further and define
       templates for common service configurations. For example, one could
@@ -1961,7 +1967,7 @@ type config_nfs = {
 
         <listitem>
           <para>Create the <filename>config.tpl</filename> and
-          <filename>schema.tpl</filename> files for this system. </para>
+          <filename>schema.tpl</filename> files for this system.</para>
         </listitem>
 
         <listitem>

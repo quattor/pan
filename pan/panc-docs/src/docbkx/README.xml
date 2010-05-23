@@ -8,6 +8,8 @@
          xmlns:db="http://docbook.org/ns/docbook">
   <title>README</title>
 
+  <subtitle>Version <?eval ${project.version}?></subtitle>
+
   <info>
     <author>
       <personname>Charles Loomis</personname>
@@ -19,6 +21,10 @@
       as identified migration issues. A detailed change log for the v8 series
       of compilers can be found at the end of the document.</para>
     </abstract>
+
+    <productnumber><?eval ${project.version}?></productnumber>
+
+    <date><?eval ${buildTimestamp}?></date>
   </info>
 
   <section>

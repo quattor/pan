@@ -8,6 +8,8 @@
          xmlns:db="http://docbook.org/ns/docbook">
   <title>Pan Compiler Manual</title>
 
+  <subtitle>Version <?eval ${project.version}?></subtitle>
+
   <info>
     <author>
       <personname><firstname>Charles</firstname><surname>Loomis</surname></personname>
@@ -22,6 +24,10 @@
       use it (alone and with other tools), and how to troubleshoot common
       problems.</para>
     </abstract>
+
+    <productnumber><?eval ${project.version}?></productnumber>
+
+    <date><?eval ${buildTimestamp}?></date>
   </info>
 
   <section>
@@ -79,7 +85,7 @@
       <programlisting>http://sourceforge.net/projects/quattor/files/</programlisting>
 
       <para>The same location also contains documentation for the compiler.
-      The document is also bundled in the distribution files. </para>
+      The document is also bundled in the distribution files.</para>
     </section>
 
     <section>
@@ -800,7 +806,7 @@
       source file, only annotations attached to certain syntactic elements can
       be recovered. Currently these are those before the template declaration,
       variable declarations, function declarations, type declarations, and
-      field specifications. Examples of all are in the example file. </para>
+      field specifications. Examples of all are in the example file.</para>
 
       <programlisting>@maintainer{
   name = Jane Manager

@@ -8,6 +8,8 @@
          xmlns:db="http://docbook.org/ns/docbook">
   <title>Pan Language Manual</title>
 
+  <subtitle>Version <?eval ${project.version}?></subtitle>
+
   <info>
     <author>
       <personname><firstname>Charles</firstname><surname>Loomis</surname></personname>
@@ -21,6 +23,10 @@
       machine-friendly XML format. This manual describes the pan
       language.</para>
     </abstract>
+
+    <productnumber><?eval ${project.version}?></productnumber>
+
+    <date><?eval ${buildTimestamp}?></date>
   </info>
 
   <section>
@@ -61,8 +67,8 @@
 
     <para>Each template must reside in a separate file with the name
     <filename><replaceable>template-name</replaceable>.pan</filename> (or the
-    older <filename><replaceable>template-name</replaceable>.tpl</filename>).
-    </para>
+    older
+    <filename><replaceable>template-name</replaceable>.tpl</filename>).</para>
 
     <section>
       <title>Object Templates</title>
@@ -1772,5 +1778,6 @@ that can span multiple lines" )</programlisting>
     </section>
   </section>
 
-  <xi:include href="appendix/appendix-built-in-functions.xml" xpointer="element(/1)" />
+  <xi:include href="appendix/appendix-built-in-functions.xml"
+              xpointer="element(/1)" />
 </article>

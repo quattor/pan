@@ -11,11 +11,11 @@
 
   <refentry xml:id="append">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -117,11 +117,11 @@
 
   <refentry xml:id="base64_decode">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -162,11 +162,11 @@
 
   <refentry xml:id="base64_encode">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -204,11 +204,11 @@
 
   <refentry xml:id="clone">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -247,11 +247,11 @@
 
   <refentry xml:id="create">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -308,11 +308,11 @@ structure template mount_cdrom;
 
   <refentry xml:id="debug">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -350,11 +350,11 @@ structure template mount_cdrom;
 
   <refentry xml:id="delete">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -402,11 +402,11 @@ structure template mount_cdrom;
 
   <refentry xml:id="deprecated">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -447,11 +447,11 @@ structure template mount_cdrom;
 
   <refentry xml:id="digest">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -493,11 +493,11 @@ structure template mount_cdrom;
 
   <refentry xml:id="error">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -544,11 +544,11 @@ function foo = {
 
   <refentry xml:id="escape">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -591,11 +591,11 @@ function foo = {
 
   <refentry xml:id="exists">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -668,11 +668,11 @@ r = exists(v+'');</programlisting>
 
   <refentry xml:id="file_contents">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -710,11 +710,11 @@ r = exists(v+'');</programlisting>
 
   <refentry xml:id="first">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -788,11 +788,11 @@ ok = first(table, k, v);
 
   <refentry xml:id="format">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -837,11 +837,11 @@ ok = first(table, k, v);
 
   <refentry xml:id="if_exists">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -886,11 +886,11 @@ ok = first(table, k, v);
 
   <refentry xml:id="index">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -1069,11 +1069,11 @@ ok = first(table, k, v);
 
   <refentry xml:id="is_boolean">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -1109,11 +1109,11 @@ ok = first(table, k, v);
 
   <refentry xml:id="is_defined">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -1151,11 +1151,11 @@ ok = first(table, k, v);
 
   <refentry xml:id="is_double">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -1191,11 +1191,11 @@ ok = first(table, k, v);
 
   <refentry xml:id="is_list">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -1231,11 +1231,11 @@ ok = first(table, k, v);
 
   <refentry xml:id="is_long">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -1271,11 +1271,11 @@ ok = first(table, k, v);
 
   <refentry xml:id="is_nlist">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -1311,11 +1311,11 @@ ok = first(table, k, v);
 
   <refentry xml:id="is_null">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -1353,11 +1353,11 @@ ok = first(table, k, v);
 
   <refentry xml:id="is_number">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -1393,11 +1393,11 @@ ok = first(table, k, v);
 
   <refentry xml:id="is_property">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -1433,11 +1433,11 @@ ok = first(table, k, v);
 
   <refentry xml:id="is_resource">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -1473,11 +1473,11 @@ ok = first(table, k, v);
 
   <refentry xml:id="is_string">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -1513,11 +1513,11 @@ ok = first(table, k, v);
 
   <refentry xml:id="key">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -1574,11 +1574,11 @@ ok = first(table, k, v);
 
   <refentry xml:id="length">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -1619,11 +1619,11 @@ ok = first(table, k, v);
 
   <refentry xml:id="list">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -1667,11 +1667,11 @@ ok = first(table, k, v);
 
   <refentry xml:id="match">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -1711,11 +1711,11 @@ type device_t = string with match(self, ’ˆ(disk|cd|net)$’);</programlisting
 
   <refentry xml:id="matches">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -1767,11 +1767,11 @@ type ipv4 = string with {
 
   <refentry xml:id="merge">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -1817,11 +1817,11 @@ type ipv4 = string with {
 
   <refentry xml:id="nlist">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -1869,11 +1869,11 @@ type ipv4 = string with {
 
   <refentry xml:id="next">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -1917,11 +1917,11 @@ type ipv4 = string with {
 
   <refentry xml:id="path_exists">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -1959,11 +1959,11 @@ type ipv4 = string with {
 
   <refentry xml:id="prepend">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -2065,11 +2065,11 @@ type ipv4 = string with {
 
   <refentry xml:id="replace">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -2114,11 +2114,11 @@ type ipv4 = string with {
 
   <refentry xml:id="return">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -2159,11 +2159,11 @@ type ipv4 = string with {
 
   <refentry xml:id="splice">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -2242,11 +2242,11 @@ type ipv4 = string with {
 
   <refentry xml:id="split">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -2304,11 +2304,11 @@ type ipv4 = string with {
 
   <refentry xml:id="substr">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -2367,11 +2367,11 @@ type ipv4 = string with {
 
   <refentry xml:id="to_boolean">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -2410,11 +2410,11 @@ type ipv4 = string with {
 
   <refentry xml:id="to_double">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -2464,11 +2464,11 @@ type ipv4 = string with {
 
   <refentry xml:id="to_long">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -2519,11 +2519,11 @@ type ipv4 = string with {
 
   <refentry xml:id="to_lowercase">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -2560,11 +2560,11 @@ type ipv4 = string with {
 
   <refentry xml:id="to_string">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -2600,11 +2600,11 @@ type ipv4 = string with {
 
   <refentry xml:id="to_uppercase">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -2641,11 +2641,11 @@ type ipv4 = string with {
 
   <refentry xml:id="traceback">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -2683,11 +2683,11 @@ type ipv4 = string with {
 
   <refentry xml:id="unescape">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -2724,11 +2724,11 @@ type ipv4 = string with {
 
   <refentry xml:id="value">
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>

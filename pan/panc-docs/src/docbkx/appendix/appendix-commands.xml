@@ -11,11 +11,11 @@
 
   <refentry>
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -414,11 +414,11 @@
 
   <refentry>
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -491,11 +491,11 @@ detach(bstats)</programlisting>
 
   <refentry>
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -545,11 +545,11 @@ detach(bstats)</programlisting>
 
   <refentry>
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -613,11 +613,11 @@ detach(cstats)</programlisting>
 
   <refentry>
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -679,11 +679,11 @@ detach(mstats)</programlisting>
 
   <refentry>
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>
@@ -747,11 +747,11 @@ detach(mstats)</programlisting>
 
   <refentry>
     <info>
-      <productnumber>@VERSION@</productnumber>
+      <productnumber><?eval ${project.version}?></productnumber>
 
       <productname>panc</productname>
 
-      <date>@DATE@</date>
+      <date><?eval ${buildTimestamp}?></date>
     </info>
 
     <refmeta>

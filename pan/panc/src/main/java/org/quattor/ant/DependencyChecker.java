@@ -11,10 +11,11 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
-import org.apache.tools.ant.BuildException;
 import org.quattor.pan.repository.FileSystemSourceRepository;
 import org.quattor.pan.repository.SourceType;
 import org.quattor.pan.utils.FileStatCache;
+
+import com.sun.xml.internal.rngom.ast.builder.BuildException;
 
 public class DependencyChecker {
 
@@ -100,6 +101,15 @@ public class DependencyChecker {
 					break;
 				}
 			}
+
+		} catch (IllegalArgumentException e) {
+
+			// This is usually the result of reading a dependency file from an
+			// old version of the compiler. Assume that the profile needs to be
+			// compiler.
+			System.err.println("Warning: Outdated dependency file ("
+					+ dependencyFile.toString() + "); compiling profile");
+			outdated = true;
 
 		} catch (IOException e) {
 

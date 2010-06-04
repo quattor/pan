@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
+import org.apache.tools.ant.BuildException;
 import org.quattor.pan.repository.FileSystemSourceRepository;
 import org.quattor.pan.repository.SourceType;
 import org.quattor.pan.utils.FileStatCache;

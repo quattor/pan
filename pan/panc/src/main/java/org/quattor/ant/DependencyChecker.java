@@ -15,8 +15,6 @@ import org.quattor.pan.repository.FileSystemSourceRepository;
 import org.quattor.pan.repository.SourceType;
 import org.quattor.pan.utils.FileStatCache;
 
-import com.sun.xml.internal.rngom.ast.builder.BuildException;
-
 public class DependencyChecker {
 
 	private final List<File> includeDirectories;

@@ -5,14 +5,14 @@
 
 	<groupId>org.quattor.pan</groupId>
 	<artifactId>panc</artifactId>
-	<version>8.4.0-SNAPSHOT</version>
+	<version>8.4.1-SNAPSHOT</version>
 	<name>panc</name>
 	<url>http://quattor.org/</url>
 
 	<parent>
 		<groupId>org.quattor.pan</groupId>
 		<artifactId>pan</artifactId>
-		<version>8.4.0-SNAPSHOT</version>
+		<version>8.4.1-SNAPSHOT</version>
 	</parent>
 
 	<profiles>
@@ -281,7 +281,7 @@
 		<dependency>
 			<groupId>org.quattor.pan</groupId>
 			<artifactId>panc-docs</artifactId>
-			<version>8.4.0-SNAPSHOT</version>
+			<version>8.4.1-SNAPSHOT</version>
 			<classifier>bundle</classifier>
 			<type>zip</type>
 			<scope>package</scope>

@@ -160,9 +160,9 @@
 					<mappings>
 						<mapping>
 							<directory>/usr/lib</directory>
-							<filemode>644</filemode>
+							<filemode>755</filemode>
 							<username>root</username>
-							<groupname>wheel</groupname>
+							<groupname>root</groupname>
 							<sources>
 								<source>
 									<location>target/panc-${project.version}.jar</location>
@@ -174,7 +174,7 @@
 							<directory>/usr/bin</directory>
 							<filemode>755</filemode>
 							<username>root</username>
-							<groupname>wheel</groupname>
+							<groupname>root</groupname>
 							<sources>
 								<source>
 									<location>src/main/scripts</location>
@@ -185,7 +185,7 @@
 							<directory>/usr/share/doc/html</directory>
 							<filemode>655</filemode>
 							<username>root</username>
-							<groupname>wheel</groupname>
+							<groupname>root</groupname>
 							<sources>
 								<source>
 									<location>target/docs/html</location>
@@ -196,7 +196,7 @@
 							<directory>/usr/share/doc/pdf</directory>
 							<filemode>655</filemode>
 							<username>root</username>
-							<groupname>wheel</groupname>
+							<groupname>root</groupname>
 							<sources>
 								<source>
 									<location>target/docs/pdf</location>
@@ -207,7 +207,7 @@
 							<directory>/usr/man/man1</directory>
 							<filemode>655</filemode>
 							<username>root</username>
-							<groupname>wheel</groupname>
+							<groupname>root</groupname>
 							<sources>
 								<source>
 									<location>target/docs/man/man1</location>

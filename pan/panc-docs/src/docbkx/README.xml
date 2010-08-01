@@ -552,6 +552,12 @@ variable X ?=
           ant task to always recompile profiles when the gzip flag was set,
           regardless of whether the profiles were indeed outdated.</para>
         </listitem>
+
+        <listitem>
+          <para>(SF Bug #3024350) Ensure that en_US is always the default
+          resource bundle for messages. (Fixes traceback when using other
+          default locales.)</para>
+        </listitem>
       </itemizedlist>
     </section>
 

@@ -422,6 +422,7 @@ public class MessageUtils {
 		try {
 			bundle = ResourceBundle.getBundle(bundleName);
 		} catch (MissingResourceException mre) {
+			// Should never occur because fallback Messages.properties exists.
 			mre.printStackTrace();
 			throw new CompilerError(mre.getLocalizedMessage());
 		}

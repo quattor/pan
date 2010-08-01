@@ -540,6 +540,22 @@ variable X ?=
     <title>Change Log</title>
 
     <section>
+      <title>Version 8.4.2</title>
+
+      <para>This is a production release containing the recent development
+      features.</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>(SF Bug #3032206) The panc ant task did not correctly check
+          for gzipped output files when the gzip flag was set. This caused the
+          ant task to always recompile profiles when the gzip flag was set,
+          regardless of whether the profiles were indeed outdated.</para>
+        </listitem>
+      </itemizedlist>
+    </section>
+
+    <section>
       <title>Version 8.4.1</title>
 
       <para>This is a production release containing the recent development

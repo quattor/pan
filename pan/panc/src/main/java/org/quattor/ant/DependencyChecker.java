@@ -49,16 +49,18 @@ public class DependencyChecker {
 	}
 
 	public List<File> extractOutdatedFiles(List<File> objectFiles,
-			File outputDirectory) {
+			File outputDirectory, boolean gzipOutput) {
 
 		LinkedList<File> outdated = new LinkedList<File>();
+
+		String xmlSuffix = (gzipOutput) ? ".xml.gz" : ".xml";
 
 		for (File objectFile : objectFiles) {
 
 			String name = objectFile.getName();
 			name = stripPanExtensions(name);
 
-			File t = new File(outputDirectory, name + ".xml");
+			File t = new File(outputDirectory, name + xmlSuffix);
 			File d = new File(outputDirectory, name + ".xml.dep");
 
 			// Both profile and dependency files must exist.

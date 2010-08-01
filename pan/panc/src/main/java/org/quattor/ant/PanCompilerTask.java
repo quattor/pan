@@ -166,7 +166,7 @@ public class PanCompilerTask extends Task {
 					includeDirectories, ignoreDependencyPattern);
 
 			outdatedFiles = checker.extractOutdatedFiles(objectFiles,
-					outputDirectory);
+					outputDirectory, gzipOutput);
 
 			if (debugVerbose) {
 				System.err.println("Outdated profiles: \n");

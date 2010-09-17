@@ -1,4 +1,4 @@
-package org.quattor;
+package org.quattor.maven;
 
 /*
  * Copyright 2001-2005 The Apache Software Foundation.

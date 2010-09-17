@@ -13,6 +13,7 @@
 	<modules>
 		<module>panc</module>
 		<module>panc-docs</module>
+		<module>maven-panc-plugin</module>
 		<!--
 		<module>panc-vim</module>
 		-->

@@ -6,7 +6,7 @@
 	<groupId>org.quattor.pan</groupId>
 	<artifactId>pan</artifactId>
 	<packaging>pom</packaging>
-	<version>8.4.2-SNAPSHOT</version>
+	<version>8.4.3-SNAPSHOT</version>
 	<name>pan</name>
 	<url>http://quattor.org/</url>
 

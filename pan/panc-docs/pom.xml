@@ -6,14 +6,14 @@
 	<groupId>org.quattor.pan</groupId>
 	<artifactId>panc-docs</artifactId>
 	<packaging>pom</packaging>
-	<version>8.4.2-SNAPSHOT</version>
+	<version>8.4.3-SNAPSHOT</version>
 	<name>panc-docs</name>
 	<url>http://quattor.org/</url>
 
 	<parent>
 		<groupId>org.quattor.pan</groupId>
 		<artifactId>pan</artifactId>
-		<version>8.4.2-SNAPSHOT</version>
+		<version>8.4.3-SNAPSHOT</version>
 	</parent>
 
 	<pluginRepositories>

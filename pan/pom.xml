@@ -1,5 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -16,7 +16,8 @@
 		<!--
 		<module>panc-vim</module>
 		-->
-	</modules>
+    <module>maven-panc-plugin</module>
+  </modules>
 
 	<repositories>
 		<repository>
@@ -30,14 +31,14 @@
 
 	<distributionManagement>
 		<repository>
-			<id>sourceforge</id>
-			<name>SourceForge</name>
-			<url>sftp://loomisc,quattor@frs.sourceforge.net:/home/frs/project/q/qu/quattor/test-releases</url>
+			<id>quattor-repository</id>
+			<name>quattor-repository</name>
+			<url>http://lapp-repo01.in2p3.fr:8081/nexus/content/repositories/releases/</url>
 		</repository>
 		<snapshotRepository>
-			<id>sourceforge</id>
-			<name>SourceForge</name>
-			<url>sftp://loomisc,quattor@frs.sourceforge.net:/home/frs/project/q/qu/quattor/test-snapshots</url>
+			<id>quattor-repository</id>
+			<name>quattor-repository</name>
+			<url>http://lapp-repo01.in2p3.fr:8081/nexus/content/repositories/snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
 

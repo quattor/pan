@@ -17,7 +17,6 @@
 		<!--
 		<module>panc-vim</module>
 		-->
-    <module>maven-panc-plugin</module>
   </modules>
 
 	<repositories>

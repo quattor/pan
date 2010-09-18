@@ -1,0 +1,19 @@
+<assembly>
+  <id>bundle</id>
+
+  <includeBaseDirectory>true</includeBaseDirectory>
+
+  <formats>
+    <format>zip</format>
+    <format>tar.gz</format>
+  </formats>
+
+  <fileSets>
+    <fileSet>
+      <directory>src/main/vim</directory>
+      <outputDirectory></outputDirectory>
+      <fileMode>0644</fileMode>
+    </fileSet>
+  </fileSets>
+
+</assembly>

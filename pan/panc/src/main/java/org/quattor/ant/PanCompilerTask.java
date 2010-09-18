@@ -194,17 +194,12 @@ public class PanCompilerTask extends Task {
 		boolean hadError = false;
 		for (List<File> batch : batches) {
 
-			// Run a compilation/build on the given object templates.
 			CompilerResults results = Compiler.run(options, null, batch);
 
-			// Print out the results.
-			String errors = results.formatErrors();
-			if (errors != null) {
+			boolean batchHadError = results.print(verbose);
+
+			if (batchHadError) {
 				hadError = true;
-				System.err.println(errors);
-			}
-			if (verbose) {
-				System.out.println(results.formatStats());
 			}
 
 		}

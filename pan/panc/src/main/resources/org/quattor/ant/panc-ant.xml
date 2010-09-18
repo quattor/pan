@@ -22,4 +22,5 @@
 
 <antlib>
   <taskdef name="panc" classname="org.quattor.ant.PanCompilerTask"/>
+  <taskdef name="panc-check-syntax" classname="org.quattor.ant.PanCheckSyntaxTask"/>
 </antlib>

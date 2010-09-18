@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -151,7 +152,7 @@ public class Compiler {
 	 *            absolute file names of templates to process
 	 */
 	public Compiler(CompilerOptions options, List<String> objectNames,
-			List<File> tplFiles) {
+			Collection<File> tplFiles) {
 
 		// Sanity check.
 		assert (options != null);
@@ -208,7 +209,7 @@ public class Compiler {
 	 * @return results from the compilation/build
 	 */
 	public static CompilerResults run(CompilerOptions options,
-			List<String> objectNames, List<File> tplFiles) {
+			List<String> objectNames, Collection<File> tplFiles) {
 		return (new Compiler(options, objectNames, tplFiles)).process();
 	}
 

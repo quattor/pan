@@ -65,6 +65,27 @@ public class CompilerResults {
 	}
 
 	/**
+	 * Prints out the formatted results. Errors are printed to the standard
+	 * error stream and the summary (if requested) on standard output.
+	 * 
+	 * @param results
+	 */
+	public boolean print(boolean verbose) {
+
+		String errors = formatErrors();
+
+		if (errors != null) {
+			System.err.println(errors);
+		}
+
+		if (verbose) {
+			System.out.println(formatStats());
+		}
+
+		return (errors != null);
+	}
+
+	/**
 	 * Format the exceptions thrown during the compilation process. A null value
 	 * will be returned if no exceptions were thrown.
 	 * 

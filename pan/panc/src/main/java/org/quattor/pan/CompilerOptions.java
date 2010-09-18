@@ -23,6 +23,7 @@ package org.quattor.pan;
 import static org.quattor.pan.utils.MessageUtils.MSG_CANNOT_LOCATE_OBJECT_TEMPLATE;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -344,7 +345,7 @@ public class CompilerOptions {
 	 * @return unmodifiable set of the resolved file names
 	 */
 	public Set<File> resolveFileList(List<String> objectNames,
-			List<File> tplFiles) {
+			Collection<File> tplFiles) {
 
 		// First just copy the named templates.
 		Set<File> filesToProcess = new TreeSet<File>();

@@ -263,11 +263,46 @@ public class CompilerOptions {
 		sourceRepository = value;
 
 		this.dumpAnnotations = dumpAnnotations;
-		
+
 		this.annotationDirectory = annotationDirectory;
 		if (annotationDirectory != null) {
 			checkDirectory(annotationDirectory, "annotation");
 		}
+
+	}
+
+	/**
+	 * Create a CompilerOptions object that is appropriate for just doing a
+	 * syntax check.
+	 * 
+	 * @param deprecationLevel
+	 *            set the deprecation level, the higher the level the fewer
+	 *            deprecation warnings are produced; 0 produces all warnings
+	 * @return
+	 */
+	public static CompilerOptions createCheckSyntaxOptions(int deprecationLevel) {
+
+		List<Pattern> debugIncludePatterns = new LinkedList<Pattern>();
+		List<Pattern> debugExcludePatterns = new LinkedList<Pattern>();
+		boolean xmlWriteEnabled = false;
+		boolean depWriteEnabled = false;
+		int iterationLimit = 5000;
+		int callDepthLimit = 50;
+		Formatter formatter = null;
+		File outputDirectory = null;
+		File sessionDirectory = null;
+		int nthread = 0;
+		boolean gzipOutput = false;
+		boolean forceBuild = false;
+		boolean dumpAnnotations = false;
+		File annotationDirectory = null;
+		LinkedList<File> includeDirectories = new LinkedList<File>();
+
+		return new CompilerOptions(debugIncludePatterns, debugExcludePatterns,
+				xmlWriteEnabled, depWriteEnabled, iterationLimit,
+				callDepthLimit, formatter, outputDirectory, sessionDirectory,
+				includeDirectories, nthread, gzipOutput, deprecationLevel,
+				forceBuild, dumpAnnotations, annotationDirectory);
 
 	}
 

@@ -15,32 +15,6 @@
 		<version>8.4.3-SNAPSHOT</version>
 	</parent>
 
-	<profiles>
-		<profile>
-			<activation>
-				<file>
-					<exists>/bin/rpm</exists>
-				</file>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>rpm-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<goals>
-									<goal>attached-rpm</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-
-	</profiles>
-
 	<build>
 
 		<resources>
@@ -145,80 +119,6 @@
 
 				</executions>
 
-			</plugin>
-
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>rpm-maven-plugin</artifactId>
-				<configuration>
-					<copyright>CNRS</copyright>
-					<distribution>Quattor</distribution>
-					<group>Quattor</group>
-					<packager>Quattor</packager>
-					<changelogFile>src/changelog</changelogFile>
-					<buildarch>noarch</buildarch>
-					<mappings>
-						<mapping>
-							<directory>/usr/lib</directory>
-							<filemode>755</filemode>
-							<username>root</username>
-							<groupname>root</groupname>
-							<sources>
-								<source>
-									<location>target/panc-${project.version}.jar</location>
-									<destination>panc.jar</destination>
-								</source>
-							</sources>
-						</mapping>
-						<mapping>
-							<directory>/usr/bin</directory>
-							<filemode>755</filemode>
-							<username>root</username>
-							<groupname>root</groupname>
-							<sources>
-								<source>
-									<location>src/main/scripts</location>
-								</source>
-							</sources>
-						</mapping>
-						<mapping>
-							<directory>/usr/share/doc/html</directory>
-							<filemode>655</filemode>
-							<username>root</username>
-							<groupname>root</groupname>
-							<sources>
-								<source>
-									<location>target/docs/html</location>
-								</source>
-							</sources>
-						</mapping>
-						<mapping>
-							<directory>/usr/share/doc/pdf</directory>
-							<filemode>655</filemode>
-							<username>root</username>
-							<groupname>root</groupname>
-							<sources>
-								<source>
-									<location>target/docs/pdf</location>
-								</source>
-							</sources>
-						</mapping>
-						<mapping>
-							<directory>/usr/man/man1</directory>
-							<filemode>655</filemode>
-							<username>root</username>
-							<groupname>root</groupname>
-							<sources>
-								<source>
-									<location>target/docs/man/man1</location>
-								</source>
-							</sources>
-						</mapping>
-					</mappings>
-					<preinstallScriptlet>
-						<script>echo "installing now"</script>
-					</preinstallScriptlet>
-				</configuration>
 			</plugin>
 
 			<plugin>

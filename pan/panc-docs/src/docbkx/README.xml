@@ -435,7 +435,7 @@
       <title>Global Variable Existence Tests</title>
 
       <para>Other than changes because of deprecated features, there is only
-      one features of panc v8 that requires some changes to pan code. This
+      one feature of panc v8 that requires some changes to pan code. This
       involves how global variables are handled and respond to the
       <function>exists</function> function. In panc v8, as soon as a variable
       statement starts execution it sets the value of the variable to
@@ -538,6 +538,34 @@ variable X ?=
 
   <section>
     <title>Change Log</title>
+
+    <section>
+      <title>Version 8.4.4</title>
+
+      <para>This release contains the same features as 8.4.3, but contains
+      updated documentation.</para>
+    </section>
+
+    <section>
+      <title>Version 8.4.3</title>
+
+      <para>This release is a production release containing:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>A new maven plug-in that can be used to check the syntax of
+          pan language files.</para>
+        </listitem>
+
+        <listitem>
+          <para>A new ant task that just does the pan language syntax check,
+          with fewer parameters than the standard task.</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>The code in the release has been slightly refactored to
+      accommodate these changes and to reduce duplication of code.</para>
+    </section>
 
     <section>
       <title>Version 8.4.2</title>

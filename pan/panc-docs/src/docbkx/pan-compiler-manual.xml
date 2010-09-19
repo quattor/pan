@@ -8,7 +8,7 @@
          xmlns:db="http://docbook.org/ns/docbook">
   <title>Pan Compiler Manual</title>
 
-  <subtitle>Version <?eval ${project.version}?></subtitle>
+  <subtitle>Version<?eval ${project.version}?></subtitle>
 
   <info>
     <author>
@@ -85,7 +85,7 @@
       <programlisting>http://sourceforge.net/projects/quattor/files/</programlisting>
 
       <para>The same location also contains documentation for the compiler.
-      The document is also bundled in the distribution files.</para>
+      This document is also bundled in the distribution files.</para>
     </section>
 
     <section>
@@ -185,17 +185,6 @@
         use one of the machine-independent packages.</para>
       </formalpara>
 
-      <formalpara>
-        <title>DMG</title>
-
-        <para>Mount the DMG file and double-click on the package file. This
-        will walk you through an installation wizard. Once installed, the
-        commands will be accessible with the standard environment. You will
-        need administrator access to install the Mac OS X package. If you
-        don't have this, use one of the machine-independent formats
-        instead.</para>
-      </formalpara>
-
       <para>Using the compiler requires Java 1.5.0 or later to be installed on
       the system. If you want to run the compiler from ant, then you must have
       ant version 1.7.0 or later installed on your system.</para>
@@ -256,8 +245,8 @@
 
       <para>Using an ant task to invoke the compiler allows the compiler to be
       easily integrated with other machine management tasks. To use the pan
-      compiler within an ant build file, the pan compiler task must be
-      defined. This can be done with a task like:</para>
+      compiler within an ant build file, the pan compiler tasks must be
+      defined. This can be done with a tasks like:</para>
 
       <programlisting>&lt;target name="define.panc.task"&gt;
 
@@ -273,8 +262,12 @@
       jar file <filename>panc.jar</filename> distributed with the pan compiler
       release.</para>
 
-      <para>Running the compiler can be done with a task like the
-      following:</para>
+      <para>There are two tasks defined: <command>panc</command> and
+      <command>panc-check-syntax</command>. The first provides all of the
+      functionality available through the compiler with a large number of
+      options. The second focuses on testing the pan language syntax and takes
+      a very limited number of options. Running the compiler can be done with
+      tasks like the following:</para>
 
       <programlisting>&lt;target name="compile.cluster.profiles"&gt;
 
@@ -282,6 +275,10 @@
   &lt;path id="pan.loadpath"&gt;
     &lt;dirset dir="${basedir}" includes="**/*" /&gt;
   &lt;/path&gt;
+
+  &lt;panc-check-syntax ...options... &gt;
+    &lt;fileset dir="${basedir}/profiles" casesensitive="yes" includes="*.pan" /&gt;
+  &lt;/panc-check-syntax&gt;
 
   &lt;panc ...options... &gt;
     &lt;path refid="pan.loadpath" /&gt;
@@ -291,12 +288,11 @@
 &lt;/target&gt;</programlisting>
 
       <para>where <literal>...options...</literal> is replaced with valid
-      options for the pan compiler ant task.</para>
+      options for the pan compiler ant tasks.</para>
 
-      <para>The following table summarizes the ant task attributes. Complete
-      information can be found by looking at the javadoc information for the
-      <classname>org.quattor.pan.ant.PanCompilerTask</classname> class in the
-      javadoc distributed with the release.</para>
+      <para>The following table summarizes the ant task attributes, only the
+      <option>deprecationLevel</option> and <option>verbose</option> options
+      are permitted for the <command>panc-check-syntax</command> task.</para>
 
       <table>
         <title>Ant Task Attributes</title>
@@ -528,6 +524,11 @@
       <section>
         <title>Nested Elements</title>
 
+        <para>Some of the configuration options are specified via nested
+        elements. The <command>panc</command> task supports all of these; the
+        <command>panc-check-syntax</command> task only supports the
+        <literal>fileset</literal> nested element.</para>
+
         <section>
           <title>Debug Element</title>
 
@@ -592,6 +593,96 @@
         options can be similarly added to the environmental variable. (The
         value is a space-separated list.)</para>
       </section>
+    </section>
+
+    <section>
+      <title>Invocation with Maven</title>
+
+      <para>The pan compiler release now contains a simple maven plug-in that
+      will perform a pan syntax check on a set of source files. The plug-in is
+      available from the Quattor maven repository. To use this, you will need
+      to configure maven for that repository. This can be done by adding the
+      following to your own settings file
+      (<filename>~/.m2/settings.xml</filename>):</para>
+
+      <programlisting>&lt;settings&gt;
+
+ ...
+
+  &lt;profiles&gt;
+    &lt;profile&gt;
+      &lt;id&gt;quattor-plugins&lt;/id&gt;
+      &lt;pluginRepositories&gt;
+        &lt;pluginRepository&gt;
+          &lt;id&gt;quattor-releases&lt;/id&gt;
+          &lt;url&gt;http://lapp-repo01.in2p3.fr:8081/nexus/content/repositories/releases/&lt;/url&gt;
+        &lt;/pluginRepository&gt;
+      &lt;/pluginRepositories&gt;
+    &lt;/profile&gt;    
+  &lt;/profiles&gt;
+  
+  &lt;activeProfiles&gt;
+    &lt;activeProfile&gt;quattor-plugins&lt;/activeProfile&gt;
+  &lt;/activeProfiles&gt;
+
+&lt;/settings&gt;</programlisting>
+
+      <para>This will allow the Quattor maven repository to be searched for
+      plug-ins. The plug-in can be invoked from the command line like
+      this:</para>
+
+      <programlisting>$ mvn org.quattor.pan:maven-panc-plugin:check-syntax</programlisting>
+
+      <para>but must be done from an area with an existing
+      <filename>pom.xml</filename> file.</para>
+
+      <para>To run this as part of a normal build, add the following to the
+      <filename>pom.xml</filename> file associated with the project:</para>
+
+      <programlisting>&lt;project&gt;
+
+  ...
+
+  &lt;pluginRepositories&gt;
+    &lt;pluginRepository&gt;
+      &lt;id&gt;quattor-releases&lt;/id&gt;
+      &lt;url&gt;http://lapp-repo01.in2p3.fr:8081/nexus/content/repositories/releases/&lt;/url&gt;
+    &lt;/pluginRepository&gt;
+  &lt;/pluginRepositories&gt;
+
+  ...
+
+  &lt;build&gt;
+
+    &lt;plugins&gt;
+      &lt;plugin&gt;
+        &lt;groupId&gt;org.quattor.pan&lt;/groupId&gt;
+        &lt;artifactId&gt;maven-panc-plugin&lt;/artifactId&gt;
+
+        &lt;executions&gt;
+          &lt;execution&gt;
+            &lt;goals&gt;
+              &lt;goal&gt;check-syntax&lt;/goal&gt;
+            &lt;/goals&gt;
+            &lt;configuration&gt;
+              &lt;verbose&gt;true&lt;/verbose&gt;
+            &lt;/configuration&gt;
+          &lt;/execution&gt;
+        &lt;/executions&gt;
+
+      &lt;/plugin&gt;
+    &lt;/plugins&gt;
+
+  &lt;/build&gt;
+
+&lt;/project&gt;</programlisting>
+
+      <para>The <literal>check-syntax</literal> goal will run by default in
+      the <literal>process-sources</literal> stage of the lifecycle. By
+      default, the plug-in will recursively look for pan sources
+      (<filename>*.pan</filename> and <filename>*.tpl</filename>) in the
+      <filename>src/main/pan</filename> subdirectory of a project. The plug-in
+      checks all of the pan sources that were found. </para>
     </section>
 
     <section>

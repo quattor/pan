@@ -48,10 +48,18 @@ public class CheckSyntaxMojo extends AbstractMojo {
 	 */
 	private int deprecationLevel = 0;
 
+	/**
+	 * If this flag is set, then warnings will be treated as errors.
+	 * 
+	 * @parameter expression="${panc.failOnWarn}" default-value=false
+	 * @required
+	 */
+	private boolean failOnWarn = false;
+
 	public void execute() throws MojoExecutionException {
 
-		CompilerOptions options = CompilerOptions
-				.createCheckSyntaxOptions(deprecationLevel, false);
+		CompilerOptions options = CompilerOptions.createCheckSyntaxOptions(
+				deprecationLevel, failOnWarn);
 
 		Set<File> sources = new TreeSet<File>();
 		collectPanSources(sources, sourceDirectory);

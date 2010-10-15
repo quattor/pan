@@ -47,6 +47,7 @@ import org.quattor.pan.cache.Valid2Cache;
 import org.quattor.pan.repository.SourceRepository;
 import org.quattor.pan.tasks.Task;
 import org.quattor.pan.tasks.TaskResult;
+import org.quattor.pan.utils.Path;
 
 /**
  * Primary java interface for invoking the pan compiler. All external methods of
@@ -68,7 +69,7 @@ public class Compiler {
 	 */
 	public static final String version;
 
-	// This block of code extracts the version from a resource file.  Any error
+	// This block of code extracts the version from a resource file. Any error
 	// will result in the value being set to "unknown".
 	static {
 
@@ -157,6 +158,11 @@ public class Compiler {
 		// Sanity check.
 		assert (options != null);
 
+		// Nasty hack to tunnel options into Path object. Remove this hack once
+		// the deprecated external path syntax has been removed.
+		Path.deprecationLevel = options.deprecationLevel;
+		Path.failOnWarn = options.failOnWarn;
+
 		// Ensure that the logging has been initialized. This turns off the log
 		// file, so any logging must be set prior to constructing a Compiler
 		// object.
@@ -186,8 +192,8 @@ public class Compiler {
 		}
 		executors = new TreeMap<TaskResult.ResultType, ThreadPoolExecutor>();
 		for (TaskResult.ResultType t : TaskResult.ResultType.values()) {
-			executors.put(t, (ThreadPoolExecutor) Executors
-					.newFixedThreadPool(nprocs));
+			executors.put(t,
+					(ThreadPoolExecutor) Executors.newFixedThreadPool(nprocs));
 		}
 
 		// Must initialize the build thread limit to the number used above.

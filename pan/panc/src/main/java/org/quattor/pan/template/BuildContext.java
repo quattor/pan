@@ -1370,4 +1370,8 @@ public class BuildContext implements Context {
 		return deprecationLevel;
 	}
 
+	public boolean getFailOnWarn() {
+		return compiler.options.failOnWarn;
+	}
+
 }

@@ -461,4 +461,6 @@ public interface Context {
 	public List<String> getRelativeLoadpaths();
 
 	public int getDeprecationLevel();
+
+	public boolean getFailOnWarn();
 }

@@ -912,4 +912,8 @@ public class CompileTimeContext implements Context {
 		return deprecationLevel;
 	}
 
+	public boolean getFailOnWarn() {
+		return false;
+	}
+
 }

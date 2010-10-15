@@ -98,6 +98,8 @@ public class PanCompilerTask extends Task {
 
 	private int deprecationLevel = 0;
 
+	private boolean failOnWarn = false;
+
 	private boolean forceBuild = false;
 
 	final protected static String debugIndent = "    ";
@@ -142,7 +144,7 @@ public class PanCompilerTask extends Task {
 				iterationLimit, callDepthLimit, formatter, outputDirectory,
 				sessionDirectory, includeDirectories, nthread, gzipOutput,
 				deprecationLevel, forceBuild, dumpAnnotations,
-				annotationDirectory);
+				annotationDirectory, failOnWarn);
 
 		// If the debugging for the task is enabled, then print out the options
 		// and the arguments.
@@ -537,6 +539,17 @@ public class PanCompilerTask extends Task {
 	 */
 	public void setDeprecationLevel(int deprecationLevel) {
 		this.deprecationLevel = deprecationLevel;
+	}
+
+	/**
+	 * Flag to indicate whether or not warnings should be treated as errors.
+	 * 
+	 * @param failOnWarn
+	 *            setting the value true will cause compilations to fail on
+	 *            warnings
+	 */
+	public void setFailOnWarn(boolean failOnWarn) {
+		this.failOnWarn = failOnWarn;
 	}
 
 	/**

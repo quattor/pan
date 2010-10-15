@@ -51,7 +51,7 @@ public class CheckSyntaxMojo extends AbstractMojo {
 	public void execute() throws MojoExecutionException {
 
 		CompilerOptions options = CompilerOptions
-				.createCheckSyntaxOptions(deprecationLevel);
+				.createCheckSyntaxOptions(deprecationLevel, false);
 
 		Set<File> sources = new TreeSet<File>();
 		collectPanSources(sources, sourceDirectory);

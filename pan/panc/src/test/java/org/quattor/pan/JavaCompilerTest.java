@@ -61,7 +61,7 @@ public class JavaCompilerTest {
 		path.add(dir);
 		CompilerOptions options = new CompilerOptions(null, null, true, false,
 				100, 50, formatter, getTmpdir(), null, path, 0, false, 2,
-				false, false, null);
+				false, false, null, false);
 		List<File> tplfiles = new LinkedList<File>();
 		tplfiles.add(tplfile);
 		return new Compiler(options, new LinkedList<String>(), tplfiles);
@@ -73,7 +73,7 @@ public class JavaCompilerTest {
 		Formatter formatter = XmlDBFormatter.getInstance();
 		CompilerOptions options = new CompilerOptions(null, null, true, true,
 				100, 50, formatter, getTmpdir(), null, path, 0, false, 2,
-				false, false, null);
+				false, false, null, false);
 		List<File> tplfiles = new LinkedList<File>();
 		tplfiles.add(tplfile);
 		return new Compiler(options, new LinkedList<String>(), tplfiles);
@@ -88,7 +88,7 @@ public class JavaCompilerTest {
 
 		CompilerOptions options = new CompilerOptions(null, null, true, false,
 				100, 50, XmlDBFormatter.getInstance(), getTmpdir(), null, path,
-				0, false, 2, false, false, null);
+				0, false, 2, false, false, null, false);
 
 		List<String> objects = new LinkedList<String>();
 		objects.add("non-existant/object/template");
@@ -129,7 +129,7 @@ public class JavaCompilerTest {
 
 		CompilerOptions options = new CompilerOptions(null, null, true, false,
 				100, 50, XmlDBFormatter.getInstance(), tmpdir, null, path, 0,
-				false, 2, false, false, null);
+				false, 2, false, false, null, false);
 
 		// Create the list of input files.
 		List<File> tplfiles = new LinkedList<File>();

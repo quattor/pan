@@ -125,6 +125,7 @@ public class Panc {
 		authorizedOpt.addElement("dump-annotations");
 		authorizedOpt.addElement("annotation-dir");
 		authorizedOptArg.addElement("annotation-dir");
+		authorizedOpt.addElement("failonwarn");
 
 		endingOptChar.addElement("j");
 		endingOptChar.addElement("J");
@@ -294,8 +295,8 @@ public class Panc {
 			type = TypeOptBfor.JOPT;
 		}
 		// authorized options
-		else if (!Pattern.matches("^[h?dlbweznjJfcSIOxyirgpa]*$", arg
-				.substring(1))) {
+		else if (!Pattern.matches("^[h?dlbweznjJfcSIOxyirgpa]*$",
+				arg.substring(1))) {
 			catchError(1, arg);
 		} else if ((lastArg) && (!Pattern.matches("^[h?]*$", arg.substring(1)))) {
 			for (String opt : endingOptChar) {
@@ -314,8 +315,8 @@ public class Panc {
 			if (Pattern.matches("^[h?]*$", arg.substring(1))) {
 				postHelp();
 				System.exit(-1);
-			} else if (Pattern.matches("[jJfSIOxir]", arg.substring((arg
-					.length()) - 1))) {
+			} else if (Pattern.matches("[jJfSIOxir]",
+					arg.substring((arg.length()) - 1))) {
 				type = TypeOptBfor.OPTARG;
 			} else if ((arg.substring((arg.length()) - 1)).equals("p")) {
 				type = TypeOptBfor.DEPR;
@@ -431,6 +432,8 @@ public class Panc {
 
 		int deprecation = 0;
 
+		boolean failOnWarn = false;
+
 		boolean verbose = false;
 
 		String logging = "";
@@ -466,9 +469,9 @@ public class Panc {
 			} else if (opt.equals("annotation-dir")) {
 				annotationDirectory = new File(arguments.elementAt(compteur));
 				if (!annotationDirectory.isAbsolute()) {
-					annotationDirectory = new File(System
-							.getProperty("user.dir"), arguments
-							.elementAt(compteur));
+					annotationDirectory = new File(
+							System.getProperty("user.dir"),
+							arguments.elementAt(compteur));
 				}
 				veriDir(annotationDirectory);
 			} else if ((opt.equals("l")) || (opt.equals("object-load"))) {
@@ -558,6 +561,8 @@ public class Panc {
 				if (logfile != null) {
 					CompilerLogging.setLogFile(logfile);
 				}
+			} else if (opt.equals("failonwarn")) {
+				failOnWarn = true;
 			}
 			compteur++;
 		}
@@ -571,7 +576,7 @@ public class Panc {
 				debugExcludePatterns, xmlWriteEnabled, depWriteEnabled,
 				iteration, callDepth, formatter, outputDirectory,
 				sessionDirectory, includeDirectories, 0, gzip, deprecation,
-				false, dumpAnnotations, annotationDirectory);
+				false, dumpAnnotations, annotationDirectory, failOnWarn);
 
 		CompilerResults results = Compiler.run(coptions, objectOutput,
 				includeFiles);
@@ -635,6 +640,8 @@ public class Panc {
 				.printf(" -g, --gzip                    compress the machine config. files\n");
 		System.out
 				.printf(" -p, --deprecation=NUMBER      set deprecation level (default is 0)\n");
+		System.out
+				.printf("     --failonwarn              treat warnings as errors\n");
 		System.out
 				.printf(" -M, --memory=NUMBER           define java memory (DEPRECATED)\n");
 		System.out

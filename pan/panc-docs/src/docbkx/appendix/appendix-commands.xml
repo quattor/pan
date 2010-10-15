@@ -70,6 +70,8 @@
 
         <arg>-p | --deprecation <replaceable>number</replaceable></arg>
 
+        <arg>--failonwarn</arg>
+
         <arg>-M | --memory <replaceable>size</replaceable></arg>
 
         <arg>--java-opts <replaceable>string</replaceable></arg>
@@ -317,6 +319,14 @@
             disappear in the next major release. Set to -1 to turn off all
             warnings. Use larger integers to see features that are planned to
             be deprecated in future releases.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><option>--failonwarn</option></term>
+
+          <listitem>
+            <para>Treat warnings as errors.</para>
           </listitem>
         </varlistentry>
 

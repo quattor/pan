@@ -108,6 +108,11 @@ public class CompilerOptions {
 	 */
 	public final int deprecationLevel;
 
+	/**
+	 * If set to true, then any warnings will cause the compilation to fail.
+	 */
+	public final boolean failOnWarn;
+
 	public final SourceRepository sourceRepository;
 
 	/**
@@ -171,6 +176,8 @@ public class CompilerOptions {
 	 *            standard output
 	 * @param annotationDirectory
 	 *            directory that will contain annotation output files
+	 * @param failOnWarn
+	 *            if set to true, all warnings will cause compilation to fail
 	 */
 	public CompilerOptions(List<Pattern> debugIncludePatterns,
 			List<Pattern> debugExcludePatterns, boolean xmlWriteEnabled,
@@ -178,7 +185,7 @@ public class CompilerOptions {
 			Formatter formatter, File outputDirectory, File sessionDirectory,
 			List<File> includeDirectories, int nthread, boolean gzipOutput,
 			int deprecationLevel, boolean forceBuild, boolean dumpAnnotations,
-			File annotationDirectory) {
+			File annotationDirectory, boolean failOnWarn) {
 
 		// Check that the iteration and call depth limits are sensible. If
 		// negative or zero set these effectively to infinity.
@@ -231,6 +238,7 @@ public class CompilerOptions {
 		this.activeThreadsPerQueue = nthread;
 		this.gzipOutput = gzipOutput;
 		this.deprecationLevel = deprecationLevel;
+		this.failOnWarn = failOnWarn;
 		this.forceBuild = forceBuild;
 
 		// Setup the debug patterns, ensuring that the debug pattern lists are
@@ -279,9 +287,12 @@ public class CompilerOptions {
 	 * @param deprecationLevel
 	 *            set the deprecation level, the higher the level the fewer
 	 *            deprecation warnings are produced; 0 produces all warnings
+	 * @param failOnWarn
+	 *            if set to true, all warnings will cause compilation to fail
 	 * @return
 	 */
-	public static CompilerOptions createCheckSyntaxOptions(int deprecationLevel) {
+	public static CompilerOptions createCheckSyntaxOptions(
+			int deprecationLevel, boolean failOnWarn) {
 
 		List<Pattern> debugIncludePatterns = new LinkedList<Pattern>();
 		List<Pattern> debugExcludePatterns = new LinkedList<Pattern>();
@@ -303,7 +314,7 @@ public class CompilerOptions {
 				xmlWriteEnabled, depWriteEnabled, iterationLimit,
 				callDepthLimit, formatter, outputDirectory, sessionDirectory,
 				includeDirectories, nthread, gzipOutput, deprecationLevel,
-				forceBuild, dumpAnnotations, annotationDirectory);
+				forceBuild, dumpAnnotations, annotationDirectory, failOnWarn);
 
 	}
 

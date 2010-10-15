@@ -52,7 +52,7 @@ public class PanCheckSyntaxTask extends Task {
 	public void execute() throws BuildException {
 
 		CompilerOptions options = CompilerOptions
-				.createCheckSyntaxOptions(deprecationLevel);
+				.createCheckSyntaxOptions(deprecationLevel, false);
 
 		CompilerResults results = Compiler.run(options, null, sourceFiles);
 

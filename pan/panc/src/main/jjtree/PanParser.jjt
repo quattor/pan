@@ -86,7 +86,13 @@ public class PanParser {
        msg.append("\n");
        msg.append(message);
 
-       System.err.println(msg.toString());
+       if (compilerOptions.failOnWarn) {
+         ParseException pe = new ParseException(msg.toString());
+         pe.sourceRange = PanParserUtils.sourceRangeFromTokens(token, token);
+         throw pe;
+       } else {
+         System.err.println(msg.toString());         
+       }
      }
    };
   

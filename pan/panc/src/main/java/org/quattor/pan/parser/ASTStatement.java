@@ -23,7 +23,7 @@ package org.quattor.pan.parser;
 public class ASTStatement extends SimpleNode {
 
 	static public enum StatementType {
-		NOOP, BIND, ASSIGN, VARIABLE, TYPE, FUNCTION, INCLUDE
+		NOOP, BIND, ASSIGN, VARIABLE, TYPE, FUNCTION, INCLUDE, PREFIX
 	}
 
 	private StatementType type = null;

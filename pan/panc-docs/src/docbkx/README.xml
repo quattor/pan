@@ -540,6 +540,30 @@ variable X ?=
     <title>Change Log</title>
 
     <section>
+      <title>Version 8.4.5</title>
+
+      <para>This release contains the following additional features:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>(SF RFE #xxxxxx) A prefix statement has been added to the pan
+          language. This defines an absolute path that will be used to resolve
+          all subsequent relative paths in assignment statements.</para>
+        </listitem>
+
+        <listitem>
+          <para>(SF RFE #xxxxxx) Add a deprecation warning for old style
+          external paths (//machine/path).</para>
+        </listitem>
+
+        <listitem>
+          <para>(SF RFE #xxxxxx) Add a compiler option to convert warnings to
+          fatal errors.</para>
+        </listitem>
+      </itemizedlist>
+    </section>
+
+    <section>
       <title>Version 8.4.4</title>
 
       <para>This release contains the same features as 8.4.3, but contains

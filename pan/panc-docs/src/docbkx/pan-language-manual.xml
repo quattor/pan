@@ -8,7 +8,7 @@
          xmlns:db="http://docbook.org/ns/docbook">
   <title>Pan Language Manual</title>
 
-  <subtitle>Version <?eval ${project.version}?></subtitle>
+  <subtitle>Version<?eval ${project.version}?></subtitle>
 
   <info>
     <author>
@@ -305,6 +305,25 @@ type path = type-spec;</programlisting>
 
       <para>The pan compiler internally implements this statement as the
       <command>bind</command> statement above.</para>
+    </section>
+
+    <section>
+      <title>prefix</title>
+
+      <para>The <command>prefix</command> statement provides an absolute path
+      used to resolve relative paths in assignment statements occurring
+      afterwards. It has the form:</para>
+
+      <para><programlisting>prefix '/some/absolute/path';</programlisting></para>
+
+      <para>The path must be an absolute path or an empty string. If the empty
+      string is given, no prefix is used for subsequent assignment statements
+      with relative paths. The prefix can be redefined within a given
+      template. </para>
+
+      <para><emphasis>This statement is evaluated at compile time and only
+      affects assignment statements in the same file as the
+      definition.</emphasis> </para>
     </section>
   </section>
 

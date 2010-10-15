@@ -356,6 +356,8 @@ TOKEN : /* Reserved words and operators. */
   | 
   <FINAL: "final">
   | 
+  <PREFIX: "prefix">
+  | 
   <UNIQUE: "unique">
   | 
   <OBJECT: "object">
@@ -564,6 +566,14 @@ void statement() #Statement :
       deprecated("replace \"include <identifier>\" with \"include {'identifier'}\"", b, 0);
       jjtThis.setIdentifier(i.image);
     } 
+  }
+  |
+  /* Set the prefix for resolving relative paths. */
+  b=<PREFIX> s=path() e=<SEMICOLON>
+  { 
+    jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(b,e)); 
+    jjtThis.setStatementType(ASTStatement.StatementType.PREFIX);
+    jjtThis.setIdentifier(s.image);
   }
   |
   /* Validation statement implemented as a bind statement with Element type. */

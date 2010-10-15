@@ -24,6 +24,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assert.assertNull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -423,4 +424,33 @@ public class PathTest {
 		p.compareTo(null);
 	}
 
+	@Test
+	public void resolveNulls() throws SyntaxException {
+		assertNull(Path.resolve(null, null));
+	}
+	
+	@Test
+	public void resolveAgainstNull() throws SyntaxException {
+		Path relative = new Path("alpha");
+		Path resolved = Path.resolve(null, relative);
+		assertEquals(relative, resolved);
+	}
+
+	@Test
+	public void resolveAbsolute() throws SyntaxException {
+		Path root = new Path("/alpha");
+		Path path = new Path("/beta");
+		Path resolved = Path.resolve(root, path);
+		assertEquals(path, resolved);
+	}
+
+	@Test
+	public void resolve() throws SyntaxException {
+		Path root = new Path("/alpha");
+		Path relative = new Path("beta");
+		Path correct = new Path("/alpha/beta");
+		Path resolved = Path.resolve(root, relative);
+		assertEquals(correct, resolved);
+	}
+	
 }

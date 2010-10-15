@@ -279,6 +279,14 @@ public class Path implements Comparable<Path> {
 		return terms.clone();
 	}
 
+	public static Path resolve(Path prefix, Path relative) throws SyntaxException {
+		if (prefix!=null && relative.isRelative()) {
+			return new Path(prefix, relative.getTerms());
+		} else {
+			return relative;
+		}
+	}
+
 	/**
 	 * Return the type (EXTERNAL, ABSOLUTE, or RELATIVE) for this path.
 	 */

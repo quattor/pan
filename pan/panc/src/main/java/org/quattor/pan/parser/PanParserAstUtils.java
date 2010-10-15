@@ -147,6 +147,7 @@ import org.quattor.pan.type.HashType;
 import org.quattor.pan.type.LinkType;
 import org.quattor.pan.type.ListType;
 import org.quattor.pan.type.RecordType;
+import org.quattor.pan.utils.MessageUtils;
 import org.quattor.pan.utils.Path;
 import org.quattor.pan.utils.Term;
 
@@ -342,6 +343,9 @@ public class PanParserAstUtils {
 		// Create a list containing all of the statements.
 		LinkedList<Statement> statements = new LinkedList<Statement>();
 
+		// By default the prefix for paths is empty.
+		Path prefix = null;
+
 		// Loop over all of the children, convert them to Statements, and add
 		// them to the list.
 		int nchild = ast.jjtGetNumChildren();
@@ -361,7 +365,7 @@ public class PanParserAstUtils {
 						file.getAbsolutePath(), snode));
 				break;
 			case ASSIGN:
-				statements.add(convertAstToAssignStatement(snode));
+				statements.add(convertAstToAssignStatement(snode, prefix));
 				break;
 			case VARIABLE:
 				statements.add(convertAstToVariableStatement(snode));
@@ -379,14 +383,17 @@ public class PanParserAstUtils {
 					statements.add(stmt);
 				}
 				break;
+			case PREFIX:
+				prefix = convertAstToPrefixStatement(snode);
+				break;
 			default:
 				assert (false);
 				break;
 			}
 		}
 
-		Template t = new Template(file, ast.getSourceRange(), ast
-				.getTemplateType(), ast.getIdentifier(), statements);
+		Template t = new Template(file, ast.getSourceRange(),
+				ast.getTemplateType(), ast.getIdentifier(), statements);
 		return t;
 	}
 
@@ -397,17 +404,7 @@ public class PanParserAstUtils {
 		assert (ast.getStatementType() == StatementType.BIND);
 
 		// Get identifier and create path.
-		String pathname = ast.getIdentifier();
-		assert (pathname != null);
-		Path path = null;
-		try {
-			path = new Path(pathname);
-		} catch (EvaluationException ee) {
-			throw SyntaxException.create(ast.getSourceRange(), ee);
-		} catch (SyntaxException se) {
-			throw se.addExceptionInfo(ast.getSourceRange(), null);
-		}
-		assert (path != null);
+		Path path = createPathFromIdentifier(ast);
 
 		// Verify that there is exactly one child.
 		assert (ast.jjtGetNumChildren() == 1);
@@ -430,26 +427,32 @@ public class PanParserAstUtils {
 		return new BindStatement(ast.getSourceRange(), path, fullType);
 	}
 
-	static private Statement convertAstToAssignStatement(ASTStatement ast)
+	private static Path createPathFromIdentifier(ASTStatement ast)
 			throws SyntaxException {
+
+		try {
+			String pathname = ast.getIdentifier();
+			assert (pathname != null);
+			return new Path(pathname);
+		} catch (EvaluationException ee) {
+			throw SyntaxException.create(ast.getSourceRange(), ee);
+		} catch (SyntaxException se) {
+			throw se.addExceptionInfo(ast.getSourceRange(), null);
+		}
+	}
+
+	static private Statement convertAstToAssignStatement(ASTStatement ast,
+			Path prefix) throws SyntaxException {
 
 		// Sanity check. Ensure that this is a assignment statement.
 		assert (ast.getStatementType() == StatementType.ASSIGN);
 
 		AssignmentStatement statement = null;
 
-		// Get the identifier and create the path.
-		String pathname = ast.getIdentifier();
-		assert (pathname != null);
-		Path path = null;
-		try {
-			path = new Path(pathname);
-		} catch (EvaluationException ee) {
-			throw SyntaxException.create(ast.getSourceRange(), ee);
-		} catch (SyntaxException se) {
-			throw se.addExceptionInfo(ast.getSourceRange(), null);
-		}
-		assert (path != null);
+		// Get the identifier and create the path. Resolve this against the
+		// prefix if the given path is relative.
+		Path path = createPathFromIdentifier(ast);
+		path = Path.resolve(prefix, path);
 
 		// Create the assignment statement.
 		assert (ast.jjtGetNumChildren() <= 1);
@@ -457,16 +460,16 @@ public class PanParserAstUtils {
 
 			// This is a delete statement.
 			Element element = Null.VALUE;
-			statement = AssignmentStatement.createAssignmentStatement(ast
-					.getSourceRange(), path, element, ast.getConditionalFlag(),
-					!ast.getFinalFlag());
+			statement = AssignmentStatement.createAssignmentStatement(
+					ast.getSourceRange(), path, element,
+					ast.getConditionalFlag(), !ast.getFinalFlag());
 		} else {
 
 			// This is a normal assignment statement.
 			ASTOperation child = (ASTOperation) ast.jjtGetChild(0);
 			Operation dml = astToDml(child);
-			statement = AssignmentStatement.createAssignmentStatement(ast
-					.getSourceRange(), path, dml, ast.getConditionalFlag(),
+			statement = AssignmentStatement.createAssignmentStatement(
+					ast.getSourceRange(), path, dml, ast.getConditionalFlag(),
 					!ast.getFinalFlag());
 		}
 
@@ -558,6 +561,32 @@ public class PanParserAstUtils {
 
 	}
 
+	static private Path convertAstToPrefixStatement(ASTStatement ast)
+			throws SyntaxException {
+
+		// Sanity check.
+		assert (ast.getStatementType() == StatementType.PREFIX);
+
+		if (!"".equals(ast.getIdentifier())) {
+
+			// Normal path was given check that it is absolute.
+			Path path = createPathFromIdentifier(ast);
+			if (!path.isAbsolute()) {
+				throw SyntaxException.create(ast.getSourceRange(),
+						MessageUtils.MSG_PREFIX_MUST_BE_ABSOLUTE_PATH,
+						path.toString());
+			}
+			return path;
+
+		} else {
+
+			// Empty path was given so just return null to indicate there is no
+			// prefix.
+			return null;
+		}
+
+	}
+
 	static private FullType astToFullType(String source, ASTFullTypeSpec ast)
 			throws SyntaxException {
 		Operation withDml = null;
@@ -590,8 +619,8 @@ public class PanParserAstUtils {
 				ASTOperation dml = (ASTOperation) op.jjtGetChild(0);
 				assert (dml.getOperationType() == OperationType.DML);
 				defaultDml = astToDml(dml);
-				sourceRange = SourceRange.combineSourceRanges(sourceRange, dml
-						.getSourceRange());
+				sourceRange = SourceRange.combineSourceRanges(sourceRange,
+						dml.getSourceRange());
 				break;
 			case WITH:
 				assert (op.jjtGetNumChildren() == 1);
@@ -599,8 +628,8 @@ public class PanParserAstUtils {
 				ASTOperation with = (ASTOperation) op.jjtGetChild(0);
 				assert (with.getOperationType() == OperationType.DML);
 				withDml = astToDml(with);
-				sourceRange = SourceRange.combineSourceRanges(sourceRange, with
-						.getSourceRange());
+				sourceRange = SourceRange.combineSourceRanges(sourceRange,
+						with.getSourceRange());
 				break;
 			default:
 				throw CompilerError.create(MSG_REACHED_IMPOSSIBLE_BRANCH);
@@ -788,8 +817,8 @@ public class PanParserAstUtils {
 				// Update the source range for this operation. This must be done
 				// afterwards because the source range for the children may be
 				// modified by iterating over them.
-				sourceRange = SourceRange.combineSourceRanges(sourceRange, n
-						.getSourceRange());
+				sourceRange = SourceRange.combineSourceRanges(sourceRange,
+						n.getSourceRange());
 			}
 		}
 
@@ -980,8 +1009,8 @@ public class PanParserAstUtils {
 				}
 			}
 
-			baseType = new RecordType(source, base.getSourceRange(), base
-					.isExtensible(), base.getRange(), includes, reqFields,
+			baseType = new RecordType(source, base.getSourceRange(),
+					base.isExtensible(), base.getRange(), includes, reqFields,
 					optFields);
 		} else {
 			// This is an alias type.

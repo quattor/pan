@@ -8,6 +8,7 @@
   <version>8.4.5-SNAPSHOT</version>
   <name>panc</name>
   <url>http://quattor.org/</url>
+  <description>Pan Language Compiler</description>
 
   <parent>
     <groupId>org.quattor.pan</groupId>

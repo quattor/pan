@@ -85,6 +85,13 @@ public class Compiler {
 			values.load(is);
 		} catch (IOException consumed) {
 		} catch (NullPointerException consumed) {
+		} finally {
+			if (is != null) {
+				try {
+					is.close();
+				} catch (IOException consumed) {
+				}
+			}
 		}
 
 		version = values.getProperty("version");

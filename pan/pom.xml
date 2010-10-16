@@ -17,6 +17,32 @@
     <module>panc-vim</module>
   </modules>
 
+  <organization>
+    <name>Quattor</name>
+    <url>http://quattor.org/</url>
+  </organization>
+
+  <scm>
+    <connection>scm:svn:https://quattor.svn.sourceforge.net/svnroot/quattor/trunk/pan</connection>
+    <developerConnection>scm:svn:https://quattor.svn.sourceforge.net/svnroot/quattor/trunk/pan</developerConnection>
+    <tag>HEAD</tag>
+    <url>http://quattor.svn.sourceforge.net/viewvc/quattor/</url>
+  </scm>
+
+  <issueManagement>
+    <system>SourceForge Tracker</system>
+    <url>https://sourceforge.net/tracker/?group_id=221766</url>
+  </issueManagement>
+
+  <mailingLists>
+    <mailingList>
+      <name>Quattor Discuss</name>
+      <subscribe>https://lists.sourceforge.net/lists/listinfo/quattor-discuss</subscribe>
+      <unsubscribe>https://lists.sourceforge.net/lists/listinfo/quattor-discuss</unsubscribe>
+      <archive>https://sourceforge.net/mailarchive/forum.php?forum_name=quattor-discuss</archive>
+    </mailingList>
+  </mailingLists>
+
   <profiles>
     <profile>
 

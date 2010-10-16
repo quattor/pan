@@ -101,6 +101,7 @@
 	  <configuration>
 	    <preparationGoals>clean install</preparationGoals>
 	    <autoVersionSubmodules>true</autoVersionSubmodules>
+	    <goals>deploy site:stage-deploy</goals>
 	  </configuration>
 	</plugin>
 	<plugin>

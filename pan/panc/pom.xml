@@ -148,6 +148,7 @@
 
   <reporting>
     <plugins>
+
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>findbugs-maven-plugin</artifactId>
@@ -155,6 +156,14 @@
           <excludeFilterFile>${basedir}/src/test/findbugs/findbugs-exclude.xml</excludeFilterFile>
         </configuration>
       </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+	</configuration>
+      </plugin>
+
     </plugins>
   </reporting>
 

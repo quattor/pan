@@ -100,7 +100,7 @@
       <title>Declaration Templates</title>
 
       <para>A template declared with a <literal>declaration</literal> modifier
-      is a declaration template. These template may contain only those pan
+      is a declaration template. These templates may contain only those pan
       statements that do not modify the machine profile. That is, they may
       contain only <command>type</command>, <command>bind</command>,
       <command>variable</command>, and <command>function</command> statements.
@@ -177,13 +177,14 @@
 include {dml};</programlisting></para>
 
       <para>The first variant includes the named template; the template is
-      written as a token without quotes. The second variant executes the given
-      DML block. The block must evaluate to a string,
-      <literal>undef</literal>, or <literal>null</literal>. If the result is
-      <literal>undef</literal> or <literal>null</literal>, the
-      <command>include</command> statement does nothing; if the result is a
-      string, the named template is loaded and executed. Any other type will
-      generate an error. The braces in the second variant are required.</para>
+      written as a token without quotes. (<emphasis>This variant is
+      deprecated.</emphasis>) The second variant executes the given DML block.
+      The block must evaluate to a string, <literal>undef</literal>, or
+      <literal>null</literal>. If the result is <literal>undef</literal> or
+      <literal>null</literal>, the <command>include</command> statement does
+      nothing; if the result is a string, the named template is loaded and
+      executed. Any other type will generate an error. The braces in the
+      second variant are required.</para>
 
       <para>Ordinary templates may be included multiple times, but loops are
       not permitted. Templates marked as <literal>declaration</literal> or
@@ -258,14 +259,17 @@ include {dml};</programlisting></para>
 
       <para>Pan provides several automatic global variables:
       <varname>OBJECT</varname>, <varname>SELF</varname>,
-      <varname>FUNCTION</varname>, and <varname>LOADPATH</varname> (and their
-      deprecated lowercase equivalents). <varname>OBJECT</varname> contains
-      the name of the object template being evaluated; it is a final variable.
+      <varname>FUNCTION</varname>, <varname>TEMPLATE</varname>, and
+      <varname>LOADPATH</varname> (and their deprecated lowercase
+      equivalents). <varname>OBJECT</varname> contains the name of the object
+      template being evaluated; it is a final variable.
       <varname>SELF</varname> is the current value of a path referred to in an
       assignment or variable statement. The <varname>SELF</varname> reference
       cannot be modified, but children of <varname>SELF</varname> may be.
       <varname>FUNCTION</varname> contains the name of the current function,
       if it exists. <varname>FUNCTION</varname> is a final variable.
+      <varname>TEMPLATE</varname> contains the name of the template that
+      invoked the current DML block; it is a final variable.
       <varname>LOADPATH</varname> can be used to modify the load path used to
       locate template for the <command>include</command> statement.</para>
 
@@ -319,11 +323,11 @@ type path = type-spec;</programlisting>
       <para>The path must be an absolute path or an empty string. If the empty
       string is given, no prefix is used for subsequent assignment statements
       with relative paths. The prefix can be redefined within a given
-      template. </para>
+      template.</para>
 
       <para><emphasis>This statement is evaluated at compile time and only
       affects assignment statements in the same file as the
-      definition.</emphasis> </para>
+      definition.</emphasis></para>
     </section>
   </section>
 
@@ -512,10 +516,11 @@ type small_even_nlist = small_even{};</programlisting>
 
       <para>When the function is called, the DML will have the variables
       <varname>ARGC</varname> and <varname>ARGV</varname> defined. (The
-      deprecated names <varname>argc</varname> and <varname>argv</varname>
-      will also be defined.) The variable <varname>ARGC</varname> contains the
-      number of arguments passed to the function; <varname>ARGV</varname> is a
-      list containing the values of the arguments.</para>
+      deprecated names <varname>argc</varname> and <varname>argv</varname> are
+      converted to uppercase at during compilation.) The variable
+      <varname>ARGC</varname> contains the number of arguments passed to the
+      function; <varname>ARGV</varname> is a list containing the values of the
+      arguments.</para>
 
       <para>Note that <varname>ARGV</varname> is a standard pan list.
       Consequently, passing null values (intended to delete elements) to
@@ -1153,7 +1158,7 @@ EOT</programlisting>
         string. That is, no escape processing is done.</para>
 
         <para>The easiest solution to put binary data inside pan code is to
-        base64 encode it and put it inside ”here-doc” strings like in the
+        base64 encode it and put it inside "here-doc” strings like in the
         following example:</para>
 
         <programlisting>"/system/binary/stuff" = base64_decode(&lt;&lt;EOT); 

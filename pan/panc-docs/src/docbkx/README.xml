@@ -49,7 +49,7 @@
       of statements and DML blocks. This first-level optimization involves the
       evaluation of compile-time constants to either remove branches in
       operator execution or to use specialized (and faster) versions of
-      build-in functions. In many cases, this optimization allows stricter
+      built-in functions. In many cases, this optimization allows stricter
       checking of syntax and validity checking of function arguments.
       Consequently, many errors that were caught only at run-time in previous
       compilers and now caught at compile-time.</para>
@@ -442,7 +442,7 @@
       <literal>undef</literal>. Previously, the value was left undefined. This
       causes a change in behavior when the <function>exists</function>
       function is applied to the same variable that is being set. That is the
-      following statement with leave the variable <varname>X</varname> always
+      following statement will leave the variable <varname>X</varname> always
       <literal>true</literal> in panc v8:</para>
 
       <programlisting>variable X = exists(X);</programlisting>
@@ -546,18 +546,18 @@ variable X ?=
 
       <itemizedlist>
         <listitem>
-          <para>(SF RFE #xxxxxx) A prefix statement has been added to the pan
+          <para>(SF RFE #2674737) A prefix statement has been added to the pan
           language. This defines an absolute path that will be used to resolve
           all subsequent relative paths in assignment statements.</para>
         </listitem>
 
         <listitem>
-          <para>(SF RFE #xxxxxx) Add a deprecation warning for old style
+          <para>(SF RFE #3088575) Add a deprecation warning for old style
           external paths (//machine/path).</para>
         </listitem>
 
         <listitem>
-          <para>(SF RFE #xxxxxx) Add a compiler option to convert warnings to
+          <para>(SF RFE #3088576) Add a compiler option to convert warnings to
           fatal errors.</para>
         </listitem>
       </itemizedlist>

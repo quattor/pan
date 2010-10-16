@@ -95,13 +95,13 @@
       repository. The mainline development ("trunk") can be checked out with a
       subversion client with the command:</para>
 
-      <programlisting>svn checkout https://quattor.svn.sourceforge.net/svnroot/quattor/trunk/panc</programlisting>
+      <programlisting>svn checkout https://quattor.svn.sourceforge.net/svnroot/quattor/trunk/pan/panc</programlisting>
 
       <para>As this is the active development branch, code checked out from it
       may or may not work. For use in a production environment, check out a
       specific version of the compiler with a command like:</para>
 
-      <programlisting>svn checkout https://quattor.svn.sourceforge.net/svnroot/quattor/tags/panc/8.2.9</programlisting>
+      <programlisting>svn checkout https://quattor.svn.sourceforge.net/svnroot/quattor/tags/pan-8.2.9/panc</programlisting>
 
       <para>where the tags correspond to the version of the compiler. Unless
       you have special requirements, use the latest
@@ -117,10 +117,11 @@
         linux distributions include the GNU implementation of Java.
         <emphasis>The GNU implementation cannot build or run the pan compiler
         correctly.</emphasis> Full versions of Java for linux, Solaris, and
-        Windows can be obtained from Sun.</para>
+        Windows can be obtained from Oracle. Maven can be obtained from the
+        Apache Foundation web site. </para>
 
-        <para>The build of the compiler is done via <command>ant</command>
-        that also depends on Java. For <command>ant</command> to find the
+        <para>The build of the compiler is done via <command>maven</command>
+        that also depends on Java. For <command>maven</command> to find the
         correct version of the compiler, the environment variable
         <envar>JAVA_HOME</envar> should be defined:</para>
 
@@ -133,15 +134,15 @@
         <para>depending on the type of shell that you use. After that, the
         entire build can be accomplished with:</para>
 
-        <para><programlisting>./external/apache-ant/bin/ant --noconfig</programlisting></para>
+        <para><programlisting>mvn clean package</programlisting></para>
 
         <para>where the current working directory is the root of the directory
         checked out from subversion. The default build will compile all of the
         java sources, run the unit tests, and package the compiler. Tarballs
         (plain, gzipped, and bzipped) as well as a zip file are created on all
         platforms. The build will also create an RPM on platforms that support
-        it and a DMG file for Mac OS X. The final packages can be found in the
-        <filename>build/pkgs</filename> subdirectory.</para>
+        it. The final packages can be found in the <filename>target</filename>
+        subdirectory.</para>
       </section>
     </section>
   </section>
@@ -291,8 +292,9 @@
       options for the pan compiler ant tasks.</para>
 
       <para>The following table summarizes the ant task attributes, only the
-      <option>deprecationLevel</option> and <option>verbose</option> options
-      are permitted for the <command>panc-check-syntax</command> task.</para>
+      <option>deprecationLevel</option>, <option>failOnWarn</option> and
+      <option>verbose</option> options are permitted for the
+      <command>panc-check-syntax</command> task.</para>
 
       <table>
         <title>Ant Task Attributes</title>
@@ -345,6 +347,15 @@
               for next release, 1 for second release, etc.</entry>
 
               <entry>No. Default value: 0</entry>
+            </row>
+
+            <row>
+              <entry>failOnWarn</entry>
+
+              <entry>If set to true, then warnings will be treated like errors
+              and abort the compilation.</entry>
+
+              <entry>No. Default value: false</entry>
             </row>
 
             <row>
@@ -682,7 +693,7 @@
       default, the plug-in will recursively look for pan sources
       (<filename>*.pan</filename> and <filename>*.tpl</filename>) in the
       <filename>src/main/pan</filename> subdirectory of a project. The plug-in
-      checks all of the pan sources that were found. </para>
+      checks all of the pan sources that were found.</para>
     </section>
 
     <section>

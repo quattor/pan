@@ -1,11 +1,10 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.quattor.pan</groupId>
   <artifactId>panc</artifactId>
-  <version>8.4.5-SNAPSHOT</version>
+  <version>8.4.5</version>
   <name>panc</name>
   <url>http://quattor.org/</url>
   <description>Pan Language Compiler</description>
@@ -13,7 +12,7 @@
   <parent>
     <groupId>org.quattor.pan</groupId>
     <artifactId>pan</artifactId>
-    <version>8.4.5-SNAPSHOT</version>
+    <version>8.4.5</version>
   </parent>
 
   <build>
@@ -75,7 +74,7 @@
           <systemPropertyVariables>
             <panc.tmpdir>${project.build.directory}/test-tmp/tmpdir</panc.tmpdir>
             <panc.testdir>${basedir}/src/test/pan</panc.testdir>
-            <buildDirectory></buildDirectory>
+            <buildDirectory />
           </systemPropertyVariables>
           <excludes>
             <exclude>**/TestUtils.java</exclude>
@@ -182,7 +181,7 @@
     <dependency>
       <groupId>org.quattor.pan</groupId>
       <artifactId>panc-docs</artifactId>
-      <version>8.4.5-SNAPSHOT</version>
+      <version>8.4.5</version>
       <classifier>bundle</classifier>
       <type>zip</type>
       <scope>package</scope>

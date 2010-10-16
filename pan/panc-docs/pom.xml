@@ -16,20 +16,6 @@
     <version>8.4.5-SNAPSHOT</version>
   </parent>
 
-  <pluginRepositories>
-    <pluginRepository>
-      <id>docbkx.snapshots</id>
-      <name>Maven Plugin Snapshots</name>
-      <url>http://docbkx-tools.sourceforge.net/snapshots/</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </pluginRepository>
-  </pluginRepositories>
-
   <build>
 
     <plugins>
@@ -50,7 +36,6 @@
       <plugin>
         <groupId>com.agilejava.docbkx</groupId>
         <artifactId>docbkx-maven-plugin</artifactId>
-        <version>2.0.10</version>
         <executions>
 
           <execution>

@@ -87,7 +87,7 @@
     <site>
       <id>sourceforge-web-autodocs</id>
       <name>sourceforge-web-autodocs</name>
-      <url>sftp://web.sourceforge.net/home/groups/q/qu/quattor/htdocs/autodoc</url>
+      <url>scp://shell.sourceforge.net/home/groups/q/qu/quattor/htdocs/autodoc</url>
     </site>
 
   </distributionManagement>

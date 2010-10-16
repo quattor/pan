@@ -6,7 +6,7 @@
   <groupId>org.quattor.pan</groupId>
   <artifactId>pan</artifactId>
   <packaging>pom</packaging>
-  <version>8.4.6-SNAPSHOT</version>
+  <version>8.4.5-SNAPSHOT</version>
   <name>pan</name>
   <url>http://quattor.org/</url>
 
@@ -25,6 +25,7 @@
   <scm>
     <connection>scm:svn:https://quattor.svn.sourceforge.net/svnroot/quattor/trunk/pan</connection>
     <developerConnection>scm:svn:https://quattor.svn.sourceforge.net/svnroot/quattor/trunk/pan</developerConnection>
+    <tag>HEAD</tag>
     <url>http://quattor.svn.sourceforge.net/viewvc/quattor/</url>
   </scm>
 

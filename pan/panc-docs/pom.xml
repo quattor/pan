@@ -1,18 +1,19 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.quattor.pan</groupId>
   <artifactId>panc-docs</artifactId>
   <packaging>pom</packaging>
-  <version>8.4.6-SNAPSHOT</version>
+  <version>8.4.5-SNAPSHOT</version>
   <name>panc-docs</name>
   <url>http://quattor.org/</url>
 
   <parent>
     <groupId>org.quattor.pan</groupId>
     <artifactId>pan</artifactId>
-    <version>8.4.6-SNAPSHOT</version>
+    <version>8.4.5-SNAPSHOT</version>
   </parent>
 
   <build>

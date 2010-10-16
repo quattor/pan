@@ -11,7 +11,7 @@ import java.util.List;
  * 
  */
 public enum SourceType {
-	TPL(false, ".tpl"), PAN(false, ".pan"), PANX(false, ".panx"), TEXT(false,
+	PAN(false, ".pan"), PANX(false, ".panx"), TPL(false, ".tpl"), TEXT(false,
 			""), ABSENT_SOURCE(true, ""), ABSENT_TEXT(true, "");
 
 	private boolean absent;

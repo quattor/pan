@@ -6,11 +6,11 @@
 	<parent>
 		<artifactId>pan</artifactId>
 		<groupId>org.quattor.pan</groupId>
-		<version>8.4.4-SNAPSHOT</version>
+		<version>8.4.5-SNAPSHOT</version>
 	</parent>
 	<groupId>org.quattor.pan</groupId>
 	<artifactId>maven-panc-plugin</artifactId>
-	<version>8.4.4-SNAPSHOT</version>
+	<version>8.4.5-SNAPSHOT</version>
 	<packaging>maven-plugin</packaging>
 	<name>maven-panc-plugin Maven Mojo</name>
 	<url>http://maven.apache.org</url>
@@ -18,7 +18,7 @@
 		<dependency>
 			<groupId>org.quattor.pan</groupId>
 			<artifactId>panc</artifactId>
-			<version>8.4.4-SNAPSHOT</version>
+			<version>8.4.5-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven</groupId>

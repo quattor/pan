@@ -9,6 +9,7 @@
   <version>8.4.5-SNAPSHOT</version>
   <name>pan</name>
   <url>http://quattor.org/</url>
+  <description>Pan Language Tools</description>
 
   <modules>
     <module>panc</module>
@@ -74,13 +75,13 @@
     <repository>
       <id>quattor-releases</id>
       <name>quattor-releases</name>
-      <url>http://lapp-repo01.in2p3.fr:8081/nexus/content/repositories/releases/</url>
+      <url>http://lapp-repo01.in2p3.fr:8081/nexus/content/repositories/releases</url>
     </repository>
 
     <snapshotRepository>
       <id>quattor-snapshots</id>
       <name>quattor-snapshots</name>
-      <url>http://lapp-repo01.in2p3.fr:8081/nexus/content/repositories/snapshots/</url>
+      <url>http://lapp-repo01.in2p3.fr:8081/nexus/content/repositories/snapshots</url>
     </snapshotRepository>
 
     <site>

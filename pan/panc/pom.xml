@@ -1,192 +1,225 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.quattor.pan</groupId>
-	<artifactId>panc</artifactId>
-	<version>8.4.5-SNAPSHOT</version>
-	<name>panc</name>
-	<url>http://quattor.org/</url>
+  <groupId>org.quattor.pan</groupId>
+  <artifactId>panc</artifactId>
+  <version>8.4.5-SNAPSHOT</version>
+  <name>panc</name>
+  <url>http://quattor.org/</url>
 
-	<parent>
-		<groupId>org.quattor.pan</groupId>
-		<artifactId>pan</artifactId>
-		<version>8.4.5-SNAPSHOT</version>
-	</parent>
+  <parent>
+    <groupId>org.quattor.pan</groupId>
+    <artifactId>pan</artifactId>
+    <version>8.4.5-SNAPSHOT</version>
+  </parent>
 
-	<build>
+  <build>
 
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
-			</resource>
-		</resources>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
 
-		<plugins>
+    <plugins>
 
-			<plugin>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>copy-documentation</id>
-						<phase>prepare-package</phase>
-						<configuration>
-							<artifactItems>
+      <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-documentation</id>
+            <phase>prepare-package</phase>
+            <configuration>
+              <artifactItems>
 
-								<artifactItem>
-									<groupId>org.quattor.pan</groupId>
-									<artifactId>panc-docs</artifactId>
-									<!-- The versions between this and compiler should always match. -->
-									<version>${project.version}</version>
-									<classifier>bundle</classifier>
-									<type>zip</type>
-									<outputDirectory>${project.build.directory}/docs</outputDirectory>
-								</artifactItem>
+                <artifactItem>
+                  <groupId>org.quattor.pan</groupId>
+                  <artifactId>panc-docs</artifactId>
+                  <!-- The versions between this and compiler should always match. -->
+                  <version>${project.version}</version>
+                  <classifier>bundle</classifier>
+                  <type>zip</type>
+                  <outputDirectory>${project.build.directory}/docs</outputDirectory>
+                </artifactItem>
 
-							</artifactItems>
-						</configuration>
-						<goals>
-							<goal>unpack</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+              </artifactItems>
+            </configuration>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
 
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>javacc-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>javacc</id>
-						<goals>
-							<goal>jjtree-javacc</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>javacc-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>javacc</id>
+            <goals>
+              <goal>jjtree-javacc</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<systemPropertyVariables>
-						<panc.tmpdir>${project.build.directory}/test-tmp/tmpdir</panc.tmpdir>
-						<panc.testdir>${basedir}/src/test/pan</panc.testdir>
-						<buildDirectory></buildDirectory>
-					</systemPropertyVariables>
-					<excludes>
-						<exclude>**/TestUtils.java</exclude>
-						<exclude>**/ScriptCompilerTest.java</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <systemPropertyVariables>
+            <panc.tmpdir>${project.build.directory}/test-tmp/tmpdir</panc.tmpdir>
+            <panc.testdir>${basedir}/src/test/pan</panc.testdir>
+            <buildDirectory></buildDirectory>
+          </systemPropertyVariables>
+          <excludes>
+            <exclude>**/TestUtils.java</exclude>
+            <exclude>**/ScriptCompilerTest.java</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<useDefaultManifestFile>true</useDefaultManifestFile>
-					<archive>
-						<index>true</index>
-						<manifestEntries>
-							<Main-Class>org.quattor.pan.Compiler</Main-Class>
-						</manifestEntries>
-					</archive>
-				</configuration>
-			</plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <useDefaultManifestFile>true</useDefaultManifestFile>
+          <archive>
+            <index>true</index>
+            <manifestEntries>
+              <Main-Class>org.quattor.pan.Compiler</Main-Class>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<descriptors>
-						<descriptor>src/main/assembly/bundle.xml</descriptor>
-					</descriptors>
-					<appendAssemblyId>false</appendAssemblyId>
-				</configuration>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <descriptors>
+            <descriptor>src/main/assembly/bundle.xml</descriptor>
+          </descriptors>
+          <appendAssemblyId>false</appendAssemblyId>
+        </configuration>
 
-				<executions>
+        <executions>
 
-					<execution>
-						<id>bundle</id>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<phase>package</phase>
-					</execution>
+          <execution>
+            <id>bundle</id>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
 
-				</executions>
+        </executions>
 
-			</plugin>
+      </plugin>
 
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>add-javacc-sources</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>add-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>${project.build.directory}/generated-sources/javacc</source>
-								<source>${project.build.directory}/generated-sources/jjtree</source>
-							</sources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>add-javacc-sources</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${project.build.directory}/generated-sources/javacc</source>
+                <source>${project.build.directory}/generated-sources/jjtree</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 
-		</plugins>
+    </plugins>
 
-	</build>
+  </build>
 
-	<reporting>
-		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>findbugs-maven-plugin</artifactId>
-				<configuration>
-					<excludeFilterFile>${basedir}/src/test/findbugs/findbugs-exclude.xml</excludeFilterFile>
-				</configuration>
-			</plugin>
-		</plugins>
-	</reporting>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+        <configuration>
+          <excludeFilterFile>${basedir}/src/test/findbugs/findbugs-exclude.xml</excludeFilterFile>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
 
-	<dependencies>
+  <dependencies>
 
-		<dependency>
-			<groupId>net.jcip</groupId>
-			<artifactId>jcip-annotations</artifactId>
-			<version>1.0</version>
-		</dependency>
+    <dependency>
+      <groupId>net.jcip</groupId>
+      <artifactId>jcip-annotations</artifactId>
+      <version>1.0</version>
+    </dependency>
 
-		<dependency>
-			<groupId>org.apache.ant</groupId>
-			<artifactId>ant</artifactId>
-			<version>1.8.1</version>
-		</dependency>
+    <dependency>
+      <groupId>org.apache.ant</groupId>
+      <artifactId>ant</artifactId>
+      <version>1.8.1</version>
+    </dependency>
 
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.8.2</version>
-			<scope>test</scope>
-		</dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.8.2</version>
+      <scope>test</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>org.quattor.pan</groupId>
-			<artifactId>panc-docs</artifactId>
-			<version>8.4.5-SNAPSHOT</version>
-			<classifier>bundle</classifier>
-			<type>zip</type>
-			<scope>package</scope>
-		</dependency>
+    <dependency>
+      <groupId>org.quattor.pan</groupId>
+      <artifactId>panc-docs</artifactId>
+      <version>8.4.5-SNAPSHOT</version>
+      <classifier>bundle</classifier>
+      <type>zip</type>
+      <scope>package</scope>
+    </dependency>
 
-	</dependencies>
+  </dependencies>
+
+  <licenses>
+    <license>
+      <name>Apache 2.0</name>
+      <url>http://www.opensource.org/licenses/apache2.0.php</url>
+      <distribution>repo</distribution>
+      <comments>Copyright (c) 2010, Centre National de la Recherche Scientifique (CNRS)</comments>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>loomisc</id>
+      <name>Charles LOOMIS</name>
+      <email>loomis@lal.in2p3.fr</email>
+      <organization>CNRS/LAL</organization>
+      <organizationUrl>http://www.lal.in2p3.fr/</organizationUrl>
+      <roles>
+	<role>maintainer</role>
+      </roles>
+    </developer>
+  </developers>
+
+  <contributors>
+    <contributor>
+      <name>Cedric DUPRILOT</name>
+      <organization>CNRS/LAL</organization>
+      <organizationUrl>http://www.lal.in2p3.fr/</organizationUrl>
+      <roles>
+	<role>developer</role>
+      </roles>
+    </contributor>
+  </contributors>
 
 </project>

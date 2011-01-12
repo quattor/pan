@@ -627,7 +627,7 @@ void statement() #Statement :
   }
   |
   /* Declare a new function. */
-  LOOKAHEAD(2) b=<FUNCTION> i=<IDENTIFIER> <ASSIGN> dml() e=<SEMICOLON>
+  b=<FUNCTION> i=<IDENTIFIER> <ASSIGN> dml() e=<SEMICOLON>
   { 
     PanParserUtils.addSpecialTokens(jjtThis, b);
     jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(b,e)); 

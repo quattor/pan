@@ -606,7 +606,7 @@ void statement() #Statement :
   }
   |
   /* Assign variable to a global variable. */
-  LOOKAHEAD(3) [ f=<FINAL> ] k=<VARIABLE> i=<IDENTIFIER> (t=<ASSIGN> | t=<ASSIGN_DEFAULT>) dml() e=<SEMICOLON>
+  LOOKAHEAD(2) [ f=<FINAL> ] k=<VARIABLE> i=<IDENTIFIER> (t=<ASSIGN> | t=<ASSIGN_DEFAULT>) dml() e=<SEMICOLON>
   { 
     b = (f!=null) ? f : k;
     PanParserUtils.addSpecialTokens(jjtThis, b);

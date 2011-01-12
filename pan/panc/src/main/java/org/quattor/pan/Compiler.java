@@ -165,11 +165,6 @@ public class Compiler {
 		// Sanity check.
 		assert (options != null);
 
-		// Nasty hack to tunnel options into Path object. Remove this hack once
-		// the deprecated external path syntax has been removed.
-		Path.deprecationLevel = options.deprecationLevel;
-		Path.failOnWarn = options.failOnWarn;
-
 		// Ensure that the logging has been initialized. This turns off the log
 		// file, so any logging must be set prior to constructing a Compiler
 		// object.

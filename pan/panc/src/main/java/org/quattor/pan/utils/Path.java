@@ -20,7 +20,6 @@
 
 package org.quattor.pan.utils;
 
-import static org.quattor.pan.utils.MessageUtils.MSG_DEPRECATED_EXTERNAL_PATH_SYNTAX;
 import static org.quattor.pan.utils.MessageUtils.MSG_EXTERNAL_PATH_NOT_ALLOWED;
 import static org.quattor.pan.utils.MessageUtils.MSG_FILE_BUG_REPORT;
 import static org.quattor.pan.utils.MessageUtils.MSG_PATH_INVALID_AUTHORITY;
@@ -48,14 +47,6 @@ import org.quattor.pan.template.Template;
  * 
  */
 public class Path implements Comparable<Path> {
-
-	// These are a nasty hack to tunnel this information down into this object.
-	// This will not allow different instances of the compiler to run with
-	// different values of these options. The compiler object should set these
-	// values before starting any compilation.
-	// FIXME: Remove this hack when old path syntax has been removed.
-	public static int deprecationLevel = 0;
-	public static boolean failOnWarn = false;
 
 	/**
 	 * An enumeration containing the three different types of paths. Note that
@@ -149,41 +140,7 @@ public class Path implements Comparable<Path> {
 		ArrayList<Term> xt = new ArrayList<Term>();
 
 		// Determine the type of path and do initial processing if required.
-		if (path.startsWith("//")) { //$NON-NLS-1$
-			type = PathType.EXTERNAL;
-			Matcher m = extractAuthorityOldForm.matcher(path);
-			if (m.matches()) {
-				if (m.groupCount() == 2) {
-					String auth = m.group(1);
-					s = m.group(2);
-
-					// Check that the authority is actually valid.
-					m = validAuthority.matcher(auth);
-					if (m.matches()) {
-						authority = auth;
-					} else {
-						throw SyntaxException.create(null,
-								MSG_PATH_INVALID_AUTHORITY, auth);
-					}
-				} else {
-					throw CompilerError.create(MSG_FILE_BUG_REPORT);
-				}
-			} else {
-				throw CompilerError.create(MSG_FILE_BUG_REPORT);
-			}
-
-			if (deprecationLevel >= 0) {
-				if (failOnWarn) {
-					throw SyntaxException.create(null,
-							MSG_DEPRECATED_EXTERNAL_PATH_SYNTAX, path);
-				} else {
-					String msg = MessageUtils.format(
-							MSG_DEPRECATED_EXTERNAL_PATH_SYNTAX, path);
-					System.err.println(msg);
-				}
-			}
-
-		} else if (path.contains(":")) { //$NON-NLS-1$
+		if (path.contains(":")) { //$NON-NLS-1$
 			type = PathType.EXTERNAL;
 			Matcher m = extractAuthority.matcher(path);
 			if (m.matches()) {

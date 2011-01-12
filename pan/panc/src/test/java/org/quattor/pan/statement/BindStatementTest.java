@@ -69,7 +69,7 @@ public class BindStatementTest extends StatementTestUtils {
 
 	@Test(expected = SyntaxException.class)
 	public void illegalExternalBind() throws Exception {
-		Path path = new Path("//external/result");
+		Path path = new Path("external:/result");
 		runExpectingException("bs4", "bind '" + path + "' = string;");
 	}
 

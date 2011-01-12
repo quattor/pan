@@ -415,8 +415,6 @@ public class MessageUtils {
 
 	public final static String MSG_PREFIX_MUST_BE_ABSOLUTE_PATH = "MSG_PREFIX_MUST_BE_ABSOLUTE_PATH";
 
-	public final static String MSG_DEPRECATED_EXTERNAL_PATH_SYNTAX = "MSG_DEPRECATED_EXTERNAL_PATH_SYNTAX";
-
 	// Name of the resource bundle to use for compiler messages.
 	private final static String bundleName = "org.quattor.pan.Messages";
 

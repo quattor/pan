@@ -38,15 +38,8 @@ public class PathTest {
 	@Test
 	public void testPathType() throws SyntaxException {
 
-		// Older form that will be deprecated.
-		Path p = new Path("//external/");
-		assertTrue(p.isExternal());
-		assertFalse(p.isAbsolute());
-		assertFalse(p.isRelative());
-		assertEquals(PathType.EXTERNAL, p.getType());
-
 		// Newer form that will allow namespaced object templates.
-		p = new Path("external:");
+		Path p = new Path("external:");
 		assertTrue(p.isExternal());
 		assertFalse(p.isAbsolute());
 		assertFalse(p.isRelative());
@@ -63,20 +56,6 @@ public class PathTest {
 		assertFalse(p.isAbsolute());
 		assertTrue(p.isRelative());
 		assertEquals(PathType.RELATIVE, p.getType());
-	}
-
-	@Test
-	public void testLegalAuthoritiesOld() throws SyntaxException {
-		List<String> paths = Arrays.asList("//alpha", "//alpha/",
-				"//127.0.0.1", "//127.0.0.1/", "//-", "//-/", "//+", "//+/",
-				"//_", "//_/");
-		for (String s : paths) {
-			try {
-				new Path(s);
-			} catch (IllegalArgumentException iae) {
-				fail("legal authority threw exception (" + s + ")");
-			}
-		}
 	}
 
 	@Test
@@ -102,19 +81,6 @@ public class PathTest {
 				new Path(s);
 			} catch (SyntaxException se) {
 				fail("legal authority threw exception (" + s + ")");
-			}
-		}
-	}
-
-	@Test
-	public void testIllegalAuthoritiesOld() {
-		List<String> paths = Arrays.asList("//alpha;", "///", "//");
-		for (String s : paths) {
-			try {
-				new Path(s);
-				fail("illegal authority did not throw exception (" + s + ")");
-			} catch (SyntaxException se) {
-				// OK.
 			}
 		}
 	}
@@ -149,8 +115,8 @@ public class PathTest {
 
 	@Test
 	public void testInvalidFirstTerm() {
-		List<String> paths = Arrays.asList("//alpha/0/a", "alpha:/0/a",
-				"alpha:0/a", "/0/a", "0/a", "//alpha/0xf/a", "alpha:/0xf/a",
+		List<String> paths = Arrays.asList("alpha:/0/a",
+				"alpha:0/a", "/0/a", "0/a", "alpha:/0xf/a",
 				"alpha:0xf/a", "/0xf/a", "0xf/a");
 		for (String s : paths) {
 			try {
@@ -242,7 +208,7 @@ public class PathTest {
 		Term[] p2 = { TermFactory.create("gamma"), TermFactory.create("delta") };
 		List<String> correct = Arrays.asList("alpha", "beta", "gamma", "delta");
 
-		List<String> paths = Arrays.asList("//alpha/beta", "alpha:beta",
+		List<String> paths = Arrays.asList("alpha:beta",
 				"alpha:/beta");
 
 		for (String s : paths) {
@@ -253,7 +219,7 @@ public class PathTest {
 				assertTrue(correct.equals(p.toList()));
 				assertTrue(p.isExternal());
 
-				fail("illegal combination did not thrown an exception (" + s
+				fail("illegal combination did not throw an exception (" + s
 						+ ")");
 			} catch (SyntaxException se) {
 				// OK.
@@ -264,12 +230,8 @@ public class PathTest {
 	@Test
 	public void testEquals() throws SyntaxException {
 
-		Path p1 = new Path("//alpha/");
-		Path p2 = new Path("//alpha");
-		assertTrue(p1.equals(p2));
-
-		p1 = new Path("alpha:/");
-		p2 = new Path("alpha:");
+		Path p1 = new Path("alpha:/");
+		Path p2 = new Path("alpha:");
 		assertTrue(p1.equals(p2));
 
 		p1 = new Path("/absolute/");
@@ -283,15 +245,8 @@ public class PathTest {
 
 	@Test
 	public void testToString() throws SyntaxException {
-		Path p = new Path("//alpha/");
-		assertEquals("incorrect path string representation: " + p, "alpha:/", p
-				.toString());
 
-		p = new Path("//alpha");
-		assertEquals("incorrect path string representation: " + p, "alpha:/", p
-				.toString());
-
-		p = new Path("alpha:/");
+		Path p = new Path("alpha:/");
 		assertEquals("incorrect path string representation: " + p, "alpha:/", p
 				.toString());
 
@@ -302,10 +257,6 @@ public class PathTest {
 		p = new Path("/");
 		assertEquals("incorrect path string representation: " + p, "/", p
 				.toString());
-
-		p = new Path("//alpha/beta");
-		assertEquals("incorrect path string representation: " + p,
-				"alpha:/beta", p.toString());
 
 		p = new Path("alpha:/beta");
 		assertEquals("incorrect path string representation: " + p,
@@ -347,11 +298,9 @@ public class PathTest {
 	@Test
 	public void testOrdering() throws SyntaxException {
 
-		Path e = new Path("//alpha/beta/gamma");
 		Path r = new Path("alpha/beta/gamma");
 		Path a = new Path("/alpha/beta/gamma");
 
-		Path e2 = new Path("//alpha/beta");
 		Path r2 = new Path("alpha/beta");
 		Path a2 = new Path("/alpha/beta");
 
@@ -359,21 +308,11 @@ public class PathTest {
 		assertTrue(r.compareTo(a) < 0);
 		assertTrue(a.compareTo(r) > 0);
 
-		assertTrue(r.compareTo(e) < 0);
-		assertTrue(e.compareTo(r) > 0);
-
-		assertTrue(a.compareTo(e) < 0);
-		assertTrue(e.compareTo(a) > 0);
-
 		// Ensure equal values really are.
-		assertTrue(e.compareTo(e) == 0);
 		assertTrue(r.compareTo(r) == 0);
 		assertTrue(a.compareTo(a) == 0);
 
 		// Check ordering with different lengths.
-		assertTrue(e.compareTo(e2) < 0);
-		assertTrue(e2.compareTo(e) > 0);
-
 		assertTrue(r.compareTo(r2) < 0);
 		assertTrue(r2.compareTo(r) > 0);
 

@@ -610,7 +610,6 @@ void statement() #Statement :
   { 
     b = (f!=null) ? f : k;
     PanParserUtils.addSpecialTokens(jjtThis, b);
-    if (i.image.equals("loadpath")) deprecated("replace variable 'loadpath' with 'LOADPATH'", t, 0);
     jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(b,e)); 
     jjtThis.setStatementType(ASTStatement.StatementType.VARIABLE);
     jjtThis.setIdentifier(i.image);
@@ -811,14 +810,8 @@ void dmlSequence() #Operation(>1) :
 void dmlVariable() #Variable :
 { Token t=null, e=null; }
 {
-  /* Object is required because it is both a global variable and a keyword. */
-  ( t=<IDENTIFIER> | t=<OBJECT> ) (<LBRACKET> dml() e=<RBRACKET>)*
+  t=<IDENTIFIER> (<LBRACKET> dml() e=<RBRACKET>)*
   { 
-    if (t.image.equals("object")) deprecated("replace variable 'object' with 'OBJECT'", t, 0);
-    if (t.image.equals("self")) deprecated("replace variable 'self' with 'SELF'", t, 0);
-    if (t.image.equals("argc")) deprecated("replace variable 'argc' with 'ARGC'", t, 0);
-    if (t.image.equals("argv")) deprecated("replace variable 'argv' with 'ARGV'", t, 0);
-    if (t.image.equals("loadpath")) deprecated("replace variable 'loadpath' with 'LOADPATH'", t, 0);
     jjtThis.setOperationType(ASTOperation.OperationType.VARIABLE);
     jjtThis.setName(t.image);
     jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(t,(e!=null)?e:t)); 

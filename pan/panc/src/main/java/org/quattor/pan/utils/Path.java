@@ -48,387 +48,375 @@ import org.quattor.pan.template.Template;
  */
 public class Path implements Comparable<Path> {
 
-	/**
-	 * An enumeration containing the three different types of paths. Note that
-	 * the ordering is important because it is used in the comparison of paths.
-	 */
-	public static enum PathType {
-		RELATIVE, ABSOLUTE, EXTERNAL
-	};
+    /**
+     * An enumeration containing the three different types of paths. Note that
+     * the ordering is important because it is used in the comparison of paths.
+     */
+    public static enum PathType {
+        RELATIVE, ABSOLUTE, EXTERNAL
+    };
 
-	/**
-	 * The authority of the path if it exists.
-	 */
-	private String authority;
+    /**
+     * The authority of the path if it exists.
+     */
+    private String authority;
 
-	/**
-	 * The path other than the authority is represented an immutable list of
-	 * terms. This must remain immutable, so copies of the terms should be
-	 * returned rather than the array itself.
-	 */
-	private Term[] terms;
+    /**
+     * The path other than the authority is represented an immutable list of
+     * terms. This must remain immutable, so copies of the terms should be
+     * returned rather than the array itself.
+     */
+    private Term[] terms;
 
-	/**
-	 * The type of this Path.
-	 */
-	private PathType type;
+    /**
+     * The type of this Path.
+     */
+    private PathType type;
 
-	/**
-	 * This regular expression defines a valid object term for an external Path.
-	 */
-	private static Pattern validAuthority = Pattern
-			.compile("^[\\w\\-\\+\\.]+$"); //$NON-NLS-1$
+    /**
+     * This regular expression extracts the authority from an external Path.
+     */
+    private static Pattern extractAuthority = Pattern.compile("([^:]*):/?(.*)"); //$NON-NLS-1$
 
-	/**
-	 * This regular expression extracts the authority from an external Path.
-	 */
-	private static Pattern extractAuthorityOldForm = Pattern
-			.compile("//([^/]*)(?:/(.*))?"); //$NON-NLS-1$
+    /**
+     * This regular expression will determine if the Path contains proper escape
+     * sequences. The escape sequences cannot be nested and each must contain
+     * both an opening and closing brace.
+     */
+    private static Pattern validEscapeSequences = Pattern
+            .compile("^([^\\{\\}]*(\\{[^\\{\\}]*\\})?)*$"); //$NON-NLS-1$
 
-	/**
-	 * This regular expression extracts the authority from an external Path.
-	 */
-	private static Pattern extractAuthority = Pattern.compile("([^:]*):/?(.*)"); //$NON-NLS-1$
+    /**
+     * Constructor of a path from a String. If the path does not have the
+     * correct syntax, an EvaluationException will be thrown.
+     */
+    public Path(String path) throws SyntaxException {
 
-	/**
-	 * This regular expression will determine if the Path contains proper escape
-	 * sequences. The escape sequences cannot be nested and each must contain
-	 * both an opening and closing brace.
-	 */
-	private static Pattern validEscapeSequences = Pattern
-			.compile("^([^\\{\\}]*(\\{[^\\{\\}]*\\})?)*$"); //$NON-NLS-1$
+        assert (path != null);
 
-	/**
-	 * Constructor of a path from a String. If the path does not have the
-	 * correct syntax, an EvaluationException will be thrown.
-	 */
-	public Path(String path) throws SyntaxException {
+        // Check that the string contains matched pairs of braces and that those
+        // are not nested.
+        Matcher matcher = validEscapeSequences.matcher(path);
+        if (!matcher.matches()) {
+            throw SyntaxException.create(null, MSG_PATH_INVALID_BRACES, path);
+        }
 
-		assert (path != null);
+        // Escape the strings within braces and re-create the path with those.
+        // Splitting on all of the braces will return a list of substrings where
+        // all of the ones with odd indices need to be escaped.
+        StringBuilder sb = new StringBuilder();
+        String[] substrings = path.split("[\\{\\}]", -1); //$NON-NLS-1$
+        for (int i = 0; i < substrings.length; i++) {
+            if (i % 2 == 0) {
+                sb.append(substrings[i]);
+            } else {
+                sb.append(EscapeUtils.escape(substrings[i]));
+            }
+        }
 
-		// Check that the string contains matched pairs of braces and that those
-		// are not nested.
-		Matcher matcher = validEscapeSequences.matcher(path);
-		if (!matcher.matches()) {
-			throw SyntaxException.create(null, MSG_PATH_INVALID_BRACES, path);
-		}
+        // Reset the path variable to the unescaped value.
+        path = sb.toString();
 
-		// Escape the strings within braces and re-create the path with those.
-		// Splitting on all of the braces will return a list of substrings where
-		// all of the ones with odd indices need to be escaped.
-		StringBuilder sb = new StringBuilder();
-		String[] substrings = path.split("[\\{\\}]", -1); //$NON-NLS-1$
-		for (int i = 0; i < substrings.length; i++) {
-			if (i % 2 == 0) {
-				sb.append(substrings[i]);
-			} else {
-				sb.append(EscapeUtils.escape(substrings[i]));
-			}
-		}
+        // Assume that it is a relative path to start.
+        String s = path;
+        type = PathType.RELATIVE;
 
-		// Reset the path variable to the unescaped value.
-		path = sb.toString();
+        // Start with an empty list. NOTE: This must be a list implementation
+        // that provides fast random access to the list elements. This is
+        // because some clients will need to look forward in the path to decide
+        // what to do.
+        ArrayList<Term> xt = new ArrayList<Term>();
 
-		// Assume that it is a relative path to start.
-		String s = path;
-		type = PathType.RELATIVE;
+        // Determine the type of path and do initial processing if required.
+        if (path.contains(":")) { //$NON-NLS-1$
+            type = PathType.EXTERNAL;
+            Matcher m = extractAuthority.matcher(path);
+            if (m.matches()) {
+                if (m.groupCount() == 2) {
+                    String auth = m.group(1);
+                    s = m.group(2);
 
-		// Start with an empty list. NOTE: This must be a list implementation
-		// that provides fast random access to the list elements. This is
-		// because some clients will need to look forward in the path to decide
-		// what to do.
-		ArrayList<Term> xt = new ArrayList<Term>();
+                    // Check that the authority is actually valid. This is
+                    // potentially a namespaced template name. Use the standard
+                    // method for determining the validity of the name.
+                    if (Template.isValidTemplateName(auth)) {
+                        authority = auth;
+                    } else {
+                        throw SyntaxException.create(null,
+                                MSG_PATH_INVALID_AUTHORITY, auth);
+                    }
+                } else {
+                    throw CompilerError.create(MSG_FILE_BUG_REPORT);
+                }
+            } else {
+                throw CompilerError.create(MSG_FILE_BUG_REPORT);
+            }
 
-		// Determine the type of path and do initial processing if required.
-		if (path.contains(":")) { //$NON-NLS-1$
-			type = PathType.EXTERNAL;
-			Matcher m = extractAuthority.matcher(path);
-			if (m.matches()) {
-				if (m.groupCount() == 2) {
-					String auth = m.group(1);
-					s = m.group(2);
+        } else if (path.startsWith("/")) { //$NON-NLS-1$
+            authority = null;
+            type = PathType.ABSOLUTE;
+            s = path.substring(1);
+        } else {
+            authority = null;
+        }
 
-					// Check that the authority is actually valid. This is
-					// potentially a namespaced template name. Use the standard
-					// method for determining the validity of the name.
-					if (Template.isValidTemplateName(auth)) {
-						authority = auth;
-					} else {
-						throw SyntaxException.create(null,
-								MSG_PATH_INVALID_AUTHORITY, auth);
-					}
-				} else {
-					throw CompilerError.create(MSG_FILE_BUG_REPORT);
-				}
-			} else {
-				throw CompilerError.create(MSG_FILE_BUG_REPORT);
-			}
+        // If the string isn't empty or null, then split the remaining
+        // string on slashes.
+        if (s != null && !"".equals(s)) { //$NON-NLS-1$
+            for (String element : s.split("/")) { //$NON-NLS-1$
+                xt.add(TermFactory.create(element));
+            }
+        }
 
-		} else if (path.startsWith("/")) { //$NON-NLS-1$
-			authority = null;
-			type = PathType.ABSOLUTE;
-			s = path.substring(1);
-		} else {
-			authority = null;
-		}
+        // Finally check that there is at least one term if this is a relative
+        // Path.
+        if (type == PathType.RELATIVE && xt.size() == 0) {
+            throw SyntaxException.create(null, MSG_PATH_MISSING_TERM);
+        }
 
-		// If the string isn't empty or null, then split the remaining
-		// string on slashes.
-		if (s != null && !"".equals(s)) { //$NON-NLS-1$
-			for (String element : s.split("/")) { //$NON-NLS-1$
-				xt.add(TermFactory.create(element));
-			}
-		}
+        // The first term in a path must always be a key. If not, throw an
+        // exception.
+        if (xt.size() > 0 && !xt.get(0).isKey()) {
+            throw SyntaxException.create(null, MSG_PATH_INVALID_FIRST_TERM);
+        }
 
-		// Finally check that there is at least one term if this is a relative
-		// Path.
-		if (type == PathType.RELATIVE && xt.size() == 0) {
-			throw SyntaxException.create(null, MSG_PATH_MISSING_TERM);
-		}
+        // Minimize the space used by the list.
+        xt.trimToSize();
 
-		// The first term in a path must always be a key. If not, throw an
-		// exception.
-		if (xt.size() > 0 && !xt.get(0).isKey()) {
-			throw SyntaxException.create(null, MSG_PATH_INVALID_FIRST_TERM);
-		}
+        // Make this an unmodifiable list.
+        terms = xt.toArray(new Term[xt.size()]);
+    }
 
-		// Minimize the space used by the list.
-		xt.trimToSize();
+    /**
+     * Constructor which will create a new Path from the concatenation of two
+     * existing paths. The first argument cannot be an external path. The second
+     * argument may be null.
+     */
+    public Path(Path root, Term[] terms) throws SyntaxException {
 
-		// Make this an unmodifiable list.
-		terms = xt.toArray(new Term[xt.size()]);
-	}
+        // Check that the root path is not an external path.
+        if (root.isExternal()) {
+            throw SyntaxException.create(null, MSG_EXTERNAL_PATH_NOT_ALLOWED);
+        }
 
-	/**
-	 * Constructor which will create a new Path from the concatenation of two
-	 * existing paths. The first argument cannot be an external path. The second
-	 * argument may be null.
-	 */
-	public Path(Path root, Term[] terms) throws SyntaxException {
+        // The type of this path will be the same as the root Path.
+        type = root.getType();
 
-		// Check that the root path is not an external path.
-		if (root.isExternal()) {
-			throw SyntaxException.create(null, MSG_EXTERNAL_PATH_NOT_ALLOWED);
-		}
+        // Copy the authority.
+        authority = root.authority;
 
-		// The type of this path will be the same as the root Path.
-		type = root.getType();
+        // Add in the path terms from the parent and child. Use the known size
+        // of the result.
+        int size = root.terms.length;
+        if (terms != null) {
+            size += terms.length;
+        }
+        Term[] result = new Term[size];
 
-		// Copy the authority.
-		authority = root.authority;
+        System.arraycopy(root.terms, 0, result, 0, root.terms.length);
+        if (terms != null) {
+            System.arraycopy(terms, 0, result, root.terms.length, terms.length);
+        }
 
-		// Add in the path terms from the parent and child. Use the known size
-		// of the result.
-		int size = root.terms.length;
-		if (terms != null) {
-			size += terms.length;
-		}
-		Term[] result = new Term[size];
+        // Make this an unmodifiable list.
+        this.terms = result;
+    }
 
-		System.arraycopy(root.terms, 0, result, 0, root.terms.length);
-		if (terms != null) {
-			System.arraycopy(terms, 0, result, root.terms.length, terms.length);
-		}
+    /**
+     * This method returns the Path as an unmodifiable list of the terms
+     * comprising the Path.
+     */
+    public List<String> toList() {
+        List<String> list = new LinkedList<String>();
+        if (authority != null) {
+            list.add(authority);
+        }
+        for (Term t : terms) {
+            list.add(t.toString());
+        }
+        return list;
+    }
 
-		// Make this an unmodifiable list.
-		this.terms = result;
-	}
+    /**
+     * Get the list of terms in this path. The returned list will implement the
+     * RandomAccess interface, so fast random access to individual element can
+     * be assumed.
+     */
+    public Term[] getTerms() {
+        return terms.clone();
+    }
 
-	/**
-	 * This method returns the Path as an unmodifiable list of the terms
-	 * comprising the Path.
-	 */
-	public List<String> toList() {
-		List<String> list = new LinkedList<String>();
-		if (authority != null) {
-			list.add(authority);
-		}
-		for (Term t : terms) {
-			list.add(t.toString());
-		}
-		return list;
-	}
+    public static Path resolve(Path prefix, Path relative)
+            throws SyntaxException {
+        if (prefix != null && relative.isRelative()) {
+            return new Path(prefix, relative.getTerms());
+        } else {
+            return relative;
+        }
+    }
 
-	/**
-	 * Get the list of terms in this path. The returned list will implement the
-	 * RandomAccess interface, so fast random access to individual element can
-	 * be assumed.
-	 */
-	public Term[] getTerms() {
-		return terms.clone();
-	}
+    /**
+     * Return the type (EXTERNAL, ABSOLUTE, or RELATIVE) for this path.
+     */
+    public PathType getType() {
+        return type;
+    }
 
-	public static Path resolve(Path prefix, Path relative)
-			throws SyntaxException {
-		if (prefix != null && relative.isRelative()) {
-			return new Path(prefix, relative.getTerms());
-		} else {
-			return relative;
-		}
-	}
+    /**
+     * Return the authority for this path or null if it doesn't exist.
+     */
+    public String getAuthority() {
+        return authority;
+    }
 
-	/**
-	 * Return the type (EXTERNAL, ABSOLUTE, or RELATIVE) for this path.
-	 */
-	public PathType getType() {
-		return type;
-	}
+    /**
+     * A convenience method which returns a boolean indicating whether the Path
+     * is absolute or not.
+     */
+    public boolean isAbsolute() {
+        return (type == PathType.ABSOLUTE);
+    }
 
-	/**
-	 * Return the authority for this path or null if it doesn't exist.
-	 */
-	public String getAuthority() {
-		return authority;
-	}
+    /**
+     * A convenience method which returns a boolean indicating whether the Path
+     * is relative or not.
+     */
+    public boolean isRelative() {
+        return (type == PathType.RELATIVE);
+    }
 
-	/**
-	 * A convenience method which returns a boolean indicating whether the Path
-	 * is absolute or not.
-	 */
-	public boolean isAbsolute() {
-		return (type == PathType.ABSOLUTE);
-	}
+    /**
+     * A convenience method which returns a boolean indicating whether the Path
+     * is external or not.
+     */
+    public boolean isExternal() {
+        return (type == PathType.EXTERNAL);
+    }
 
-	/**
-	 * A convenience method which returns a boolean indicating whether the Path
-	 * is relative or not.
-	 */
-	public boolean isRelative() {
-		return (type == PathType.RELATIVE);
-	}
+    /**
+     * Get the type of this path.
+     * 
+     * @return the type of this path
+     */
+    public PathType getPathType() {
+        return type;
+    }
 
-	/**
-	 * A convenience method which returns a boolean indicating whether the Path
-	 * is external or not.
-	 */
-	public boolean isExternal() {
-		return (type == PathType.EXTERNAL);
-	}
+    /**
+     * Determine if two paths are equal.
+     */
+    @Override
+    public boolean equals(Object obj) {
 
-	/**
-	 * Get the type of this path.
-	 * 
-	 * @return the type of this path
-	 */
-	public PathType getPathType() {
-		return type;
-	}
+        // Check obvious mismatches--null or wrong type of instance.
+        if (obj == null || !(obj instanceof Path)) {
+            return false;
+        }
 
-	/**
-	 * Determine if two paths are equal.
-	 */
-	@Override
-	public boolean equals(Object obj) {
+        // The other object is a Path. Cast it into one so we can access the
+        // internal fields.
+        Path p = (Path) obj;
 
-		// Check obvious mismatches--null or wrong type of instance.
-		if (obj == null || !(obj instanceof Path)) {
-			return false;
-		}
+        // Check that the path types are the same.
+        if (type != p.type) {
+            return false;
+        }
 
-		// The other object is a Path. Cast it into one so we can access the
-		// internal fields.
-		Path p = (Path) obj;
+        // Check that the authorities are either equal--they have the same value
+        // or are both null.
+        if (authority != null && p.authority != null) {
+            if (!authority.equals(p.authority)) {
+                return false;
+            }
+        } else if (authority != null || p.authority != null) {
+            return false;
+        }
 
-		// Check that the path types are the same.
-		if (type != p.type) {
-			return false;
-		}
+        // Finally check the individual terms.
+        return Arrays.equals(terms, p.terms);
+    }
 
-		// Check that the authorities are either equal--they have the same value
-		// or are both null.
-		if (authority != null && p.authority != null) {
-			if (!authority.equals(p.authority)) {
-				return false;
-			}
-		} else if (authority != null || p.authority != null) {
-			return false;
-		}
+    /**
+     * This must be defined so that Paths can be used properly in Maps.
+     */
+    // FIXME: This should cache the hashcode for a path. This is expensive to
+    // recalculate every time. This should also include the authority.
+    @Override
+    public int hashCode() {
 
-		// Finally check the individual terms.
-		return Arrays.equals(terms, p.terms);
-	}
+        int code = type.hashCode();
 
-	/**
-	 * This must be defined so that Paths can be used properly in Maps.
-	 */
-	// FIXME: This should cache the hashcode for a path. This is expensive to
-	// recalculate every time. This should also include the authority.
-	@Override
-	public int hashCode() {
+        for (Term t : terms) {
+            code = code ^ t.hashCode();
+        }
+        return code;
+    }
 
-		int code = type.hashCode();
+    /**
+     * Convert this path to a string.
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
 
-		for (Term t : terms) {
-			code = code ^ t.hashCode();
-		}
-		return code;
-	}
+        if (isExternal())
+            sb.append(authority + ":/"); //$NON-NLS-1$
 
-	/**
-	 * Convert this path to a string.
-	 */
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
+        if (isAbsolute())
+            sb.append("/"); //$NON-NLS-1$
 
-		if (isExternal())
-			sb.append(authority + ":/"); //$NON-NLS-1$
+        boolean first = true;
+        for (Term t : terms) {
+            if (!first) {
+                sb.append("/" + t.toString()); //$NON-NLS-1$
+            } else {
+                sb.append(t.toString());
+                first = false;
+            }
+        }
 
-		if (isAbsolute())
-			sb.append("/"); //$NON-NLS-1$
+        return sb.toString();
+    }
 
-		boolean first = true;
-		for (Term t : terms) {
-			if (!first) {
-				sb.append("/" + t.toString()); //$NON-NLS-1$
-			} else {
-				sb.append(t.toString());
-				first = false;
-			}
-		}
+    /**
+     * The default ordering for paths is such that it will produce a
+     * post-traversal ordering. All relative paths will be before absolute paths
+     * which are before external paths.
+     */
+    public int compareTo(Path o) {
 
-		return sb.toString();
-	}
+        // Sanity check.
+        if (o == null) {
+            throw new NullPointerException();
+        }
 
-	/**
-	 * The default ordering for paths is such that it will produce a
-	 * post-traversal ordering. All relative paths will be before absolute paths
-	 * which are before external paths.
-	 */
-	public int compareTo(Path o) {
+        // If these are not the same type, do the simple comparison.
+        if (this.type != o.type) {
+            return type.compareTo(o.type);
+        }
 
-		// Sanity check.
-		if (o == null) {
-			throw new NullPointerException();
-		}
+        // Same type of path, so check first the number of terms. If not equal,
+        // then it is easy to decide the order. (Longer paths come before
+        // shorter ones.)
+        int mySize = this.terms.length;
+        int otherSize = o.terms.length;
+        if (mySize != otherSize) {
+            return (mySize < otherSize) ? 1 : -1;
+        }
 
-		// If these are not the same type, do the simple comparison.
-		if (this.type != o.type) {
-			return type.compareTo(o.type);
-		}
+        // Ok, the hard case, the two paths are of the same type and have the
+        // same number of terms.
+        for (int i = 0; i < mySize; i++) {
+            Term myTerm = this.terms[i];
+            Term otherTerm = o.terms[i];
+            int comparison = myTerm.compareTo(otherTerm);
+            if (comparison != 0) {
+                return comparison;
+            }
+        }
 
-		// Same type of path, so check first the number of terms. If not equal,
-		// then it is easy to decide the order. (Longer paths come before
-		// shorter ones.)
-		int mySize = this.terms.length;
-		int otherSize = o.terms.length;
-		if (mySize != otherSize) {
-			return (mySize < otherSize) ? 1 : -1;
-		}
-
-		// Ok, the hard case, the two paths are of the same type and have the
-		// same number of terms.
-		for (int i = 0; i < mySize; i++) {
-			Term myTerm = this.terms[i];
-			Term otherTerm = o.terms[i];
-			int comparison = myTerm.compareTo(otherTerm);
-			if (comparison != 0) {
-				return comparison;
-			}
-		}
-
-		// We've gone through all of the checks, so the two paths must be equal;
-		// return zero.
-		return 0;
-	}
+        // We've gone through all of the checks, so the two paths must be equal;
+        // return zero.
+        return 0;
+    }
 }

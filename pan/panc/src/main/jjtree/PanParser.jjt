@@ -618,7 +618,7 @@ void statement() #Statement :
   }
   |
   /* Declare a new type. */
-  LOOKAHEAD(2) b=<TYPE> i=<IDENTIFIER> <ASSIGN> fullTypeSpec() e=<SEMICOLON>
+  b=<TYPE> i=<IDENTIFIER> <ASSIGN> fullTypeSpec() e=<SEMICOLON>
   { 
     PanParserUtils.addSpecialTokens(jjtThis, b);
     jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(b,e)); 

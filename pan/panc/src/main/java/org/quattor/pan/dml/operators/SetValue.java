@@ -51,7 +51,7 @@ public class SetValue extends AbstractOperation {
 	 * Note, a couple of values can be set, like ARGV and ARGC. SELF is handled
 	 * separately because the rules are more complicated.
 	 */
-	private static final String[] automaticVariables = new String[] { "object",
+	private static final String[] automaticVariables = new String[] {
 			"OBJECT", "FUNCTION", "TEMPLATE" };
 
 	protected String identifier;

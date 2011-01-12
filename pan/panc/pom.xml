@@ -193,7 +193,7 @@
       <version>8.4.6-SNAPSHOT</version>
       <classifier>bundle</classifier>
       <type>zip</type>
-      <scope>package</scope>
+      <scope>compile</scope>
     </dependency>
 
   </dependencies>

@@ -594,15 +594,6 @@ void statement() #Statement :
     jjtThis.setIdentifier(s.image);
   }
   |
-  /* Alternate, deprecated form of a bind statement. */
-  LOOKAHEAD(2) b=<TYPE> s=path() <ASSIGN> fullTypeSpec() e=<SEMICOLON>
-  { 
-    deprecated("replace 'type <path> = ...' with 'bind <path> = ...'", b, 0);
-    jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(b,e)); 
-    jjtThis.setStatementType(ASTStatement.StatementType.BIND);
-    jjtThis.setIdentifier(s.image);
-  }
-  |
   /* Assign a value or code to a path. */
   LOOKAHEAD(2) [ f=<FINAL> ] s=path() (t=<ASSIGN> | t=<ASSIGN_DEFAULT>) dml() e=<SEMICOLON>
   { 

@@ -564,14 +564,10 @@ void statement() #Statement :
   }
   |
   /* Static and DML include statements. */
-  b=<INCLUDE> ( i=<NS_IDENTIFIER> | dmlSequence() ) e=<SEMICOLON>
+  b=<INCLUDE> dmlSequence() e=<SEMICOLON>
   { 
     jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(b,e));
     jjtThis.setStatementType(ASTStatement.StatementType.INCLUDE);
-    if (i!=null) {
-      deprecated("replace \"include <identifier>\" with \"include {'identifier'}\"", b, 0);
-      jjtThis.setIdentifier(i.image);
-    } 
   }
   |
   /* Set the prefix for resolving relative paths. */

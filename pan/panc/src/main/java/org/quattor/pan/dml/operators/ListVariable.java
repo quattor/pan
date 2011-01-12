@@ -43,24 +43,6 @@ abstract public class ListVariable extends AbstractOperation {
 
 	public static ListVariable getInstance(SourceRange sourceRange,
 			String identifier, Operation... operations) {
-
-		// Convert deprecated lowercase variable names to uppercase.
-		if ("self".equals(identifier)) {
-			identifier = "SELF";
-		}
-		if ("argc".equals(identifier)) {
-			identifier = "ARGC";
-		}
-		if ("argv".equals(identifier)) {
-			identifier = "ARGV";
-		}
-		if ("loadpath".equals(identifier)) {
-			identifier = "LOADPATH";
-		}
-		if ("object".equals(identifier)) {
-			identifier = "OBJECT";
-		}
-
 		return createSubclass(sourceRange, identifier, operations);
 	}
 

@@ -51,24 +51,6 @@ abstract public class Variable extends AbstractOperation {
 
 	public static Variable getInstance(SourceRange sourceRange,
 			String identifier, boolean lookupOnly, Operation... operations) {
-
-		// Convert deprecated lowercase variable names to uppercase.
-		if ("self".equals(identifier)) {
-			identifier = "SELF";
-		}
-		if ("argc".equals(identifier)) {
-			identifier = "ARGC";
-		}
-		if ("argv".equals(identifier)) {
-			identifier = "ARGV";
-		}
-		if ("loadpath".equals(identifier)) {
-			identifier = "LOADPATH";
-		}
-		if ("object".equals(identifier)) {
-			identifier = "OBJECT";
-		}
-
 		return createSubclass(sourceRange, identifier, lookupOnly, operations);
 	}
 

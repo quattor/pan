@@ -104,24 +104,6 @@ public class SetValue extends AbstractOperation {
 
 	public static SetValue getInstance(SourceRange sourceRange,
 			String identifier, Operation... operations) throws SyntaxException {
-
-		// Convert deprecated lowercase variable names to uppercase.
-		if ("self".equals(identifier)) {
-			identifier = "SELF";
-		}
-		if ("argc".equals(identifier)) {
-			identifier = "ARGC";
-		}
-		if ("argv".equals(identifier)) {
-			identifier = "ARGV";
-		}
-		if ("loadpath".equals(identifier)) {
-			identifier = "LOADPATH";
-		}
-		if ("object".equals(identifier)) {
-			identifier = "OBJECT";
-		}
-
 		return createSubclass(sourceRange, identifier, operations);
 	}
 

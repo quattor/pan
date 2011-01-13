@@ -16,6 +16,12 @@
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -25,7 +31,7 @@
     </refmeta>
 
     <refnamediv>
-      <refname>append</refname>
+      <refname>panc:append</refname>
 
       <refpurpose>adds a value to the end of a list</refpurpose>
     </refnamediv>
@@ -122,6 +128,12 @@
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -131,7 +143,7 @@
     </refmeta>
 
     <refnamediv>
-      <refname>base64_decode</refname>
+      <refname>panc:base64_decode</refname>
 
       <refpurpose>decodes a string that has been encoded in base64
       format</refpurpose>
@@ -167,6 +179,12 @@
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -176,7 +194,7 @@
     </refmeta>
 
     <refnamediv>
-      <refname>base64_encode</refname>
+      <refname>panc:base64_encode</refname>
 
       <refpurpose>encodes a string in base64 format</refpurpose>
     </refnamediv>
@@ -209,6 +227,12 @@
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -218,7 +242,7 @@
     </refmeta>
 
     <refnamediv>
-      <refname>clone</refname>
+      <refname>panc:clone</refname>
 
       <refpurpose>returns a clone (copy) of the argument</refpurpose>
     </refnamediv>
@@ -252,6 +276,12 @@
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -261,7 +291,7 @@
     </refmeta>
 
     <refnamediv>
-      <refname>create</refname>
+      <refname>panc:create</refname>
 
       <refpurpose>create an nlist from a structure template</refpurpose>
     </refnamediv>
@@ -313,6 +343,12 @@ structure template mount_cdrom;
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -322,7 +358,7 @@ structure template mount_cdrom;
     </refmeta>
 
     <refnamediv>
-      <refname>debug</refname>
+      <refname>panc:debug</refname>
 
       <refpurpose>print debugging information to the console</refpurpose>
     </refnamediv>
@@ -355,6 +391,12 @@ structure template mount_cdrom;
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -364,7 +406,7 @@ structure template mount_cdrom;
     </refmeta>
 
     <refnamediv>
-      <refname>delete</refname>
+      <refname>panc:delete</refname>
 
       <refpurpose>delete the element identified by the variable
       expression</refpurpose>
@@ -407,6 +449,12 @@ structure template mount_cdrom;
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -416,7 +464,7 @@ structure template mount_cdrom;
     </refmeta>
 
     <refnamediv>
-      <refname>deprecated</refname>
+      <refname>panc:deprecated</refname>
 
       <refpurpose>print deprecation warning to console</refpurpose>
     </refnamediv>
@@ -452,6 +500,12 @@ structure template mount_cdrom;
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -461,7 +515,7 @@ structure template mount_cdrom;
     </refmeta>
 
     <refnamediv>
-      <refname>digest</refname>
+      <refname>panc:digest</refname>
 
       <refpurpose>creates a digest of a message using the specified
       algorithm</refpurpose>
@@ -498,6 +552,12 @@ structure template mount_cdrom;
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -507,7 +567,7 @@ structure template mount_cdrom;
     </refmeta>
 
     <refnamediv>
-      <refname>error</refname>
+      <refname>panc:error</refname>
 
       <refpurpose>print message to console and abort compilation</refpurpose>
     </refnamediv>
@@ -549,6 +609,12 @@ function foo = {
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -558,7 +624,7 @@ function foo = {
     </refmeta>
 
     <refnamediv>
-      <refname>escape</refname>
+      <refname>panc:escape</refname>
 
       <refpurpose>escape non-alphanumeric characters to allow use as nlist
       key</refpurpose>
@@ -596,6 +662,12 @@ function foo = {
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -605,7 +677,7 @@ function foo = {
     </refmeta>
 
     <refnamediv>
-      <refname>exists</refname>
+      <refname>panc:exists</refname>
 
       <refpurpose>determines if a variable expression, path, or template
       exists</refpurpose>
@@ -673,6 +745,12 @@ r = exists(v+'');</programlisting>
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -682,7 +760,7 @@ r = exists(v+'');</programlisting>
     </refmeta>
 
     <refnamediv>
-      <refname>file_contents</refname>
+      <refname>panc:file_contents</refname>
 
       <refpurpose>provide contents of file as a string</refpurpose>
     </refnamediv>
@@ -715,6 +793,12 @@ r = exists(v+'');</programlisting>
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -724,7 +808,7 @@ r = exists(v+'');</programlisting>
     </refmeta>
 
     <refnamediv>
-      <refname>first</refname>
+      <refname>panc:first</refname>
 
       <refpurpose>initialize an iterator over a resource and return first
       entry</refpurpose>
@@ -793,6 +877,12 @@ ok = first(table, k, v);
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -802,7 +892,7 @@ ok = first(table, k, v);
     </refmeta>
 
     <refnamediv>
-      <refname>format</refname>
+      <refname>panc:format</refname>
 
       <refpurpose xml:id="func_format_purpose">format a string by replacing
       references to parameters</refpurpose>
@@ -842,6 +932,12 @@ ok = first(table, k, v);
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -851,7 +947,7 @@ ok = first(table, k, v);
     </refmeta>
 
     <refnamediv>
-      <refname>if_exists</refname>
+      <refname>panc:if_exists</refname>
 
       <refpurpose>check if a template exists, returning template name if it
       does</refpurpose>
@@ -891,6 +987,12 @@ ok = first(table, k, v);
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -900,7 +1002,7 @@ ok = first(table, k, v);
     </refmeta>
 
     <refnamediv>
-      <refname>index</refname>
+      <refname>panc:index</refname>
 
       <refpurpose>finds substring within a string or element within a
       resource</refpurpose>
@@ -1074,6 +1176,12 @@ ok = first(table, k, v);
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -1083,7 +1191,7 @@ ok = first(table, k, v);
     </refmeta>
 
     <refnamediv>
-      <refname>is_boolean</refname>
+      <refname>panc:is_boolean</refname>
 
       <refpurpose>checks to see if the argument is a double</refpurpose>
     </refnamediv>
@@ -1114,6 +1222,12 @@ ok = first(table, k, v);
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -1123,7 +1237,7 @@ ok = first(table, k, v);
     </refmeta>
 
     <refnamediv>
-      <refname>is_defined</refname>
+      <refname>panc:is_defined</refname>
 
       <refpurpose>checks to see if the argument is anything but
       <literal>undef</literal> or <literal>null</literal></refpurpose>
@@ -1156,6 +1270,12 @@ ok = first(table, k, v);
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -1165,7 +1285,7 @@ ok = first(table, k, v);
     </refmeta>
 
     <refnamediv>
-      <refname>is_double</refname>
+      <refname>panc:is_double</refname>
 
       <refpurpose>checks to see if the argument is a double</refpurpose>
     </refnamediv>
@@ -1196,6 +1316,12 @@ ok = first(table, k, v);
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -1205,7 +1331,7 @@ ok = first(table, k, v);
     </refmeta>
 
     <refnamediv>
-      <refname>is_list</refname>
+      <refname>panc:is_list</refname>
 
       <refpurpose>checks to see if the argument is a double</refpurpose>
     </refnamediv>
@@ -1236,6 +1362,12 @@ ok = first(table, k, v);
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -1245,7 +1377,7 @@ ok = first(table, k, v);
     </refmeta>
 
     <refnamediv>
-      <refname>is_long</refname>
+      <refname>panc:is_long</refname>
 
       <refpurpose>checks to see if the argument is a long</refpurpose>
     </refnamediv>
@@ -1276,6 +1408,12 @@ ok = first(table, k, v);
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -1285,7 +1423,7 @@ ok = first(table, k, v);
     </refmeta>
 
     <refnamediv>
-      <refname>is_nlist</refname>
+      <refname>panc:is_nlist</refname>
 
       <refpurpose>checks to see if the argument is an nlist</refpurpose>
     </refnamediv>
@@ -1316,6 +1454,12 @@ ok = first(table, k, v);
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -1325,7 +1469,7 @@ ok = first(table, k, v);
     </refmeta>
 
     <refnamediv>
-      <refname>is_null</refname>
+      <refname>panc:is_null</refname>
 
       <refpurpose>checks to see if the argument is
       <literal>null</literal></refpurpose>
@@ -1358,6 +1502,12 @@ ok = first(table, k, v);
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -1367,7 +1517,7 @@ ok = first(table, k, v);
     </refmeta>
 
     <refnamediv>
-      <refname>is_number</refname>
+      <refname>panc:is_number</refname>
 
       <refpurpose>checks to see if the argument is a number</refpurpose>
     </refnamediv>
@@ -1398,6 +1548,12 @@ ok = first(table, k, v);
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -1407,7 +1563,7 @@ ok = first(table, k, v);
     </refmeta>
 
     <refnamediv>
-      <refname>is_property</refname>
+      <refname>panc:is_property</refname>
 
       <refpurpose>checks to see if the argument is a property</refpurpose>
     </refnamediv>
@@ -1438,6 +1594,12 @@ ok = first(table, k, v);
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -1447,7 +1609,7 @@ ok = first(table, k, v);
     </refmeta>
 
     <refnamediv>
-      <refname>is_resource</refname>
+      <refname>panc:is_resource</refname>
 
       <refpurpose>checks to see if the argument is a resource</refpurpose>
     </refnamediv>
@@ -1478,6 +1640,12 @@ ok = first(table, k, v);
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -1487,7 +1655,7 @@ ok = first(table, k, v);
     </refmeta>
 
     <refnamediv>
-      <refname>is_string</refname>
+      <refname>panc:is_string</refname>
 
       <refpurpose>checks to see if the argument is a string</refpurpose>
     </refnamediv>
@@ -1518,6 +1686,12 @@ ok = first(table, k, v);
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -1527,7 +1701,7 @@ ok = first(table, k, v);
     </refmeta>
 
     <refnamediv>
-      <refname>key</refname>
+      <refname>panc:key</refname>
 
       <refpurpose>returns name of child based on the index</refpurpose>
     </refnamediv>
@@ -1579,6 +1753,12 @@ ok = first(table, k, v);
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -1588,7 +1768,7 @@ ok = first(table, k, v);
     </refmeta>
 
     <refnamediv>
-      <refname>length</refname>
+      <refname>panc:length</refname>
 
       <refpurpose>returns size of a string or resource</refpurpose>
     </refnamediv>
@@ -1624,6 +1804,12 @@ ok = first(table, k, v);
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -1633,7 +1819,7 @@ ok = first(table, k, v);
     </refmeta>
 
     <refnamediv>
-      <refname>list</refname>
+      <refname>panc:list</refname>
 
       <refpurpose>create a new list consisting of the function
       arguments</refpurpose>
@@ -1672,6 +1858,12 @@ ok = first(table, k, v);
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -1681,7 +1873,7 @@ ok = first(table, k, v);
     </refmeta>
 
     <refnamediv>
-      <refname>match</refname>
+      <refname>panc:match</refname>
 
       <refpurpose>checks if a regular expression matches a string</refpurpose>
     </refnamediv>
@@ -1716,6 +1908,12 @@ type device_t = string with match(self, ’ˆ(disk|cd|net)$’);</programlisting
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -1725,7 +1923,7 @@ type device_t = string with match(self, ’ˆ(disk|cd|net)$’);</programlisting
     </refmeta>
 
     <refnamediv>
-      <refname>matches</refname>
+      <refname>panc:matches</refname>
 
       <refpurpose>checks if a regular expression matches a string</refpurpose>
     </refnamediv>
@@ -1772,6 +1970,12 @@ type ipv4 = string with {
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -1781,7 +1985,7 @@ type ipv4 = string with {
     </refmeta>
 
     <refnamediv>
-      <refname>merge</refname>
+      <refname>panc:merge</refname>
 
       <refpurpose>combine two resources into a single one</refpurpose>
     </refnamediv>
@@ -1822,6 +2026,12 @@ type ipv4 = string with {
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -1831,7 +2041,7 @@ type ipv4 = string with {
     </refmeta>
 
     <refnamediv>
-      <refname>nlist</refname>
+      <refname>panc:nlist</refname>
 
       <refpurpose>create an nlist from the arguments</refpurpose>
     </refnamediv>
@@ -1874,6 +2084,12 @@ type ipv4 = string with {
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -1883,7 +2099,7 @@ type ipv4 = string with {
     </refmeta>
 
     <refnamediv>
-      <refname>next</refname>
+      <refname>panc:next</refname>
 
       <refpurpose>increment iterator over a resource</refpurpose>
     </refnamediv>
@@ -1922,6 +2138,12 @@ type ipv4 = string with {
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -1931,7 +2153,7 @@ type ipv4 = string with {
     </refmeta>
 
     <refnamediv>
-      <refname>path_exists</refname>
+      <refname>panc:path_exists</refname>
 
       <refpurpose>determines if a path exists</refpurpose>
     </refnamediv>
@@ -1964,6 +2186,12 @@ type ipv4 = string with {
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -1973,7 +2201,7 @@ type ipv4 = string with {
     </refmeta>
 
     <refnamediv>
-      <refname>prepend</refname>
+      <refname>panc:prepend</refname>
 
       <refpurpose>adds a value to the beginning of a list</refpurpose>
     </refnamediv>
@@ -2070,6 +2298,12 @@ type ipv4 = string with {
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -2079,7 +2313,7 @@ type ipv4 = string with {
     </refmeta>
 
     <refnamediv>
-      <refname>replace</refname>
+      <refname>panc:replace</refname>
 
       <refpurpose>replace all occurrences of a regular expression</refpurpose>
     </refnamediv>
@@ -2119,6 +2353,12 @@ type ipv4 = string with {
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -2128,7 +2368,7 @@ type ipv4 = string with {
     </refmeta>
 
     <refnamediv>
-      <refname>return</refname>
+      <refname>panc:return</refname>
 
       <refpurpose>exit DML block with given value</refpurpose>
     </refnamediv>
@@ -2164,6 +2404,12 @@ type ipv4 = string with {
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -2173,7 +2419,7 @@ type ipv4 = string with {
     </refmeta>
 
     <refnamediv>
-      <refname>splice</refname>
+      <refname>panc:splice</refname>
 
       <refpurpose>insert string or list into another</refpurpose>
     </refnamediv>
@@ -2247,6 +2493,12 @@ type ipv4 = string with {
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -2256,7 +2508,7 @@ type ipv4 = string with {
     </refmeta>
 
     <refnamediv>
-      <refname>split</refname>
+      <refname>panc:split</refname>
 
       <refpurpose>split a string using a regular expression</refpurpose>
     </refnamediv>
@@ -2309,6 +2561,12 @@ type ipv4 = string with {
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -2318,7 +2576,7 @@ type ipv4 = string with {
     </refmeta>
 
     <refnamediv>
-      <refname>substr</refname>
+      <refname>panc:substr</refname>
 
       <refpurpose>extract a substring from a string</refpurpose>
     </refnamediv>
@@ -2372,6 +2630,12 @@ type ipv4 = string with {
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -2381,7 +2645,7 @@ type ipv4 = string with {
     </refmeta>
 
     <refnamediv>
-      <refname>to_boolean</refname>
+      <refname>panc:to_boolean</refname>
 
       <refpurpose>convert argument to a boolean value</refpurpose>
     </refnamediv>
@@ -2415,6 +2679,12 @@ type ipv4 = string with {
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -2424,7 +2694,7 @@ type ipv4 = string with {
     </refmeta>
 
     <refnamediv>
-      <refname>to_double</refname>
+      <refname>panc:to_double</refname>
 
       <refpurpose>convert argument to a double value</refpurpose>
     </refnamediv>
@@ -2469,6 +2739,12 @@ type ipv4 = string with {
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -2478,7 +2754,7 @@ type ipv4 = string with {
     </refmeta>
 
     <refnamediv>
-      <refname>to_long</refname>
+      <refname>panc:to_long</refname>
 
       <refpurpose>convert argument to a long value</refpurpose>
     </refnamediv>
@@ -2524,6 +2800,12 @@ type ipv4 = string with {
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -2533,7 +2815,7 @@ type ipv4 = string with {
     </refmeta>
 
     <refnamediv>
-      <refname>to_lowercase</refname>
+      <refname>panc:to_lowercase</refname>
 
       <refpurpose>change all uppercase letters to lowercase</refpurpose>
     </refnamediv>
@@ -2565,6 +2847,12 @@ type ipv4 = string with {
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -2574,7 +2862,7 @@ type ipv4 = string with {
     </refmeta>
 
     <refnamediv>
-      <refname>to_string</refname>
+      <refname>panc:to_string</refname>
 
       <refpurpose>convert argument to a string value</refpurpose>
     </refnamediv>
@@ -2605,6 +2893,12 @@ type ipv4 = string with {
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -2614,7 +2908,7 @@ type ipv4 = string with {
     </refmeta>
 
     <refnamediv>
-      <refname>to_uppercase</refname>
+      <refname>panc:to_uppercase</refname>
 
       <refpurpose>change all lowercase letters to uppercase</refpurpose>
     </refnamediv>
@@ -2646,6 +2940,12 @@ type ipv4 = string with {
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -2655,7 +2955,7 @@ type ipv4 = string with {
     </refmeta>
 
     <refnamediv>
-      <refname>traceback</refname>
+      <refname>panc:traceback</refname>
 
       <refpurpose>print message and traceback to console</refpurpose>
     </refnamediv>
@@ -2688,6 +2988,12 @@ type ipv4 = string with {
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -2697,7 +3003,7 @@ type ipv4 = string with {
     </refmeta>
 
     <refnamediv>
-      <refname>unescape</refname>
+      <refname>panc:unescape</refname>
 
       <refpurpose>replaces escaped characters with ASCII
       characters</refpurpose>
@@ -2729,6 +3035,12 @@ type ipv4 = string with {
       <productname>panc</productname>
 
       <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2011</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
     </info>
 
     <refmeta>
@@ -2738,7 +3050,7 @@ type ipv4 = string with {
     </refmeta>
 
     <refnamediv>
-      <refname>value</refname>
+      <refname>panc:value</refname>
 
       <refpurpose>retrieve a value specified by a path</refpurpose>
     </refnamediv>

@@ -8,7 +8,7 @@
          xmlns:db="http://docbook.org/ns/docbook">
   <title>Pan Language Manual</title>
 
-  <subtitle>Version<?eval ${project.version}?></subtitle>
+  <subtitle>Version <?eval ${project.version}?></subtitle>
 
   <info>
     <author>

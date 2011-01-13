@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<book version="5.0" xmlns="http://docbook.org/ns/docbook"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:svg="http://www.w3.org/2000/svg"
+      xmlns:m="http://www.w3.org/1998/Math/MathML"
+      xmlns:html="http://www.w3.org/1999/xhtml"
+      xmlns:db="http://docbook.org/ns/docbook">
+  <info>
+    <title>Pan Configuration Language</title>
+
+    <author>
+      <personname><firstname>Charles</firstname><surname>Loomis</surname></personname>
+
+      <email>loomis@lal.in2p3.fr</email>
+
+      <affiliation>
+        <orgname>Centre National de la Recherche Scientifique (CNRS)</orgname>
+      </affiliation>
+    </author>
+
+    <pubdate><?eval ${buildTimestamp}?></pubdate>
+
+    <productnumber><?eval ${project.version}?></productnumber>
+
+    <date><?eval ${buildTimestamp}?></date>
+
+    <copyright>
+      <year>2011</year>
+
+      <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+    </copyright>
+  </info>
+
+  <preface>
+    <title>Preface</title>
+
+    <para></para>
+  </preface>
+
+  <chapter>
+    <title>Introduction</title>
+
+    <para></para>
+  </chapter>
+
+  <chapter>
+    <title>Quick Start</title>
+
+    <para></para>
+  </chapter>
+
+  <chapter>
+    <title>Pan Statements</title>
+
+    <para></para>
+  </chapter>
+
+  <chapter>
+    <title>Data Types</title>
+
+    <para></para>
+
+    <section>
+      <title>Type Hierarchy</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Properties and Primitive Types</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>String-Like Types</title>
+
+      <para></para>
+
+      <section>
+        <title>Links</title>
+
+        <para></para>
+      </section>
+
+      <section>
+        <title>Regular Expressions</title>
+
+        <para></para>
+      </section>
+
+      <section>
+        <title>Paths</title>
+
+        <para></para>
+      </section>
+    </section>
+
+    <section>
+      <title>Special Types</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Resources</title>
+
+      <para></para>
+    </section>
+  </chapter>
+
+  <chapter>
+    <title>Data Manipulation Language (DML)</title>
+
+    <para></para>
+  </chapter>
+
+  <chapter>
+    <title>Functions</title>
+
+    <para></para>
+  </chapter>
+
+  <chapter>
+    <title>Validation</title>
+
+    <para></para>
+
+    <section>
+      <title>User Defined Types</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Validation Functions</title>
+
+      <para></para>
+    </section>
+  </chapter>
+</book>

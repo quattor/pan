@@ -15,6 +15,10 @@
       <personname><firstname>Charles</firstname><surname>Loomis</surname></personname>
     </author>
 
+    <org>
+      <orgname>Centre National de la Recherche Scientifique (CNRS)</orgname>
+    </org>
+
     <abstract>
       <para>The pan compiler transforms a set of files written in the pan
       configuration language into a set of machine configuration profiles.
@@ -28,6 +32,12 @@
     <productnumber><?eval ${project.version}?></productnumber>
 
     <date><?eval ${buildTimestamp}?></date>
+
+    <copyright>
+      <year>2011</year>
+
+      <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+    </copyright>
   </info>
 
   <section>
@@ -118,7 +128,7 @@
         <emphasis>The GNU implementation cannot build or run the pan compiler
         correctly.</emphasis> Full versions of Java for linux, Solaris, and
         Windows can be obtained from Oracle. Maven can be obtained from the
-        Apache Foundation web site. </para>
+        Apache Foundation web site.</para>
 
         <para>The build of the compiler is done via <command>maven</command>
         that also depends on Java. For <command>maven</command> to find the

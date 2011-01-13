@@ -8,12 +8,16 @@
          xmlns:db="http://docbook.org/ns/docbook">
   <title>Pan Tutorial</title>
 
-  <subtitle>Version <?eval ${project.version}?></subtitle>
+  <subtitle>Version<?eval ${project.version}?></subtitle>
 
   <info>
     <author>
       <personname><firstname>Charles</firstname><surname>Loomis</surname></personname>
     </author>
+
+    <org>
+      <orgname>Centre National de la Recherche Scientifique (CNRS)</orgname>
+    </org>
 
     <abstract>
       <para>This tutorial introduces the pan compiler and pan configuration
@@ -28,6 +32,12 @@
     <productnumber><?eval ${project.version}?></productnumber>
 
     <date><?eval ${buildTimestamp}?></date>
+
+    <copyright>
+      <year>2011</year>
+
+      <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+    </copyright>
   </info>
 
   <section>

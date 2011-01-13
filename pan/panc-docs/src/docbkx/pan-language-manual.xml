@@ -13,7 +13,13 @@
   <info>
     <author>
       <personname><firstname>Charles</firstname><surname>Loomis</surname></personname>
+
+      <email>loomis@lal.in2p3.fr</email>
     </author>
+
+    <org>
+      <orgname>Centre National de la Recherche Scientifique (CNRS)</orgname>
+    </org>
 
     <abstract>
       <para>The pan configuration language allows the definition of machine
@@ -27,6 +33,12 @@
     <productnumber><?eval ${project.version}?></productnumber>
 
     <date><?eval ${buildTimestamp}?></date>
+
+    <copyright>
+      <year>2011</year>
+
+      <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+    </copyright>
   </info>
 
   <section>
@@ -45,10 +57,10 @@
     <title>Templates</title>
 
     <para>A machine configuration is defined by a set of files, called
-    templates, written in the pan language. These templates define
-    simultaneously the configuration parameters, the configuration schema, and
-    validation functions. Each template is named and is contained in a file
-    having the same name.</para>
+    templates, written in the pan configuration language. These templates
+    define simultaneously the configuration parameters, the configuration
+    schema, and validation functions. Each template is named and is contained
+    in a file having the same name.</para>
 
     <para>The syntax of a template file is simple:</para>
 
@@ -66,9 +78,14 @@
     template name may not begin or end with a slash.</para>
 
     <para>Each template must reside in a separate file with the name
-    <filename><replaceable>template-name</replaceable>.pan</filename> (or the
-    older
-    <filename><replaceable>template-name</replaceable>.tpl</filename>).</para>
+    <filename><replaceable>template-name</replaceable>.pan</filename>.</para>
+
+    <note>
+      <para>The older file extension "tpl" is also accepted by the pan
+      compiler, but the "pan" extension is preferred. If files with both
+      extensions exist for a given template, then the file with the "pan"
+      extension will be used by the compiler.</para>
+    </note>
 
     <section>
       <title>Object Templates</title>
@@ -170,32 +187,27 @@
 
       <para>The <command>include</command> statement acts as if the contents
       of the named template were included literally at the point the include
-      statement is executed. Two variants of the <command>include</command>
-      statement are permitted:</para>
+      statement is executed.</para>
 
-      <para><programlisting>include template-name;
-include {dml};</programlisting></para>
+      <para><programlisting>include dml;</programlisting></para>
 
-      <para>The first variant includes the named template; the template is
-      written as a token without quotes. (<emphasis>This variant is
-      deprecated.</emphasis>) The second variant executes the given DML block.
-      The block must evaluate to a string, <literal>undef</literal>, or
-      <literal>null</literal>. If the result is <literal>undef</literal> or
+      <para>The DML block must evaluate to a string, <literal>undef</literal>,
+      or <literal>null</literal>. If the result is <literal>undef</literal> or
       <literal>null</literal>, the <command>include</command> statement does
       nothing; if the result is a string, the named template is loaded and
-      executed. Any other type will generate an error. The braces in the
-      second variant are required.</para>
+      executed. Any other type will generate an error.</para>
 
-      <para>Ordinary templates may be included multiple times, but loops are
-      not permitted. Templates marked as <literal>declaration</literal> or
-      <literal>unique</literal> templates will be only included once where
-      first encountered.</para>
+      <para>Ordinary templates may be included multiple times. Templates
+      marked as <literal>declaration</literal> or <literal>unique</literal>
+      templates will be only included once where first encountered. Includes
+      which create cyclic dependencies are not permitted and will generate a
+      fatal error.</para>
 
       <para>There are some restrictions on what types of templates can be
       included. Object templates cannot be included. Structure templates can
       only include and be included by other structure templates. Declaration
       templates can only include other declaration templates. All other
-      situations are allowed.</para>
+      combinations are allowed.</para>
     </section>
 
     <section>
@@ -260,9 +272,8 @@ include {dml};</programlisting></para>
       <para>Pan provides several automatic global variables:
       <varname>OBJECT</varname>, <varname>SELF</varname>,
       <varname>FUNCTION</varname>, <varname>TEMPLATE</varname>, and
-      <varname>LOADPATH</varname> (and their deprecated lowercase
-      equivalents). <varname>OBJECT</varname> contains the name of the object
-      template being evaluated; it is a final variable.
+      <varname>LOADPATH</varname>. <varname>OBJECT</varname> contains the name
+      of the object template being evaluated; it is a final variable.
       <varname>SELF</varname> is the current value of a path referred to in an
       assignment or variable statement. The <varname>SELF</varname> reference
       cannot be modified, but children of <varname>SELF</varname> may be.
@@ -273,9 +284,15 @@ include {dml};</programlisting></para>
       <varname>LOADPATH</varname> can be used to modify the load path used to
       locate template for the <command>include</command> statement.</para>
 
-      <para>Any valid identifier may be used to name a global variable. To
-      avoid conflicts with local variables, however, global variables are
-      usually named in all uppercase; local variables in all lowercase.</para>
+      <para>Any valid identifier may be used to name a global variable.</para>
+
+      <caution>
+        <para>Global and local variables share a common namespace. Best
+        practice dictates that global variables have names with all uppercase
+        letters and local variables have names with all lowercase letters.
+        This avoids conflicts and unexpected errors when sharing
+        configurations. </para>
+      </caution>
     </section>
 
     <section>
@@ -284,14 +301,12 @@ include {dml};</programlisting></para>
       <para>The <command>bind</command> statement binds a type definition to a
       path. Multiple types may be bound to a single path. During the
       validation phase, the value corresponding to the named path will be
-      checked against the bound types. There are two variants:</para>
+      checked against the bound types.</para>
 
-      <programlisting>bind path = type-spec;
-type path = type-spec;</programlisting>
+      <programlisting>bind path = type-spec;</programlisting>
 
       <para>See the Type section for a complete description of the
-      <replaceable>type-spec</replaceable> syntax. Note that the second form
-      is deprecated and will disappear in a future release.</para>
+      <replaceable>type-spec</replaceable> syntax.</para>
     </section>
 
     <section>
@@ -342,12 +357,7 @@ type path = type-spec;</programlisting>
 
     <para>where 'path' is a valid path name and
     <replaceable>type-spec</replaceable> is either a type specification or
-    name of an existing type. The syntax:</para>
-
-    <para><programlisting>type path = type-spec; # DEPRECATED</programlisting></para>
-
-    <para>will also work, but its use is deprecated. Support for the latter
-    form will disappear in a future release of the compiler.</para>
+    name of an existing type.</para>
 
     <para>Full type specifications are of the form:</para>
 
@@ -424,16 +434,16 @@ type path = type-spec;</programlisting>
       example. The following are "alias" types that associate a new name with
       an existing type, plus some restrictions.</para>
 
-      <programlisting>type ulong1 = long with self &gt;= 0;
+      <programlisting>type ulong1 = long with SELF &gt;= 0;
 type ulong2 = long(0..);
 type port = long(0..65535);
 type short_string = string(..255);
-type small_even = long(-16..16) with self %2 == 0;</programlisting>
+type small_even = long(-16..16) with SELF % 2 == 0;</programlisting>
 
       <para>Similarly one can create link types for elements in the machine
       configuration:</para>
 
-      <programlisting>type mylink = long(0..)* with match(self, 'r$');</programlisting>
+      <programlisting>type mylink = long(0..)* with match(SELF, 'r$');</programlisting>
 
       <para>Values associated to this type must be a string ending with 'r';
       the value must be a valid path that references an unsigned long
@@ -515,12 +525,10 @@ type small_even_nlist = small_even{};</programlisting>
       bind to this identifier.</para>
 
       <para>When the function is called, the DML will have the variables
-      <varname>ARGC</varname> and <varname>ARGV</varname> defined. (The
-      deprecated names <varname>argc</varname> and <varname>argv</varname> are
-      converted to uppercase at during compilation.) The variable
-      <varname>ARGC</varname> contains the number of arguments passed to the
-      function; <varname>ARGV</varname> is a list containing the values of the
-      arguments.</para>
+      <varname>ARGC</varname> and <varname>ARGV</varname> defined. The
+      variable <varname>ARGC</varname> contains the number of arguments passed
+      to the function; <varname>ARGV</varname> is a list containing the values
+      of the arguments.</para>
 
       <para>Note that <varname>ARGV</varname> is a standard pan list.
       Consequently, passing null values (intended to delete elements) to
@@ -532,10 +540,10 @@ type small_even_nlist = small_even{};</programlisting>
       null value deletes the nonexistent element
       <varname>ARGV[0]</varname>.</para>
 
-      <para>The pan language does no automatic checking of the number or types
+      <para>The pan language does not automatically check the number or types
       of arguments. The DML block that defines the function must make all of
-      these checks explicitly and use the error() function to emit an
-      informative message in case of an error.</para>
+      these checks explicitly and use the <function>error</function> function
+      to emit an informative message in case of an error.</para>
 
       <para>Recursive calls to a function are permitted. However, the call
       depth is limited (by an option when the compiler is invoked) to avoid
@@ -545,7 +553,7 @@ type small_even_nlist = small_even{};</programlisting>
       <para>The following example defines a function that checks if the number
       of arguments is even and are all numbers:</para>
 
-      <programlisting>function even_numbers = {
+      <programlisting>function paired_numbers = {
 
   if (ARGC%2 != 0) {
     error('number of arguments must be even'); 
@@ -1148,8 +1156,8 @@ does not contain a newline"</programlisting>
         <para>Multi-line strings can be represented using the 'here-doc'
         syntax, like in shell or Perl.</para>
 
-        <programlisting>"test" = "foo" + &lt;&lt;EOT + "bar"; 
-this code will assign to the path "test" the string 
+        <programlisting>'/test' = 'foo' + &lt;&lt;EOT + 'bar'; 
+this code will assign to the path '/test' the string 
 made of ‘foo’, plus this text including the final newline, 
 plus ‘bar’... 
 EOT</programlisting>
@@ -1161,7 +1169,7 @@ EOT</programlisting>
         base64 encode it and put it inside "here-doc” strings like in the
         following example:</para>
 
-        <programlisting>"/system/binary/stuff" = base64_decode(&lt;&lt;EOT); 
+        <programlisting>'/system/binary/stuff' = base64_decode(&lt;&lt;EOT); 
 H4sIAOwLyDwAA02PQQ7DMAgE731FX9BT1f8QZ52iYhthEiW/r2SitCdmxCK0E3W8no+36n2G 
 8UbOrYYWGROCgurBe4JeCexI2ahgWF5rulaLtImkDxbucS0tcc3t5GXMAqeZnIYo+TvAmsL8 
 GGLobbUUX7pT+pxkXJc/5Bx5p0ki7Cgq5KccGrCR8PzruUfP2xfJgVqHCgEAAA== 
@@ -1179,7 +1187,7 @@ EOT</programlisting>
           absolute, and relative.</para>
 
           <para>An <emphasis>external path</emphasis> explicitly references an
-          object template. The preferred syntax for external paths is:</para>
+          object template. The syntax for an external path is:</para>
 
           <programlisting>my/external/object:/some/absolute/path</programlisting>
 
@@ -1187,15 +1195,6 @@ EOT</programlisting>
           the substring after the colon is an absolute path. The leading slash
           of the absolute path is optional in an external path. This form will
           work for both namespaced and non-namespaced object templates.</para>
-
-          <para>A second, deprecated syntax is also supported by the
-          compiler:</para>
-
-          <programlisting>//myobject/some/absolute/path</programlisting>
-
-          <para>this form does <emphasis>not</emphasis> support namespaced
-          object templates. Support for this syntax will disappear in a future
-          release of the compiler.</para>
 
           <para>An <emphasis>absolute path</emphasis> starts at the top of a
           configuration tree and identifies a node within the tree. All
@@ -1283,12 +1282,13 @@ EOT</programlisting>
 
       <para>Local variables are subject to primitive type checking. So the
       primitive type of a local variable cannot be changed unless the variable
-      is assigned a value of 'undef' or 'null' between the type-changing
-      assignments.</para>
+      is assigned to <literal>undef</literal> or <literal>null</literal>
+      between the type-changing assignments.</para>
 
-      <para>Global variables (defined with the 'variable' statement) can be
-      read from the DML block. Global variables may not be modified from
-      within the block; attempting to do so will abort the execution.</para>
+      <para>Global variables (defined with the <command>variable</command>
+      statement) can be read from the DML block. Global variables may not be
+      modified from within the block; attempting to do so will abort the
+      execution.</para>
 
       <para>Global and local variables share the same namespace. Consequently,
       there may be unintended naming conflicts between them. The best practice
@@ -1600,7 +1600,7 @@ EOT</programlisting>
 
       <para>These statements, like all DML statements, return a value. Be
       careful of this, because unexecuted blocks generally will return
-      'undef', which may lead to non-intuitive behavior.</para>
+      <literal>undef</literal>, which may lead to unexpected behavior.</para>
 
       <section>
         <title>Branching (<literal>if</literal> statement)</title>
@@ -1666,8 +1666,8 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
       <section>
         <title>Iteration (<literal>foreach</literal> statement)</title>
 
-        <para>The 'foreach' statement allows iteration over all of the
-        elements of a list or nlist. The syntax is:</para>
+        <para>The <command>foreach</command> statement allows iteration over
+        all of the elements of a list or nlist. The syntax is:</para>
 
         <programlisting>foreach (key; value; resource) body-dml;</programlisting>
 
@@ -1682,11 +1682,11 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
 
         <para>The value returned will be that of the last iteration of the
         body-dml. If the body-dml is never executed (for an empty list or
-        nlist), 'undef' will be returned.</para>
+        nlist), <literal>undef</literal> will be returned.</para>
 
-        <para>The 'foreach' statement is not subject to the compiler's
-        iteration limit. By definition, the resource has a finite number of
-        entries, so this safeguard is not needed.</para>
+        <para>The <command>foreach</command> statement is not subject to the
+        compiler's iteration limit. By definition, the resource has a finite
+        number of entries, so this safeguard is not needed.</para>
 
         <para>This form of iteration should be used in preference to the
         <function>first</function>, <function>next</function>, and

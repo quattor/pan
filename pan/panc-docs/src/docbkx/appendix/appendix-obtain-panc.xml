@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix version="5.0" xml:id="appendix-obtain-panc"
+          xmlns="http://docbook.org/ns/docbook"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          xmlns:xi="http://www.w3.org/2001/XInclude"
+          xmlns:svg="http://www.w3.org/2000/svg"
+          xmlns:mml="http://www.w3.org/1998/Math/MathML"
+          xmlns:html="http://www.w3.org/1999/xhtml"
+          xmlns:db="http://docbook.org/ns/docbook">
+  <title>Obtaining the Compiler</title>
+
+  <section>
+    <title>Binary Distributions</title>
+
+    <para>Binary packages for all releases are available from SourceForge in a
+    variety of formats:</para>
+
+    <programlisting>http://sourceforge.net/projects/quattor/files/</programlisting>
+
+    <para>The same location also contains documentation for the compiler. This
+    document is also bundled in the distribution files.</para>
+  </section>
+
+  <section>
+    <title>Source</title>
+
+    <para>The source for the pan compiler is managed through a subversion
+    repository. The mainline development ("trunk") can be checked out with a
+    subversion client with the command:</para>
+
+    <programlisting>svn checkout https://quattor.svn.sourceforge.net/svnroot/quattor/trunk/pan/panc</programlisting>
+
+    <para>As this is the active development branch, code checked out from it
+    may or may not work. For use in a production environment, check out a
+    specific version of the compiler with a command like:</para>
+
+    <programlisting>svn checkout https://quattor.svn.sourceforge.net/svnroot/quattor/tags/pan-8.2.9/panc</programlisting>
+
+    <para>where the tags correspond to the version of the compiler. Unless you
+    have special requirements, use the latest <emphasis>production</emphasis>
+    version of the compiler. All of the tags can be found by pointing a web
+    browser at the subversion repository.</para>
+
+    <section>
+      <title>Building</title>
+
+      <para>Correctly building the Java-implementation of the pan compiler
+      requires version 1.5.0 or later of a Java Development Kit (JDK). Many
+      linux distributions include the GNU implementation of Java.
+      <emphasis>The GNU implementation cannot build or run the pan compiler
+      correctly.</emphasis> Full versions of Java for linux, Solaris, and
+      Windows can be obtained from Oracle. Maven can be obtained from the
+      Apache Foundation web site.</para>
+
+      <para>The build of the compiler is done via <command>maven</command>
+      that also depends on Java. For <command>maven</command> to find the
+      correct version of the compiler, the environment variable
+      <envar>JAVA_HOME</envar> should be defined:</para>
+
+      <para><programlisting>export JAVA_HOME=&lt;path to java area&gt;</programlisting></para>
+
+      <para>or</para>
+
+      <programlisting>setenv JAVA_HOME &lt;path to java area&gt; </programlisting>
+
+      <para>depending on the type of shell that you use. After that, the
+      entire build can be accomplished with:</para>
+
+      <para><programlisting>mvn clean package</programlisting></para>
+
+      <para>where the current working directory is the root of the directory
+      checked out from subversion. The default build will compile all of the
+      java sources, run the unit tests, and package the compiler. Tarballs
+      (plain, gzipped, and bzipped) as well as a zip file are created on all
+      platforms. The build will also create an RPM on platforms that support
+      it. The final packages can be found in the <filename>target</filename>
+      subdirectory.</para>
+    </section>
+  </section>
+
+  <section>
+    <title>Installation</title>
+
+    <para>The proper installation of the pan compiler depends on how it will
+    be used. If it will be used from the command line (either directly or
+    through another program), then the full installation from a binary package
+    should be done. However, if the compiler will be run via
+    <command>ant</command>, then one really only needs to install the
+    <filename>panc.jar</filename> file.</para>
+
+    <section>
+      <title>Full Package Installation</title>
+
+      <para>Once you have a binary distribution of the compiler (either
+      building it from source or downloading a pre-built version),
+      installation of the java compiler should be relatively painless. The
+      binary packages include the code, scripts, and documentation of the
+      compiler.</para>
+
+      <formalpara>
+        <title>Tarballs/Zip File</title>
+
+        <para>Untar/unzip the package in a convenient area and redefine the
+        <envar>PATH</envar> variable to include the <filename>bin</filename>
+        subdirectory. You should then have access to <command>panc</command>
+        and the various log file analysis scripts from the command
+        line.</para>
+      </formalpara>
+
+      <formalpara>
+        <title>RPM</title>
+
+        <para>Simply using the command <command>rpm</command> (as root) to
+        install the package will be enough. The scripts and binaries will be
+        installed in the standard locations on the system. The RPM is not
+        relocatable. If you need to install the compiler as a regular user,
+        use one of the machine-independent packages.</para>
+      </formalpara>
+
+      <para>Using the compiler requires Java 1.5.0 or later to be installed on
+      the system. If you want to run the compiler from ant, then you must have
+      ant version 1.7.0 or later installed on your system.</para>
+    </section>
+
+    <section>
+      <title>Eclipse Integration</title>
+
+      <para>To integrate the compiler in an Integrated Development Environment
+      (IDE) like eclipse, only the file <filename>panc.jar</filename> is
+      needed, presuming that the compiler will be called via the ant task.
+      Build files that reference the compiler must define the panc task and
+      then may use the task to invoke the compiler. See the documentation for
+      invoking the compiler from ant.</para>
+    </section>
+  </section>
+</appendix>

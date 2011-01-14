@@ -36,24 +36,419 @@
     <title>Preface</title>
 
     <para></para>
+
+    <section>
+      <title>Typographic Conventions</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Organization</title>
+
+      <para></para>
+    </section>
   </preface>
 
   <chapter>
     <title>Introduction</title>
 
     <para></para>
+
+    <section>
+      <title>Configuration Language</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Benefits</title>
+
+      <para></para>
+    </section>
   </chapter>
 
   <chapter>
     <title>Quick Start</title>
 
     <para></para>
+
+    <section>
+      <title>Download and Installation</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Validating Installation</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Simple Tour of Language</title>
+
+      <para></para>
+    </section>
   </chapter>
 
   <chapter>
-    <title>Pan Statements</title>
+    <title>Pan Language</title>
 
     <para></para>
+
+    <section>
+      <title>Templates</title>
+
+      <section>
+        <title>Syntax</title>
+
+        <para>A machine configuration is defined by a set of files, called
+        templates, written in the pan configuration language. These templates
+        define simultaneously the configuration parameters, the configuration
+        schema, and validation functions. Each template is named and is
+        contained in a file having the same name.</para>
+
+        <para>The syntax of a template file is simple:</para>
+
+        <para><programlisting>[ object | declaration | unique | structure ] <literal>template</literal> <replaceable>template-name</replaceable>;
+[ statement ... ]</programlisting></para>
+
+        <para>These files may contain comments that start with the hash sign
+        ('#') and terminate with the next new line or end of file. There are
+        five different types of templates that are identified by the template
+        modifier.</para>
+
+        <para>A template name is a series of substrings separated by slashes.
+        Each substring may consist of letters, digits, underscores, hyphens,
+        periods, and pluses. The substrings may not be empty or begin with a
+        period; the template name may not begin or end with a slash.</para>
+
+        <para>Each template must reside in a separate file with the name
+        <filename><replaceable>template-name</replaceable>.pan</filename>.</para>
+
+        <note>
+          <para>The older file extension "tpl" is also accepted by the pan
+          compiler, but the "pan" extension is preferred. If files with both
+          extensions exist for a given template, then the file with the "pan"
+          extension will be used by the compiler.</para>
+        </note>
+      </section>
+
+      <section>
+        <title>Types of Templates</title>
+
+        <section>
+          <title>Object Templates</title>
+
+          <para>An object template is declared via the
+          <literal>object</literal> modifier. Each object template is
+          associated with a machine profile and the pan compiler will, by
+          default, generate an XML profile for each processed object template.
+          An object template may contain any of the pan statements. Statements
+          that operate on paths may contain only absolute paths.</para>
+
+          <para>Object template names may be namespaced, allowing organization
+          of object templates in directory structures as is done for other
+          templates. For the automatic loading mechanism to find object
+          templates, the root directory containing them must be specified
+          explicitly in the load path (either on the command line or via the
+          <varname>LOADPATH</varname> variable).</para>
+        </section>
+
+        <section>
+          <title>Ordinary Templates</title>
+
+          <para>An ordinary template uses no template modifier in the
+          declaration. These templates may contain any pan statement, but
+          statements must operate only on absolute paths.</para>
+        </section>
+
+        <section>
+          <title>Declaration Templates</title>
+
+          <para>A template declared with a <literal>declaration</literal>
+          modifier is a declaration template. These templates may contain only
+          those pan statements that do not modify the machine profile. That
+          is, they may contain only <command>type</command>,
+          <command>bind</command>, <command>variable</command>, and
+          <command>function</command> statements. A declaration template will
+          only be executed once for each processed object template no matter
+          how many times it is included. It will be executed when the first
+          include statement referencing the template is encountered.</para>
+        </section>
+
+        <section>
+          <title>Unique Templates</title>
+
+          <para>A template defined with the <literal>unique</literal> modifier
+          behaves like an ordinary template except that it will only be
+          included once for each processed object template. It has the same
+          restrictions as an ordinary template. It will be executed when the
+          first include statement referencing the template is
+          encountered.</para>
+        </section>
+
+        <section>
+          <title>Structure Templates</title>
+
+          <para>A template declared with the <literal>structure</literal>
+          modifier may only contain <command>include</command> statements and
+          assignment statements that operate on relative paths. The
+          <command>include</command> statements may only reference other
+          structure templates. Structure templates are an alternative for
+          creating nlists and are used via the <function>create</function>
+          function.</para>
+        </section>
+      </section>
+    </section>
+
+    <section>
+      <title>Comments</title>
+
+      <para>These files may contain comments that start with the hash sign
+      ('#') and terminate with the next new line or end of file. There are
+      five different types of templates that are identified by the template
+      modifier.</para>
+    </section>
+
+    <section>
+      <title>Statements</title>
+
+      <section>
+        <title>Assignment</title>
+
+        <section>
+          <title>unconditional</title>
+
+          <para>Assignment statements are used to modify a part of the
+          configuration tree by replacing the subtree identified by its path
+          by the result of the execution a DML block. This result can be a
+          single property or a resource holding any number of elements.</para>
+
+          <para><programlisting>[ final ] path = dml; </programlisting></para>
+
+          <para>where the path is represented by a string literal.
+          Single-quoted strings are slightly more efficient, but double-quoted
+          strings work as well.</para>
+
+          <para>The assignment will create parents of the value that do not
+          already exist.</para>
+
+          <para>If a value already exists, the pan compiler will verify that
+          the new value has a compatible type. If not, it will terminate the
+          processing with an error.</para>
+
+          <para>If the <literal>final</literal> modifier is used, then the
+          path and any children of that path may not be subsequently modified.
+          Attempts to do so will result in a fatal error.</para>
+        </section>
+
+        <section>
+          <title>conditional</title>
+
+          <para>Assignment statements are used to modify a part of the
+          configuration tree by replacing the subtree identified by its path
+          by the result of the execution a DML block. This result can be a
+          single property or a resource holding any number of elements.</para>
+
+          <para><programlisting>[ final ] path ?= dml;</programlisting></para>
+
+          <para>where the path is represented by a string literal.
+          Single-quoted strings are slightly more efficient, but double-quoted
+          strings work as well. The conditional form (?=) will only execute
+          the DML block and assign a value if the named path does not exist or
+          contains the <literal>undef</literal> value.</para>
+
+          <para>The assignment will create parents of the value that do not
+          already exist.</para>
+
+          <para>If a value already exists, the pan compiler will verify that
+          the new value has a compatible type. If not, it will terminate the
+          processing with an error.</para>
+
+          <para>If the <literal>final</literal> modifier is used, then the
+          path and any children of that path may not be subsequently modified.
+          Attempts to do so will result in a fatal error.</para>
+        </section>
+
+        <section>
+          <title>prefix</title>
+
+          <para>The <command>prefix</command> statement provides an absolute
+          path used to resolve relative paths in assignment statements
+          occurring afterwards. It has the form:</para>
+
+          <para><programlisting>prefix '/some/absolute/path';</programlisting></para>
+
+          <para>The path must be an absolute path or an empty string. If the
+          empty string is given, no prefix is used for subsequent assignment
+          statements with relative paths. The prefix can be redefined within a
+          given template.</para>
+
+          <para><emphasis>This statement is evaluated at compile time and only
+          affects assignment statements in the same file as the
+          definition.</emphasis></para>
+        </section>
+      </section>
+
+      <section>
+        <title>Include</title>
+
+        <para>The <command>include</command> statement acts as if the contents
+        of the named template were included literally at the point the include
+        statement is executed.</para>
+
+        <para><programlisting>include dml;</programlisting></para>
+
+        <para>The DML block must evaluate to a string,
+        <literal>undef</literal>, or <literal>null</literal>. If the result is
+        <literal>undef</literal> or <literal>null</literal>, the
+        <command>include</command> statement does nothing; if the result is a
+        string, the named template is loaded and executed. Any other type will
+        generate an error.</para>
+
+        <para>Ordinary templates may be included multiple times. Templates
+        marked as <literal>declaration</literal> or <literal>unique</literal>
+        templates will be only included once where first encountered. Includes
+        which create cyclic dependencies are not permitted and will generate a
+        fatal error.</para>
+
+        <para>There are some restrictions on what types of templates can be
+        included. Object templates cannot be included. Structure templates can
+        only include and be included by other structure templates. Declaration
+        templates can only include other declaration templates. All other
+        combinations are allowed.</para>
+      </section>
+
+      <section>
+        <title>Definition</title>
+
+        <section>
+          <title>variable</title>
+
+          <para>Global variables can be defined via a
+          <command>variable</command> statement. These may be referenced from
+          any DML block after being defined. They may not be modified from a
+          DML block; they can only be modified from a
+          <command>variable</command> statement. Like the assignment statement
+          there are conditional and unconditional forms:</para>
+
+          <programlisting>[ final ] variable identifier ?= dml;
+[ final ] variable identifier = dml;</programlisting>
+
+          <para>For the conditional form, the DML block will only be evaluated
+          and the assignment done if the variable does not exist or has the
+          <literal>undef</literal> value.</para>
+
+          <para>If the <literal>final</literal> modifier is used, then the
+          variable may not be subsequently modified. Attempts to do so will
+          result in a fatal error.</para>
+
+          <para>Pan provides several automatic global variables:
+          <varname>OBJECT</varname>, <varname>SELF</varname>,
+          <varname>FUNCTION</varname>, <varname>TEMPLATE</varname>, and
+          <varname>LOADPATH</varname>. <varname>OBJECT</varname> contains the
+          name of the object template being evaluated; it is a final variable.
+          <varname>SELF</varname> is the current value of a path referred to
+          in an assignment or variable statement. The <varname>SELF</varname>
+          reference cannot be modified, but children of
+          <varname>SELF</varname> may be. <varname>FUNCTION</varname> contains
+          the name of the current function, if it exists.
+          <varname>FUNCTION</varname> is a final variable.
+          <varname>TEMPLATE</varname> contains the name of the template that
+          invoked the current DML block; it is a final variable.
+          <varname>LOADPATH</varname> can be used to modify the load path used
+          to locate template for the <command>include</command>
+          statement.</para>
+
+          <para>Any valid identifier may be used to name a global
+          variable.</para>
+
+          <caution>
+            <para>Global and local variables share a common namespace. Best
+            practice dictates that global variables have names with all
+            uppercase letters and local variables have names with all
+            lowercase letters. This avoids conflicts and unexpected errors
+            when sharing configurations.</para>
+          </caution>
+        </section>
+
+        <section>
+          <title>function</title>
+
+          <para>Functions can be defined by the user. These are arbitrary DML
+          blocks bound to an identifier. Once defined, functions can be called
+          from any subsequent DML block. Functions may only be defined once;
+          attempts to redefine an existing function will cause the compilation
+          to abort. The function definition syntax is:</para>
+
+          <para><programlisting>function identifier = dml; </programlisting></para>
+
+          <para>See the Function section for more information on user-defined
+          functions and a list of built-in functions.</para>
+
+          <para>Note that the compiler keeps distinct function and type
+          namespaces. One can define a function and type with the same
+          names.</para>
+        </section>
+
+        <section>
+          <title>type</title>
+
+          <para>Type definitions are critical for the validation of the
+          generated machine profiles. Types can be built up from the primitive
+          pan types and arbitrary validation functions. New types can be
+          defined with</para>
+
+          <para><programlisting>type identifier = type-spec;</programlisting></para>
+
+          <para>A type may be defined only once; attempts to redefine an
+          existing type will cause the compilation to abort. Types referenced
+          in the type-spec must already be defined. See the Type section for
+          more details on the syntax of the type specification.</para>
+
+          <para>Note that the compiler keeps distinct function and type
+          namespaces. One can define a function and type with the same
+          names.</para>
+        </section>
+      </section>
+
+      <section>
+        <title>Validation</title>
+
+        <section>
+          <title>bind</title>
+
+          <para>The <command>bind</command> statement binds a type definition
+          to a path. Multiple types may be bound to a single path. During the
+          validation phase, the value corresponding to the named path will be
+          checked against the bound types.</para>
+
+          <programlisting>bind path = type-spec;</programlisting>
+
+          <para>See the Type section for a complete description of the
+          <replaceable>type-spec</replaceable> syntax.</para>
+        </section>
+
+        <section>
+          <title>valid</title>
+
+          <para>The <command>valid</command> statement binds a validation DML
+          block to a path. It has the form:</para>
+
+          <para><programlisting>valid path = DML;</programlisting></para>
+
+          <para>This is a convenience statement and has exactly the same
+          effect as the statement:</para>
+
+          <para><programlisting>bind path = element with DML;</programlisting></para>
+
+          <para>The pan compiler internally implements this statement as the
+          <command>bind</command> statement above.</para>
+        </section>
+      </section>
+    </section>
   </chapter>
 
   <chapter>
@@ -120,6 +515,18 @@
     <title>Functions</title>
 
     <para></para>
+
+    <section>
+      <title>Built-In Functions</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>User-Defined Functions</title>
+
+      <para></para>
+    </section>
   </chapter>
 
   <chapter>
@@ -139,4 +546,240 @@
       <para></para>
     </section>
   </chapter>
+
+  <chapter>
+    <title>Modular Configurations</title>
+
+    <para></para>
+  </chapter>
+
+  <chapter>
+    <title>Advanced Features</title>
+
+    <para></para>
+
+    <section>
+      <title>Annotations</title>
+
+      <para>The compiler supports pan language annotations and provides a
+      mechanism for recovering those annotations in a separate XML file. While
+      the compiler permits annotations to occur in nearly any location in a
+      source file, only annotations attached to certain syntactic elements can
+      be recovered. Currently these are those before the template declaration,
+      variable declarations, function declarations, type declarations, and
+      field specifications. Examples of all are in the example file.</para>
+
+      <programlisting>@maintainer{
+  name = Jane Manager
+  email = jane.manager@example.org
+}
+@{
+  Example template that shows off the 
+  annotation features of the compiler.
+}
+object template annotations;
+
+@use{
+  type = long
+  default = 1
+  note = negative values raise an exception
+}
+variable VALUE ?= 1;
+
+@documentation{
+  desc = simple addition of two numbers
+  arg = first number to add
+  arg = second number to add
+}
+function ADD = {
+ ARGV[0] + ARGV[1];
+};
+
+type EXTERN = {
+  'info' ? string
+};
+
+@documentation{
+  Simple definition of a key value pair.
+}
+type KV_PAIR = extensible {
+
+  @{additional information fields}
+  include EXTERN
+
+  @{key for pair as string} 
+  'key' : string
+
+  @{value for pair as string}
+  'value' : string = to_string(2 + 3)
+};
+
+bind '/pair' = KV_PAIR;
+
+'/add' = ADD(1, 2);
+
+'/pair/key' = 'KEY';
+'/pair/value' = 'VALUE';</programlisting>
+
+      <para>Using the following command to process the file:</para>
+
+      <programlisting>$ panc --annotation-dir=annotations annotations.pan</programlisting>
+
+      <para>will produce the following output in the file
+      <filename>annotations.annotation.xml</filename>. Note that white space
+      and indentation have been added for clarity.</para>
+
+      <programlisting>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;template xmlns="http://quattor.org/pan/annotations" name="annotations" type="OBJECT"&gt;
+    &lt;desc&gt;
+  Example template that shows off the 
+  annotation features of the compiler.
+&lt;/desc&gt;
+
+    &lt;maintainer&gt;
+        &lt;name&gt;Jane Manager&lt;/name&gt;
+        &lt;email&gt;jane.manager@example.org&lt;/email&gt;
+    &lt;/maintainer&gt;
+
+    &lt;variable name="VALUE"&gt;
+        &lt;use&gt;
+            &lt;type&gt;long&lt;/type&gt;
+            &lt;default&gt;1&lt;/default&gt;
+            &lt;note&gt;negative values raise an exception&lt;/note&gt;
+        &lt;/use&gt;
+    &lt;/variable&gt;
+
+    &lt;function name="ADD"&gt;
+        &lt;documentation&gt;
+            &lt;desc&gt;simple addition of two numbers&lt;/desc&gt;
+            &lt;arg&gt;first number to add&lt;/arg&gt;
+            &lt;arg&gt;second number to add&lt;/arg&gt;
+        &lt;/documentation&gt;
+    &lt;/function&gt;
+
+    &lt;type name="EXTERN"&gt;
+        &lt;basetype extensible="no"&gt;
+            &lt;field name="info" required="no"&gt;
+                &lt;basetype name="string" extensible="no"/&gt;
+            &lt;/field&gt;
+        &lt;/basetype&gt;
+    &lt;/type&gt;
+
+    &lt;type name="KV_PAIR"&gt;
+        &lt;documentation&gt;
+            &lt;desc&gt;
+  Simple definition of a key value pair.
+&lt;/desc&gt;
+        &lt;/documentation&gt;
+
+        &lt;basetype extensible="yes"&gt;
+            &lt;include name="EXTERN"/&gt;
+            &lt;field name="key" required="yes"&gt;
+                &lt;desc&gt;key for pair as string&lt;/desc&gt;
+                &lt;basetype name="string" extensible="no"/&gt;
+            &lt;/field&gt;
+            &lt;field name="value" required="yes"&gt;
+                &lt;desc&gt;value for pair as string&lt;/desc&gt;
+                &lt;basetype name="string" extensible="no"/&gt;
+            &lt;/field&gt;
+        &lt;/basetype&gt;
+
+    &lt;/type&gt;
+    &lt;basetype name="KV_PAIR" extensible="no"/&gt;
+&lt;/template&gt;</programlisting>
+    </section>
+
+    <section>
+      <title>Logging</title>
+
+      <para>It is possible to log various activities of the pan compiler. The
+      types of logging that can be specified are:</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>task</term>
+
+          <listitem>
+            <para>Task logging can be used to extract information about how
+            long the various processing phases last for a particular object
+            template. The build phases one will see in the log file are:
+            execute, defaults, valid1, valid2, xml, and dep. There is also a
+            build stage that combines the execute and defaults stages.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>call</term>
+
+          <listitem>
+            <para>Call logging allows the full inclusion graph to be
+            reconstructed, including function calls. Each include is logged
+            even if the include would not actually include a file because the
+            included file is a declaration or unique template that has already
+            been included.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>include</term>
+
+          <listitem>
+            <para>Include logging only logs the inclusion of templates and
+            does not log function calls.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>memory</term>
+
+          <listitem>
+            <para>Memory logging show the memory usage during template
+            processing. This can be used to see the progression of memory
+            utilization and can be correlated with other activities if other
+            types of logging are enabled.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>all</term>
+
+          <listitem>
+            <para>Turns all types of logging on.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>none</term>
+
+          <listitem>
+            <para>Turns all types of logging off.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>Note that a log file name must also be specified, otherwise the
+      logging information will not be saved.</para>
+    </section>
+  </chapter>
+
+  <chapter>
+    <title>Performance Considerations</title>
+
+    <para></para>
+  </chapter>
+
+  <chapter>
+    <title>Troubleshooting</title>
+
+    <para></para>
+  </chapter>
+
+  <xi:include href="appendix/appendix-obtain-panc.xml" xpointer="element(/1)" />
+
+  <xi:include href="appendix/appendix-run-panc.xml" xpointer="element(/1)" />
+
+  <xi:include href="appendix/appendix-commands.xml" xpointer="element(/1)" />
+
+  <xi:include href="appendix/appendix-built-in-functions.xml"
+              xpointer="element(/1)" />
 </book>

@@ -1,0 +1,534 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix version="5.0" xml:id="appendix-run-panc"
+          xmlns="http://docbook.org/ns/docbook"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          xmlns:xi="http://www.w3.org/2001/XInclude"
+          xmlns:svg="http://www.w3.org/2000/svg"
+          xmlns:mml="http://www.w3.org/1998/Math/MathML"
+          xmlns:html="http://www.w3.org/1999/xhtml"
+          xmlns:db="http://docbook.org/ns/docbook">
+  <title>Running the Compiler</title>
+
+  <para>The performance of the compiler can degrade markedly if there is not
+  sufficient memory to do a particular compile and build. Moreover, the
+  default memory allocation and vary wildly depending on how and when the
+  compiler is invoked. Similarly, there are other options that may improve the
+  performance of the compiler. For instance, it is usually advisable to use
+  the <option>-server</option> option.</para>
+
+  <section>
+    <title>Command Line</title>
+
+    <para>The compiler can be invoked from the command line by using
+    <command>panc</command>. This is a script that is installed with the pan
+    compiler package that invokes a Java virtual machine and the compiler. The
+    script options have been designed to be as compatible with previous
+    versions of the <command>panc</command> command as possible.</para>
+
+    <para>The full list of options can be obtained with the
+    <option>--help</option> option or by looking on the relevant man
+    page.</para>
+  </section>
+
+  <section>
+    <title>Using <command>java</command> Command</title>
+
+    <para>If the Java compiler class is being directly invoked via the
+    <command>java</command> command, then the option <option>-Xmx</option>
+    must be used to change the VM memory available (for any reasonably sized
+    compilation). For example to start <command>java</command> with 1024 MB of
+    memory, the following command and options can be used:</para>
+
+    <programlisting>java -Xmx1024M org.quattor.pan.Compiler [options...]</programlisting>
+
+    <para>The same can be done for other options.</para>
+  </section>
+
+  <section>
+    <title>Maven</title>
+
+    <para>The pan compiler release now contains a simple maven plug-in that
+    will perform a pan syntax check on a set of source files. The plug-in is
+    available from the Quattor maven repository. To use this, you will need to
+    configure maven for that repository. This can be done by adding the
+    following to your own settings file
+    (<filename>~/.m2/settings.xml</filename>):</para>
+
+    <programlisting>&lt;settings&gt;
+
+ ...
+
+  &lt;profiles&gt;
+    &lt;profile&gt;
+      &lt;id&gt;quattor-plugins&lt;/id&gt;
+      &lt;pluginRepositories&gt;
+        &lt;pluginRepository&gt;
+          &lt;id&gt;quattor-releases&lt;/id&gt;
+          &lt;url&gt;http://lapp-repo01.in2p3.fr:8081/nexus/content/repositories/releases/&lt;/url&gt;
+        &lt;/pluginRepository&gt;
+      &lt;/pluginRepositories&gt;
+    &lt;/profile&gt;    
+  &lt;/profiles&gt;
+  
+  &lt;activeProfiles&gt;
+    &lt;activeProfile&gt;quattor-plugins&lt;/activeProfile&gt;
+  &lt;/activeProfiles&gt;
+
+&lt;/settings&gt;</programlisting>
+
+    <para>This will allow the Quattor maven repository to be searched for
+    plug-ins. The plug-in can be invoked from the command line like
+    this:</para>
+
+    <programlisting>$ mvn org.quattor.pan:maven-panc-plugin:check-syntax</programlisting>
+
+    <para>but must be done from an area with an existing
+    <filename>pom.xml</filename> file.</para>
+
+    <para>To run this as part of a normal build, add the following to the
+    <filename>pom.xml</filename> file associated with the project:</para>
+
+    <programlisting>&lt;project&gt;
+
+  ...
+
+  &lt;pluginRepositories&gt;
+    &lt;pluginRepository&gt;
+      &lt;id&gt;quattor-releases&lt;/id&gt;
+      &lt;url&gt;http://lapp-repo01.in2p3.fr:8081/nexus/content/repositories/releases/&lt;/url&gt;
+    &lt;/pluginRepository&gt;
+  &lt;/pluginRepositories&gt;
+
+  ...
+
+  &lt;build&gt;
+
+    &lt;plugins&gt;
+      &lt;plugin&gt;
+        &lt;groupId&gt;org.quattor.pan&lt;/groupId&gt;
+        &lt;artifactId&gt;maven-panc-plugin&lt;/artifactId&gt;
+
+        &lt;executions&gt;
+          &lt;execution&gt;
+            &lt;goals&gt;
+              &lt;goal&gt;check-syntax&lt;/goal&gt;
+            &lt;/goals&gt;
+            &lt;configuration&gt;
+              &lt;verbose&gt;true&lt;/verbose&gt;
+            &lt;/configuration&gt;
+          &lt;/execution&gt;
+        &lt;/executions&gt;
+
+      &lt;/plugin&gt;
+    &lt;/plugins&gt;
+
+  &lt;/build&gt;
+
+&lt;/project&gt;</programlisting>
+
+    <para>The <literal>check-syntax</literal> goal will run by default in the
+    <literal>process-sources</literal> stage of the lifecycle. By default, the
+    plug-in will recursively look for pan sources (<filename>*.pan</filename>
+    and <filename>*.tpl</filename>) in the <filename>src/main/pan</filename>
+    subdirectory of a project. The plug-in checks all of the pan sources that
+    were found.</para>
+  </section>
+
+  <section>
+    <title>Ant</title>
+
+    <para>Using an ant task to invoke the compiler allows the compiler to be
+    easily integrated with other machine management tasks. To use the pan
+    compiler within an ant build file, the pan compiler tasks must be defined.
+    This can be done with a tasks like:</para>
+
+    <programlisting>&lt;target name="define.panc.task"&gt;
+
+  &lt;taskdef resource="org/quattor/ant/panc-ant.xml"&gt;
+    &lt;classpath&gt;
+      &lt;pathelement path="${panc.jar}" /&gt;
+    &lt;/classpath&gt;
+  &lt;/taskdef&gt;
+
+&lt;/target&gt;</programlisting>
+
+    <para>where the property <property>${panc.jar}</property> points to the
+    jar file <filename>panc.jar</filename> distributed with the pan compiler
+    release.</para>
+
+    <para>There are two tasks defined: <command>panc</command> and
+    <command>panc-check-syntax</command>. The first provides all of the
+    functionality available through the compiler with a large number of
+    options. The second focuses on testing the pan language syntax and takes a
+    very limited number of options. Running the compiler can be done with
+    tasks like the following:</para>
+
+    <programlisting>&lt;target name="compile.cluster.profiles"&gt;
+
+  &lt;!-- Define the load path.  By default this is just the cluster area. --&gt;
+  &lt;path id="pan.loadpath"&gt;
+    &lt;dirset dir="${basedir}" includes="**/*" /&gt;
+  &lt;/path&gt;
+
+  &lt;panc-check-syntax ...options... &gt;
+    &lt;fileset dir="${basedir}/profiles" casesensitive="yes" includes="*.pan" /&gt;
+  &lt;/panc-check-syntax&gt;
+
+  &lt;panc ...options... &gt;
+    &lt;path refid="pan.loadpath" /&gt;
+    &lt;fileset dir="${basedir}/profiles" casesensitive="yes" includes="*.pan" /&gt;
+  &lt;/panc&gt;
+
+&lt;/target&gt;</programlisting>
+
+    <para>where <literal>...options...</literal> is replaced with valid
+    options for the pan compiler ant tasks.</para>
+
+    <para>The following table summarizes the ant task attributes, only the
+    <option>deprecationLevel</option>, <option>failOnWarn</option> and
+    <option>verbose</option> options are permitted for the
+    <command>panc-check-syntax</command> task.</para>
+
+    <table>
+      <title>Ant Task Attributes</title>
+
+      <tgroup cols="3">
+        <thead>
+          <row>
+            <entry align="center">Attribute</entry>
+
+            <entry align="center">Description</entry>
+
+            <entry>Required</entry>
+          </row>
+        </thead>
+
+        <tbody>
+          <row>
+            <entry>callDepthLimit</entry>
+
+            <entry>Maximum number of recursive calls.</entry>
+
+            <entry>No. Default value: 5000</entry>
+          </row>
+
+          <row>
+            <entry>checkDependencies</entry>
+
+            <entry>Whether or not to check dependencies and only build
+            profiles that have not changed.</entry>
+
+            <entry>No. Default value: true</entry>
+          </row>
+
+          <row>
+            <entry>debugTask</entry>
+
+            <entry>Emit debugging messages for the ant task itself. If the
+            value is 1, then normal debugging is turned on; if the value is
+            greater than 1 then verbose debugging is turned on. A value of
+            zero turns off the task debugging.</entry>
+
+            <entry>No. Default value: 0</entry>
+          </row>
+
+          <row>
+            <entry>deprecationLevel</entry>
+
+            <entry>Set deprecation level. A negative number turns off
+            deprecation warnings. 0 prints warnings for deprecated features
+            for next release, 1 for second release, etc.</entry>
+
+            <entry>No. Default value: 0</entry>
+          </row>
+
+          <row>
+            <entry>failOnWarn</entry>
+
+            <entry>If set to true, then warnings will be treated like errors
+            and abort the compilation.</entry>
+
+            <entry>No. Default value: false</entry>
+          </row>
+
+          <row>
+            <entry>depWriteEnabled</entry>
+
+            <entry>Whether or not to write dependency file.</entry>
+
+            <entry>No. Default value: false</entry>
+          </row>
+
+          <row>
+            <entry>dumpAnnotations</entry>
+
+            <entry>Whether or not to write annotation information to the
+            standard output.</entry>
+
+            <entry>No. Default value: false</entry>
+          </row>
+
+          <row>
+            <entry>forceBuild</entry>
+
+            <entry>Force the build of all given object templates.</entry>
+
+            <entry>No. Default value: false</entry>
+          </row>
+
+          <row>
+            <entry>formatter</entry>
+
+            <entry>The formatter to use for the output file. The accepted
+            values are: "pan", "xmldb", "text", and "dot".</entry>
+
+            <entry>No. Default value: pan</entry>
+          </row>
+
+          <row>
+            <entry>gzipOutput</entry>
+
+            <entry>Whether or not to gzip the (XML) output file.</entry>
+
+            <entry>No. Default value: no</entry>
+          </row>
+
+          <row>
+            <entry>ignoreDependencyPattern</entry>
+
+            <entry>A pattern which will select dependencies to ignore during
+            the task's dependency calculation. The pattern will be matched
+            against the namespaced template name.</entry>
+
+            <entry>No. Default value: null</entry>
+          </row>
+
+          <row>
+            <entry>includeRoot</entry>
+
+            <entry>Directory to use as the root of the compilation.</entry>
+
+            <entry>Yes.</entry>
+          </row>
+
+          <row>
+            <entry>includes</entry>
+
+            <entry>Set of directories below the include root to use in the
+            compilation. This is a "glob".</entry>
+
+            <entry>Yes.</entry>
+          </row>
+
+          <row>
+            <entry>iterationLimit</entry>
+
+            <entry>Set the maximum number of iterations. This is a failsafe to
+            avoid infinite loops.</entry>
+
+            <entry>No. Default value: 5000</entry>
+          </row>
+
+          <row>
+            <entry>logfile</entry>
+
+            <entry>The name of the file to use for logging information. This
+            value must be defined in order to enable logging.</entry>
+
+            <entry>Yes, if logging attribute is used.</entry>
+          </row>
+
+          <row>
+            <entry>logging</entry>
+
+            <entry>Enable different types of logging. The possible values are:
+            "all", "none", "include", "call", "task", and "memory". Multiple
+            values may be included as a comma-separated list. The value "none"
+            will override any other setting.</entry>
+
+            <entry>No.</entry>
+          </row>
+
+          <row>
+            <entry>nthread</entry>
+
+            <entry>Number of threads to use while compiling. Use 0 to set the
+            number of threads to the number of CPUs/cores on the
+            machine.</entry>
+
+            <entry>No. Default value: 0</entry>
+          </row>
+
+          <row>
+            <entry>outputDirectory</entry>
+
+            <entry>The directory that will contain the output of the
+            compilation.</entry>
+
+            <entry>Yes.</entry>
+          </row>
+
+          <row>
+            <entry>sessionDirectory</entry>
+
+            <entry>Set the session directory for the build.</entry>
+
+            <entry>No.</entry>
+          </row>
+
+          <row>
+            <entry>verbose</entry>
+
+            <entry>Whether to include a summary of the compilation, including
+            number of profiles compiled and overall memory
+            utilization.</entry>
+
+            <entry>No. Default value: false</entry>
+          </row>
+
+          <row>
+            <entry>xmlWriteEnabled</entry>
+
+            <entry>Whether or not to write the output files from the
+            compilation.</entry>
+
+            <entry>No. Default value: true</entry>
+          </row>
+
+          <row>
+            <entry>dumpAnnotations</entry>
+
+            <entry>Write the annotations to the standard output as the
+            template is compiled.</entry>
+
+            <entry>No. Default value: false</entry>
+          </row>
+
+          <row>
+            <entry>annotationDirectory</entry>
+
+            <entry>Directory which will hold files containing annotation
+            information.</entry>
+
+            <entry>No.</entry>
+          </row>
+
+          <row>
+            <entry>batchSize</entry>
+
+            <entry>If set to a positive integer, the outdated templates will
+            be processed in batches of batchSize.</entry>
+
+            <entry>No. Default value: 0</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+
+    <section>
+      <title>Nested Elements</title>
+
+      <para>Some of the configuration options are specified via nested
+      elements. The <command>panc</command> task supports all of these; the
+      <command>panc-check-syntax</command> task only supports the
+      <literal>fileset</literal> nested element.</para>
+
+      <section>
+        <title>Debug Element</title>
+
+        <para>The debug element is used to enable debugging output from the
+        <function>debug</function> and <function>traceback</function>
+        functions. The element takes the <literal>include</literal> and
+        <literal>exclude</literal> attributes, both of which are optional. The
+        <literal>debug</literal> element may appear multiple times within the
+        task with the final list of <literal>include</literal> and
+        <literal>exclude</literal> patterns being the union of all of those
+        specified in the elements. The values for the attributes are regular
+        expressions. For example,</para>
+
+        <programlisting>&lt;debug include="xen/.*" exclude=".*unwanted.*" /&gt;</programlisting>
+
+        <para>will cause <function>debug</function> and
+        <function>traceback</function> functions in the xen namespace to emit
+        messages as long as the template name does not contain the string
+        "unwanted". A special case is,</para>
+
+        <programlisting>&lt;debug&gt;</programlisting>
+
+        <para>that behaves exactly like:</para>
+
+        <programlisting>&lt;debug include=".*" exclude="^$" /&gt;</programlisting>
+
+        <para>That is, it will turn on debugging in all templates, unless
+        excluded via another <literal>debug</literal> element.</para>
+      </section>
+
+      <section>
+        <title>Fileset</title>
+
+        <para>Nested <literal>fileset</literal> elements specify the list of
+        files to process with the compiler. These are standard ant element and
+        take all of the usual attributes.</para>
+      </section>
+
+      <section>
+        <title>Path</title>
+
+        <para>A nested <literal>path</literal> element specifies the list of
+        include directories to use during the compilation. This is a standard
+        ant element and takes all of the usual attributes.</para>
+      </section>
+    </section>
+
+    <section>
+      <title>Setting JVM Parameters</title>
+
+      <para>If the compiler is invoked via the pan compiler ant task, then the
+      memory option can be added with the <envar>ANT_OPTS</envar>
+      environmental variable.</para>
+
+      <para><programlisting>export <envar>ANT_OPTS</envar>="-Xmx1024M"</programlisting></para>
+
+      <para>or</para>
+
+      <para><programlisting>setenv <envar>ANT_OPTS</envar> "-Xmx1024M"</programlisting></para>
+
+      <para>depending on whether you use a c-shell or a bourne shell. Other
+      options can be similarly added to the environmental variable. (The value
+      is a space-separated list.)</para>
+    </section>
+  </section>
+
+  <section>
+    <title>Invocation Inside Eclipse</title>
+
+    <para>If you use the default VM to run the pan compiler ant task, then you
+    will need to increase the memory when starting eclipse. From the command
+    line you can add the VM arguments like:</para>
+
+    <para><programlisting>eclipse -vmargs -Xmx&lt;memory size&gt;</programlisting></para>
+
+    <para>You may also need to increase the memory in the "permanent"
+    generation for a Sun VM with</para>
+
+    <para><programlisting>eclipse -vmargs -XX:MaxPermSize=&lt;memory size&gt;</programlisting></para>
+
+    <para>This will increase the memory available to eclipse and to all tasks
+    using the default virtual machine. For Max OS X, you will have to edit the
+    application "ini" file. See the eclipse instructions for how to do
+    this.</para>
+
+    <para>If you invoke a new Java virtual machine for each build, then you
+    can change the ant arguments via the run parameters. From within the "ant"
+    view, right-click on the appropriate ant build file, and then select "Run
+    As -&gt; Ant Build...". In the pop-up window, select the JRE tab. In the
+    "VM arguments" panel, add the <option>-Xmx</option> option. The next build
+    will use these options. Other VM options can be changed in the same
+    way.</para>
+
+    <para>The options can also be set using the "Window -&gt; Preferences
+    -&gt; Java -&gt; Installed JREs" panel. Select the JRE you want use, click
+    edit and add the additional parameters in the "DefaultVM arguments"
+    field.</para>
+  </section>
+</appendix>

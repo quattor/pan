@@ -46,34 +46,36 @@ task before
   <xsl:attribute-set name="toc.line.properties">
     <xsl:attribute name="font-weight">
       <xsl:choose>
-        <xsl:when test="name(.)='preface'">bold</xsl:when>
-        <xsl:when test="name(.)='chapter'">bold</xsl:when>
-        <xsl:when test="name(.)='appendix'">bold</xsl:when>
+        <xsl:when test="name(.)='preface' or name(.)='chapter' or name(.)='appendix'">bold</xsl:when>
         <xsl:otherwise>normal</xsl:otherwise>
       </xsl:choose>
     </xsl:attribute>
     <xsl:attribute name="space-before">
       <xsl:choose>
-        <xsl:when test="name(.)='preface'">12pt</xsl:when>
-        <xsl:when test="name(.)='chapter'">12pt</xsl:when>
-        <xsl:when test="name(.)='appendix'">12pt</xsl:when>
+        <xsl:when test="name(.)='preface' or name(.)='chapter' or name(.)='appendix'">12pt</xsl:when>
         <xsl:otherwise>0pt</xsl:otherwise>
       </xsl:choose>
     </xsl:attribute>
     <xsl:attribute name="space-after">
       <xsl:choose>
-        <xsl:when test="name(.)='preface'">4pt</xsl:when>
-        <xsl:when test="name(.)='chapter'">4pt</xsl:when>
-        <xsl:when test="name(.)='appendix'">4pt</xsl:when>
+        <xsl:when test="name(.)='preface' or name(.)='chapter' or name(.)='appendix'">4pt</xsl:when>
         <xsl:otherwise>0pt</xsl:otherwise>
       </xsl:choose>
     </xsl:attribute>
-    <xsl:attribute name="border-bottom">
+  </xsl:attribute-set>
+
+  <!-- Put LOT entries for main divisions in bold. -->
+  <xsl:attribute-set name="lot.line.properties">
+    <xsl:attribute name="font-weight">
       <xsl:choose>
-        <xsl:when test="name(.)='preface'">0.5pt solid black</xsl:when>
-        <xsl:when test="name(.)='chapter'">0.5pt solid black</xsl:when>
-        <xsl:when test="name(.)='appendix'">0.5pt solid black</xsl:when>
-        <xsl:otherwise>none</xsl:otherwise>
+        <xsl:when test="position()=1">bold</xsl:when>
+        <xsl:otherwise>normal</xsl:otherwise>
+      </xsl:choose>
+    </xsl:attribute>
+    <xsl:attribute name="space-before">
+      <xsl:choose>
+        <xsl:when test="position()=1">12pt</xsl:when>
+        <xsl:otherwise>0pt</xsl:otherwise>
       </xsl:choose>
     </xsl:attribute>
   </xsl:attribute-set>
@@ -105,9 +107,18 @@ task before
     <xsl:param name="gentext-key" select="''"/>
 
     <xsl:variable name="footer.running.marker">
-      <fo:retrieve-marker retrieve-class-name="section.head.marker"
-                          retrieve-position="first-including-carryover"
-                          retrieve-boundary="page-sequence"/>
+      <xsl:choose>
+        <xsl:when test="$gentext-key != '' and name(.)!='chapter' and name(.)!='appendix'">
+          <xsl:call-template name="gentext">
+            <xsl:with-param name="key">
+              <xsl:value-of select="$gentext-key"/>
+            </xsl:with-param>
+          </xsl:call-template>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:apply-templates select="." mode="title.markup"/>
+        </xsl:otherwise>
+      </xsl:choose>
     </xsl:variable>
 
     <fo:block>
@@ -123,24 +134,18 @@ task before
                         and $position='left'">
           <fo:page-number/>
           <xsl:text> | </xsl:text>
-          <fo:retrieve-marker retrieve-class-name="section.head.marker"
-                              retrieve-position="first-including-carryover"
-                              retrieve-boundary="page-sequence"/>
+          <xsl:value-of select="$footer.running.marker"/>
         </xsl:when>
         
         <xsl:when test="$double.sided != 0 and ($sequence = 'odd' or $sequence = 'first')
                         and $position='right'">
-          <fo:retrieve-marker retrieve-class-name="section.head.marker"
-                              retrieve-position="first-including-carryover"
-                              retrieve-boundary="page-sequence"/>
+          <xsl:value-of select="$footer.running.marker"/>
           <xsl:text> | </xsl:text>
           <fo:page-number/>
         </xsl:when>
         
         <xsl:when test="$double.sided = 0 and $position='right'">
-          <fo:retrieve-marker retrieve-class-name="section.head.marker"
-                              retrieve-position="first-including-carryover"
-                              retrieve-boundary="page-sequence"/>
+          <xsl:value-of select="$footer.running.marker"/>
           <xsl:text> | </xsl:text>
           <fo:page-number/>
         </xsl:when>
@@ -150,14 +155,10 @@ task before
             <xsl:when test="$double.sided != 0 and $position = 'left'">
               <fo:page-number/>
               <xsl:text> | </xsl:text>
-              <fo:retrieve-marker retrieve-class-name="section.head.marker"
-                                  retrieve-position="first-including-carryover"
-                                  retrieve-boundary="page-sequence"/>
+              <xsl:value-of select="$footer.running.marker"/>
             </xsl:when>
             <xsl:when test="$double.sided = 0 and $position = 'right'">
-              <fo:retrieve-marker retrieve-class-name="section.head.marker"
-                                  retrieve-position="first-including-carryover"
-                                  retrieve-boundary="page-sequence"/>
+              <xsl:value-of select="$footer.running.marker"/>
               <xsl:text> | </xsl:text>
               <fo:page-number/>
             </xsl:when>
@@ -174,8 +175,8 @@ task before
       </xsl:choose>
     </fo:block>
   </xsl:template>
-
-  <!-- Change the generation of section headings. --> 
+  
+  <!-- Change the generation of chapter headings. --> 
   <xsl:template name="component.title">
 
     <xsl:param name="node" select="."/>

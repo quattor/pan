@@ -25,225 +25,235 @@ import org.xml.sax.helpers.AttributesImpl;
 
 public class PanParserAnnotationUtils {
 
-	public static final String PAN_ANNO_NS = "http://quattor.org/pan/annotations";
+    public static final String PAN_ANNO_NS = "http://quattor.org/pan/annotations";
 
-	public static void printXML(File annotationDirectory, ASTTemplate ast) {
+    public static void printXML(File annotationDirectory, ASTTemplate ast) {
 
-		String templateName = ast.getIdentifier();
+        String templateName = ast.getIdentifier();
 
-		File outputFile = setupOutputFile(annotationDirectory, templateName);
+        File outputFile = setupOutputFile(annotationDirectory, templateName);
 
-		try {
+        Writer writer = null;
 
-			TransformerHandler handler = XmlUtils.getSaxTransformerHandler();
+        try {
 
-			// Ok, feed SAX events to the output stream.
-			Writer writer = new FileWriter(outputFile);
-			handler.setResult(new StreamResult(writer));
+            TransformerHandler handler = XmlUtils.getSaxTransformerHandler();
 
-			handler.startDocument();
+            // Ok, feed SAX events to the output stream.
+            writer = new FileWriter(outputFile);
+            handler.setResult(new StreamResult(writer));
 
-			// Process children recursively.
-			writeASTNode(handler, ast);
+            handler.startDocument();
 
-			// Flushes and closes the underlying stream.
-			handler.endDocument();
+            // Process children recursively.
+            writeASTNode(handler, ast);
 
-		} catch (SAXException se) {
-			Error error = CompilerError
-					.create(MSG_UNEXPECTED_EXCEPTION_WHILE_WRITING_OUTPUT);
-			error.initCause(se);
-			throw error;
+            // Flushes and closes the underlying stream.
+            handler.endDocument();
 
-		} catch (IOException e) {
-			String msg = MessageUtils.format(MSG_ERROR_WHILE_WRITING_OUTPUT,
-					outputFile);
-			SystemException exception = new SystemException(msg);
-			throw exception;
-		}
+        } catch (SAXException se) {
+            Error error = CompilerError
+                    .create(MSG_UNEXPECTED_EXCEPTION_WHILE_WRITING_OUTPUT);
+            error.initCause(se);
+            throw error;
 
-	}
+        } catch (IOException e) {
+            String msg = MessageUtils.format(MSG_ERROR_WHILE_WRITING_OUTPUT,
+                    outputFile);
+            SystemException exception = new SystemException(msg);
+            throw exception;
 
-	private static File setupOutputFile(File annotationDirectory,
-			String templateName) {
+        } finally {
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (IOException consumed) {
+                }
+            }
+        }
 
-		String separator = System.getProperty("file.separator");
+    }
 
-		String localizedName = templateName.replaceAll("/", separator)
-				+ ".annotation.xml";
+    private static File setupOutputFile(File annotationDirectory,
+            String templateName) {
 
-		File outputFile = new File(annotationDirectory, localizedName);
+        String separator = System.getProperty("file.separator");
 
-		File outputDir = outputFile.getParentFile();
+        String localizedName = templateName.replaceAll("/", separator)
+                + ".annotation.xml";
 
-		if (!outputDir.exists()) {
-			outputDir.mkdirs();
-		}
+        File outputFile = new File(annotationDirectory, localizedName);
 
-		return outputFile;
-	}
+        File outputDir = outputFile.getParentFile();
 
-	private static void writeASTNode(TransformerHandler handler, Node ast)
-			throws SAXException {
+        if (!outputDir.exists()) {
+            outputDir.mkdirs();
+        }
 
-		AttributesImpl atts = new AttributesImpl();
+        return outputFile;
+    }
 
-		String elementName = getElementInfo(ast, atts);
+    private static void writeASTNode(TransformerHandler handler, Node ast)
+            throws SAXException {
 
-		if (elementName != null) {
-			handler.startElement(PAN_ANNO_NS, null, elementName, atts);
+        AttributesImpl atts = new AttributesImpl();
 
-			if (ast instanceof SimpleNode) {
-				SimpleNode node = (SimpleNode) ast;
-				for (Token t : node.getSpecialTokens()) {
-					writeAnnotationToken(handler, t);
-				}
-			}
-		}
+        String elementName = getElementInfo(ast, atts);
 
-		int nchild = ast.jjtGetNumChildren();
-		for (int i = 0; i < nchild; i++) {
-			writeASTNode(handler, ast.jjtGetChild(i));
-		}
+        if (elementName != null) {
+            handler.startElement(PAN_ANNO_NS, null, elementName, atts);
 
-		if (elementName != null) {
-			handler.endElement(PAN_ANNO_NS, null, elementName);
-		}
+            if (ast instanceof SimpleNode) {
+                SimpleNode node = (SimpleNode) ast;
+                for (Token t : node.getSpecialTokens()) {
+                    writeAnnotationToken(handler, t);
+                }
+            }
+        }
 
-	}
+        int nchild = ast.jjtGetNumChildren();
+        for (int i = 0; i < nchild; i++) {
+            writeASTNode(handler, ast.jjtGetChild(i));
+        }
 
-	private static String getElementInfo(Node ast, AttributesImpl atts) {
+        if (elementName != null) {
+            handler.endElement(PAN_ANNO_NS, null, elementName);
+        }
 
-		String elementName = null;
+    }
 
-		if (ast instanceof ASTTemplate) {
+    private static String getElementInfo(Node ast, AttributesImpl atts) {
 
-			ASTTemplate tplNode = (ASTTemplate) ast;
+        String elementName = null;
 
-			elementName = "template";
+        if (ast instanceof ASTTemplate) {
 
-			addNameAttribute(atts, tplNode.getIdentifier());
-			addSourceRangeAttribute(atts, tplNode);
-			addAttribute(atts, "type", tplNode.getTemplateType());
+            ASTTemplate tplNode = (ASTTemplate) ast;
 
-		} else if (ast instanceof ASTStatement) {
+            elementName = "template";
 
-			ASTStatement node = (ASTStatement) ast;
+            addNameAttribute(atts, tplNode.getIdentifier());
+            addSourceRangeAttribute(atts, tplNode);
+            addAttribute(atts, "type", tplNode.getTemplateType());
 
-			StatementType type = node.getStatementType();
+        } else if (ast instanceof ASTStatement) {
 
-			switch (type) {
+            ASTStatement node = (ASTStatement) ast;
 
-			case FUNCTION: // fall through
-			case VARIABLE: // fall through
-			case TYPE:
-				elementName = node.getStatementType().toString().toLowerCase();
+            StatementType type = node.getStatementType();
 
-				addNameAttribute(atts, node.getIdentifier());
-				addSourceRangeAttribute(atts, node);
+            switch (type) {
 
-				break;
+            case FUNCTION: // fall through
+            case VARIABLE: // fall through
+            case TYPE:
+                elementName = node.getStatementType().toString().toLowerCase();
 
-			default:
-				elementName = null;
+                addNameAttribute(atts, node.getIdentifier());
+                addSourceRangeAttribute(atts, node);
 
-			}
+                break;
 
-		} else if (ast instanceof ASTFieldSpec) {
+            default:
+                elementName = null;
 
-			ASTFieldSpec node = (ASTFieldSpec) ast;
+            }
 
-			if (node.getInclude() == null) {
+        } else if (ast instanceof ASTFieldSpec) {
 
-				elementName = "field";
+            ASTFieldSpec node = (ASTFieldSpec) ast;
 
-				try {
-					addNameAttribute(atts, node.getKey());
-				} catch (SyntaxException consumed) {
-				}
-				addSourceRangeAttribute(atts, node);
-				addAttribute(atts, "required", node.isRequired());
+            if (node.getInclude() == null) {
 
-			} else {
+                elementName = "field";
 
-				elementName = "include";
+                try {
+                    addNameAttribute(atts, node.getKey());
+                } catch (SyntaxException consumed) {
+                }
+                addSourceRangeAttribute(atts, node);
+                addAttribute(atts, "required", node.isRequired());
 
-				addNameAttribute(atts, node.getInclude());
-				addSourceRangeAttribute(atts, node);
+            } else {
 
-			}
+                elementName = "include";
 
-		} else if (ast instanceof ASTBaseTypeSpec) {
+                addNameAttribute(atts, node.getInclude());
+                addSourceRangeAttribute(atts, node);
 
-			ASTBaseTypeSpec node = (ASTBaseTypeSpec) ast;
+            }
 
-			elementName = "basetype";
+        } else if (ast instanceof ASTBaseTypeSpec) {
 
-			addNameAttribute(atts, node.getIdentifier());
-			addSourceRangeAttribute(atts, node);
-			addAttribute(atts, "extensible", node.isExtensible());
-			addAttribute(atts, "range", node.getRange());
+            ASTBaseTypeSpec node = (ASTBaseTypeSpec) ast;
 
-		}
+            elementName = "basetype";
 
-		return elementName;
-	}
+            addNameAttribute(atts, node.getIdentifier());
+            addSourceRangeAttribute(atts, node);
+            addAttribute(atts, "extensible", node.isExtensible());
+            addAttribute(atts, "range", node.getRange());
 
-	private static void writeAnnotationToken(TransformerHandler handler, Token t)
-			throws SAXException {
+        }
 
-		if (t instanceof AnnotationToken) {
-			AnnotationToken token = (AnnotationToken) t;
-			Annotation annotation = (Annotation) token.getValue();
+        return elementName;
+    }
 
-			String name = annotation.getName();
+    private static void writeAnnotationToken(TransformerHandler handler, Token t)
+            throws SAXException {
 
-			AttributesImpl atts = new AttributesImpl();
+        if (t instanceof AnnotationToken) {
+            AnnotationToken token = (AnnotationToken) t;
+            Annotation annotation = (Annotation) token.getValue();
 
-			if (!annotation.isAnonymous()) {
-				handler.startElement(PAN_ANNO_NS, null, name, atts);
-			}
+            String name = annotation.getName();
 
-			for (Entry entry : annotation.getEntries()) {
+            AttributesImpl atts = new AttributesImpl();
 
-				String elementName = entry.getKey();
-				char[] elementContents = entry.getValue().toCharArray();
+            if (!annotation.isAnonymous()) {
+                handler.startElement(PAN_ANNO_NS, null, name, atts);
+            }
 
-				handler.startElement(PAN_ANNO_NS, null, elementName, atts);
-				handler.characters(elementContents, 0, elementContents.length);
-				handler.endElement(PAN_ANNO_NS, null, elementName);
+            for (Entry entry : annotation.getEntries()) {
 
-			}
+                String elementName = entry.getKey();
+                char[] elementContents = entry.getValue().toCharArray();
 
-			if (!annotation.isAnonymous()) {
-				handler.endElement(PAN_ANNO_NS, null, name);
-			}
+                handler.startElement(PAN_ANNO_NS, null, elementName, atts);
+                handler.characters(elementContents, 0, elementContents.length);
+                handler.endElement(PAN_ANNO_NS, null, elementName);
 
-		}
-	}
+            }
 
-	public static void addAttribute(AttributesImpl atts, String name,
-			Object value) {
-		if (value != null) {
-			atts.addAttribute(PAN_ANNO_NS, null, name, "CDATA", value
-					.toString());
-		}
-	}
+            if (!annotation.isAnonymous()) {
+                handler.endElement(PAN_ANNO_NS, null, name);
+            }
 
-	public static void addAttribute(AttributesImpl atts, String name,
-			boolean value) {
-		Boolean bvalue = Boolean.valueOf(value);
-		addAttribute(atts, name, bvalue);
-	}
+        }
+    }
 
-	public static void addNameAttribute(AttributesImpl atts, Object value) {
-		addAttribute(atts, "name", value);
-	}
+    public static void addAttribute(AttributesImpl atts, String name,
+            Object value) {
+        if (value != null) {
+            atts.addAttribute(PAN_ANNO_NS, null, name, "CDATA", value
+                    .toString());
+        }
+    }
 
-	public static void addSourceRangeAttribute(AttributesImpl atts,
-			SimpleNode node) {
-		SourceRange sourceRange = node.getSourceRange();
-		addAttribute(atts, "source-range", sourceRange);
-	}
+    public static void addAttribute(AttributesImpl atts, String name,
+            boolean value) {
+        Boolean bvalue = Boolean.valueOf(value);
+        addAttribute(atts, name, bvalue);
+    }
+
+    public static void addNameAttribute(AttributesImpl atts, Object value) {
+        addAttribute(atts, "name", value);
+    }
+
+    public static void addSourceRangeAttribute(AttributesImpl atts,
+            SimpleNode node) {
+        SourceRange sourceRange = node.getSourceRange();
+        addAttribute(atts, "source-range", sourceRange);
+    }
 
 }

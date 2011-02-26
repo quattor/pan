@@ -21,6 +21,9 @@
 package org.quattor.pan.dml.functions;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_FIRST_STRING_ARG_REQ;
+import static org.quattor.pan.utils.MessageUtils.MSG_FORMAT_REQUIRES_PROPERTIES;
+import static org.quattor.pan.utils.MessageUtils.MSG_ILLEGAL_FORMAT;
+import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_FIRST_ARG_FORMAT;
 
 import java.util.IllegalFormatException;
 
@@ -42,66 +45,64 @@ import org.quattor.pan.template.SourceRange;
  */
 final public class Format extends BuiltInFunction {
 
-	private Format(SourceRange sourceRange, Operation... operations)
-			throws SyntaxException {
-		super("format", sourceRange, operations);
+    private Format(SourceRange sourceRange, Operation... operations)
+            throws SyntaxException {
+        super("format", sourceRange, operations);
 
-		// There must be at least one argument.
-		if (operations.length == 0) {
-			throw SyntaxException.create(sourceRange, MSG_FIRST_STRING_ARG_REQ,
-					name);
-		}
-	}
+        // There must be at least one argument.
+        if (operations.length == 0) {
+            throw SyntaxException.create(sourceRange, MSG_FIRST_STRING_ARG_REQ,
+                    name);
+        }
+    }
 
-	public static Operation getInstance(SourceRange sourceRange,
-			Operation... operations) throws SyntaxException {
-		return new Format(sourceRange, operations);
-	}
+    public static Operation getInstance(SourceRange sourceRange,
+            Operation... operations) throws SyntaxException {
+        return new Format(sourceRange, operations);
+    }
 
-	@Override
-	public Element execute(Context context) {
+    @Override
+    public Element execute(Context context) {
 
-		assert (ops.length > 0);
+        assert (ops.length > 0);
 
-		// Calculate arguments.
-		Element[] args = calculateArgs(context);
+        // Calculate arguments.
+        Element[] args = calculateArgs(context);
 
-		// Pull out the format string.
-		String format = null;
-		try {
-			format = ((StringProperty) args[0]).getValue();
-		} catch (ClassCastException cce) {
-			throw new EvaluationException(
-					"first argument to format() must be a string", sourceRange,
-					context);
-		}
+        // Pull out the format string.
+        String format = null;
+        try {
+            format = ((StringProperty) args[0]).getValue();
+        } catch (ClassCastException cce) {
+            throw EvaluationException.create(sourceRange, context,
+                    MSG_INVALID_FIRST_ARG_FORMAT);
+        }
 
-		// Now pull out all of the arguments for formatting.
-		Object[] jargs = new Object[args.length - 1];
-		for (int i = 1; i < args.length; i++) {
-			Property p = null;
-			try {
-				p = (Property) args[i];
-			} catch (ClassCastException cce) {
-				throw new EvaluationException(
-						"all arguments to format() must be properties",
-						sourceRange, context);
-			}
-			jargs[i - 1] = p.getValue();
-		}
+        // Now pull out all of the arguments for formatting.
+        Object[] jargs = new Object[args.length - 1];
+        for (int i = 1; i < args.length; i++) {
+            Property p = null;
+            try {
+                p = (Property) args[i];
+            } catch (ClassCastException cce) {
+                throw EvaluationException.create(sourceRange, context,
+                        MSG_FORMAT_REQUIRES_PROPERTIES);
+            }
+            jargs[i - 1] = p.getValue();
+        }
 
-		StringProperty result = null;
-		try {
-			result = StringProperty.getInstance(String.format(format, jargs));
-		} catch (IllegalFormatException ife) {
-			throw new EvaluationException("illegal format exception ("
-					+ ife.getMessage() + ")", sourceRange, context);
-		}
+        StringProperty result = null;
+        try {
+            result = StringProperty.getInstance(String.format(format, jargs));
+        } catch (IllegalFormatException ife) {
+            throw EvaluationException.create(sourceRange, context,
+                    MSG_ILLEGAL_FORMAT, ife.getLocalizedMessage());
+        }
 
-		// Return the value. It should never be null if we reach this part of
-		// the code.
-		assert (result != null);
-		return result;
+        // Return the value. It should never be null if we reach this part of
+        // the code.
+        assert (result != null);
+        return result;
 
-	}
+    }
 }

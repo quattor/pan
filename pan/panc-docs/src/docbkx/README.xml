@@ -8,7 +8,7 @@
          xmlns:db="http://docbook.org/ns/docbook">
   <title>README</title>
 
-  <subtitle>Version <?eval ${project.version}?></subtitle>
+  <subtitle>Version<?eval ${project.version}?></subtitle>
 
   <info>
     <author>
@@ -538,6 +538,20 @@ variable X ?=
 
   <section>
     <title>Change Log</title>
+
+    <section>
+      <title>Version 9.0.0</title>
+
+      <para>This release contains the following changes:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>(SF Bug #3171788) Improve error message for format() function
+          when there is a mismatch between given format string and
+          arguments.</para>
+        </listitem>
+      </itemizedlist>
+    </section>
 
     <section>
       <title>Version 8.4.5</title>

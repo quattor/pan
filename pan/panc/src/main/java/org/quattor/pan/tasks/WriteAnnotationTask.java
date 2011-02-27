@@ -41,9 +41,9 @@ public class WriteAnnotationTask extends Task<TaskResult> {
 
 	private static final Logger taskLogger = LoggingType.TASK.logger();
 
-	public WriteAnnotationTask(File annotationDirectory, ASTTemplate ast) {
+	public WriteAnnotationTask(File outputFile, ASTTemplate ast) {
 		super(TaskResult.ResultType.ANNOTATION, ast.getIdentifier(),
-				new CallImpl(annotationDirectory, ast));
+				new CallImpl(outputFile, ast));
 	}
 
 	/**
@@ -54,15 +54,15 @@ public class WriteAnnotationTask extends Task<TaskResult> {
 	 */
 	private static class CallImpl implements Callable<TaskResult> {
 
-		private final File outputDirectory;
+		private final File outputFile;
 
 		private final String objectName;
 
 		private final ASTTemplate ast;
 
-		public CallImpl(File annotationDirectory, ASTTemplate ast) {
+		public CallImpl(File outputFile, ASTTemplate ast) {
 
-			this.outputDirectory = annotationDirectory;
+			this.outputFile = outputFile;
 			this.objectName = ast.getIdentifier();
 			this.ast = ast;
 		}
@@ -72,8 +72,8 @@ public class WriteAnnotationTask extends Task<TaskResult> {
 			// Mark the beginning of writing dependency file.
 			taskLogger.log(Level.FINER, "START_ANNOTATION_FILE", objectName);
 
-			if (outputDirectory != null) {
-				PanParserAnnotationUtils.printXML(outputDirectory, ast);
+			if (outputFile != null) {
+				PanParserAnnotationUtils.printXML(outputFile, ast);
 			}
 
 			// Mark the end of writing dependency file.

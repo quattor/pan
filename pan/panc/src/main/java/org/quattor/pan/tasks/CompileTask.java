@@ -49,148 +49,149 @@ import org.quattor.pan.template.Template;
  */
 public class CompileTask extends Task<CompileResult> {
 
-	private static final Logger taskLogger = LoggingType.TASK.logger();
+    private static final Logger taskLogger = LoggingType.TASK.logger();
 
-	public CompileTask(String tplfile,
-			PostCompileProcessor postCompileProcessor,
-			CompilerOptions compilerOptions) {
-		super(TaskResult.ResultType.COMPILED, tplfile, new CallImpl(tplfile,
-				postCompileProcessor, compilerOptions));
-	}
+    public CompileTask(String tplfile,
+            PostCompileProcessor postCompileProcessor,
+            CompilerOptions compilerOptions) {
+        super(TaskResult.ResultType.COMPILED, tplfile, new CallImpl(tplfile,
+                postCompileProcessor, compilerOptions));
+    }
 
-	/**
-	 * Compiles the template from scratch. This class may create a task to write
-	 * a compiled template to disk. If the compiled template is an object
-	 * template, then this may create a task to build the machine configuration.
-	 * 
-	 * @author loomis
-	 * 
-	 */
-	public static class CallImpl implements Callable<CompileResult> {
+    /**
+     * Compiles the template from scratch. This class may create a task to write
+     * a compiled template to disk. If the compiled template is an object
+     * template, then this may create a task to build the machine configuration.
+     * 
+     * @author loomis
+     * 
+     */
+    public static class CallImpl implements Callable<CompileResult> {
 
-		private final File tplfile;
+        private final File tplfile;
 
-		private final PostCompileProcessor postCompileProcessor;
+        private final PostCompileProcessor postCompileProcessor;
 
-		private final CompilerOptions compilerOptions;
+        private final CompilerOptions compilerOptions;
 
-		public CallImpl(String tplpath,
-				PostCompileProcessor postCompileProcessor,
-				CompilerOptions compilerOptions) {
+        public CallImpl(String tplpath,
+                PostCompileProcessor postCompileProcessor,
+                CompilerOptions compilerOptions) {
 
-			File tplfile = new File(tplpath);
+            File tplfile = new File(tplpath);
 
-			// Sanity checks.
-			assert (tplfile != null);
-			assert (tplfile.isAbsolute());
-			assert (tplfile.getName().endsWith(".tpl"));
+            // Sanity checks.
+            assert (tplfile != null);
+            assert (tplfile.isAbsolute());
+            // FIXME: Should include *.pan as well.
+            assert (tplfile.getName().endsWith(".tpl"));
 
-			this.tplfile = tplfile;
-			this.postCompileProcessor = postCompileProcessor;
-			this.compilerOptions = compilerOptions;
-		}
+            this.tplfile = tplfile;
+            this.postCompileProcessor = postCompileProcessor;
+            this.compilerOptions = compilerOptions;
+        }
 
-		public CompileResult call() throws Exception {
+        public CompileResult call() throws Exception {
 
-			try {
+            try {
 
-				// Log the beginning of the template load.
-				taskLogger.log(Level.FINER, "START_COMPILE", tplfile
-						.getAbsolutePath());
+                // Log the beginning of the template load.
+                taskLogger.log(Level.FINER, "START_COMPILE", tplfile
+                        .getAbsolutePath());
 
-				ASTTemplate ast = compile(tplfile, compilerOptions);
-				Template template = PanParserAstUtils.convertAstToTemplate(
-						tplfile, ast);
+                ASTTemplate ast = compile(tplfile, compilerOptions);
+                Template template = PanParserAstUtils.convertAstToTemplate(
+                        tplfile, ast);
 
-				// Either the load or compilation was successful or an exception
-				// was thrown. Hence, we should always have a non-null template
-				// value at this point.
-				assert (template != null);
+                // Either the load or compilation was successful or an exception
+                // was thrown. Hence, we should always have a non-null template
+                // value at this point.
+                assert (template != null);
 
-				// If this is an object template, then (maybe) start a build.
-				postCompileProcessor.process(ast, template);
+                // If this is an object template, then (maybe) start a build.
+                postCompileProcessor.process(ast, template);
 
-				// Create the result and return it.
-				CompileResult result = new CompileResult(template);
+                // Create the result and return it.
+                CompileResult result = new CompileResult(template);
 
-				// Log the end of template load.
-				taskLogger.log(Level.FINER, "END_COMPILE", tplfile
-						.getAbsolutePath());
+                // Log the end of template load.
+                taskLogger.log(Level.FINER, "END_COMPILE", tplfile
+                        .getAbsolutePath());
 
-				return result;
+                return result;
 
-			} catch (SyntaxException se) {
-				throw se.addExceptionInfo(null, tplfile);
-			}
-		}
+            } catch (SyntaxException se) {
+                throw se.addExceptionInfo(null, tplfile);
+            }
+        }
 
-		/**
-		 * Run the compilation.
-		 * 
-		 * @param tplfile
-		 *            file to compile
-		 * @param compilerOptions
-		 *            compiler options to use for compilation
-		 * @throws ParseException
-		 *             for low-level parsing errors
-		 * @throws SyntaxException
-		 *             for files which parse correctly but contain higher-level
-		 *             syntax errors
-		 * @throws SystemException
-		 *             for IO exceptions or unexpected system exceptions; the
-		 *             cause is the underlying exception
-		 * 
-		 */
-		public static ASTTemplate compile(File tplfile,
-				CompilerOptions compilerOptions) throws Exception {
+        /**
+         * Run the compilation.
+         * 
+         * @param tplfile
+         *            file to compile
+         * @param compilerOptions
+         *            compiler options to use for compilation
+         * @throws ParseException
+         *             for low-level parsing errors
+         * @throws SyntaxException
+         *             for files which parse correctly but contain higher-level
+         *             syntax errors
+         * @throws SystemException
+         *             for IO exceptions or unexpected system exceptions; the
+         *             cause is the underlying exception
+         * 
+         */
+        public static ASTTemplate compile(File tplfile,
+                CompilerOptions compilerOptions) throws Exception {
 
-			ASTTemplate ast = null;
+            ASTTemplate ast = null;
 
-			// Ensure that the file can actually be read.
-			if (!tplfile.canRead()) {
-				throw new SystemException("template file cannot be read",
-						tplfile);
-			}
+            // Ensure that the file can actually be read.
+            if (!tplfile.canRead()) {
+                throw new SystemException("template file cannot be read",
+                        tplfile);
+            }
 
-			// Parse the input file and generate a Template object.
-			Reader reader = null;
-			try {
-				reader = new FileReader(tplfile);
+            // Parse the input file and generate a Template object.
+            Reader reader = null;
+            try {
+                reader = new FileReader(tplfile);
 
-				PanParser parser = new PanParser(reader);
-				parser.setFile(tplfile);
-				parser.setCompilerOptions(compilerOptions);
-				ast = parser.template();
+                PanParser parser = new PanParser(reader);
+                parser.setFile(tplfile);
+                parser.setCompilerOptions(compilerOptions);
+                ast = parser.template();
 
-			} catch (ParseException pe) {
-				pe.file = tplfile;
-				throw pe;
-			} catch (java.io.IOException ioe) {
-				SystemException se = new SystemException("IO error", tplfile);
-				se.initCause(ioe);
-				throw se;
-			} catch (EvaluationException ee) {
-				throw ee.addExceptionInfo(null, tplfile, null);
-			} catch (Exception e) {
-				SystemException se = new SystemException(
-						"unexpected system exception", tplfile);
-				se.initCause(e);
-				throw se;
-			} finally {
-				if (reader != null) {
-					try {
-						reader.close();
-					} catch (java.io.IOException consumed) {
-					}
-				}
-			}
+            } catch (ParseException pe) {
+                pe.file = tplfile;
+                throw pe;
+            } catch (java.io.IOException ioe) {
+                SystemException se = new SystemException("IO error", tplfile);
+                se.initCause(ioe);
+                throw se;
+            } catch (EvaluationException ee) {
+                throw ee.addExceptionInfo(null, tplfile, null);
+            } catch (Exception e) {
+                SystemException se = new SystemException(
+                        "unexpected system exception", tplfile);
+                se.initCause(e);
+                throw se;
+            } finally {
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (java.io.IOException consumed) {
+                    }
+                }
+            }
 
-			// Unless an exception was thrown, we should always have a non-null
-			// value.
-			assert (ast != null);
+            // Unless an exception was thrown, we should always have a non-null
+            // value.
+            assert (ast != null);
 
-			return ast;
-		}
-	}
+            return ast;
+        }
+    }
 
 }

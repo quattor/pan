@@ -21,6 +21,7 @@
 package org.quattor.pan.cache;
 
 import java.io.File;
+import java.net.URI;
 import java.util.concurrent.Future;
 
 import org.quattor.pan.Compiler;
@@ -44,110 +45,150 @@ import org.quattor.pan.template.Template.TemplateType;
  */
 public class CompileCache extends AbstractCache<CompileResult> {
 
-	private final CompileCache.PostCompileProcessor postCompileProcessor;
+    private final CompileCache.PostCompileProcessor postCompileProcessor;
 
-	/**
-	 * Creates a new <code>CompileCache</code> with a default, initial size of
-	 * 1000 entries.
-	 * 
-	 * @param compiler
-	 *            associated compiler for this cache
-	 */
-	public CompileCache(Compiler compiler) {
-		this(compiler, 1000);
-	}
+    /**
+     * Creates a new <code>CompileCache</code> with a default, initial size of
+     * 1000 entries.
+     * 
+     * @param compiler
+     *            associated compiler for this cache
+     */
+    public CompileCache(Compiler compiler) {
+        this(compiler, 1000);
+    }
 
-	public CompileCache(Compiler compiler, int size) {
-		super(compiler, size);
+    public CompileCache(Compiler compiler, int size) {
+        super(compiler, size);
 
-		// Setup the post compilation processor.
-		postCompileProcessor = new CompileCache.PostCompileProcessor(compiler,
-				compiler.options.xmlWriteEnabled,
-				compiler.options.depWriteEnabled);
-	}
+        // Setup the post compilation processor.
+        postCompileProcessor = new CompileCache.PostCompileProcessor(compiler,
+                compiler.options.xmlWriteEnabled,
+                compiler.options.depWriteEnabled);
+    }
 
-	/**
-	 * Unconditionally compiles the template, but does not put it into the
-	 * cache. This is useful for (re)compilations of a large number of template
-	 * where keeping them for a build is not necessary.
-	 * 
-	 * @param tplfile
-	 *            absolute path of the file to compile
-	 * 
-	 * @return return a result that contains the compiled template
-	 */
-	public Future<CompileResult> compile(String tplfile) {
-		Task<CompileResult> task = createTask(tplfile);
-		compiler.submit(task);
-		return task;
-	}
+    /**
+     * Unconditionally compiles the template, but does not put it into the
+     * cache. This is useful for (re)compilations of a large number of template
+     * where keeping them for a build is not necessary.
+     * 
+     * @param tplfile
+     *            absolute path of the file to compile
+     * 
+     * @return return a result that contains the compiled template
+     */
+    public Future<CompileResult> compile(String tplfile) {
+        Task<CompileResult> task = createTask(tplfile);
+        compiler.submit(task);
+        return task;
+    }
 
-	/**
-	 * This class encapsulates the post compilation behavior of the cache. If
-	 * output is requested, then the processor will submit object templates
-	 * discovered during the build process to also be built.
-	 * 
-	 * @author loomis
-	 * 
-	 */
-	public static class PostCompileProcessor {
+    /**
+     * This class encapsulates the post compilation behavior of the cache. If
+     * output is requested, then the processor will submit object templates
+     * discovered during the build process to also be built.
+     * 
+     * @author loomis
+     * 
+     */
+    public static class PostCompileProcessor {
 
-		private final Compiler compiler;
-		private final boolean doXML;
-		private final boolean doDep;
+        private final Compiler compiler;
+        private final boolean doXML;
+        private final boolean doDep;
 
-		public PostCompileProcessor(Compiler compiler, boolean doXML,
-				boolean doDep) {
-			this.compiler = compiler;
-			this.doXML = doXML;
-			this.doDep = doDep;
-		}
+        public PostCompileProcessor(Compiler compiler, boolean doXML,
+                boolean doDep) {
+            this.compiler = compiler;
+            this.doXML = doXML;
+            this.doDep = doDep;
+        }
 
-		public void process(ASTTemplate ast, Template template) {
+        public void process(ASTTemplate ast, Template template) {
 
-			Task<TaskResult> task;
+            Task<TaskResult> task;
 
-			if (template.type == TemplateType.OBJECT) {
+            if (template.type == TemplateType.OBJECT) {
 
-				String objectName = template.name;
+                String objectName = template.name;
 
-				if (doXML) {
-					Formatter formatter = compiler.options.formatter;
-					File outputDirectory = compiler.options.outputDirectory;
-					task = new WriteXmlTask(formatter,
-							compiler.options.gzipOutput, compiler, objectName,
-							outputDirectory);
-					compiler.submit(task);
-				}
+                if (doXML) {
+                    Formatter formatter = compiler.options.formatter;
+                    File outputDirectory = compiler.options.outputDirectory;
+                    task = new WriteXmlTask(formatter,
+                            compiler.options.gzipOutput, compiler, objectName,
+                            outputDirectory);
+                    compiler.submit(task);
+                }
 
-				if (doDep) {
-					File outputDirectory = compiler.options.outputDirectory;
-					task = new WriteDepTask(compiler, objectName,
-							outputDirectory);
-					compiler.submit(task);
-				}
+                if (doDep) {
+                    File outputDirectory = compiler.options.outputDirectory;
+                    task = new WriteDepTask(compiler, objectName,
+                            outputDirectory);
+                    compiler.submit(task);
+                }
 
-			}
+            }
 
-			boolean doAnno = (compiler.options.annotationDirectory != null);
-			if (doAnno) {
-				task = new WriteAnnotationTask(
-						compiler.options.annotationDirectory, ast);
-				compiler.submit(task);
-			}
+            boolean doAnno = (compiler.options.annotationDirectory != null)
+                    && (compiler.options.annotationBaseDirectory != null)
+                    && (template.sourceFile != null);
+            if (doAnno) {
 
-		}
-	}
+                String relativePath = getRelativePath(
+                        compiler.options.annotationBaseDirectory,
+                        template.sourceFile.getPath());
 
-	@Override
-	protected CompileTask createTask(String tplfile) {
-		return new CompileTask(tplfile, postCompileProcessor, compiler.options);
+                File outputFile = annotationOutputFile(
+                        compiler.options.annotationDirectory, relativePath);
 
-	}
+                task = new WriteAnnotationTask(outputFile, ast);
+                compiler.submit(task);
+            }
 
-	@Override
-	protected TaskResult.ResultType getExecutorQueueType() {
-		return TaskResult.ResultType.COMPILED;
-	}
+        }
+    }
+
+    @Override
+    protected CompileTask createTask(String tplfile) {
+        return new CompileTask(tplfile, postCompileProcessor, compiler.options);
+
+    }
+
+    @Override
+    protected TaskResult.ResultType getExecutorQueueType() {
+        return TaskResult.ResultType.COMPILED;
+    }
+
+    public final static String getRelativePath(File baseDirectory, File file) {
+
+        String relativePath = null;
+
+        if (baseDirectory != null && file != null) {
+            URI baseURI = baseDirectory.toURI();
+            URI fileURI = file.toURI();
+
+            URI relativeURI = baseURI.relativize(fileURI);
+            if (!relativeURI.isAbsolute()) {
+                relativePath = relativeURI.toString();
+            }
+        }
+
+        return relativePath;
+    }
+
+    public static File annotationOutputFile(File annotationDirectory,
+            String relativePath) {
+
+        if (relativePath != null) {
+            String relativeOutputPath = relativePath + ".annotation.xml";
+            relativeOutputPath = relativeOutputPath
+                    .replace("/", File.separator);
+            return new File(annotationDirectory, relativeOutputPath);
+        } else {
+            return null;
+        }
+
+    }
 
 }

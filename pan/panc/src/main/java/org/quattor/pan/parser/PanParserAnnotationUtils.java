@@ -27,11 +27,11 @@ public class PanParserAnnotationUtils {
 
     public static final String PAN_ANNO_NS = "http://quattor.org/pan/annotations";
 
-    public static void printXML(File annotationDirectory, ASTTemplate ast) {
+    public static void printXML(File outputFile, ASTTemplate ast) {
 
         String templateName = ast.getIdentifier();
 
-        File outputFile = setupOutputFile(annotationDirectory, templateName);
+        createDirectories(outputFile, templateName);
 
         Writer writer = null;
 
@@ -74,15 +74,7 @@ public class PanParserAnnotationUtils {
 
     }
 
-    private static File setupOutputFile(File annotationDirectory,
-            String templateName) {
-
-        String separator = System.getProperty("file.separator");
-
-        String localizedName = templateName.replaceAll("/", separator)
-                + ".annotation.xml";
-
-        File outputFile = new File(annotationDirectory, localizedName);
+    private static void createDirectories(File outputFile, String templateName) {
 
         File outputDir = outputFile.getParentFile();
 
@@ -90,7 +82,6 @@ public class PanParserAnnotationUtils {
             outputDir.mkdirs();
         }
 
-        return outputFile;
     }
 
     private static void writeASTNode(TransformerHandler handler, Node ast)

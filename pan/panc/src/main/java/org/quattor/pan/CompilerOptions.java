@@ -125,11 +125,6 @@ public class CompilerOptions {
     private final List<Pattern> debugExcludePatterns;
 
     /**
-     * Temporary option to allow dumping of annotation contents.
-     */
-    public final boolean dumpAnnotations;
-
-    /**
      * Directory that will contain the annotation output files.
      */
     public final File annotationDirectory;
@@ -178,13 +173,10 @@ public class CompilerOptions {
      *            future releases)
      * @param forceBuild
      *            force build even if no output files are generated if true
-     * @param dumpAnnotations
-     *            flag to indicate if annotations should be dumped to the
-     *            standard output
      * @param annotationDirectory
      *            directory that will contain annotation output files
      * @param annotationBaseDirectory
-     *            TODO
+     *            base directory of source files for annotation output
      * @param failOnWarn
      *            if set to true, all warnings will cause compilation to fail
      */
@@ -193,9 +185,8 @@ public class CompilerOptions {
             boolean depWriteEnabled, int iterationLimit, int callDepthLimit,
             Formatter formatter, File outputDirectory, File sessionDirectory,
             List<File> includeDirectories, int nthread, boolean gzipOutput,
-            int deprecationLevel, boolean forceBuild, boolean dumpAnnotations,
-            File annotationDirectory, File annotationBaseDirectory,
-            boolean failOnWarn) {
+            int deprecationLevel, boolean forceBuild, File annotationDirectory,
+            File annotationBaseDirectory, boolean failOnWarn) {
 
         // Check that the iteration and call depth limits are sensible. If
         // negative or zero set these effectively to infinity.
@@ -281,8 +272,6 @@ public class CompilerOptions {
         }
         sourceRepository = value;
 
-        this.dumpAnnotations = dumpAnnotations;
-
         this.annotationDirectory = annotationDirectory;
         if (annotationDirectory != null) {
             checkDirectory(annotationDirectory, "annotation");
@@ -321,7 +310,6 @@ public class CompilerOptions {
         int nthread = 0;
         boolean gzipOutput = false;
         boolean forceBuild = false;
-        boolean dumpAnnotations = false;
         File annotationDirectory = null;
         File annotationBaseDirectory = null;
         LinkedList<File> includeDirectories = new LinkedList<File>();
@@ -330,8 +318,8 @@ public class CompilerOptions {
                 xmlWriteEnabled, depWriteEnabled, iterationLimit,
                 callDepthLimit, formatter, outputDirectory, sessionDirectory,
                 includeDirectories, nthread, gzipOutput, deprecationLevel,
-                forceBuild, dumpAnnotations, annotationDirectory,
-                annotationBaseDirectory, failOnWarn);
+                forceBuild, annotationDirectory, annotationBaseDirectory,
+                failOnWarn);
 
     }
 

@@ -116,7 +116,6 @@ public class Panc {
         authorizedOptArg.addElement("logfile");
         authorizedOpt.addElement("java-opts");
         authorizedOptArg.addElement("java-opts");
-        authorizedOpt.addElement("dump-annotations");
         authorizedOpt.addElement("annotation-dir");
         authorizedOptArg.addElement("annotation-dir");
         authorizedOpt.addElement("annotation-base-dir");
@@ -398,8 +397,6 @@ public class Panc {
     public static int launchCompiler(Vector<String> options,
             Vector<String> arguments, Vector<String> paths) {
 
-        boolean dumpAnnotations = false;
-
         File annotationOutputDirectory = null;
 
         File annotationBaseDirectory = null;
@@ -460,8 +457,6 @@ public class Panc {
             } else if (opt.equals("debug-exclude")) {
                 Pattern p = verifyPattern(arguments.elementAt(compteur));
                 debugExcludePatterns.add(p);
-            } else if (opt.equals("dump-annotations")) {
-                dumpAnnotations = true;
             } else if (opt.equals("annotation-dir")) {
                 annotationOutputDirectory = new File(arguments
                         .elementAt(compteur));
@@ -574,8 +569,8 @@ public class Panc {
                 debugExcludePatterns, xmlWriteEnabled, depWriteEnabled,
                 iteration, callDepth, formatter, outputDirectory,
                 sessionDirectory, includeDirectories, 0, gzip, deprecation,
-                false, dumpAnnotations, annotationOutputDirectory,
-                annotationBaseDirectory, failOnWarn);
+                false, annotationOutputDirectory, annotationBaseDirectory,
+                failOnWarn);
 
         CompilerResults results = Compiler.run(coptions, objectOutput,
                 includeFiles);
@@ -604,8 +599,6 @@ public class Panc {
                 .printf("    --debug-include           enable regex for debug/traceback functions\n");
         System.out
                 .printf("    --debug-exclude           exclude regex debug/traceback functions\n");
-        System.out
-                .printf("    --dump-annotations        print annotations to standard output\n");
         System.out
                 .printf("    --annotation-dir=PATH     where to store the annotation files\n");
         System.out

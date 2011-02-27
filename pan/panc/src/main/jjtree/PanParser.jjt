@@ -68,7 +68,6 @@ public class PanParser {
   /**
    * Set the compiler options.  Will be used to determine debugging status. */
   public void setCompilerOptions(org.quattor.pan.CompilerOptions options) {
-    AnnotationToken.setDumpAnnotation(options.dumpAnnotations);
     compilerOptions = options;
   }
   
@@ -181,8 +180,6 @@ TOKEN_MGR_DECLS : {
       ParseException pe = new ParseException(e.getMessage());
       pe.sourceRange = PanParserUtils.sourceRangeFromTokens(a,a);
       throw pe;
-    } else {
-      a.dump();
     }
   }
 }

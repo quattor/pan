@@ -108,8 +108,6 @@ public class PanCompilerTask extends Task {
 
     private File logfile = null;
 
-    private boolean dumpAnnotations = false;
-
     private File annotationDirectory = null;
 
     private File annotationBaseDirectory = null;
@@ -145,8 +143,8 @@ public class PanCompilerTask extends Task {
                 debugExcludePatterns, xmlWriteEnabled, depWriteEnabled,
                 iterationLimit, callDepthLimit, formatter, outputDirectory,
                 sessionDirectory, includeDirectories, nthread, gzipOutput,
-                deprecationLevel, forceBuild, dumpAnnotations,
-                annotationDirectory, annotationBaseDirectory, failOnWarn);
+                deprecationLevel, forceBuild, annotationDirectory,
+                annotationBaseDirectory, failOnWarn);
 
         // If the debugging for the task is enabled, then print out the options
         // and the arguments.
@@ -445,15 +443,6 @@ public class PanCompilerTask extends Task {
         if (formatter == null) {
             throw new BuildException("unknown output formatter: " + name);
         }
-    }
-
-    /**
-     * Set the flag to indicate whether annotations should be dumped to the
-     * standard output or not. This is a temporary option and may disappear in
-     * the future.
-     */
-    public void setDumpAnnotations(boolean dumpAnnotations) {
-        this.dumpAnnotations = dumpAnnotations;
     }
 
     /**

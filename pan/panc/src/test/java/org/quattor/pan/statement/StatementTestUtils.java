@@ -75,7 +75,7 @@ public class StatementTestUtils {
 
         CompilerOptions options = new CompilerOptions(null, null, true, true,
                 1000, 50, XmlDBFormatter.getInstance(), tmpfile, null, paths,
-                0, false, 0, false, false, null, null, false);
+                0, false, 0, false, null, null, false);
 
         Compiler compiler = new Compiler(options, new LinkedList<String>(),
                 files);
@@ -116,7 +116,7 @@ public class StatementTestUtils {
 
         CompilerOptions options = new CompilerOptions(null, null, true, true,
                 1000, 50, XmlDBFormatter.getInstance(), tmpfile, null, paths,
-                0, false, 0, false, false, null, null, false);
+                0, false, 0, false, null, null, false);
 
         Compiler compiler = new Compiler(options, new LinkedList<String>(),
                 files);
@@ -165,7 +165,7 @@ public class StatementTestUtils {
 
         CompilerOptions options = new CompilerOptions(null, null, true, true,
                 1000, 50, XmlDBFormatter.getInstance(), tmpfile, null, paths,
-                0, false, 0, false, false, null, null, false);
+                0, false, 0, false, null, null, false);
 
         Compiler compiler = new Compiler(options, new LinkedList<String>(),
                 files);

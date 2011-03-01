@@ -53,7 +53,7 @@
               <hyphenate>false</hyphenate>
 -->
 
-              <foCustomization>src/docbkx/panc-docbook-fo.xsl</foCustomization>
+              <foCustomization>${basedir}/src/docbkx/panc-docbook-fo.xsl</foCustomization>
             </configuration>
             <phase>prepare-package</phase>
           </execution>

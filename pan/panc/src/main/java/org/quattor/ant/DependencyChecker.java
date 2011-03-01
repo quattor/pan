@@ -14,10 +14,10 @@ import java.util.regex.Pattern;
 import org.apache.tools.ant.BuildException;
 import org.quattor.pan.CompilerOptions;
 import org.quattor.pan.parser.ASTTemplate;
-import org.quattor.pan.repository.FileSystemSourceRepository;
 import org.quattor.pan.repository.SourceType;
 import org.quattor.pan.tasks.CompileTask;
 import org.quattor.pan.utils.FileStatCache;
+import org.quattor.pan.utils.FileUtils;
 
 public class DependencyChecker {
 
@@ -110,7 +110,7 @@ public class DependencyChecker {
 
             ASTTemplate ast = CompileTask.CallImpl.compile(sourceFile, options);
             String name = ast.getIdentifier();
-            return name.replaceAll("/", File.separator);
+            return FileUtils.localizeFilename(name);
 
         } catch (Exception e) {
             return null;
@@ -225,7 +225,7 @@ public class DependencyChecker {
 
     public File lookupSourceFile(String tplName) {
 
-        String localTplName = FileSystemSourceRepository.localizeName(tplName);
+        String localTplName = FileUtils.localizeFilename(tplName);
 
         List<String> sourceFiles = new ArrayList<String>();
         for (String extension : SourceType.getExtensions()) {
@@ -247,7 +247,7 @@ public class DependencyChecker {
 
     public File lookupTextFile(String tplName) {
 
-        String localTplName = FileSystemSourceRepository.localizeName(tplName);
+        String localTplName = FileUtils.localizeFilename(tplName);
 
         for (File pathdir : includeDirectories) {
 

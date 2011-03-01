@@ -36,6 +36,7 @@ import org.quattor.pan.tasks.WriteDepTask;
 import org.quattor.pan.tasks.WriteXmlTask;
 import org.quattor.pan.template.Template;
 import org.quattor.pan.template.Template.TemplateType;
+import org.quattor.pan.utils.FileUtils;
 
 /**
  * Contains a global cache of all compiled templates.
@@ -182,8 +183,7 @@ public class CompileCache extends AbstractCache<CompileResult> {
 
         if (relativePath != null) {
             String relativeOutputPath = relativePath + ".annotation.xml";
-            relativeOutputPath = relativeOutputPath
-                    .replace("/", File.separator);
+            relativeOutputPath = FileUtils.localizeFilename(relativeOutputPath);
             return new File(annotationDirectory, relativeOutputPath);
         } else {
             return null;

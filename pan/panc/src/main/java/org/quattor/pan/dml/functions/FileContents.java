@@ -38,6 +38,7 @@ import org.quattor.pan.exceptions.SystemException;
 import org.quattor.pan.repository.SourceFile;
 import org.quattor.pan.template.Context;
 import org.quattor.pan.template.SourceRange;
+import org.quattor.pan.utils.FileUtils;
 import org.quattor.pan.utils.StringUtils;
 
 /**
@@ -49,99 +50,99 @@ import org.quattor.pan.utils.StringUtils;
  */
 final public class FileContents extends BuiltInFunction {
 
-	private FileContents(SourceRange sourceRange, Operation... operations)
-			throws SyntaxException {
-		super("file_contents", sourceRange, operations);
+    private FileContents(SourceRange sourceRange, Operation... operations)
+            throws SyntaxException {
+        super("file_contents", sourceRange, operations);
 
-		// There must be exactly one argument.
-		if (operations.length != 1) {
-			throw SyntaxException.create(sourceRange, MSG_ONE_ARG_REQ,
-					"file_contents");
-		}
+        // There must be exactly one argument.
+        if (operations.length != 1) {
+            throw SyntaxException.create(sourceRange, MSG_ONE_ARG_REQ,
+                    "file_contents");
+        }
 
-		// If there is already a fixed argument, then check that it is valid.
-		if (operations[0] instanceof Element) {
-			String relativePath = verifyRelativePath((Element) operations[0]);
-			if (relativePath == null) {
-				throw SyntaxException.create(sourceRange,
-						MSG_RELATIVE_FILE_REQ, "file_contents");
-			}
-		}
-	}
+        // If there is already a fixed argument, then check that it is valid.
+        if (operations[0] instanceof Element) {
+            String relativePath = verifyRelativePath((Element) operations[0]);
+            if (relativePath == null) {
+                throw SyntaxException.create(sourceRange,
+                        MSG_RELATIVE_FILE_REQ, "file_contents");
+            }
+        }
+    }
 
-	public static Operation getInstance(SourceRange sourceRange,
-			Operation... operations) throws SyntaxException {
-		return new FileContents(sourceRange, operations);
-	}
+    public static Operation getInstance(SourceRange sourceRange,
+            Operation... operations) throws SyntaxException {
+        return new FileContents(sourceRange, operations);
+    }
 
-	@Override
-	public Element execute(Context context) {
+    @Override
+    public Element execute(Context context) {
 
-		throwExceptionIfCompileTimeContext(context);
+        throwExceptionIfCompileTimeContext(context);
 
-		// Calculate arguments.
-		Element[] args = calculateArgs(context);
-		assert (args.length == 1);
+        // Calculate arguments.
+        Element[] args = calculateArgs(context);
+        assert (args.length == 1);
 
-		// Get the relative file name to find.
-		String relativeFileName = verifyRelativePath(args[0]);
-		if (relativeFileName == null) {
-			throw EvaluationException.create(sourceRange,
-					MSG_RELATIVE_FILE_REQ, name);
-		}
+        // Get the relative file name to find.
+        String relativeFileName = verifyRelativePath(args[0]);
+        if (relativeFileName == null) {
+            throw EvaluationException.create(sourceRange,
+                    MSG_RELATIVE_FILE_REQ, name);
+        }
 
-		SourceFile srcFile = context.lookupFile(relativeFileName);
+        SourceFile srcFile = context.lookupFile(relativeFileName);
 
-		if (!srcFile.isAbsent()) {
-			if (srcFile.getPath().isDirectory()) {
-				throw EvaluationException.create(sourceRange,
-						MSG_DIR_NOT_ALLOWED, name);
-			}
-			try {
-				return readFileAsStringProperty(srcFile);
-			} catch (IOException e) {
-				throw new SystemException(e.getLocalizedMessage(), srcFile
-						.getPath());
-			}
-		} else {
-			throw EvaluationException.create(sourceRange, MSG_NONEXISTANT_FILE,
-					relativeFileName);
-		}
+        if (!srcFile.isAbsent()) {
+            if (srcFile.getPath().isDirectory()) {
+                throw EvaluationException.create(sourceRange,
+                        MSG_DIR_NOT_ALLOWED, name);
+            }
+            try {
+                return readFileAsStringProperty(srcFile);
+            } catch (IOException e) {
+                throw new SystemException(e.getLocalizedMessage(), srcFile
+                        .getPath());
+            }
+        } else {
+            throw EvaluationException.create(sourceRange, MSG_NONEXISTANT_FILE,
+                    relativeFileName);
+        }
 
-	}
+    }
 
-	private static StringProperty readFileAsStringProperty(SourceFile source)
-			throws IOException {
-		Reader reader = source.getReader();
-		String contents = StringUtils.readCompletely(reader);
-		return StringProperty.getInstance(contents);
-	}
+    private static StringProperty readFileAsStringProperty(SourceFile source)
+            throws IOException {
+        Reader reader = source.getReader();
+        String contents = StringUtils.readCompletely(reader);
+        return StringProperty.getInstance(contents);
+    }
 
-	// TODO: Determine if the system file separator is needed
-	// TODO: Determine if empty string is valid
-	private static String verifyRelativePath(Element element) {
+    // TODO: Determine if the system file separator is needed
+    // TODO: Determine if empty string is valid
+    private static String verifyRelativePath(Element element) {
 
-		try {
+        try {
 
-			String s = ((StringProperty) element).getValue();
+            String s = ((StringProperty) element).getValue();
 
-			// Replace all of the slashes by the platform's file separator.
-			s = s.replaceAll("/", System.getProperty("file.separator"));
+            // Replace all of the slashes by the platform's file separator.
+            s = FileUtils.localizeFilename(s);
 
-			// Create a File object from this and verify that it is a relative
-			// path.
-			File f = new File(s);
-			if (f.isAbsolute()) {
-				return null;
-			}
+            // Create a File object from this and verify that it is a relative
+            // path.
+            File f = new File(s);
+            if (f.isAbsolute()) {
+                return null;
+            }
 
-			// Everything's OK, so return the created file.
-			return f.toString();
+            // Everything's OK, so return the created file.
+            return f.toString();
 
-		} catch (ClassCastException e) {
-			return null;
-		}
+        } catch (ClassCastException e) {
+            return null;
+        }
 
-	}
+    }
 
 }

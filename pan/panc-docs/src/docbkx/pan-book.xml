@@ -36,7 +36,7 @@
       Unported License. To view a copy of this license, visit <uri
       xlink:href="http://creativecommons.org/licenses/by/3.0/">http://creativecommons.org/licenses/by/3.0/</uri>
       or send a letter to Creative Commons, 171 Second Street, Suite 300, San
-      Francisco, California, 94105, USA. </para>
+      Francisco, California, 94105, USA.</para>
     </legalnotice>
   </info>
 
@@ -54,7 +54,9 @@
         <title>Typographic Conventions</title>
 
         <tgroup cols="2">
-          <colspec align="center" />
+          <colspec align="left" colnum="1" colwidth="1*" />
+
+          <colspec align="left" colnum="2" colwidth="4*" />
 
           <tbody>
             <row>
@@ -1180,7 +1182,15 @@ EOT</programlisting>
       <table>
         <title>Unary DML Operators</title>
 
+        <?dbfo table-width="50%"?>
+
         <tgroup cols="3">
+          <colspec align="left" colnum="1" colwidth="1*" />
+
+          <colspec align="left" colnum="2" colwidth="2*" />
+
+          <colspec align="left" colnum="3" colwidth="2*" />
+
           <tbody>
             <row>
               <entry>+</entry>
@@ -1220,7 +1230,15 @@ EOT</programlisting>
       <table>
         <title>Binary DML Operators</title>
 
+        <?dbfo table-width="50%"?>
+
         <tgroup cols="3">
+          <colspec align="left" colname="" colnum="1" colwidth="1*" />
+
+          <colspec align="left" colnum="2" colwidth="2*" />
+
+          <colspec align="left" colnum="3" colwidth="2*" />
+
           <tbody>
             <row>
               <entry>+</entry>
@@ -1412,6 +1430,8 @@ EOT</programlisting>
       <table>
         <title>Operator Precedence (lowest to highest)</title>
 
+        <?dbfo table-width="25%"?>
+
         <tgroup cols="1">
           <tbody>
             <row>
@@ -1579,7 +1599,9 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
         <title>String Manipulation Functions</title>
 
         <tgroup cols="2">
-          <colspec align="center" />
+          <colspec align="left" colnum="1" colwidth="1*" />
+
+          <colspec align="left" colnum="2" colwidth="4*" />
 
           <tbody>
             <row>
@@ -1671,7 +1693,9 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
         <title>Debugging Functions</title>
 
         <tgroup cols="2">
-          <colspec align="center" />
+          <colspec align="left" colnum="1" colwidth="1*" />
+
+          <colspec align="left" colnum="2" colwidth="4*" />
 
           <tbody>
             <row>
@@ -1710,7 +1734,9 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
         <title>Encoding and Decoding Functions</title>
 
         <tgroup cols="2">
-          <colspec align="center" />
+          <colspec align="left" colnum="1" colwidth="1*" />
+
+          <colspec align="left" colnum="2" colwidth="4*" />
 
           <tbody>
             <row>
@@ -1753,7 +1779,9 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
         <title>Resource Manipulation Functions</title>
 
         <tgroup cols="2">
-          <colspec align="center" />
+          <colspec align="left" colnum="1" colwidth="1*" />
+
+          <colspec align="left" colnum="2" colwidth="4*" />
 
           <tbody>
             <row>
@@ -1837,7 +1865,9 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
         <title>Type Checking Functions</title>
 
         <tgroup cols="2">
-          <colspec align="center" />
+          <colspec align="left" colnum="1" colwidth="1*" />
+
+          <colspec align="left" colnum="2" colwidth="4*" />
 
           <tbody>
             <row>
@@ -1947,7 +1977,9 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
         <title>Type Conversion Functions</title>
 
         <tgroup cols="2">
-          <colspec align="center" />
+          <colspec align="left" colnum="1" colwidth="1*" />
+
+          <colspec align="left" colnum="2" colwidth="4*" />
 
           <tbody>
             <row>
@@ -1999,7 +2031,9 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
         <title>Miscellaneous Functions</title>
 
         <tgroup cols="2">
-          <colspec align="center" />
+          <colspec align="left" colnum="1" colwidth="1*" />
+
+          <colspec align="left" colnum="2" colwidth="4*" />
 
           <tbody>
             <row>

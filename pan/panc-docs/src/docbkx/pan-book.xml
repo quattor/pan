@@ -201,56 +201,71 @@
     <section>
       <title>Download and Installation</title>
 
-      <para></para>
+      <para>The pan compiler can be invoked via the Unix (Linux) command line,
+      ant, or maven. The easiest for the simple examples in this book is the
+      command line interface. (See Appendix A for installation instructions
+      for all the execution methods.) Locate and download the latest version
+      of the pan tarball and untar this into a convenient directory. You can
+      find the packaged versions of the compiler in SourceForge.</para>
+
+      <para>The pan compiler requires a Java Runtime Environment (JRE) or Java
+      Development Kit (JDK) 1.5 or later. If you will just be running the pan
+      compiler, the JRE is sufficient; compiling the sources will require the
+      JDK. Use a complete, certified version of the Java Virtual Machine; in
+      particular avoid the Gnu Java Compiler (GJC) as the pan compiler will
+      not run correctly with it.</para>
+
+      <para>To use the compiler from the command line, you must make it
+      accessible from the path. </para>
+
+      <screen>$ export PANC_HOME=/panc/location
+$ export PATH=$PATH:$PANC_HOME/bin</screen>
+
+      <para>The above will work for Bourne shells; adjust the command for the
+      shell that you use. Change the value of <varname>PANC_HOME</varname> to
+      the directory where the pan compiler was unpacked. </para>
     </section>
 
     <section>
       <title>Validating Installation</title>
 
-      <para></para>
-    </section>
-
-    <section>
-      <title>Invoking the Pan Compiler</title>
-
-      <para>In order to experiment with the pan compiler, you must first
-      install it; see the pan compiler manual for instructions for downloading
-      and installing an appropriate version. For this tutorial, the command
-      line interface is the most convenient method for invoking the compiler.
-      However, there are other mechanisms for invoking it directly from java
-      or for integrating it with ant.</para>
-
-      <para>Once you have installed the compiler, make sure that it is
-      correctly installed by using the commands:</para>
+      <para>Once you have installed the compiler, make sure that it is working
+      correctly by using the commands:</para>
 
       <screen>$ panc --version
 $ panc --help</screen>
 
       <para>The first command will return the version of the compiler; the
-      second will give a complete list of all of the available options.</para>
+      second will give a complete list of all of the available options. If
+      either command fails, review the installation instructions. </para>
+    </section>
 
-      <para>Now create a file named <filename>hello.tpl</filename> that
+    <section>
+      <title>Invoking the Pan Compiler</title>
+
+      <para>Now create a file named <filename>hello_world.pan</filename> that
       contains the following:</para>
 
-      <programlisting>object template hello;
-'/message' = 'hello';</programlisting>
+      <programlisting>object template hello_world;
+'/message' = 'Hello World!';</programlisting>
 
       <para>Now compile this profile into the default XML representation and
       look at the output.</para>
 
-      <screen>$ panc hello.tpl
-$ cat hello.xml
+      <screen>$ panc hello_world.pan
+
+$ cat hello_world.xml
 &lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;nlist format="pan" name="profile"&gt;
-&lt;string name="message"&gt;hello&lt;/string&gt;
+&lt;string name="message"&gt;Hello World!&lt;/string&gt;
 &lt;/nlist&gt;</screen>
 
       <para>The output should look similar to what is shown above. As you can
       see the generated information has a simple structure: a top-level
       element of type <type>nlist</type>, named "profile" with a single
       <type>string</type> child, named "message". The value of the "message"
-      is "hello". If the output format is not specified, the default is the
-      "pan" XML style shown above, in which the element names are the pan
+      is "Hello World!". If the output format is not specified, the default is
+      the "pan" XML style shown above, in which the element names are the pan
       primitive types and the name attribute gives the associated name of the
       element in the pan template.</para>
 
@@ -260,11 +275,12 @@ $ cat hello.xml
       type. (If not specified, the default type is <type>string</type>.) The
       following shows the output for the xmldb format.</para>
 
-      <screen>$ panc --xml-style=xmldb hello.tpl
+      <screen>$ panc --xml-style=xmldb hello_world.pan
+
 $ cat hello.xml
 &lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;profile format="xmldb"&gt;
-&lt;message type="string"&gt;hello&lt;/message&gt;
+&lt;message type="string"&gt;Hello World!&lt;/message&gt;
 &lt;/profile&gt;</screen>
 
       <para>This format is convenient if the resulting output will be
@@ -276,28 +292,30 @@ $ cat hello.xml
       text format. This provides a clean representation of the configuration
       tree on a terminal.</para>
 
-      <screen>$ panc --xml-style=text hello.tpl
-$ cat hello.txt
+      <screen>$ panc --xml-style=text hello_world.pan
+
+$ cat hello_world.txt
 +-profile
         $ message : (string) 'hello'</screen>
 
-      <para>Note that the output file is named <filename>hello.txt</filename>
-      and no longer <filename>hello.xml</filename>. It provides the same
-      information as the XML formats, but is easier to understand
-      visually.</para>
+      <para>Note that the output file is named
+      <filename>hello_world.txt</filename> and no longer
+      <filename>hello_world.xml</filename>. It provides the same information
+      as the XML formats, but is easier to read.</para>
 
       <para>The last style is the "dot" format. This format produces an output
       file that <link xlink:href="http://www.graphviz.org/">Graphviz</link>
       can use to generate a graph of the configuration information.</para>
 
-      <screen>$ panc --xml-style=dot hello.tpl
-$ cat hello.dot
+      <screen>$ panc --xml-style=dot hello_world.pan
+
+$ cat hello_world.dot
 digraph "profile" {
 bgcolor = beige
 node [ color = black, shape = box, fontname=Helvetica ]
 edge [ color = black ]
 "/profile" [ label = "profile" ]
-"/profile/message" [ label = "message\n'hello'" ]
+"/profile/message" [ label = "message\n'Hello World!'" ]
 "/profile" -&gt; "/profile/message"
 }</screen>
 
@@ -309,155 +327,662 @@ edge [ color = black ]
 
       <figure xml:id="fig-hello">
         <title>Graph of configuration produced by
-        <filename>hello.tpl</filename>.</title>
+        <filename>hello_world.pan</filename>.</title>
 
         <mediaobject>
-          <alt>Graph of configuration produced by the file hello.tpl.</alt>
+          <alt>Graph of configuration produced by the file
+          hello_world.pan.</alt>
 
           <imageobject role="html">
-            <imagedata fileref="images/hello.png" format="PNG"></imagedata>
+            <imagedata align="center" fileref="images/hello.png" format="PNG"
+                       valign="middle"></imagedata>
           </imageobject>
 
           <imageobject role="fo">
-            <imagedata fileref="images/hello.svg" format="SVG"></imagedata>
+            <imagedata align="center" fileref="images/hello.svg" format="SVG"
+                       valign="middle"></imagedata>
           </imageobject>
         </mediaobject>
       </figure>
     </section>
+  </chapter>
+
+  <chapter>
+    <title>A Whirlwind Tour</title>
+
+    <para>This tour will highlight the major features of the pan language by
+    showing how the configuration for a batch system for asynchronous handling
+    of jobs could be described with the pan language. The fictitious,
+    simplified batch system used here gives you the flavor of the development
+    process and common pan features. The description of a real batch system
+    would contain significantly more parameters and services. </para>
 
     <section>
-      <title>Simple Tour of Language</title>
+      <title>Batch System Description</title>
 
-      <para>This tutorial will demonstrate how to define a configuration
-      schema and populate it with values using the pan configuration language.
-      To keep this tutorial from becoming a dry exercise of pan functionality,
-      a simplified but typical configuration scenario will be used. A system
-      administrator has four machines that need to be installed. One of the
-      machines will be an NFS server to provide a shared file system to the
-      other three machines. One of the machines will be the head node of a
-      batch system and the other two will be the batch system clients, or
-      worker nodes.</para>
+      <para>A batch system provides a set of resources for asynchronous
+      execution of jobs (scripts) submitted by users. The batch system (or
+      cluster) consists of:</para>
 
-      <para>The corresponding configuration schema will consist of both
-      hardware and software aspects of the configuration. For the hardware
-      aspects, the schema will include information about the location of the
-      machine, RAM, CPUs, disks, and network interface cards (NICs). The
-      software configuration will include parameters for configuring an NFS
-      server, NFS client, batch system head node, and batch system client. The
-      software configuration will also contain information about some related
-      low-level services such as a firewall.</para>
+      <variablelist>
+        <varlistentry>
+          <term>Server (or head node)</term>
 
-      <para>The schema developed in this tutorial borrows ideas from the
-      standard Quattor schema. However for pedagogical reasons, the schema
-      here is simplified to demonstrate the essential pan language features.
-      At the end of the tutorial, readers should understand the core features
-      of the pan configuration language and be able to understand the standard
-      Quattor schema. Additional work with other components of the Quattor
-      system will be necessary to use Quattor to configure a real set of
-      machines.</para>
+          <listitem>
+            <para>A machine containing a service for accepting job requests
+            from users and a scheduler for dispatching those jobs to available
+            workers.</para>
+          </listitem>
+        </varlistentry>
 
-      <section>
-        <title>Setting Configuration Values</title>
+        <varlistentry>
+          <term>Workers</term>
 
-        <para>The pan configuration language is a declarative language that
-        allows configuration parameters arranged in a hierarchical tree to be
-        given values. At its simplest level, pan simply sets key/value pairs
-        where the keys can be arranged hierarchically. Consider initially the
-        hardware information for the machines: location of the machine, RAM,
-        CPUs, disks, and network interface cards (NICs). One possible way of
-        specifying this information in pan is the following:</para>
+          <listitem>
+            <para>One or more machines that accept jobs from the server,
+            execute them, and then return the results to the server.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
 
-        <programlisting>object template nfsserver.example.org;
+      <para>Users send a script containing the job description to the server.
+      The server then queues the request for later execution. The scheduler
+      periodically checks the queued jobs and resources, sending a queued job
+      for execution on a worker if one is available. The worker execute the
+      job it has been given and keeps the server informed about the state of
+      the job. At the end of the job, results are returned to the server. The
+      user can interact with the server to determine the status of jobs and to
+      retrieve the output of completed jobs.</para>
 
-'/hardware/location/rack' = 'IBM04';
-'/hardware/location/slot' = 25;
+      <para>For our simplified batch system, we want to create a set of
+      parameters that describe the configuration. For many real services, the
+      configuration schema used in pan will closely mirror the configuration
+      file(s) of the service. In our case we will create a configuration
+      schema based on the above description.</para>
 
-'/hardware/ram' = 2048;
+      <para>The server controls a set of workers and manages jobs via a set of
+      queues. Each queue is named, has a CPU limit, and can be enabled or
+      disabled. Each node also has a name, participates in one or more queues,
+      and has a set of capabilities (e.g. a particular software license is
+      available, has a fast network connection, etc.). </para>
 
-'/hardware/cpu/model' = 'Intel Xeon';
-'/hardware/cpu/speed' = 2.5;
-'/hardware/cpu/arch' = 'x86_64';
-'/hardware/cpu/cores' = 4;
-'/hardware/cpu/number' = 2;
+      <para>The worker needs to know with which server to communicate. Each
+      worker will also have a flag to indicate if the worker is enabled or
+      disabled. </para>
+    </section>
 
-'/hardware/disks/ide/0/capacity' = 64;
-'/hardware/disks/ide/0/boot' = true;
-'/hardware/disks/ide/0/label' = 'system';
-'/hardware/disks/ide/1/capacity' = 1024;
-'/hardware/disks/ide/1/boot' = false;
+    <section>
+      <title>Naive Configuration</title>
 
-'/hardware/nic/0/mac' = '01:23:45:ab:cd:99';
-'/hardware/nic/0/pxeboot' = false;
-'/hardware/nic/1/mac' = '01:23:45:ab:cd:00';
-'/hardware/nic/1/pxeboot' = true;</programlisting>
+      <para>Given the previous description, a pan language configuration for
+      both the batch server and one batch worker can easily be created. We
+      must create an object template for each machine in order to have the
+      machine descriptions created during the compilation. Create the file
+      <filename>server.example.org.pan</filename> with the following contents:
+      </para>
 
-        <para>In this example, each assignment statement sets one value. On
-        the left-hand side is the absolute path, which must be a single- or
-        double-quoted string; the right-hand side is the value to assign to
-        that path. All absolute paths must begin with a slash. Save this to
-        the file <filename>nfsserver.example.org.tpl</filename>. Invoking the
-        pan compiler on this will cause a configuration tree to be built by
-        executing the assignment statements in order from the beginning to the
-        end. The text representation of the compiler output looks like:</para>
+      <programlisting>object template server.example.org;
 
-        <screen>$ panc --xml-style=text nfsserver.example.org
-$ cat nfsserver.example.org.txt
-+-profile
-        +-hardware
-                +-cpu
-                        $ arch : (string) 'x86_64'
-                        $ cores : (long) '4'
-                        $ model : (string) 'Intel Xeon'
-                        $ number : (long) '2'
-                        $ speed : (double) '2.5'
-                +-disks
-                        +-ide
-                                +-0
-                                        $ boot : (boolean) 'true'
-                                        $ capacity : (long) '64'
-                                        $ label : (string) 'system'
-                                +-1
-                                        $ boot : (boolean) 'false'
-                                        $ capacity : (long) '1024'
-                +-location
-                        $ rack : (string) 'IBM04'
-                        $ slot : (long) '25'
-                +-nic
-                        +-0
-                                $ mac : (string) '01:23:45:ab:cd:99'
-                                $ pxeboot : (boolean) 'false'
-                        +-1
-                                $ mac : (string) '01:23:45:ab:cd:00'
-                                $ pxeboot : (boolean) 'true'
-                $ ram : (long) '2048'</screen>
+'/batch/server/nodes/worker01.example.org/queues' = list('default');
+'/batch/server/nodes/worker01.example.org/capabilities' = list('sw-license', 'fast-network');
 
-        <para>showing how a machine with an dual-CPU machine with Intel Xeon
-        chips running at 2.5 GHz, 2 GB of RAM, two IDE disks, two NICs, and
-        located in rack IBM04 in slot 25 could be represented. This
-        information could then be used by other parts of the Quattor toolkit
-        (or any other tool for that matter) to do some work based on this
-        information, although the XML format is usually used when transmitting
-        the information to other tools.</para>
+'/batch/server/queues/default/maxCpuHours' = 1;
+'/batch/server/queues/default/enabled' = true;</programlisting>
 
-        <para>Although this example should be fairly intuitive for most
-        readers, there are a few subtleties to point out. The first line of
-        the example indicates that this file represents a "managed object" and
-        should produce an output file. If the <literal>object</literal>
-        modifier is left out, then the file will compile but no output file
-        will be produced. The tutorial will explain the different types of
-        templates later.</para>
+      <para>It is customary to use the machine name as the object template.
+      For this server, there is one worker node named 'worker01.example.org'
+      and one queue named 'default'. The worker node participates in the
+      'default' queue and has a couple of capabilities. The 'default' queue
+      has a CPU limit of 1 hour. </para>
 
-        <para>Notice that it was not necessary to specify all of the parents
-        of a particular path. For example, there was no assignment statement
-        with the path <literal>/hardware</literal>. When assigning a value to
-        a particular path, pan will automatically create the parents as
-        necessary. In the pan language, the leaves of the tree (terminal
-        values) are called <emphasis>properties</emphasis>. All of the
-        assignment statements in this example set properties. The branches of
-        the tree (collections) are generically called
-        <emphasis>resources</emphasis>. The term <emphasis>element</emphasis>
-        encompasses both pan properties and resources.</para>
-      </section>
+      <para>Create the file <filename>worker01.example.org.pan</filename> for
+      the worker:</para>
+
+      <programlisting>object template worker01.example.org;
+
+'/batch/worker/server' = 'server.example.org';
+'/batch/worker/enabled' = true;</programlisting>
+
+      <para>This is part of the cluster controlled by the server
+      'server.example.org' and is enabled. </para>
+
+      <para>These templates can be compiled with the following command:</para>
+
+      <screen>$ panc --xml-style=text *.pan</screen>
+
+      <para>which then produces the files
+      <filename>server.example.org.txt</filename> and
+      <filename>worker01.example.org.txt</filename>:</para>
+
+      <screen>+-profile
+        +-batch
+                +-server
+                        +-nodes
+                                +-worker01.example.org
+                                        +-capabilities
+                                                $ 0 : (string) 'sw-license'
+                                                $ 1 : (string) 'fast-network'
+                                        +-queues
+                                                $ 0 : (string) 'default'
+                        +-queues
+                                +-default
+                                        $ maxCpuHours : (long) '1'</screen>
+
+      <screen>+-profile
+        +-batch
+                +-worker
+                        $ enabled : (boolean) 'true'
+                        $ server : (string) 'server.example.org'</screen>
+
+      <para>These generated files (or more likely their equivalents in XML)
+      can then be used by tools to actually configure the machines and batch
+      services appropriately. </para>
+    </section>
+
+    <section>
+      <title>Using Namespaces and Includes</title>
+
+      <para>The naive configuration shown in the previous section has a couple
+      of problems. First, it will become tedious to maintain especially if
+      individual machines contain a mix of different services. Second, similar
+      configurations would be duplicated between object templates, increasing
+      the likelihood of errors. These problems can be eliminated by
+      refactoring the configuration into separate templates and by organizing
+      those templates into reasonable namespaces. </para>
+
+      <para>As a first step in reorganizing the configuration, we pull out the
+      batch server and worker configurations into separate
+      <emphasis>ordinary</emphasis> templates. These configurations are put
+      into <filename>services/batch-server.pan</filename> and
+      <filename>services/batch-worker.pan</filename>, respectively.</para>
+
+      <programlisting>template services/batch-server;
+
+'/batch/server/nodes/worker01.example.org/queues' = list('default');
+'/batch/server/nodes/worker01.example.org/capabilities' = list('sw-license', 'fast-network');
+
+'/batch/server/queues/default/maxCpuHours' = 1;
+'/batch/server/queues/default/enabled' = true;</programlisting>
+
+      <programlisting>template services/batch-worker;
+
+'/batch/worker/server' = 'server.example.org';
+'/batch/worker/enabled' = true;</programlisting>
+
+      <para>Note that these files are not object templates (i.e. there is no
+      <literal>object</literal> keyword) and will not produce any output files
+      themselves. Note also that they are namespaced; the relative directory
+      of the template must match the path hierarchy in the file system. In
+      this particular case, these both must appear in a
+      <filename>services</filename> subdirectory.</para>
+
+      <para>Object templates can also be namespaced; here we will put them
+      into a <filename>profiles</filename> subdirectory. These object
+      templates can then include configuration in other (non-object)
+      templates. The contents of these profiles becomes:</para>
+
+      <programlisting>object template profiles/server.example.org;
+
+include 'services/batch-server';</programlisting>
+
+      <programlisting>object template profiles/worker01.example.org;
+
+include 'services/batch-worker';</programlisting>
+
+      <para>Organizing the service configurations in this way makes it easy to
+      include multiple services in a particular object template. If reasonable
+      names are chosen, then the object template becomes self-documenting,
+      listing the services included on the machine. </para>
+
+      <para>The command to compile these object templates is slightly
+      different:</para>
+
+      <screen>$ panc --xml-style=text profiles/*.pan</screen>
+
+      <para>The output files by default will be placed next to the object
+      template, so in this case they will be in the
+      <filename>profiles</filename> subdirectory. You can verify that the
+      reorganized configuration produces exactly the same configuration as the
+      first example. </para>
+    </section>
+
+    <section>
+      <title>Simple Typing</title>
+
+      <para>Although the configuration is completely specified in the previous
+      examples, it does not protect you from inappropriate values, for
+      instance, specifying 'ON' for the boolean worker's
+      <parameter>enabled</parameter> parameter or a negative number for the
+      <parameter>maxCpuHours</parameter> parameter of a queue. The pan
+      language has a number of primitive types, collections, and mechanisms
+      for user-defined types.</para>
+
+      <para>Create a file named <filename>services/batch-types.pan</filename>
+      with the following content:</para>
+
+      <programlisting>declaration template services/batch-types;<co
+          xml:id="batch-types-declaration" />
+
+type batch_capabilities<co xml:id="batch-types-batch_capabilities" /> = string[];
+
+type batch_queue_list<co xml:id="batch-types-batch_queue_list" /> = string[1..];
+
+type batch_node<co xml:id="batch-types-batch_node" /> = {
+  'queues' : batch_queue_list
+  'capabilities' ? batch_capabilities
+};
+
+type batch_queue<co xml:id="batch-types-batch_queue" /> = {
+  'maxCpuHours' : long(0..)
+  'enabled' : boolean
+};
+
+type batch_server<co xml:id="batch-types-batch_server" /> = {
+  'nodes' : batch_node{}
+  'queues' : batch_queue{}
+};
+
+type batch_worker<co xml:id="batch-types-batch_worker" /> = {
+  'server' : string
+  'enabled' : boolean
+};</programlisting>
+
+      <calloutlist>
+        <callout arearefs="batch-types-batch_worker">
+          <para>The <type>batch_worker</type> type defines a record (nlist or
+          hash with named children) for the worker configuration. The
+          'enabled' flag is defined to be a boolean value. The 'server' is
+          defined to be a string. For a real configuration, the server would
+          likely be define to be a hostname or IP address with appropriate
+          constraints.</para>
+        </callout>
+
+        <callout arearefs="batch-types-batch_server">
+          <para>The <type>batch_server</type> type also defines a record with
+          nodes and queues children. These are both defined to be nlists where
+          the keys are the worker host name or the queue name, respectively.
+          The notation <literal>mytype{}</literal> defines an nlist. </para>
+        </callout>
+
+        <callout arearefs="batch-types-batch_queue" conformance="">
+          <para>Type batch_queue type defines a record with the
+          characteristics of a queue. Each queue can be enabled or disabled.
+          The <parameter>maxCpuHours</parameter> is required to be a
+          non-negative long value. The range specification
+          <literal>(0..)</literal> limits the allowed values. Range limits
+          like this apply to the numeric value for long and double types; it
+          applied to the length of strings. </para>
+        </callout>
+
+        <callout arearefs="batch-types-batch_node">
+          <para>Type batch_node again defines a record for a single node. The
+          node description contains a list of queues and a list of
+          capabilities. In this case, the record specifier uses a question
+          mark ('?') indicating that the field is optional; if the record
+          specifier uses a colon (':') then the field is required. </para>
+        </callout>
+
+        <callout arearefs="batch-types-batch_queue_list">
+          <para>Type <type>batch_queue_list</type> is an alias for a list of
+          strings, but also contains a range limitation
+          <literal>[1..]</literal>. This range limitation means that the list
+          must contain at least one element. </para>
+        </callout>
+
+        <callout arearefs="batch-types-batch_capabilities">
+          <para>Type batch_capabilities is just an alias for a list of
+          strings. It is a convenience type used to make the field description
+          clearer. </para>
+        </callout>
+
+        <callout arearefs="batch-types-declaration">
+          <para>The template declaration uses the declaration modifier. This
+          means that the template will only be executed once during the build
+          of a particular machine profile. It also limits the content of the
+          template to variable, function, and type definitions.</para>
+        </callout>
+      </calloutlist>
+
+      <para>A complete set of types is now available for the batch
+      configuration, but at this point, none of these types have been attached
+      to a part of the configuration. The <literal>bind</literal> statement
+      associates a particular type to a path. Note that a single path can have
+      multiple type declarations associated with it. For the batch
+      configuration, the <filename>services/batch-server.pan</filename> and
+      <filename>services/batch-worker.pan</filename> have had a
+      <literal>bind</literal> statement added. </para>
+
+      <programlisting>template services/batch-server;
+
+include { 'services/batch-types' };
+
+bind '/batch/server' = batch_server;
+
+'/batch/server/nodes/worker01.example.org/queues' = list('default');
+'/batch/server/nodes/worker01.example.org/capabilities' = list('sw-license', 'fast-network');
+
+'/batch/server/queues/default/maxCpuHours' = 1;
+'/batch/server/queues/default/enabled' = true;</programlisting>
+
+      <programlisting>template services/batch-worker;
+
+include { 'services/batch-types' };
+
+bind '/batch/worker' = batch_worker;
+
+'/batch/worker/server' = 'server.example.org';
+'/batch/worker/enabled' = true;</programlisting>
+
+      <para>Types have been bound to two paths with these
+      <literal>bind</literal> statements. If any of the content does not
+      conform to the specified types, then an error will occur during the
+      compilation. Note that we have not limited the values for paths other
+      than these two paths. Configuration in other paths can be added without
+      being subject to these type definitions. A global schema can be defined
+      by binding a type definition to the root path '/'.</para>
+    </section>
+
+    <section>
+      <title>Default Values</title>
+
+      <para>Very often configuration parameters can have reasonable default
+      values, avoiding the need to specify them explicitly within a machine
+      profile. The pan type system allows default values to be defined and
+      then inserted into a machine configuration when necessary. The following
+      is a modified version of the <filename>batch-types.pan</filename> file
+      with default values added.</para>
+
+      <programlisting>declaration template services/batch-types;
+
+type batch_capabilities = string[];
+
+type batch_queue_list = string[1..];
+
+type batch_node = {
+  'queues' : batch_queue_list = list('default') <co
+          xml:id="batch-types-default-node-queues" />
+  'capabilities' ? batch_capabilities
+};
+
+type batch_queue = {
+  'maxCpuHours' : long(0..) = 1 <co xml:id="batch-types-default-cpuhours" />
+  'enabled' : boolean = true <co xml:id="batch-types-default-queue-enabled" />
+};
+
+type batch_server = {
+  'nodes' : batch_node{}
+  'queues' : batch_queue{} = nlist('default', nlist()) <co
+          xml:id="batch-types-default-queues" />
+};
+
+type batch_worker = {
+  'server' : string
+  'enabled' : boolean = true <co xml:id="batch-types-default-worker-enabled" />
+};</programlisting>
+
+      <calloutlist>
+        <callout arearefs="batch-types-default-node-queues">
+          <para>If the queue list for a node is not specified, then assume
+          that the node will participate in the 'default' queue. That is, the
+          default value is a one-element list containing the string
+          'default'.</para>
+        </callout>
+
+        <callout arearefs="batch-types-default-cpuhours">
+          <para>Default to 1 CPU-hour for the queue execution limit.</para>
+        </callout>
+
+        <callout arearefs="batch-types-default-queue-enabled">
+          <para>By default, a queue will be enabled.</para>
+        </callout>
+
+        <callout arearefs="batch-types-default-queues">
+          <para>If no queues are specified, then provide an nlist containing
+          only a queue definition for the 'default' queue. Note that the
+          actual queue parameters are provided by the type definition
+          <type>batch_queue</type>. </para>
+        </callout>
+
+        <callout arearefs="batch-types-default-worker-enabled">
+          <para>By default, a worker will be enabled.</para>
+        </callout>
+      </calloutlist>
+
+      <para>Using these default values, then simplifies the configuration
+      templates <filename>services/batch-server.pan</filename> and
+      <filename>services/batch-worker.pan</filename>.</para>
+
+      <programlisting>template services/batch-server;
+
+include { 'services/batch-types' };
+
+bind '/batch/server' = batch_server;
+
+'/batch/server/nodes/worker01.example.org/capabilities' = list('sw-license', 'fast-network');</programlisting>
+
+      <programlisting>template services/batch-worker;
+
+include { 'services/batch-types' };
+
+bind '/batch/worker' = batch_worker;
+
+'/batch/worker/server' = 'server.example.org';</programlisting>
+
+      <para>Compiling these templates will result in exactly the same
+      generated files as with the previous configuration in which the default
+      values were explicitly specified in the configuration. To use a value
+      other than the default, the path just needs to be assigned the desired
+      value. The defaults mechanism will never replace a value which was
+      explicitly specified in the configuration.</para>
+    </section>
+
+    <section>
+      <title>Cross-Element and Cross-Machine Validation</title>
+
+      <para>Much of the power of using the pan language comes from its ability
+      to ensure the consistency between different elements within a machine
+      profile and between configurations of different machine profiles. In our
+      example we have two cases where these types of validations would be
+      useful: 1) the list of queues for a node should only reference defined
+      queues and 2) the worker list on the server and the defined workers
+      should be consistent.</para>
+
+      <para>The file batch-types.pan will be expanded to include validation
+      functions for these cases. Each validation function must return
+      <literal>true</literal> if the value is valid. If the value is not
+      valid, then the function can return <literal>false</literal> or throw an
+      exception via the <function>error</function> function. The
+      <function>error</function> function allows you to provide a descriptive
+      error message for the user. The contents of the modified file
+      are:</para>
+
+      <programlisting>declaration template services/batch-types;
+
+function valid_batch_queue_list<co xml:id="function-valid_batch_queue_list" /> = {
+  foreach (index; queue_name; ARGV[0]) {
+    if (!path_exists('/batch/server/queues/' + queue_name)) {
+      return(false);
+    };
+  };
+  true;
+};
+
+function valid_batch_node_nlist<co xml:id="function-valid_batch_node_nlist" /> = {
+  foreach (hostname; properties; ARGV[0]) {
+    path = 'profiles/' + hostname + ':/batch/worker';
+    if (!path_exists(path)) {
+      error(path + ' doesn''t exist');
+      return(false);
+    };
+  };
+  true;
+};
+
+function server_exists<co xml:id="function-server_exists" /> = {
+  return(path_exists('profiles/' + ARGV[0] + ':/batch/server'));
+};
+
+function server_knows_about_me<co xml:id="function-server_knows_about_me" /> = {
+  regex = '^profiles/(.*)$';
+  if (match(OBJECT, regex)) {
+    parts = matches(OBJECT, regex);
+    path = 'profiles/' + ARGV[0] + ':/batch/server/nodes/' + parts[1];
+    if (!path_exists(path)) {
+      error(path + ' doesn''t exist');
+    };
+  } else {
+    error(OBJECT + ' doesn''t match ' + regex);
+  };
+  true;
+};
+
+function valid_server<co xml:id="function-valid_server" /> = {
+  return(server_exists(ARGV[0]) &amp;&amp; server_knows_about_me(ARGV[0]));
+};
+
+
+type batch_capabilities = string[];
+
+type batch_queue_list = string[1..];
+
+type batch_node = {
+  'queues' : batch_queue_list = list('default') with valid_batch_queue_list(SELF)<co
+          xml:id="validate-batch_queue_list" />
+  'capabilities' ? batch_capabilities
+};
+
+type batch_queue = {
+  'maxCpuHours' : long(0..) = 1
+  'enabled' : boolean = true
+};
+
+type batch_server = {
+  'nodes' : batch_node{} with valid_batch_node_nlist(SELF)<co
+          xml:id="validate-batch_node" />
+  'queues' : batch_queue{} = nlist('default', nlist())
+};
+
+type batch_worker = {
+  'server' : string with valid_server(SELF)<co xml:id="validate-valid_server" />
+  'enabled' : boolean = true
+};</programlisting>
+
+      <calloutlist>
+        <callout arearefs="function-valid_batch_queue_list">
+          <para>The argument to this function is the batch queue list for a
+          node. The function loops over the queue names and ensures that the
+          associated path in the configuration exists. For example for the
+          'default' queue, the path '/batch/server/queues/default' must exist.
+          </para>
+        </callout>
+
+        <callout arearefs="function-valid_batch_node_nlist">
+          <para>The argument to this function is the nlist of worker nodes.
+          The function loops over the worker node entries and constructs a
+          path using the worker node name. For example for the worker node
+          'worker01.example.org', it will construct the path
+          'worker01.example.org:/batch/worker'. This is an
+          <emphasis>external</emphasis> path that references another machine
+          profile. In this case, the server profile 'server.example.org' will
+          reference all of the worker profiles, e.g. 'worker01.example.org'.
+          If the node is configured as a worker, the path '/batch/worker' will
+          exist on the node.</para>
+        </callout>
+
+        <callout arearefs="function-server_exists">
+          <para>The argument to this function is the name of the server as
+          configured on a worker node. Similar to the previous function, this
+          constructs a path on the referenced server and verifies that it
+          exists. In this example, each worker will verify that the path
+          'server.example.org:/batch/server' exists.</para>
+        </callout>
+
+        <callout arearefs="function-server_knows_about_me">
+          <para>The argument to this function is also the name of the server
+          as configured on a worker node. This function will extract the list
+          of workers in the server configuration and ensure that the worker's
+          name appears. This uses a regular expression to extract the machine
+          name from the <varname>OBJECT</varname> variable, which contains the
+          name of the object template being processed. The constructed path
+          will exist if the server configuration contains the named worker
+          node.</para>
+        </callout>
+
+        <callout arearefs="function-valid_server">
+          <para>The argument to this function is the name of the server. It is
+          a convenience function that combines the previous two
+          functions.</para>
+        </callout>
+      </calloutlist>
+
+      <para>These functions are tied to a type definition using a
+      <literal>with</literal> clause. The <literal>with</literal> clause will
+      execute the given code block for the given type after the profile has
+      been fully constructed. Usually, the code block will reference the
+      special variable <varname>SELF</varname>, which contains the value
+      associated with the given type. Although any block of code can be used
+      in the type definition, it is best practice to define a validation
+      function with the code and reference that validation function. This
+      makes the type definition easier to read. The with clauses for the
+      cross-element and cross-machine validation are:</para>
+
+      <calloutlist>
+        <callout arearefs="validate-batch_queue_list">
+          <para>Run the <function>valid_batch_queue_list</function> function
+          for all of the node queue lists.</para>
+        </callout>
+
+        <callout arearefs="validate-batch_node">
+          <para>Run the <function>valid_batch_node_nlist</function> function
+          for the server's node nlist.</para>
+        </callout>
+
+        <callout arearefs="validate-valid_server">
+          <para>Run the <function>valid_server</function> function for the
+          worker node's configured server.</para>
+        </callout>
+      </calloutlist>
+
+      <para>This type of validation ensures internal and external consistency
+      of machine configurations and can significantly enhance confidence in
+      the defined configurations. Note that the cross-machine validation will
+      work even with circular dependencies, allowing server and client
+      validation for services.</para>
+    </section>
+
+    <section>
+      <title>Path Prefixes</title>
+
+      <para>Although in this particular example there is a limited number of
+      parameters set, most real examples involve a large number of parameters
+      and repetitive specifications of similar absolute paths. The
+      <literal>prefix</literal> pseudo-statement is a convenience for reducing
+      duplication in path specifications. The path provided in the
+      <literal>prefix</literal> statement will be applied to any relative
+      paths found in a template <emphasis>after</emphasis> the
+      <literal>prefix</literal> statement.</para>
+
+      <para>As an example, we take the batch server configuration, adding a
+      second worker node. </para>
+
+      <programlisting>template services/batch-server;
+
+include { 'services/batch-types' };
+
+bind '/batch/server' = batch_server;
+
+prefix '/batch/server/nodes';
+
+'worker01.example.org/capabilities' = list('sw-license', 'fast-network');
+'worker02.example.org/capabilities' = list();</programlisting>
+
+      <para>In this case, this saves us from having to duplicate the prefix
+      '/batch/server/nodes' for each worker node. Note that the prefix is
+      expanded when the template is compiled and <emphasis>does not</emphasis>
+      affect any included templates. Although multiple
+      <literal>prefix</literal> statements can be used in a template, it is
+      best practice to use only one near the beginning of the template.
+      </para>
     </section>
   </chapter>
 
@@ -868,6 +1393,27 @@ $ cat nfsserver.example.org.txt
       associates a string key with a value; these are also known as hashes or
       associative lists. These seven comprise the primitive types in the pan
       language.</para>
+
+      <figure xml:id="fig-types">
+        <title>Pan language type hierarchy</title>
+
+        <mediaobject>
+          <alt>Pan language type hierarchy</alt>
+
+          <imageobject role="html">
+            <imagedata align="center"
+                       fileref="images/pan-type-hierarchy-truncated.png"
+                       format="PNG" role="" scale="10" scalefit="1"
+                       valign="middle"></imagedata>
+          </imageobject>
+
+          <imageobject role="fo">
+            <imagedata align="center"
+                       fileref="images/pan-type-hierarchy-truncated.svg"
+                       format="SVG" scale="40" scalefit="1" valign="middle"></imagedata>
+          </imageobject>
+        </mediaobject>
+      </figure>
 
       <section>
         <title>Implicit Typing</title>
@@ -3018,7 +3564,230 @@ bind '/pair' = KV_PAIR;
   <chapter>
     <title>Performance Considerations</title>
 
+    <section>
+      <title>Use Specific Paths</title>
+
+      <para>Whenever possible, use the most specific path and assign a
+      property to that path. The code:</para>
+
+      <programlisting>'/path' = nlist('a', 1, 'b', 2);</programlisting>
+
+      <para>and the block:</para>
+
+      <programlisting>'/path/a' = 1;
+'/path/b' = 2;</programlisting>
+
+      <para>provide identical results, although the second example is easier
+      to read and will be better optimized by the compiler.</para>
+    </section>
+
+    <section>
+      <title>Use Escaped Literal Path Syntax</title>
+
+      <para>In previous versions of the compiler, it was necessary to use a
+      DML block when part of a path needed to be escaped:</para>
+
+      <programlisting>'/path' = nlist(escape('a/b'), 1);</programlisting>
+
+      <para>Newer versions of the compiler provide a literal path syntax in
+      which escaped portions can be written explicitly:</para>
+
+      <programlisting>'/path/{a/b}' = 1;</programlisting>
+
+      <para>This is both more legible and faster. </para>
+    </section>
+
+    <section>
+      <title>Use Built-In Functions</title>
+
+      <para>Built-in functions are significantly faster than equivalents
+      defined with the pan language. In particular, the functions
+      <function>append</function> and <function>prepend</function> should be
+      used for incrementally building up lists (in preference to
+      <function>push</function> equivalents). There are also functions like
+      <function>to_uppercase</function> and <function>to_lowercase</function>
+      that avoid character by character manipulation of strings.</para>
+
+      <para>The list of available built-in functions continues to expand.
+      Check the list of functions with each new release of the
+      compiler.</para>
+    </section>
+
+    <section>
+      <title>Invoking the Compiler</title>
+
+      <para>There are several ways to invoke the compiler, either from the
+      command line, from ant, or from maven. For single, infrequent
+      invocations of the compiler they are roughly equivalent in startup time.
+      However, if the compiler will be invoked frequently it is better to
+      avoid using the command line panc script. The reason for this is that
+      the panc script starts a new JVM each time it is invoked, while the ant
+      and maven invocations can reuse their own JVM. This means that for the
+      panc script, you will pay the startup costs each time it is invoked
+      while for ant or maven you pay it them only once. The startup costs are
+      particularly expensive if you request a large amount of memory and do
+      hundreds of compilations at a time. </para>
+    </section>
+
+    <section>
+      <title>Avoid Copying SELF</title>
+
+      <para>Assignments of <varname>SELF</varname> to a local variable inside
+      of a code block will cause a deep copy of <varname>SELF</varname>. In
+      the following code, the local variable <varname>copy</varname> will
+      contain a complete replica of <varname>SELF</varname>.</para>
+
+      <programlisting>'/path' = {
+ copy = SELF;
+ copy;
+};</programlisting>
+
+      <para>These copies can be time-consuming when <varname>SELF</varname> is
+      a large resource or when the code is executed frequently. If you
+      manipulate <varname>SELF</varname> within a code block,
+      <emphasis>always</emphasis> reference <varname>SELF</varname>
+      directly.</para>
+
+      <para>Also be aware that <varname>copy</varname> and
+      <varname>SELF</varname> will contain independent copies so that changes
+      to <varname>copy</varname> to not affect <varname>SELF</varname> and
+      vice versa. This can lead to bugs that are difficult to find.</para>
+    </section>
+  </chapter>
+
+  <chapter>
+    <title>Common Idioms</title>
+
     <para></para>
+
+    <section>
+      <title>Configuration File Templates</title>
+
+      <para>Although it is much better to create an abstracted schema for
+      service configuration, practically it is often useful to directly embed
+      a configuration file directly in the service configuration. In previous
+      versions of the compiler, the configuration file was often created
+      incrementally in a global variable and then assigned to a path.
+      Something like the following was common:</para>
+
+      <programlisting>variable USER = 'smith';
+variable QUOTA = 10;
+
+variable CONTENTS = &lt;&lt;EOF;
+alpha = 1
+beta = 2
+EOF
+
+variable CONTENTS = CONTENTS + 'user = ' + USER + "\n";
+
+variable CONTENTS = CONTENTS + 'quota = ' + to_string(QUOTA) + "\n";
+
+
+'/cfgfile' = CONTENTS;</programlisting>
+
+      <para>This can be improved somewhat by using the
+      <function>format</function> function:</para>
+
+      <programlisting>variable USER = 'smith';
+variable QUOTA = 10;
+
+
+variable CFG_TEMPLATE = &lt;&lt;EOF;
+alpha = 1
+beta = 2
+user = %s
+quota = %d
+EOF
+
+'/cfgfile' = format(CFG_TEMPLATE, USER, QUOTA);</programlisting>
+
+      <para>This can be further improved by moving the configuration template
+      complete out of the pan language file. For instance, create the file
+      cfg-template.txt:</para>
+
+      <programlisting>alpha = 1
+beta = 2
+user = %s
+quota = %d</programlisting>
+
+      <para>which can then be used like this:</para>
+
+      <programlisting>variable USER = 'smith';
+variable QUOTA = 10;
+
+'/cfgfile' = format(file_contents('cfg-template.txt'), USER, QUOTA);</programlisting>
+
+      <para>This is much easier to read and to maintain. It is especially
+      helpful when the included configuration file has a syntax for which an
+      external editor can provide additional help with validation. </para>
+    </section>
+
+    <section>
+      <title>Extension Templates</title>
+
+      <para>Often sets of templates that are intended for reuse will allow the
+      configuration to be extended or modified at particular points by
+      including named templates. For example, the following provides
+      pre-configuration and post-configuration service hooks:</para>
+
+      <programlisting>template my_service/config;
+
+include if_exists('my_service/prehook');
+
+# bulk of real service configuration
+
+include if_exists('my_service/posthook');</programlisting>
+
+      <para>In both of these cases, the named templates will be included if
+      they can be found on the loadpath. If they are not found, the includes
+      do nothing.</para>
+    </section>
+
+    <section>
+      <title>Global Variables as Switches</title>
+
+      <para>Configuration intended for reuse also tends to expose switches for
+      common configuration options. The idiom looks like the following:</para>
+
+      <programlisting>template my_service/config;
+
+variable MY_OPTION ?= false;
+
+'/my_service/config/my_option' = 
+  if (MY_OPTION) {
+    'some value';
+  } else {
+    'some other value';
+  };
+};</programlisting>
+
+      <para>In cases where the path simply should not exist if the option is
+      not set, then using a default value of null can be the best
+      option:</para>
+
+      <programlisting>template my_service/config;
+
+variable MY_OPTION ?= null;
+
+'/my_service/config/my_option' = MY_OPTION;</programlisting>
+
+      <para>In this case, if the variable MY_OPTION is not set to a value
+      before executing this template, the null value will be used and the
+      given path will simply be deleted. </para>
+    </section>
+
+    <section>
+      <title>Tri-state Variables</title>
+
+      <para>Occasionally is is useful to have tri-state variables. The most
+      convenient values to use in this case are <literal>true</literal>,
+      <literal>false</literal>, and <literal>null</literal>. With these values
+      as the three states, you can use <function>is_null</function> to test
+      explicitly for the third state. Using <literal>undef</literal> for the
+      third value can cause problems because variables are automatically set
+      to <literal>undef</literal> before executing a variable assignment
+      statement.</para>
+    </section>
   </chapter>
 
   <chapter>

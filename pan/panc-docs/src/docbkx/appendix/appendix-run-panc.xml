@@ -190,26 +190,6 @@
     <command>panc-check-syntax</command> task.</para>
 
     <table>
-      <title>Dummy Table</title>
-
-      <tgroup cols="2">
-        <tbody>
-          <row>
-            <entry>value1</entry>
-
-            <entry>value2</entry>
-          </row>
-
-          <row>
-            <entry>value3</entry>
-
-            <entry>value4</entry>
-          </row>
-        </tbody>
-      </tgroup>
-    </table>
-
-    <table>
       <title>Ant Task Attributes</title>
 
       <tgroup cols="3">

@@ -1,0 +1,16 @@
+Installation
+============
+
+The PAN syntax file for VIM can be installed with the following process.
+mkdir -p ${HOME}/.vim/ftdetect
+mkdir ${HOME}/.vim/syntax
+
+Download the following file from the quattor website:
+https://quattor.svn.sourceforge.net/svnroot/quattor/trunk/panc-vim/ftdetect/pan.vim
+and copy it to the ${HOME}/.vim/ftdetect directory.
+
+Download the following file from the quattor website:
+https://quattor.svn.sourceforge.net/svnroot/quattor/trunk/panc-vim/syntax/pan.vim
+and copy it to the ${HOME}/.vim/syntax directory.
+
+Take care, the two files have the same name!

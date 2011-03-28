@@ -1,7 +1,12 @@
-"pythoncomplete.vim - Omni Completion for python
-" Maintainer: Aaron Griffin <aaronmgriffin@gmail.com>
-" Version: 0.7
-" Last Updated: 19 Oct 2006
+" Omni Completion for PAN
+" Language:     Pan
+" Maintainer:   Jerome Pansanel <jerome.pansanel@iphc.cnrs.fr>
+" Last Change:  2011 March 25
+" Location:     https://quattor.svn.sourceforge.net/svnroot/quattor/trunk/util/vim/ftplugin/pan.vim
+" License:      Apache License, Version 2.0
+"
+" Please download most recent version first before mailing any comments.
+" Based on the Pan language v8.4.7
 
 if v:version < 700
   echohl ERROR "Smart completion will work only in vim version 7+"

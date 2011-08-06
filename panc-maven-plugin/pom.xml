@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.quattor.pan</groupId>
-  <artifactId>maven-panc-plugin</artifactId>
+  <artifactId>panc-maven-plugin</artifactId>
   <version>9.0.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
   <name>maven-panc-plugin</name>

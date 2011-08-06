@@ -91,14 +91,6 @@
         <configuration>
           <xincludeSupported>true</xincludeSupported>
         </configuration>
-        <dependencies>
-          <dependency>
-            <groupId>org.docbook</groupId>
-            <artifactId>docbook-xml</artifactId>
-            <version>4.4</version>
-            <scope>runtime</scope>
-          </dependency>
-        </dependencies>
       </plugin>
 
       <plugin>

@@ -550,6 +550,16 @@ variable X ?=
           when there is a mismatch between given format string and
           arguments.</para>
         </listitem>
+
+        <listitem>
+          <para>(SF RFE #3386906) Support for \b (backspace) and \f (form
+          feed) escape sequences in double-quoted strings.</para>
+        </listitem>
+
+        <listitem>
+          <para>(SF Bug #3186921) Dependency calculation in ant task does not
+          work correctly for namespaced object templates.</para>
+        </listitem>
       </itemizedlist>
     </section>
 

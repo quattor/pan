@@ -216,14 +216,14 @@
       not run correctly with it.</para>
 
       <para>To use the compiler from the command line, you must make it
-      accessible from the path. </para>
+      accessible from the path.</para>
 
       <screen>$ export PANC_HOME=/panc/location
 $ export PATH=$PATH:$PANC_HOME/bin</screen>
 
       <para>The above will work for Bourne shells; adjust the command for the
       shell that you use. Change the value of <varname>PANC_HOME</varname> to
-      the directory where the pan compiler was unpacked. </para>
+      the directory where the pan compiler was unpacked.</para>
     </section>
 
     <section>
@@ -237,7 +237,7 @@ $ panc --help</screen>
 
       <para>The first command will return the version of the compiler; the
       second will give a complete list of all of the available options. If
-      either command fails, review the installation instructions. </para>
+      either command fails, review the installation instructions.</para>
     </section>
 
     <section>
@@ -355,7 +355,7 @@ edge [ color = black ]
     of jobs could be described with the pan language. The fictitious,
     simplified batch system used here gives you the flavor of the development
     process and common pan features. The description of a real batch system
-    would contain significantly more parameters and services. </para>
+    would contain significantly more parameters and services.</para>
 
     <section>
       <title>Batch System Description</title>
@@ -404,11 +404,11 @@ edge [ color = black ]
       queues. Each queue is named, has a CPU limit, and can be enabled or
       disabled. Each node also has a name, participates in one or more queues,
       and has a set of capabilities (e.g. a particular software license is
-      available, has a fast network connection, etc.). </para>
+      available, has a fast network connection, etc.).</para>
 
       <para>The worker needs to know with which server to communicate. Each
       worker will also have a flag to indicate if the worker is enabled or
-      disabled. </para>
+      disabled.</para>
     </section>
 
     <section>
@@ -418,8 +418,8 @@ edge [ color = black ]
       both the batch server and one batch worker can easily be created. We
       must create an object template for each machine in order to have the
       machine descriptions created during the compilation. Create the file
-      <filename>server.example.org.pan</filename> with the following contents:
-      </para>
+      <filename>server.example.org.pan</filename> with the following
+      contents:</para>
 
       <programlisting>object template server.example.org;
 
@@ -433,7 +433,7 @@ edge [ color = black ]
       For this server, there is one worker node named 'worker01.example.org'
       and one queue named 'default'. The worker node participates in the
       'default' queue and has a couple of capabilities. The 'default' queue
-      has a CPU limit of 1 hour. </para>
+      has a CPU limit of 1 hour.</para>
 
       <para>Create the file <filename>worker01.example.org.pan</filename> for
       the worker:</para>
@@ -444,7 +444,7 @@ edge [ color = black ]
 '/batch/worker/enabled' = true;</programlisting>
 
       <para>This is part of the cluster controlled by the server
-      'server.example.org' and is enabled. </para>
+      'server.example.org' and is enabled.</para>
 
       <para>These templates can be compiled with the following command:</para>
 
@@ -476,7 +476,7 @@ edge [ color = black ]
 
       <para>These generated files (or more likely their equivalents in XML)
       can then be used by tools to actually configure the machines and batch
-      services appropriately. </para>
+      services appropriately.</para>
     </section>
 
     <section>
@@ -488,7 +488,7 @@ edge [ color = black ]
       configurations would be duplicated between object templates, increasing
       the likelihood of errors. These problems can be eliminated by
       refactoring the configuration into separate templates and by organizing
-      those templates into reasonable namespaces. </para>
+      those templates into reasonable namespaces.</para>
 
       <para>As a first step in reorganizing the configuration, we pull out the
       batch server and worker configurations into separate
@@ -532,7 +532,7 @@ include 'services/batch-worker';</programlisting>
       <para>Organizing the service configurations in this way makes it easy to
       include multiple services in a particular object template. If reasonable
       names are chosen, then the object template becomes self-documenting,
-      listing the services included on the machine. </para>
+      listing the services included on the machine.</para>
 
       <para>The command to compile these object templates is slightly
       different:</para>
@@ -543,7 +543,7 @@ include 'services/batch-worker';</programlisting>
       template, so in this case they will be in the
       <filename>profiles</filename> subdirectory. You can verify that the
       reorganized configuration produces exactly the same configuration as the
-      first example. </para>
+      first example.</para>
     </section>
 
     <section>
@@ -601,7 +601,7 @@ type batch_worker<co xml:id="batch-types-batch_worker" /> = {
           <para>The <type>batch_server</type> type also defines a record with
           nodes and queues children. These are both defined to be nlists where
           the keys are the worker host name or the queue name, respectively.
-          The notation <literal>mytype{}</literal> defines an nlist. </para>
+          The notation <literal>mytype{}</literal> defines an nlist.</para>
         </callout>
 
         <callout arearefs="batch-types-batch_queue" conformance="">
@@ -611,7 +611,7 @@ type batch_worker<co xml:id="batch-types-batch_worker" /> = {
           non-negative long value. The range specification
           <literal>(0..)</literal> limits the allowed values. Range limits
           like this apply to the numeric value for long and double types; it
-          applied to the length of strings. </para>
+          applied to the length of strings.</para>
         </callout>
 
         <callout arearefs="batch-types-batch_node">
@@ -619,20 +619,20 @@ type batch_worker<co xml:id="batch-types-batch_worker" /> = {
           node description contains a list of queues and a list of
           capabilities. In this case, the record specifier uses a question
           mark ('?') indicating that the field is optional; if the record
-          specifier uses a colon (':') then the field is required. </para>
+          specifier uses a colon (':') then the field is required.</para>
         </callout>
 
         <callout arearefs="batch-types-batch_queue_list">
           <para>Type <type>batch_queue_list</type> is an alias for a list of
           strings, but also contains a range limitation
           <literal>[1..]</literal>. This range limitation means that the list
-          must contain at least one element. </para>
+          must contain at least one element.</para>
         </callout>
 
         <callout arearefs="batch-types-batch_capabilities">
           <para>Type batch_capabilities is just an alias for a list of
           strings. It is a convenience type used to make the field description
-          clearer. </para>
+          clearer.</para>
         </callout>
 
         <callout arearefs="batch-types-declaration">
@@ -650,7 +650,7 @@ type batch_worker<co xml:id="batch-types-batch_worker" /> = {
       multiple type declarations associated with it. For the batch
       configuration, the <filename>services/batch-server.pan</filename> and
       <filename>services/batch-worker.pan</filename> have had a
-      <literal>bind</literal> statement added. </para>
+      <literal>bind</literal> statement added.</para>
 
       <programlisting>template services/batch-server;
 
@@ -740,7 +740,7 @@ type batch_worker = {
           <para>If no queues are specified, then provide an nlist containing
           only a queue definition for the 'default' queue. Note that the
           actual queue parameters are provided by the type definition
-          <type>batch_queue</type>. </para>
+          <type>batch_queue</type>.</para>
         </callout>
 
         <callout arearefs="batch-types-default-worker-enabled">
@@ -872,8 +872,8 @@ type batch_worker = {
           <para>The argument to this function is the batch queue list for a
           node. The function loops over the queue names and ensures that the
           associated path in the configuration exists. For example for the
-          'default' queue, the path '/batch/server/queues/default' must exist.
-          </para>
+          'default' queue, the path '/batch/server/queues/default' must
+          exist.</para>
         </callout>
 
         <callout arearefs="function-valid_batch_node_nlist">
@@ -963,7 +963,7 @@ type batch_worker = {
       <literal>prefix</literal> statement.</para>
 
       <para>As an example, we take the batch server configuration, adding a
-      second worker node. </para>
+      second worker node.</para>
 
       <programlisting>template services/batch-server;
 
@@ -981,8 +981,7 @@ prefix '/batch/server/nodes';
       expanded when the template is compiled and <emphasis>does not</emphasis>
       affect any included templates. Although multiple
       <literal>prefix</literal> statements can be used in a template, it is
-      best practice to use only one near the beginning of the template.
-      </para>
+      best practice to use only one near the beginning of the template.</para>
     </section>
   </chapter>
 
@@ -1508,7 +1507,7 @@ prefix '/batch/server/nodes';
 
         <programlisting>"foo" 
 "it’s a sentence" 
-"Java-style escapes: \t (tab) \r (carriage return) \n (newline)" 
+"Java-style escapes: \t (tab) \r (carriage return) \n (newline) \b (backspace) \f (form feed)" 
 "Hexadecimal escapes: \x3d (=) \x00 (NULL byte) \x0A (newline)" 
 "Miscellaneous escapes: \" (double quote) \\ (backslash)" 
 "this string spans two lines and\
@@ -3594,7 +3593,7 @@ bind '/pair' = KV_PAIR;
 
       <programlisting>'/path/{a/b}' = 1;</programlisting>
 
-      <para>This is both more legible and faster. </para>
+      <para>This is both more legible and faster.</para>
     </section>
 
     <section>
@@ -3626,7 +3625,7 @@ bind '/pair' = KV_PAIR;
       panc script, you will pay the startup costs each time it is invoked
       while for ant or maven you pay it them only once. The startup costs are
       particularly expensive if you request a large amount of memory and do
-      hundreds of compilations at a time. </para>
+      hundreds of compilations at a time.</para>
     </section>
 
     <section>
@@ -3719,7 +3718,7 @@ variable QUOTA = 10;
 
       <para>This is much easier to read and to maintain. It is especially
       helpful when the included configuration file has a syntax for which an
-      external editor can provide additional help with validation. </para>
+      external editor can provide additional help with validation.</para>
     </section>
 
     <section>
@@ -3773,7 +3772,7 @@ variable MY_OPTION ?= null;
 
       <para>In this case, if the variable MY_OPTION is not set to a value
       before executing this template, the null value will be used and the
-      given path will simply be deleted. </para>
+      given path will simply be deleted.</para>
     </section>
 
     <section>

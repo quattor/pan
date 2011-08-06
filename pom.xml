@@ -90,13 +90,61 @@
 
   </distributionManagement>
 
+  <dependencyManagement>
+    <dependencies>
+      
+      <dependency>
+        <groupId>net.jcip</groupId>
+        <artifactId>jcip-annotations</artifactId>
+        <version>1.0</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.apache.ant</groupId>
+        <artifactId>ant</artifactId>
+        <version>1.8.2</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.8.2</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.docbook</groupId>
+        <artifactId>docbook-xml</artifactId>
+        <version>4.4</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-plugin-api</artifactId>
+        <version>2.0</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.quattor.pan</groupId>
+        <artifactId>panc-docs</artifactId>
+        <version>9.0.0-SNAPSHOT</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>org.quattor.pan</groupId>
+        <artifactId>panc</artifactId>
+        <version>9.0.0-SNAPSHOT</version>
+      </dependency>
+
+    </dependencies>
+  </dependencyManagement>
+
   <build>
     <pluginManagement>
       <plugins>
 	<plugin>
 	  <groupId>org.apache.maven.plugins</groupId>
 	  <artifactId>maven-release-plugin</artifactId>
-	  <version>2.1</version>
+	  <version>2.2.1</version>
 	  <configuration>
 	    <preparationGoals>clean install</preparationGoals>
 	    <autoVersionSubmodules>true</autoVersionSubmodules>
@@ -106,12 +154,12 @@
 	<plugin>
 	  <groupId>org.apache.maven.plugins</groupId>
 	  <artifactId>maven-assembly-plugin</artifactId>
-	  <version>2.2</version>
+	  <version>2.2.1</version>
 	</plugin>
 	<plugin>
 	  <groupId>org.apache.maven.plugins</groupId>
 	  <artifactId>maven-plugin-plugin</artifactId>
-	  <version>2.6</version>
+	  <version>2.8</version>
 	</plugin>
 	<plugin>
 	  <groupId>org.apache.maven.plugins</groupId>
@@ -130,7 +178,7 @@
 	<plugin>
 	  <groupId>org.apache.maven.plugins</groupId>
 	  <artifactId>maven-dependency-plugin</artifactId>
-	  <version>2.1</version>
+	  <version>2.2</version>
 	</plugin>
 	<plugin>
 	  <groupId>org.apache.maven.plugins</groupId>
@@ -145,17 +193,17 @@
 	<plugin>
 	  <groupId>org.apache.maven.plugins</groupId>
 	  <artifactId>maven-resources-plugin</artifactId>
-	  <version>2.4.3</version>
+	  <version>2.5</version>
 	</plugin>
 	<plugin>
 	  <groupId>org.apache.maven.plugins</groupId>
 	  <artifactId>maven-site-plugin</artifactId>
-	  <version>2.1.1</version>
+	  <version>2.3</version>
 	</plugin>
 	<plugin>
 	  <groupId>org.apache.maven.plugins</groupId>
 	  <artifactId>maven-surefire-plugin</artifactId>
-	  <version>2.6</version>
+	  <version>2.8.1</version>
 	</plugin>
 	<plugin>
 	  <groupId>org.apache.maven.plugins</groupId>
@@ -166,12 +214,12 @@
 	<plugin>
 	  <groupId>org.codehaus.mojo</groupId>
 	  <artifactId>build-helper-maven-plugin</artifactId>
-	  <version>1.5</version>
+	  <version>1.7</version>
 	</plugin>
 	<plugin>
 	  <groupId>org.codehaus.mojo</groupId>
 	  <artifactId>findbugs-maven-plugin</artifactId>
-	  <version>2.3.1</version>
+	  <version>2.3.2</version>
 	</plugin>
 	<plugin>
 	  <groupId>org.codehaus.mojo</groupId>
@@ -191,7 +239,7 @@
 	<plugin>
 	  <groupId>com.agilejava.docbkx</groupId>
 	  <artifactId>docbkx-maven-plugin</artifactId>
-	  <version>2.0.11</version>
+	  <version>2.0.13</version>
 	</plugin>
 
       </plugins>

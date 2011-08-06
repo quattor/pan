@@ -38,8 +38,6 @@
                 <artifactItem>
                   <groupId>org.quattor.pan</groupId>
                   <artifactId>panc-docs</artifactId>
-                  <!-- The versions between this and compiler should always match. -->
-                  <version>${project.version}</version>
                   <classifier>bundle</classifier>
                   <type>zip</type>
                   <outputDirectory>${project.build.directory}/docs</outputDirectory>
@@ -171,26 +169,23 @@
     <dependency>
       <groupId>net.jcip</groupId>
       <artifactId>jcip-annotations</artifactId>
-      <version>1.0</version>
     </dependency>
 
     <dependency>
       <groupId>org.apache.ant</groupId>
       <artifactId>ant</artifactId>
-      <version>1.8.1</version>
     </dependency>
 
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.8.2</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.quattor.pan</groupId>
       <artifactId>panc-docs</artifactId>
-      <version>9.0.0-SNAPSHOT</version>
+      <version>${project.version}</version>
       <classifier>bundle</classifier>
       <type>zip</type>
       <scope>compile</scope>

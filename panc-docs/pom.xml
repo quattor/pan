@@ -75,6 +75,18 @@
           </execution>
 
           <execution>
+            <id>create-epub</id>
+            <goals>
+              <goal>generate-epub</goal>
+            </goals>
+            <configuration>
+              <!-- Any parameters specific to epub version go here -->
+              <epubAutolabel>true</epubAutolabel>
+            </configuration>
+            <phase>prepare-package</phase>
+          </execution>
+
+          <execution>
             <id>create-manpages</id>
             <goals>
               <goal>generate-manpages</goal>

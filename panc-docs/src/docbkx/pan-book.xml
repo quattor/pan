@@ -43,12 +43,26 @@
   <preface>
     <title>Preface</title>
 
-    <para></para>
+    <section>
+      <title>Organization</title>
+
+      <para>This book is intended to act as both a reference guide for the pan
+      configuration language as well as a tutorial on using the associated
+      compiler. The first chapter introduces the language and guides you
+      through a basic installation of the compiler. The following chapter
+      provides a simplified, real-world example to show the major features of
+      the pan language for site configuration. Chapters 3-8 provide a detailed
+      description of the pan language and act as a reference for it. Chapters
+      9-11 provide information about advanced features and best practices when
+      using the language. Finally, Chapter 12 gives some information about
+      troubleshooting problems that can arise when using the compiler and
+      language. The appendices provide detailed information on installing and
+      using the compiler in various environments as well as detailed
+      information on the pan commands and functions.</para>
+    </section>
 
     <section>
       <title>Typographic Conventions</title>
-
-      <para></para>
 
       <table>
         <title>Typographic Conventions</title>
@@ -86,31 +100,25 @@
         </tgroup>
       </table>
     </section>
-
-    <section>
-      <title>Organization</title>
-
-      <para></para>
-    </section>
   </preface>
 
   <chapter>
-    <title>Introduction</title>
+    <title>Getting Started</title>
 
-    <para></para>
+    <para>The pan configuration language allows system administrators to
+    define simultaneously a site configuration and a schema for validation. As
+    a core component of the Quattor fabric management toolkit, the pan
+    compiler translates this high-level site configuration to a
+    machine-readable representation, which other tools can then use to enact
+    the desired configuration changes.</para>
 
     <section>
-      <title>Purpose of the Pan Compiler</title>
+      <title>Configuration Language</title>
 
-      <para>The pan compiler is a critical component of the quattor fabric
-      management toolkit that translates a high-level site configuration
-      written by a system administrator in the pan configuration language to a
-      machine-readable representation. The pan configuration language allows a
-      system administrator to define simultaneously both a site configuration
-      and a schema for validation. One advantage the pan language has over,
-      for example, XML and XMLSchema is that it is declarative language with a
-      simple, human-friendly syntax. In addition, the typing features of the
-      pan language allow more rigorous validation than XMLSchema.</para>
+      <para>The pan language was designed to have a simple, human-friendly
+      syntax. In addition, it allows more rigorous validation via its flexible
+      data typing features when compared to, for instance, XML and
+      XMLSchema.</para>
 
       <para>The name "compiler" is actually a misnomer, as the pan compiler
       does much more than a simple compilation. The processing progresses
@@ -130,11 +138,10 @@
           <term>execution</term>
 
           <listitem>
-            <para>The statements in each object template are executed to
-            generate a partial tree of configuration information. The object
-            template usually includes many other templates during the course
-            of execution. The generated tree contains all configuration
-            information directly specified by the system administrator.</para>
+            <para>The statements the templates are executed to generate a
+            partial tree of configuration information. The generated tree
+            contains all configuration information directly specified by the
+            system administrator.</para>
           </listitem>
         </varlistentry>
 
@@ -143,9 +150,9 @@
 
           <listitem>
             <para>A pass is made through the tree of configuration information
-            during which default values (if specified) are inserted for
-            missing elements. The tree of configuration information is
-            complete after this stage.</para>
+            during which any default values are inserted for missing elements.
+            The tree of configuration information is complete after this
+            stage.</para>
           </listitem>
         </varlistentry>
 
@@ -153,12 +160,9 @@
           <term>validation</term>
 
           <listitem>
-            <para>The configuration information is frozen and all of the
-            user-specified validation is run. (This is actually implemented as
-            two separate validation passes to allow circular validation
-            dependencies between machines.) Any invalid values or conditions
-            will cause the processing to abort. If this stage finishes, then
-            the configuration information is complete and validated.</para>
+            <para>The configuration information is frozen and all standard and
+            user-specified validation is done. Any invalid values or
+            conditions will cause the processing to abort.</para>
           </listitem>
         </varlistentry>
 
@@ -174,29 +178,47 @@
       </variablelist>
 
       <para>The pan compiler runs through these stages for each "object"
-      template. An "object" template is a special template that indicates a
-      configuration tree that should be serialized; usually there is one
-      object template for each physical machine. (Although with the rise of
-      virtualization, it may be one per logical machine.)</para>
-    </section>
-
-    <section>
-      <title>Configuration Language</title>
-
-      <para></para>
+      template. Usually there is one object template for each physical
+      machine; although with the rise of virtualization, it may be one per
+      logical machine.</para>
     </section>
 
     <section>
       <title>Benefits</title>
 
-      <para></para>
+      <para>Using the pan language and compiler has the following
+      benefits:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Declarative language allows easier merging of configurations
+          from different administrators.</para>
+        </listitem>
+
+        <listitem>
+          <para>Encourages organization of configuration by service and
+          function to allow sharing of configurations between machines and
+          sites.</para>
+        </listitem>
+
+        <listitem>
+          <para>Provides simple syntax for definition of configuration
+          information and validation.</para>
+        </listitem>
+
+        <listitem>
+          <para>Ensures a high-level of validation before configurations are
+          deployed, avoiding interruptions in services and wasted time from
+          recovery.</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>The language and compiler are intended to be used with other tools
+      that manage the full set of configuration files and that can affect the
+      changes necessary to arrive at the desired configuration. The Quattor
+      toolkit provides such tools, although the compiler can be easily used in
+      conjunction with others.</para>
     </section>
-  </chapter>
-
-  <chapter>
-    <title>Quick Start</title>
-
-    <para></para>
 
     <section>
       <title>Download and Installation</title>
@@ -206,14 +228,15 @@
       command line interface. (See Appendix A for installation instructions
       for all the execution methods.) Locate and download the latest version
       of the pan tarball and untar this into a convenient directory. You can
-      find the packaged versions of the compiler in SourceForge.</para>
+      find the packaged versions of the compiler in the Quattor project space
+      on SourceForge.</para>
 
       <para>The pan compiler requires a Java Runtime Environment (JRE) or Java
-      Development Kit (JDK) 1.5 or later. If you will just be running the pan
-      compiler, the JRE is sufficient; compiling the sources will require the
-      JDK. Use a complete, certified version of the Java Virtual Machine; in
-      particular avoid the Gnu Java Compiler (GJC) as the pan compiler will
-      not run correctly with it.</para>
+      Development Kit (JDK) 1.5 or later. If you will just be running a binary
+      version of the pan compiler, the JRE is sufficient; compiling the
+      sources will require the JDK. Use a complete, certified version of the
+      Java Virtual Machine; in particular avoid the GNU Java Compiler (GJC) as
+      the pan compiler will not run correctly with it.</para>
 
       <para>To use the compiler from the command line, you must make it
       accessible from the path.</para>
@@ -227,7 +250,7 @@ $ export PATH=$PATH:$PANC_HOME/bin</screen>
     </section>
 
     <section>
-      <title>Validating Installation</title>
+      <title>Validating the Installation</title>
 
       <para>Once you have installed the compiler, make sure that it is working
       correctly by using the commands:</para>
@@ -243,14 +266,14 @@ $ panc --help</screen>
     <section>
       <title>Invoking the Pan Compiler</title>
 
-      <para>Now create a file named <filename>hello_world.pan</filename> that
-      contains the following:</para>
+      <para>Now create a file (called a "template") named
+      <filename>hello_world.pan</filename> that contains the following:</para>
 
       <programlisting>object template hello_world;
 '/message' = 'Hello World!';</programlisting>
 
-      <para>Now compile this profile into the default XML representation and
-      look at the output.</para>
+      <para>Compile this template into the default XML representation and look
+      at the output.</para>
 
       <screen>$ panc hello_world.pan
 
@@ -266,8 +289,8 @@ $ cat hello_world.xml
       <type>string</type> child, named "message". The value of the "message"
       is "Hello World!". If the output format is not specified, the default is
       the "pan" XML style shown above, in which the element names are the pan
-      primitive types and the name attribute gives the associated name of the
-      element in the pan template.</para>
+      primitive types and the name attribute corresponds to the name of the
+      field in the pan template.</para>
 
       <para>The pan compiler can generate output in three additional formats:
       xmldb, text, and dot. The xmldb format is a format in which the pan
@@ -288,9 +311,9 @@ $ cat hello.xml
       use for a particular element is very close (but not identical) to the
       pan language path.</para>
 
-      <para>For this tutorial, the most convenient representation will the the
-      text format. This provides a clean representation of the configuration
-      tree on a terminal.</para>
+      <para>In this book, the most convenient representation is the the text
+      format. This provides a clean representation of the configuration tree
+      in plain text.</para>
 
       <screen>$ panc --xml-style=text hello_world.pan
 
@@ -303,9 +326,7 @@ $ cat hello_world.txt
       <filename>hello_world.xml</filename>. It provides the same information
       as the XML formats, but is easier to read.</para>
 
-      <para>The last style is the "dot" format. This format produces an output
-      file that <link xlink:href="http://www.graphviz.org/">Graphviz</link>
-      can use to generate a graph of the configuration information.</para>
+      <para>The last style is the "dot" format.</para>
 
       <screen>$ panc --xml-style=dot hello_world.pan
 
@@ -320,10 +341,10 @@ edge [ color = black ]
 }</screen>
 
       <para>Although the text is not very enlightening by itself, it can be
-      used by Graphviz to generate a graph of the configuration. Processing
-      the above file with Graphviz produces the image shown in <xref
-      linkend="fig-hello" />. The images in the tutorial have been produced
-      with the dot output of the compiler.</para>
+      used by <link xlink:href="http://www.graphviz.org/">Graphviz</link> to
+      generate a graph of the configuration. Processing the above file with
+      Graphviz produces the image shown in <xref
+      linkend="fig-hello" />.</para>
 
       <figure xml:id="fig-hello">
         <title>Graph of configuration produced by
@@ -423,8 +444,11 @@ edge [ color = black ]
 
       <programlisting>object template server.example.org;
 
-'/batch/server/nodes/worker01.example.org/queues' = list('default');
-'/batch/server/nodes/worker01.example.org/capabilities' = list('sw-license', 'fast-network');
+'/batch/server/nodes/worker01.example.org/queues' 
+    = list('default');
+
+'/batch/server/nodes/worker01.example.org/capabilities' 
+    = list('sw-license', 'fast-network');
 
 '/batch/server/queues/default/maxCpuHours' = 1;
 '/batch/server/queues/default/enabled' = true;</programlisting>
@@ -455,24 +479,24 @@ edge [ color = black ]
       <filename>worker01.example.org.txt</filename>:</para>
 
       <screen>+-profile
-        +-batch
-                +-server
-                        +-nodes
-                                +-worker01.example.org
-                                        +-capabilities
-                                                $ 0 : (string) 'sw-license'
-                                                $ 1 : (string) 'fast-network'
-                                        +-queues
-                                                $ 0 : (string) 'default'
-                        +-queues
-                                +-default
-                                        $ maxCpuHours : (long) '1'</screen>
+  +-batch
+    +-server
+      +-nodes
+        +-worker01.example.org
+          +-capabilities
+            $ 0 : (string) 'sw-license'
+            $ 1 : (string) 'fast-network'
+          +-queues
+            $ 0 : (string) 'default'
+      +-queues
+        +-default
+          $ maxCpuHours : (long) '1'</screen>
 
       <screen>+-profile
-        +-batch
-                +-worker
-                        $ enabled : (boolean) 'true'
-                        $ server : (string) 'server.example.org'</screen>
+  +-batch
+    +-worker
+      $ enabled : (boolean) 'true'
+      $ server : (string) 'server.example.org'</screen>
 
       <para>These generated files (or more likely their equivalents in XML)
       can then be used by tools to actually configure the machines and batch
@@ -498,8 +522,11 @@ edge [ color = black ]
 
       <programlisting>template services/batch-server;
 
-'/batch/server/nodes/worker01.example.org/queues' = list('default');
-'/batch/server/nodes/worker01.example.org/capabilities' = list('sw-license', 'fast-network');
+'/batch/server/nodes/worker01.example.org/queues' 
+    = list('default');
+
+'/batch/server/nodes/worker01.example.org/capabilities' 
+    = list('sw-license', 'fast-network');
 
 '/batch/server/queues/default/maxCpuHours' = 1;
 '/batch/server/queues/default/enabled' = true;</programlisting>
@@ -658,8 +685,11 @@ include { 'services/batch-types' };
 
 bind '/batch/server' = batch_server;
 
-'/batch/server/nodes/worker01.example.org/queues' = list('default');
-'/batch/server/nodes/worker01.example.org/capabilities' = list('sw-license', 'fast-network');
+'/batch/server/nodes/worker01.example.org/queues' 
+    = list('default');
+
+'/batch/server/nodes/worker01.example.org/capabilities' 
+    = list('sw-license', 'fast-network');
 
 '/batch/server/queues/default/maxCpuHours' = 1;
 '/batch/server/queues/default/enabled' = true;</programlisting>
@@ -758,7 +788,8 @@ include { 'services/batch-types' };
 
 bind '/batch/server' = batch_server;
 
-'/batch/server/nodes/worker01.example.org/capabilities' = list('sw-license', 'fast-network');</programlisting>
+'/batch/server/nodes/worker01.example.org/capabilities' 
+    = list('sw-license', 'fast-network');</programlisting>
 
       <programlisting>template services/batch-worker;
 
@@ -826,7 +857,8 @@ function server_knows_about_me<co xml:id="function-server_knows_about_me" /> = {
   regex = '^profiles/(.*)$';
   if (match(OBJECT, regex)) {
     parts = matches(OBJECT, regex);
-    path = 'profiles/' + ARGV[0] + ':/batch/server/nodes/' + parts[1];
+    path = 'profiles/' + ARGV[0] + 
+             ':/batch/server/nodes/' + parts[1];
     if (!path_exists(path)) {
       error(path + ' doesn''t exist');
     };
@@ -837,7 +869,7 @@ function server_knows_about_me<co xml:id="function-server_knows_about_me" /> = {
 };
 
 function valid_server<co xml:id="function-valid_server" /> = {
-  return(server_exists(ARGV[0]) &amp;&amp; server_knows_about_me(ARGV[0]));
+  (server_exists(ARGV[0]) &amp;&amp; server_knows_about_me(ARGV[0]));
 };
 
 
@@ -846,7 +878,8 @@ type batch_capabilities = string[];
 type batch_queue_list = string[1..];
 
 type batch_node = {
-  'queues' : batch_queue_list = list('default') with valid_batch_queue_list(SELF)<co
+  'queues' : batch_queue_list = list('default') 
+               with valid_batch_queue_list(SELF)<co
           xml:id="validate-batch_queue_list" />
   'capabilities' ? batch_capabilities
 };
@@ -973,7 +1006,9 @@ bind '/batch/server' = batch_server;
 
 prefix '/batch/server/nodes';
 
-'worker01.example.org/capabilities' = list('sw-license', 'fast-network');
+'worker01.example.org/capabilities' 
+    = list('sw-license', 'fast-network');
+
 'worker02.example.org/capabilities' = list();</programlisting>
 
       <para>In this case, this saves us from having to duplicate the prefix
@@ -986,9 +1021,16 @@ prefix '/batch/server/nodes';
   </chapter>
 
   <chapter>
-    <title>Pan Language</title>
+    <title>Core Syntax</title>
 
-    <para></para>
+    <para>As you will have seen in the whirlwind tour, a complete site or
+    service configuration consists of a set of files called "templates". These
+    files are usually managed via a versioning system to track changes and to
+    permit reverting to an earlier state. The top-level syntax of the
+    templates is especially simple: a template declaration followed by a list
+    of statements that are executed in sequence. The compiler will serialize a
+    machine profile, usually in XML format, for each "object" template it
+    encounters. </para>
 
     <section>
       <title>Templates</title>
@@ -1004,13 +1046,14 @@ prefix '/batch/server/nodes';
 
         <para>The syntax of a template file is simple:</para>
 
-        <para><programlisting>[ object | declaration | unique | structure ] <literal>template</literal> <replaceable>template-name</replaceable>;
+        <para><programlisting>[ <replaceable>modifier</replaceable> ] <literal>template</literal> <replaceable>template-name</replaceable>;
 [ statement ... ]</programlisting></para>
 
-        <para>These files may contain comments that start with the hash sign
-        ('#') and terminate with the next new line or end of file. There are
-        five different types of templates that are identified by the template
-        modifier.</para>
+        <para>where the optional modifier is either <literal>object</literal>,
+        <literal>structure</literal>, <literal>unique</literal>, or
+        <literal>declaration</literal>. There are five different types of
+        templates that are identified by the template modifier; the four
+        listed above and an "ordinary" template that has no modifier.</para>
 
         <para>A template name is a series of substrings separated by slashes.
         Each substring may consist of letters, digits, underscores, hyphens,
@@ -1018,7 +1061,11 @@ prefix '/batch/server/nodes';
         period; the template name may not begin or end with a slash.</para>
 
         <para>Each template must reside in a separate file with the name
-        <filename><replaceable>template-name</replaceable>.pan</filename>.</para>
+        <filename><replaceable>template-name</replaceable>.pan</filename> with
+        any terms separated with slashes corresponding to subdirectories. For
+        example, a template with the name "service/batch/worker-23" must have
+        a file name of <filename>worker-23.pan</filename> and reside in a
+        subdirectory <filename>service/batch/</filename>. </para>
 
         <note>
           <para>The older file extension "tpl" is also accepted by the pan
@@ -1058,6 +1105,17 @@ prefix '/batch/server/nodes';
         </section>
 
         <section>
+          <title>Unique Templates</title>
+
+          <para>A template defined with the <literal>unique</literal> modifier
+          behaves like an ordinary template except that it will only be
+          included once for each processed object template. It has the same
+          restrictions as an ordinary template. It will be executed when the
+          first include statement referencing the template is
+          encountered.</para>
+        </section>
+
+        <section>
           <title>Declaration Templates</title>
 
           <para>A template declared with a <literal>declaration</literal>
@@ -1069,17 +1127,6 @@ prefix '/batch/server/nodes';
           only be executed once for each processed object template no matter
           how many times it is included. It will be executed when the first
           include statement referencing the template is encountered.</para>
-        </section>
-
-        <section>
-          <title>Unique Templates</title>
-
-          <para>A template defined with the <literal>unique</literal> modifier
-          behaves like an ordinary template except that it will only be
-          included once for each processed object template. It has the same
-          restrictions as an ordinary template. It will be executed when the
-          first include statement referencing the template is
-          encountered.</para>
         </section>
 
         <section>
@@ -1100,9 +1147,12 @@ prefix '/batch/server/nodes';
       <title>Comments</title>
 
       <para>These files may contain comments that start with the hash sign
-      ('#') and terminate with the next new line or end of file. There are
-      five different types of templates that are identified by the template
-      modifier.</para>
+      ('#') and terminate with the next new line or end of file. Comments may
+      occur anywhere in the file except in the middle of strings, where they
+      will be taken to be part of the string itself.</para>
+
+      <para>Whitespace in the template files is ignored except when it is used
+      to separate language tokens. </para>
     </section>
 
     <section>
@@ -1111,86 +1161,65 @@ prefix '/batch/server/nodes';
       <section>
         <title>Assignment</title>
 
-        <section>
-          <title>unconditional</title>
+        <para>Assignment statements are used to modify a part of the
+        configuration tree by replacing the subtree identified by its path by
+        the result of the execution a DML block. This result can be a single
+        property or a resource holding any number of elements. The
+        unconditional assignment is:</para>
 
-          <para>Assignment statements are used to modify a part of the
-          configuration tree by replacing the subtree identified by its path
-          by the result of the execution a DML block. This result can be a
-          single property or a resource holding any number of elements.</para>
+        <para><programlisting>[ final ] path = dml; </programlisting></para>
 
-          <para><programlisting>[ final ] path = dml; </programlisting></para>
+        <para>where the path is represented by a string literal. Single-quoted
+        strings are slightly more efficient, but double-quoted strings work as
+        well.</para>
 
-          <para>where the path is represented by a string literal.
-          Single-quoted strings are slightly more efficient, but double-quoted
-          strings work as well.</para>
+        <para>The assignment will create parents of the value that do not
+        already exist.</para>
 
-          <para>The assignment will create parents of the value that do not
-          already exist.</para>
+        <para>If a value already exists, the pan compiler will verify that the
+        new value has a compatible type. If not, it will terminate the
+        processing with an error.</para>
 
-          <para>If a value already exists, the pan compiler will verify that
-          the new value has a compatible type. If not, it will terminate the
-          processing with an error.</para>
+        <para>If the <literal>final</literal> modifier is used, then the path
+        and any children of that path may not be subsequently modified.
+        Attempts to do so will result in a fatal error.</para>
 
-          <para>If the <literal>final</literal> modifier is used, then the
-          path and any children of that path may not be subsequently modified.
-          Attempts to do so will result in a fatal error.</para>
-        </section>
+        <para>A conditional form of the assignment statement also
+        exists:</para>
 
-        <section>
-          <title>conditional</title>
+        <para><programlisting>[ final ] path ?= dml;</programlisting></para>
 
-          <para>Assignment statements are used to modify a part of the
-          configuration tree by replacing the subtree identified by its path
-          by the result of the execution a DML block. This result can be a
-          single property or a resource holding any number of elements.</para>
+        <para>where the path is again represented by a string literal. The
+        conditional form (?=) will only execute the DML block and assign a
+        value if the named path does not exist or contains the
+        <literal>undef</literal> value.</para>
+      </section>
 
-          <para><programlisting>[ final ] path ?= dml;</programlisting></para>
+      <section>
+        <title>Prefix</title>
 
-          <para>where the path is represented by a string literal.
-          Single-quoted strings are slightly more efficient, but double-quoted
-          strings work as well. The conditional form (?=) will only execute
-          the DML block and assign a value if the named path does not exist or
-          contains the <literal>undef</literal> value.</para>
+        <para>The <command>prefix</command> (pseudo-)statement provides an
+        absolute path used to resolve relative paths in assignment statements
+        that occur afterwards in the template. It has the form:</para>
 
-          <para>The assignment will create parents of the value that do not
-          already exist.</para>
+        <para><programlisting>prefix '/some/absolute/path';</programlisting></para>
 
-          <para>If a value already exists, the pan compiler will verify that
-          the new value has a compatible type. If not, it will terminate the
-          processing with an error.</para>
+        <para>The path must be an absolute path or an empty string. If the
+        empty string is given, no prefix is used for subsequent assignment
+        statements with relative paths. The <command>prefix</command>
+        statement can be used multiple times within a given template.</para>
 
-          <para>If the <literal>final</literal> modifier is used, then the
-          path and any children of that path may not be subsequently modified.
-          Attempts to do so will result in a fatal error.</para>
-        </section>
-
-        <section>
-          <title>prefix</title>
-
-          <para>The <command>prefix</command> statement provides an absolute
-          path used to resolve relative paths in assignment statements
-          occurring afterwards. It has the form:</para>
-
-          <para><programlisting>prefix '/some/absolute/path';</programlisting></para>
-
-          <para>The path must be an absolute path or an empty string. If the
-          empty string is given, no prefix is used for subsequent assignment
-          statements with relative paths. The prefix can be redefined within a
-          given template.</para>
-
-          <para><emphasis>This statement is evaluated at compile time and only
-          affects assignment statements in the same file as the
-          definition.</emphasis></para>
-        </section>
+        <para><emphasis>This statement is evaluated at compile time and only
+        affects assignment statements in the same file as the
+        definition.</emphasis></para>
       </section>
 
       <section>
         <title>Include</title>
 
         <para>The <command>include</command> statement acts as if the contents
-        of the named template were included literally at the point the include
-        statement is executed.</para>
+        of the named template were included literally at the point the
+        <command>include</command> statement is executed.</para>
 
         <para><programlisting>include dml;</programlisting></para>
 
@@ -1215,131 +1244,119 @@ prefix '/batch/server/nodes';
       </section>
 
       <section>
-        <title>Definition</title>
+        <title>Variable Definition</title>
 
-        <section>
-          <title>variable</title>
+        <para>Global variables can be defined via a
+        <command>variable</command> statement. These may be referenced from
+        any DML block after being defined. They may not be modified from a DML
+        block; they can only be modified from a <command>variable</command>
+        statement. Like the assignment statement there are conditional and
+        unconditional forms:</para>
 
-          <para>Global variables can be defined via a
-          <command>variable</command> statement. These may be referenced from
-          any DML block after being defined. They may not be modified from a
-          DML block; they can only be modified from a
-          <command>variable</command> statement. Like the assignment statement
-          there are conditional and unconditional forms:</para>
-
-          <programlisting>[ final ] variable identifier ?= dml;
+        <programlisting>[ final ] variable identifier ?= dml;
 [ final ] variable identifier = dml;</programlisting>
 
-          <para>For the conditional form, the DML block will only be evaluated
-          and the assignment done if the variable does not exist or has the
-          <literal>undef</literal> value.</para>
+        <para>For the conditional form, the DML block will only be evaluated
+        and the assignment done if the variable does not exist or has the
+        <literal>undef</literal> value.</para>
 
-          <para>If the <literal>final</literal> modifier is used, then the
-          variable may not be subsequently modified. Attempts to do so will
-          result in a fatal error.</para>
+        <para>If the <literal>final</literal> modifier is used, then the
+        variable may not be subsequently modified. Attempts to do so will
+        result in a fatal error.</para>
 
-          <para>Pan provides several automatic global variables:
-          <varname>OBJECT</varname>, <varname>SELF</varname>,
-          <varname>FUNCTION</varname>, <varname>TEMPLATE</varname>, and
-          <varname>LOADPATH</varname>. <varname>OBJECT</varname> contains the
-          name of the object template being evaluated; it is a final variable.
-          <varname>SELF</varname> is the current value of a path referred to
-          in an assignment or variable statement. The <varname>SELF</varname>
-          reference cannot be modified, but children of
-          <varname>SELF</varname> may be. <varname>FUNCTION</varname> contains
-          the name of the current function, if it exists.
-          <varname>FUNCTION</varname> is a final variable.
-          <varname>TEMPLATE</varname> contains the name of the template that
-          invoked the current DML block; it is a final variable.
-          <varname>LOADPATH</varname> can be used to modify the load path used
-          to locate template for the <command>include</command>
-          statement.</para>
+        <para>Pan provides several automatic global variables:
+        <varname>OBJECT</varname>, <varname>SELF</varname>,
+        <varname>FUNCTION</varname>, <varname>TEMPLATE</varname>, and
+        <varname>LOADPATH</varname>. <varname>OBJECT</varname> contains the
+        name of the object template being evaluated; it is a final variable.
+        <varname>SELF</varname> is the current value of a path referred to in
+        an assignment or variable statement. The <varname>SELF</varname>
+        reference cannot be modified, but children of <varname>SELF</varname>
+        may be. <varname>FUNCTION</varname> contains the name of the current
+        function, if it exists. <varname>FUNCTION</varname> is a final
+        variable. <varname>TEMPLATE</varname> contains the name of the
+        template that invoked the current DML block; it is a final variable.
+        <varname>LOADPATH</varname> can be used to modify the load path used
+        to locate template for the <command>include</command>
+        statement.</para>
 
-          <para>Any valid identifier may be used to name a global
-          variable.</para>
+        <para>Any valid identifier may be used to name a global
+        variable.</para>
 
-          <caution>
-            <para>Global and local variables share a common namespace. Best
-            practice dictates that global variables have names with all
-            uppercase letters and local variables have names with all
-            lowercase letters. This avoids conflicts and unexpected errors
-            when sharing configurations.</para>
-          </caution>
-        </section>
+        <caution>
+          <para>Global and local variables share a common namespace. Best
+          practice dictates that global variables have names with all
+          uppercase letters (e.g. <varname>MY_GLOBAL_VAR</varname>) and local
+          variables have names with all lowercase letters (e.g.
+          <varname>my_local_var</varname>). This avoids conflicts and
+          unexpected errors when sharing configurations.</para>
+        </caution>
+      </section>
 
-        <section>
-          <title>function</title>
+      <section>
+        <title>Function Definition</title>
 
-          <para>Functions can be defined by the user. These are arbitrary DML
-          blocks bound to an identifier. Once defined, functions can be called
-          from any subsequent DML block. Functions may only be defined once;
-          attempts to redefine an existing function will cause the compilation
-          to abort. The function definition syntax is:</para>
+        <para>Functions can be defined by the user. These are arbitrary DML
+        blocks bound to an identifier. Once defined, functions can be called
+        from any subsequent DML block. Functions may only be defined once;
+        attempts to redefine an existing function will cause the compilation
+        to abort. The function definition syntax is:</para>
 
-          <para><programlisting>function identifier = dml; </programlisting></para>
+        <para><programlisting>function identifier = dml; </programlisting></para>
 
-          <para>See the Function section for more information on user-defined
-          functions and a list of built-in functions.</para>
+        <para>See the Function section for more information on user-defined
+        functions and a list of built-in functions.</para>
 
-          <para>Note that the compiler keeps distinct function and type
-          namespaces. One can define a function and type with the same
-          names.</para>
-        </section>
+        <para>Note that the compiler keeps distinct function and type
+        namespaces. One can define a function and type with the same
+        names.</para>
+      </section>
 
-        <section>
-          <title>type</title>
+      <section>
+        <title>Type Definition</title>
 
-          <para>Type definitions are critical for the validation of the
-          generated machine profiles. Types can be built up from the primitive
-          pan types and arbitrary validation functions. New types can be
-          defined with</para>
+        <para>Type definitions are critical for the validation of the
+        generated machine profiles. Types can be built up from the primitive
+        pan types and arbitrary validation functions. New types can be defined
+        with</para>
 
-          <para><programlisting>type identifier = type-spec;</programlisting></para>
+        <para><programlisting>type identifier = type-spec;</programlisting></para>
 
-          <para>A type may be defined only once; attempts to redefine an
-          existing type will cause the compilation to abort. Types referenced
-          in the type-spec must already be defined. See the Type section for
-          more details on the syntax of the type specification.</para>
+        <para>A type may be defined only once; attempts to redefine an
+        existing type will cause the compilation to abort. Types referenced in
+        the type-spec must already be defined. See the Type section for more
+        details on the syntax of the type specification.</para>
 
-          <para>Note that the compiler keeps distinct function and type
-          namespaces. One can define a function and type with the same
-          names.</para>
-        </section>
+        <para>Note that the compiler keeps distinct function and type
+        namespaces. One can define a function and type with the same
+        names.</para>
       </section>
 
       <section>
         <title>Validation</title>
 
-        <section>
-          <title>bind</title>
+        <para>The <command>bind</command> statement binds a type definition to
+        a path. Multiple types may be bound to a single path. During the
+        validation phase, the value corresponding to the named path will be
+        checked against the bound types.</para>
 
-          <para>The <command>bind</command> statement binds a type definition
-          to a path. Multiple types may be bound to a single path. During the
-          validation phase, the value corresponding to the named path will be
-          checked against the bound types.</para>
+        <programlisting>bind path = type-spec;</programlisting>
 
-          <programlisting>bind path = type-spec;</programlisting>
+        <para>See the Type section for a complete description of the
+        <replaceable>type-spec</replaceable> syntax.</para>
 
-          <para>See the Type section for a complete description of the
-          <replaceable>type-spec</replaceable> syntax.</para>
-        </section>
+        <para>The <command>valid</command> statement binds a validation DML
+        block to a path. It has the form:</para>
 
-        <section>
-          <title>valid</title>
+        <para><programlisting>valid path = DML;</programlisting></para>
 
-          <para>The <command>valid</command> statement binds a validation DML
-          block to a path. It has the form:</para>
+        <para>This is a convenience statement and has exactly the same effect
+        as the statement:</para>
 
-          <para><programlisting>valid path = DML;</programlisting></para>
+        <para><programlisting>bind path = element with DML;</programlisting></para>
 
-          <para>This is a convenience statement and has exactly the same
-          effect as the statement:</para>
-
-          <para><programlisting>bind path = element with DML;</programlisting></para>
-
-          <para>The pan compiler internally implements this statement as the
-          <command>bind</command> statement above.</para>
-        </section>
+        <para>The pan compiler internally implements this statement as the
+        <command>bind</command> statement above.</para>
       </section>
     </section>
   </chapter>
@@ -1347,51 +1364,29 @@ prefix '/batch/server/nodes';
   <chapter>
     <title>Data Types</title>
 
+    <para>The data typing system forms the foundation of the validation
+    features of the pan language. All configuration elements are implicitly
+    typed based on values assigned to them. Types, once inferred, are enforced
+    by the compiler. </para>
+
     <section>
       <title>Type Hierarchy</title>
 
-      <para>There are five primitive, atomic types in the pan language:</para>
+      <para>There are four primitive, atomic types in the pan language:
+      boolean, long, double, and string. Additionally, there are three
+      string-like types: path, link, and regular expression. These appear in
+      special constructs and have additional validity constraints associated
+      with them. All of these atomic types are known as "properties".</para>
 
-      <itemizedlist>
-        <listitem>
-          <para>boolean</para>
-        </listitem>
+      <para>The language contains two types of collections: list and nlist.
+      The 'list' is an ordered list of elements, which uses the index (an
+      integer) as the key. The named list (nlist) associates a string key with
+      a value; these are also known as hashes or associative lists. These
+      collections are known as "resources".</para>
 
-        <listitem>
-          <para>long</para>
-        </listitem>
-
-        <listitem>
-          <para>double</para>
-        </listitem>
-
-        <listitem>
-          <para>string</para>
-        </listitem>
-
-        <listitem>
-          <para>link</para>
-        </listitem>
-      </itemizedlist>
-
-      <para>The "link" type appears as a string, but must be a valid path name
-      that exists at validation time. In addition, there are two primitive
-      collection types:</para>
-
-      <itemizedlist>
-        <listitem>
-          <para>list</para>
-        </listitem>
-
-        <listitem>
-          <para>nlist</para>
-        </listitem>
-      </itemizedlist>
-
-      <para>The 'list' is an ordered list of elements. The named list (nlist)
-      associates a string key with a value; these are also known as hashes or
-      associative lists. These seven comprise the primitive types in the pan
-      language.</para>
+      <para>The complete type hierarchy is shown in <xref
+      linkend="fig-types" />, including the two special types
+      <literal>undef</literal> and <literal>null</literal>. </para>
 
       <figure xml:id="fig-types">
         <title>Pan language type hierarchy</title>
@@ -1427,13 +1422,19 @@ prefix '/batch/server/nodes';
         One of the strengths of the pan language is to specify constraints on
         the values to detect problems before configurations are deployed to
         machines.</para>
+
+        <para>All of the elements in a configuration will have a concrete data
+        type assigned to them. Usually this is inferred from the configuration
+        itself. Once a concrete data type has been assigned to an element, the
+        compiler will enforce the data type, disallowing replacing a long
+        value with a string, for instance. More detailed validation must be
+        explicitly defined in the configuration (see Validation
+        chapter).</para>
       </section>
     </section>
 
     <section>
       <title>Properties and Primitive Types</title>
-
-      <para></para>
 
       <section>
         <title>Boolean Literals</title>
@@ -1507,7 +1508,8 @@ prefix '/batch/server/nodes';
 
         <programlisting>"foo" 
 "it’s a sentence" 
-"Java-style escapes: \t (tab) \r (carriage return) \n (newline) \b (backspace) \f (form feed)" 
+"Java-style escapes: \t (tab) \r (carriage return) \n (newline)" 
+"Java-style escapes: \b (backspace) \f (form feed)" 
 "Hexadecimal escapes: \x3d (=) \x00 (NULL byte) \x0A (newline)" 
 "Miscellaneous escapes: \" (double quote) \\ (backslash)" 
 "this string spans two lines and\
@@ -1533,12 +1535,15 @@ EOT</programlisting>
         following example:</para>
 
         <programlisting>'/system/binary/stuff' = base64_decode(&lt;&lt;EOT); 
-H4sIAOwLyDwAA02PQQ7DMAgE731FX9BT1f8QZ52iYhthEiW/r2SitCdmxCK0E3W8no+36n2G 
-8UbOrYYWGROCgurBe4JeCexI2ahgWF5rulaLtImkDxbucS0tcc3t5GXMAqeZnIYo+TvAmsL8 
-GGLobbUUX7pT+pxkXJc/5Bx5p0ki7Cgq5KccGrCR8PzruUfP2xfJgVqHCgEAAA== 
+H4sIAOwLyDwAA02PQQ7DMAgE731FX9BT1f8Q
+Z52iYhthEiW/r2SitCdmxCK0E3W8no+36n2G 
+8UbOrYYWGROCgurBe4JeCexI2ahgWF5rulaL
+tImkDxbucS0tcc3t5GXMAqeZnIYo+TvAmsL8 
+GGLobbUUX7pT+pxkXJc/5Bx5p0ki7Cgq5Kcc
+GrCR8PzruUfP2xfJgVqHCgEAAA== 
 EOT</programlisting>
 
-        <para>The <function>base64_decode()</function> function is one of the
+        <para>The <function>base64_decode</function> function is one of the
         built-in pan functions.</para>
       </section>
     </section>
@@ -1546,29 +1551,8 @@ EOT</programlisting>
     <section>
       <title>String-Like Types</title>
 
-      <para></para>
-
       <section>
-        <title>Links</title>
-
-        <para></para>
-      </section>
-
-      <section>
-        <title>Regular Expressions</title>
-
-        <para>Regular expressions are written as a standard pan string
-        literals. The regular expression syntax is compatible with the Perl
-        regular expression syntax. (The actual implementation exposes the java
-        regular expression syntax, which is largely compatible with the Perl
-        syntax.) Because certain characters have a special meaning in pan
-        double quoted strings, characters like backslashes will need to be
-        escaped. It is preferable to use single-quoted strings for regular
-        expression literals.</para>
-      </section>
-
-      <section xml:id="section-path-literals">
-        <title>Paths</title>
+        <title>Path</title>
 
         <para>Pan paths are represented as string literals; either of the
         standard quoted forms for a string literal can be used to represent a
@@ -1608,26 +1592,32 @@ EOT</programlisting>
         <para>The second term is equivalent to
         <function>escape</function>('a/b').</para>
       </section>
-    </section>
 
-    <section>
-      <title>Special Types</title>
+      <section>
+        <title>Link</title>
 
-      <bridgehead>undef</bridgehead>
+        <para>A property can hold a reference to another element; this is
+        known as a link. The value of the link is the absolute path of the
+        referenced element. A property explicitly declared to be a link will
+        be validated to ensure that 1) it represents a valid absolute path and
+        2) that the given path exists in the final configuration.</para>
+      </section>
 
-      <para>The undef literal can be used to represent the undefined element,
-      i.e. an element which is neither a property nor a resource.</para>
+      <section>
+        <title>Regular Expression</title>
 
-      <para>The undefined element cannot be written to a final machine profile
-      and most built-in functions will report a fatal error when processing
-      it. It can be used to mark an element that must be overwritten during
-      the processing.</para>
+        <para>Regular expressions are written as a standard pan string
+        literals. The implementation exposes the Java regular expression
+        syntax, which is largely compatible with the Perl regular expression
+        syntax. Because certain characters have a special meaning in pan
+        double quoted strings, characters like backslashes will need to be
+        escaped; consequently, it is preferable to use single-quoted strings
+        for regular expression literals.</para>
 
-      <bridgehead>null</bridgehead>
-
-      <para>The null value deletes the path or global variable to which it is
-      assigned. Most operations and functions will report an error if this
-      value is processed directly.</para>
+        <para>When the compiler can infer that a string literal must be a
+        regular expression, it will validate the regular expression at compile
+        time, failing when an invalid regular expression is provided. </para>
+      </section>
     </section>
 
     <section>
@@ -1667,35 +1657,69 @@ EOT</programlisting>
       The names of children in an nlist must begin with a letter or
       underscore.</para>
     </section>
+
+    <section>
+      <title>Special Types</title>
+
+      <para>The pan language contains two special types:
+      <literal>undef</literal> and <literal>null</literal>.</para>
+
+      <para>The <literal>undef</literal> literal can be used to represent the
+      undefined element, i.e. an element which is neither a property nor a
+      resource. The undefined element cannot be written to a final machine
+      profile and most built-in functions will report a fatal error when
+      processing it. It can be used to mark an element that must be
+      overwritten during the processing.</para>
+
+      <para>The <literal>null</literal> value deletes the path or global
+      variable to which it is assigned. Most operations and functions will
+      report an error if this value is processed directly.</para>
+    </section>
   </chapter>
 
   <chapter>
     <title>Data Manipulation Language (DML)</title>
 
-    <para></para>
+    <para>Any non-trivial configuration will need to have some values that are
+    calculated. The Data Manipulation Language (DML), a subset of the full pan
+    configuration language, fulfills this role. This subset has the features
+    of many imperative programming languages, but can
+    <emphasis>only</emphasis> be used on the right-hand side of a statement,
+    that is, to calculate a value. </para>
+
+    <section>
+      <title>DML Syntax</title>
+
+      <para>A DML block consists of one or more statements separated by
+      semicolons. The block must be delimited by braces if there is more than
+      one statement. The value of the block is the value of the last statement
+      executed within the block. <emphasis>All</emphasis> DML statements
+      return a value, even flow control statements like <literal>if</literal>
+      and <literal>foreach</literal>. </para>
+    </section>
 
     <section>
       <title>Variables</title>
 
-      <para>To ease data handling, you can use variables in any DML
-      expression. They are by default lexically scoped to the
-      <emphasis>outermost</emphasis> enclosing DML expression. They do not
-      need to be declared before they are used. The local variables are
-      destroyed once the outermost enclosing DML block terminates.</para>
+      <para>To ease data handling, you can use local variables in any DML
+      expression. They are scoped to the <emphasis>outermost</emphasis>
+      enclosing DML expression. They do not need to be declared before they
+      are used. The local variables are destroyed once the outermost enclosing
+      DML block terminates.</para>
 
       <para>As a first approximation, variables work the way you expect them
       to work. They can contain properties and resources and you can easily
       access resource children using square brackets:</para>
 
-      <programlisting># populate /table which is a nlist 
+      <programlisting># populate /table which is an nlist 
 ’/table/red’ = ’rouge’; 
 ’/table/green’ = ’vert’; 
 
 ’/test’ = { 
   x = list(’a’, ’b’, ’c’); # x is a list 
   y = value(’/table’);     # y is a nlist 
-  z = x[1] + y[’red’];     # z is a string 
-  return(length(z));       # this will be 6 
+  z = x[1] + y[’red’];     # z is a string ('arouge')
+  length(z);               # this will be 6 
 };</programlisting>
 
       <para>Local variables are subject to primitive type checking. So the
@@ -1708,17 +1732,21 @@ EOT</programlisting>
       modified from within the block; attempting to do so will abort the
       execution.</para>
 
-      <para>Global and local variables share the same namespace. Consequently,
-      there may be unintended naming conflicts between them. The best practice
-      to avoid this, is to name all local variables with all lowercase letters
-      and all global variables with all uppercase letters.</para>
+      <caution>
+        <para>Global and local variables share the same namespace.
+        Consequently, there may be unintended naming conflicts between them.
+        The best practice to avoid this is to name all local variables with
+        all lowercase letters (e.g. <varname>my_local_var</varname>) and all
+        global variables with all uppercase letters (e.g.
+        <varname>MY_GLOBAL_VAR</varname>).</para>
+      </caution>
     </section>
 
     <section>
       <title>Operators</title>
 
       <para>The operators available in the pan Data Manipulation Language
-      (DML) are very similar to those in the java or c languages. The
+      (DML) are very similar to those in the Java or c languages. The
       following tables summarize the DML operators. The valid primitive types
       for each operator are indicated. Those marked with "number" will take
       either long or double arguments. In the case of binary operators, the
@@ -2034,23 +2062,26 @@ EOT</programlisting>
       over an entire resource (<type>list</type> or
       <type>nlist</type>).</para>
 
-      <para>These statements, like all DML statements, return a value. Be
-      careful of this, because unexecuted blocks generally will return
-      <literal>undef</literal>, which may lead to unexpected behavior.</para>
+      <caution>
+        <para>These statements, like all DML statements, return a value. Be
+        careful of this, because unexecuted blocks generally will return
+        <literal>undef</literal>, which may lead to unexpected
+        behavior.</para>
+      </caution>
 
       <section>
         <title>Branching (<literal>if</literal> statement)</title>
 
-        <para>The <literal>if</literal> statement allows conditional execution
-        of a DML block. The statement may include an <literal>else</literal>
-        clause that will be executed if the condition is
-        <literal>false</literal>. The syntax is:</para>
+        <para>The <literal>if</literal> statement allows the conditional
+        execution of a DML block. The statement may include an
+        <literal>else</literal> clause that will be executed if the condition
+        is <literal>false</literal>. The syntax is:</para>
 
         <programlisting>if ( condition-dml ) true-dml;
 if ( condition-dml ) true-dml else false-dml;</programlisting>
 
         <para>where all of the blocks may either be a single DML statement or
-        a true DML block.</para>
+        a multi-statement DML block.</para>
 
         <para>The value returned by this statement is the value returned by
         the <replaceable>true-dml</replaceable> or
@@ -2076,9 +2107,9 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
         <replaceable>body-dml</replaceable> block is never executed, then
         <literal>undef</literal> is returned.</para>
 
-        <para>The pan language also contains a for statement that in many
-        cases provides a more concise syntax for many types of loops. The
-        syntax is:</para>
+        <para>The pan language also contains a <literal>for</literal>
+        statement that in many cases provides a more concise syntax for many
+        types of loops. The syntax is:</para>
 
         <programlisting>for (initialization-dml; condition-dml; increment-dml) body-dml;</programlisting>
 
@@ -2094,9 +2125,10 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
         must be present, but those not of interest can be defined as just
         <literal>undef</literal>.</para>
 
-        <para>Note that the compiler usually enforces an iteration limit to
-        avoid infinite loops. Loops exceeding the iteration limit will cause
-        the compiler to abort the execution.</para>
+        <para>Note that the compiler enforces an iteration limit to avoid
+        infinite loops. Loops exceeding the iteration limit will cause the
+        compiler to abort the execution. The value of this limit can be set
+        via a compiler option.</para>
       </section>
 
       <section>
@@ -2107,18 +2139,19 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
 
         <programlisting>foreach (key; value; resource) body-dml;</programlisting>
 
-        <para>This will cause the body-dml to be executed once for each
-        element in resource (a list or nlist). The local variables
-        <varname>key</varname> and <varname>value</varname> (you can choose
-        these names) will be set at each iteration to the key and value of the
-        element. For a list, the <varname>key</varname> is the element's
-        index. The iteration will always occur in the natural order of the
-        resource: ordinal order for lists and lexical order of the keys for
-        nlists.</para>
+        <para>This will cause the <replaceable>body-dml</replaceable> to be
+        executed once for each element in resource (a list or nlist). The
+        local variables <varname>key</varname> and <varname>value</varname>
+        (you can choose these names) will be set at each iteration to the key
+        and value of the element. For a list, the <varname>key</varname> is
+        the element's index. The iteration will always occur in the natural
+        order of the resource: ordinal order for lists and lexical order of
+        the keys for nlists.</para>
 
         <para>The value returned will be that of the last iteration of the
-        body-dml. If the body-dml is never executed (for an empty list or
-        nlist), <literal>undef</literal> will be returned.</para>
+        <replaceable>body-dml</replaceable>. If the
+        <replaceable>body-dml</replaceable> is never executed (for an empty
+        list or nlist), <literal>undef</literal> will be returned.</para>
 
         <para>The <command>foreach</command> statement is not subject to the
         compiler's iteration limit. By definition, the resource has a finite
@@ -2135,10 +2168,21 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
   <chapter>
     <title>Functions</title>
 
-    <para></para>
+    <para>The pan configuration has a rich set of build-in functions for
+    manipulating elements and for debugging. In addition, user-defined
+    functions can be specified, which are often used to make configurations
+    more modular and maintainable. </para>
 
     <section>
       <title>Built-In Functions</title>
+
+      <para>Built-in functions are actually treated as operators within the
+      DML language. Because of this, they are highly optimized and often
+      process their arguments specially. In all cases, users should prefer
+      built-in functions to user-defined functions when possible. The
+      following tables describe all of the build-in functions; refer to the
+      appendix to see the arguments and other detailed information about the
+      functions.</para>
 
       <table>
         <title>String Manipulation Functions</title>
@@ -2645,10 +2689,10 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
       function will cause the execution to be aborted. The syntax for defining
       a function is:</para>
 
-      <programlisting>function identifier = DML;</programlisting>
+      <programlisting>function <replaceable>identifier</replaceable> = DML;</programlisting>
 
-      <para>where identifier is a valid pan identifier and DML is the block to
-      bind to this identifier.</para>
+      <para>where <replaceable>identifier</replaceable> is a valid pan
+      identifier and DML is the block to bind to it.</para>
 
       <para>When the function is called, the DML will have the variables
       <varname>ARGC</varname> and <varname>ARGV</varname> defined. The
@@ -2666,15 +2710,17 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
       null value deletes the nonexistent element
       <varname>ARGV[0]</varname>.</para>
 
-      <para>The pan language does not automatically check the number or types
-      of arguments. The DML block that defines the function must make all of
-      these checks explicitly and use the <function>error</function> function
-      to emit an informative message in case of an error.</para>
+      <para>The pan language does <emphasis>not</emphasis> check the number or
+      types of arguments automatically. The DML block that defines the
+      function must make all of these checks explicitly and use the
+      <function>error</function> function to emit an informative message in
+      case of an error.</para>
 
       <para>Recursive calls to a function are permitted. However, the call
       depth is limited (by an option when the compiler is invoked) to avoid
-      infinite recursion. Typically, the maximum is a small number like
-      10.</para>
+      infinite recursion. Typically, the maximum is a small number like 10.
+      Recursion is expensive within the pan language and should be avoided if
+      possible.</para>
 
       <para>The following example defines a function that checks if the number
       of arguments is even and are all numbers:</para>
@@ -2690,6 +2736,8 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
       error('non-numeric argument found');
     };
   };
+
+  'ok';
 
 };</programlisting>
     </section>
@@ -2707,50 +2755,62 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
     makes up for the time wasted debugging a bad configuration that has been
     deployed.</para>
 
-    <para>Simple validation through the validation of primitive properties and
-    simple resources has already been covered when discussing the pan type
-    definition features. This chapter deals with more complicated
-    scenarios.</para>
+    <section>
+      <title>Forcing Validation</title>
 
-    <para>The following statement will bind an existing type definition
-    (either a built-in definition or a user-defined one) to a path in a
-    machine configuration:</para>
+      <para>Simple validation through the validation of primitive properties
+      and simple resources has already been covered when discussing the pan
+      type definition features. This chapter deals with more complicated
+      scenarios.</para>
 
-    <programlisting>bind path = type-spec;</programlisting>
+      <para>The following statement will bind an existing type definition
+      (either a built-in definition or a user-defined one) to a path in a
+      machine configuration:</para>
 
-    <para>where 'path' is a valid path name and
-    <replaceable>type-spec</replaceable> is either a type specification or
-    name of an existing type.</para>
+      <programlisting>bind <replaceable>path</replaceable> = <replaceable>type-spec</replaceable>;</programlisting>
 
-    <para>Full type specifications are of the form:</para>
+      <para>where <replaceable>path</replaceable> is a valid path name and
+      <replaceable>type-spec</replaceable> is either a type specification or
+      name of an existing type.</para>
 
-    <para><programlisting>identifier = constant <literal>with</literal> validation-dml</programlisting></para>
+      <para>Full type specifications are of the form:</para>
 
-    <para>where 'constant' is a DML block that evaluates to a compile-time
-    constant (the default value), and the 'validation-dml' is a DML block that
-    will be run to validate paths associated with this type. Both the default
-    value and validation block are optional. The identifier can be any legal
-    name with an optional array specifier and/or range afterwards. For
-    example, an array of 5 elements is written int[5] or a string of length 5
-    to 10 characters string(5..10).</para>
+      <para><programlisting><replaceable>identifier</replaceable> = <replaceable>constant</replaceable> <literal>with</literal> <replaceable>validation-dml</replaceable></programlisting></para>
+
+      <para>where <replaceable>constant</replaceable> is a DML block that
+      evaluates to a compile-time constant (the default value), and the
+      <replaceable>validation-dml</replaceable> is a DML block that will be
+      run to validate paths associated with this type. Both the default value
+      and validation block are optional. The
+      <replaceable>identifier</replaceable> can be any legal name with an
+      optional array specifier and/or range afterwards. For example, an array
+      of 5 elements is written int[5] or a string of length 5 to 10 characters
+      string(5..10).</para>
+    </section>
 
     <section>
       <title>Implicit Typing</title>
 
-      <para>If you worked through the exercises of the previous section, you
-      will have discovered that although you have an intuitive idea of what
-      type a particular path should contain (e.g.
+      <para>If you worked through the previous chapters, you will have
+      discovered that although you have an intuitive idea of what type a
+      particular path should contain (e.g.
       <literal>/hardware/cpu/number</literal> should be positive long), the
-      pan compiler does not. Downstream tools to configure a machine will
-      likely expect certain values to have certain types and will produce
-      errors or erroneous configurations if the correct type is not used. One
-      of the strengths of the pan language is to specify constraints on the
-      values to detect problems before configurations are deployed to
-      machines.</para>
+      pan compiler does not. The compiler will infer an element's data type
+      from the first value assigned to it. From then on it will enforce that
+      type, raising an error if, for instance, a double is replaced by a
+      string. If necessary, the implicit type can be removed from an element
+      by assigning it to <literal>undef</literal> before changing the
+      value.</para>
     </section>
 
     <section>
       <title>Binding Primitive Types to Paths</title>
+
+      <para>Downstream machine configuration tools will likely expect
+      parameters to have certain types, producing errors or erroneous
+      configurations if the correct type is not used. One of the strengths of
+      the pan language is to specify explicit constraints on the element to
+      detect problems before configurations are deployed to machines.</para>
 
       <para>At the most basic level, a system administrator can tell the pan
       compiler that a particular element must be a particular type. This is
@@ -2780,9 +2840,9 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
       The endpoint values must be long literal values. A range specified as a
       single value indicates an exact match (e.g. <literal>3</literal> is
       short-hand for <literal>3..3</literal>). A range can be applied to a
-      <type>long</type>, <type>double</type>, or <type>string</type> value.
-      For strings, the range is applied to the length of the string. A range
-      cannot be applied to <type>boolean</type> values.</para>
+      <type>long</type>, <type>double</type>, or <type>string</type> type
+      definition. For strings, the range is applied to the length of the
+      string.</para>
     </section>
 
     <section>
@@ -2792,10 +2852,10 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
       with optional validation functions. The general format for creating a
       new type is:</para>
 
-      <programlisting>type identifier = type-spec;</programlisting>
+      <programlisting>type <replaceable>identifier</replaceable> = <replaceable>type-spec</replaceable>;</programlisting>
 
-      <para>where the general form for a type specification 'type-spec' is
-      given above.</para>
+      <para>where the general form for a type specification
+      <replaceable>type-spec</replaceable> is given above.</para>
 
       <para>Probably the easiest way to understand the type definitions is by
       example. The following are "alias" types that associate a new name with
@@ -2828,8 +2888,8 @@ type small_even_nlist = small_even{};</programlisting>
       easily as the built-in primitive types.</para>
 
       <para>A record is an nlist that explicitly names and types its children.
-      A record is by far, the most used type definition. For example, the type
-      definition:</para>
+      A record is by far, the most frequently encountered type definition. For
+      example, the type definition:</para>
 
       <programlisting>type cpu = {
   'vendor' : string
@@ -2839,10 +2899,10 @@ type small_even_nlist = small_even{};</programlisting>
 };</programlisting>
 
       <para>defines an nlist with four children named 'vendor', 'model', etc.
-      The first three use a colon (":") in the definition and are consequently
-      required; the last uses a question mark ("?") and is optional. As
-      defined, no other children may appear in nlists of this type. However,
-      one can make the record extensible with:</para>
+      The first three fields use a colon (":") in the definition and are
+      consequently required fields; the last uses a question mark ("?") and is
+      optional. As defined, no other children may appear in nlists of this
+      type. However, one can make the record extensible with:</para>
 
       <programlisting>type cpu = extensible {
   'vendor' : string
@@ -2862,16 +2922,16 @@ type small_even_nlist = small_even{};</programlisting>
     <section>
       <title>Default Values</title>
 
-      <para>Looking again at the nfsserver.example.org configuration, there
-      are a couple of places where we could hope to use default values. The
-      <literal>pxeboot</literal> and <literal>boot</literal> flags in the
-      <type>nic</type> and <type>disk</type> type definitions could use
-      default values. In both cases, at most one value will be set to
-      <literal>true</literal>; all other values will be set to
-      <literal>false</literal>. Another place one might want to use default
-      values is in the <type>cpu</type> type; perhaps we would like to have
-      <literal>number</literal> and <literal>cores</literal> both default to 1
-      if not specified.</para>
+      <para>Looking again at the <filename>nfsserver.example.org</filename>
+      configuration, there are a couple of places where we could hope to use
+      default values. The <literal>pxeboot</literal> and
+      <literal>boot</literal> flags in the <type>nic</type> and
+      <type>disk</type> type definitions could use default values. In both
+      cases, at most one value will be set to <literal>true</literal>; all
+      other values will be set to <literal>false</literal>. Another place one
+      might want to use default values is in the <type>cpu</type> type;
+      perhaps we would like to have <literal>number</literal> and
+      <literal>cores</literal> both default to 1 if not specified.</para>
 
       <para>Pan allows type definitions to contain default values. For
       example, to change the three type definitions mentioned above:</para>
@@ -2911,12 +2971,6 @@ type disk = {
     </section>
 
     <section>
-      <title>Validation Functions</title>
-
-      <para></para>
-    </section>
-
-    <section>
       <title>Advanced Parameter Validation</title>
 
       <para>Often there are cases where the legal values of a parameter cannot
@@ -2926,7 +2980,10 @@ type disk = {
       the following examples:</para>
 
       <programlisting>type even_positive_long = long(1..) with (SELF % 2 == 0);
-type machine_state_enum = string with match(SELF, 'open|closed|drain');
+
+type machine_state_enum = string 
+    with match(SELF, 'open|closed|drain');
+
 type ip = string with is_ipv4(SELF);</programlisting>
 
       <para>The validation code must return the boolean value
@@ -2938,8 +2995,26 @@ type ip = string with is_ipv4(SELF);</programlisting>
       <para>Simple constraints are often written directly with the type
       statement; more complicated validation usually calls a separate
       function. The third line in the example above calls the function
-      <function>is_ipv4</function>. This is a user-defined function that could
-      look like:</para>
+      <function>is_ipv4</function>, which was defined in the next
+      section.</para>
+    </section>
+
+    <section>
+      <title>Validation Functions</title>
+
+      <para>To simplify type definitions, validation functions are often
+      defined. These are user-defined functions defined using the standard
+      <command>function</command> statement. They can be referenced within a
+      type definition just as they would be in any DML block. However,
+      validation functions <emphasis>must</emphasis> return a boolean value or
+      raise an error with the <function>error</function> function. A
+      validation function that returns a non-boolean value will abort the
+      compilation. Similarly, a validation function that returns
+      <literal>false</literal> will raise an error indicating that the value
+      for the tested element is invalid.</para>
+
+      <para>A validation function that checks that a value is a valid IPv4
+      address could look like:</para>
 
       <programlisting>function is_ipv4 = {
   terms = split('\.', ARGV[0]);
@@ -3029,7 +3104,8 @@ type component = extensible {
       foreach (index; dependency; component['pre']) {
         if (!exists(SELF['dependency']['active'] ||
              SELF['dependency']['active'])) {
-          error('non-existant or inactive dependency: ' + dependency);
+          error('non-existant or inactive dependency: ' 
+                  + dependency);
         };
       };
     };
@@ -3100,7 +3176,7 @@ function valid_export = {
   found;
 };
 
-# Type that defines path and authorized host for NFS server export.
+# Defines path and authorized host for NFS server export.
 type nfs_exports = {
   'path' : string
   'authorized_host' : string
@@ -3136,12 +3212,44 @@ type config_nfs = {
       A batch system is a typical example where this circular cross-validation
       is useful.</para>
     </section>
+
+    <section>
+      <title>Schemas</title>
+
+      <para>The pan language allows complete configuration schema to be
+      defined. Actually, you are capable of doing this already as defining a
+      schema is nothing more than defining a type and binding that type to the
+      root element. An example of this is:</para>
+
+      <programlisting>object template schema_example;
+
+include { 'type_definitions' };
+
+type schema = {
+  'software' : software_type
+  'hardware' : hardware_type
+  'packages' : packages_type
+};
+
+bind '/' = schema;
+
+# Actual definitions of parameters.
+# ...</programlisting>
+
+      <para>In this fictitious example, the concrete types would be defined in
+      the included file and the template would actually define the
+      configuration parameters.</para>
+    </section>
   </chapter>
 
   <chapter>
     <title>Modular Configurations</title>
 
-    <para></para>
+    <para>Defining the configuration for a machine with many services, let
+    alone a full site, quickly involves a large number of parameters. Often
+    subsets of the configuration can be shared between services or machines.
+    To minimize duplication and encourage sharing of configurations, the pan
+    language has features to allow modularization of the configuration.</para>
 
     <section>
       <title>Include Statement</title>
@@ -3238,7 +3346,7 @@ bind '/' = root;
 
       <para>First, there is a new pan statement in the
       <literal>nfsserver.example.org</literal> template to include the schema.
-      The <literal>include</literal> statement takes the name of the template
+      The <command>include</command> statement takes the name of the template
       to include as a string; the braces are mandatory. If the template is not
       included directly on the command line, then the compiler will search the
       <emphasis>loadpath</emphasis> for the template. If the loadpath is not
@@ -3247,25 +3355,23 @@ bind '/' = root;
       <para>Second, the schema has been pulled out into a separate file. The
       first line of that schema template is now marked as a
       <literal>declaration</literal> template. Such a template can only
-      include type declarations. (Also variable and function declarations as
-      we will see later.) Such a template will be included at most once when
-      building an object; all inclusions after the first will be ignored. This
-      allows many different template to reference type (and function)
-      declarations that they use without having to worry about accidentally
-      redefining them.</para>
+      include type, variable, and function declarations. Such a template will
+      be included at most once when building an object; all inclusions after
+      the first will be ignored. This allows many different template to
+      reference type (and function) declarations that they use without having
+      to worry about accidentally redefining them.</para>
 
       <para>Third, the schema template name is
       <literal>common/schema</literal> and must be located in a file called
-      <filename>common/schema.tpl</filename>; that is, it must be in a
+      <filename>common/schema.pan</filename>; that is, it must be in a
       subdirectory of the current directory called
       <filename>common</filename>. This is called
       <emphasis>namespacing</emphasis> and allows the templates that make up a
       configuration to be organized into subdirectories. For the few templates
-      that are used in this tutorial, namespacing is not critical. It is,
-      however, critical for real sites that are likely to have hundreds or
-      thousands of templates. Note that the hierarchy for namespaces is
-      completely independent of the hierarchy used in the configuration
-      schema.</para>
+      that are used here, namespacing is not critical. It is, however,
+      critical for real sites that are likely to have hundreds or thousands of
+      templates. Note that the hierarchy for namespaces is completely
+      independent of the hierarchy used in the configuration schema.</para>
 
       <para>Pulling out common declarations and help maintain coherence
       between different managed machines and reduce the overall size of the
@@ -3318,7 +3424,7 @@ bind '/' = root;
       final configuration.</para>
 
       <para>How is this used in the machine configuration? The
-      <literal>include</literal> statement will not work because we must
+      <command>include</command> statement will not work because we must
       indicate where the configuration should be rooted. The answer is to use
       an assignment statement along with the <function>create</function>
       function.</para>
@@ -3354,7 +3460,9 @@ bind '/' = root;
   <chapter>
     <title>Advanced Features</title>
 
-    <para></para>
+    <para>This chapter discusses annotations and logging, two advanced topics
+    that can be used to facilitate the management of sites and better
+    understand a site's configuration.</para>
 
     <section>
       <title>Annotations</title>
@@ -3428,7 +3536,9 @@ bind '/pair' = KV_PAIR;
       and indentation have been added for clarity.</para>
 
       <programlisting>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;template xmlns="http://quattor.org/pan/annotations" name="annotations" type="OBJECT"&gt;
+&lt;template xmlns="http://quattor.org/pan/annotations" 
+          name="annotations" 
+          type="OBJECT"&gt;
     &lt;desc&gt;
   Example template that shows off the 
   annotation features of the compiler.
@@ -3557,11 +3667,25 @@ bind '/pair' = KV_PAIR;
 
       <para>Note that a log file name must also be specified, otherwise the
       logging information will not be saved.</para>
+
+      <para>The logging information can be used to understand the performance
+      of the compiler and find bottlenecks in the configuration. It can also
+      be used to extract information about the relationships between
+      templates, which are then commonly passed to visualization tasks to
+      allow a better understanding of the configuration. Many examples are
+      included in the distribution as analysis scripts. See the command
+      reference appendix for details.</para>
     </section>
   </chapter>
 
   <chapter>
     <title>Performance Considerations</title>
+
+    <para>As configurations become larger, the speed at which the full
+    configuration can be compiled becomes important. The logging features
+    presented in the previous chapter can help identify slow parts of the
+    compilation for you particular configuration. This chapter contains
+    general advice on making the compilation as quick as possible.</para>
 
     <section>
       <title>Use Specific Paths</title>
@@ -3657,7 +3781,10 @@ bind '/pair' = KV_PAIR;
   <chapter>
     <title>Common Idioms</title>
 
-    <para></para>
+    <para>As you use the pan configuration, you will discover certain idioms
+    which appear. This chapter describes some of the common idioms so that you
+    can take advantage of them from the start and not need to rediscover them
+    yourself. </para>
 
     <section>
       <title>Configuration File Templates</title>
@@ -3677,9 +3804,11 @@ alpha = 1
 beta = 2
 EOF
 
-variable CONTENTS = CONTENTS + 'user = ' + USER + "\n";
+variable CONTENTS = CONTENTS + 
+    'user = ' + USER + "\n";
 
-variable CONTENTS = CONTENTS + 'quota = ' + to_string(QUOTA) + "\n";
+variable CONTENTS = CONTENTS + 
+    'quota = ' + to_string(QUOTA) + "\n";
 
 
 '/cfgfile' = CONTENTS;</programlisting>
@@ -3701,8 +3830,8 @@ EOF
 '/cfgfile' = format(CFG_TEMPLATE, USER, QUOTA);</programlisting>
 
       <para>This can be further improved by moving the configuration template
-      complete out of the pan language file. For instance, create the file
-      cfg-template.txt:</para>
+      completely out of the pan language file. For instance, create the file
+      <filename>cfg-template.txt</filename>:</para>
 
       <programlisting>alpha = 1
 beta = 2
@@ -3714,7 +3843,8 @@ quota = %d</programlisting>
       <programlisting>variable USER = 'smith';
 variable QUOTA = 10;
 
-'/cfgfile' = format(file_contents('cfg-template.txt'), USER, QUOTA);</programlisting>
+'/cfgfile' = format(file_contents('cfg-template.txt'), 
+                    USER, QUOTA);</programlisting>
 
       <para>This is much easier to read and to maintain. It is especially
       helpful when the included configuration file has a syntax for which an
@@ -3793,6 +3923,201 @@ variable MY_OPTION ?= null;
     <title>Troubleshooting</title>
 
     <para></para>
+
+    <section>
+      <title>Compilation Problems</title>
+
+      <para>In a production environment, the number of templates and their
+      complexity will be must greater. Often something goes wrong with the
+      compilation or build resulting in one or more errors appearing on the
+      console (standard error stream). There are four categories of
+      errors:</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>Syntax Error</term>
+
+          <listitem>
+            <para>These include any errors that can be caught during the
+            compilation of a single template. These include lexing, parsing,
+            and syntax errors, but also semantic errors like absolute
+            assignment statements appearing in a structure template that can
+            be caught at compilation time.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Evaluation Error</term>
+
+          <listitem>
+            <para>These are the most common; these include any error that
+            happens during the "execution" phase of processing like
+            mathematical errors, primitive type conflicts, and the like.
+            Usually the name of the template and the location where the error
+            occurred will be included in the error message.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Validation Error</term>
+
+          <listitem>
+            <para>Validation errors occur during the "validation" phase and
+            indicate that the generated machine profile violates the defined
+            schema. Information about what type specification was violated and
+            the offending path will be included in the error message.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>System Error</term>
+
+          <listitem>
+            <para>These include low-level problems like problems reading from
+            or writing to the file system.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>In general, the errors try to indicate as precisely as possible
+      the problem. Usually the name of the source file as well as the location
+      inside the file (line and column numbers) are indicated. For most
+      evaluation exceptions, a traceback is also provided. Validation errors
+      are the most terse, giving only the element causing the problem and the
+      location of the type definition that has been violated.</para>
+
+      <para>There is one further class of errors called "compiler errors".
+      These indicate an error in the logic of the compiler itself and should
+      be accompanied by a detailed error message and a Java traceback. All
+      compiler errors should be reported as a bug. The bug report should
+      include the template that caused the problem along with the full Java
+      traceback. Hopefully, you will not encounter these errors.</para>
+    </section>
+
+    <section>
+      <title>Common Problems</title>
+
+      <qandaset>
+        <qandadiv>
+          <qandaentry>
+            <question>
+              <para>"Java Heap Space" warnings appear on console.</para>
+
+              <para>If you see messages that refer to "Java Heap Space" while
+              running the compiler, then the java virtual machine does not
+              have enough memory to compile the given templates. You must
+              increase the amount of memory allocated to the java virtual
+              machine when you start the compiler. See the section Running the
+              Compiler for how to specify the VM memory.</para>
+            </question>
+          </qandaentry>
+
+          <qandaentry>
+            <question>
+              <para>The compilation is extremely slow.</para>
+
+              <para>If the compilation appears to be slow, check that the
+              compiler is not thrashing because of a limited amount of memory.
+              With the verbose option set, successful compilations will
+              produce a summary like:</para>
+
+              <screen>2 templates
+2/2 compiled, 2/2 xml, 0/0 dep
+0 errors, 166 ms, 0 MB/63 MB heap, 12 MB/116 MB nonheap</screen>
+
+              <para>The last line with gives the maximum amount of heap memory
+              used and the maximum available (the value marked "heap"). If the
+              maximum used is more than about 80% of the maximum available,
+              then you should consider increasing the memory allocated to the
+              java virtual machine. See the section Running the Compiler for
+              how to specify the VM memory.</para>
+            </question>
+          </qandaentry>
+
+          <qandaentry>
+            <question>
+              <para>"missing modifyThread Permission" warnings appear on
+              console.</para>
+
+              <para>The java-implementation of the pan language compiler is
+              completely multi-threaded. Internally, it controls several
+              thread pools to handle compilation, execution, and serialization
+              in parallel. At the end of a compilation, the compiler will
+              normally destroy the thread pools that were created. The java
+              security model requires that a program have the "modifyThread"
+              permission to destroy threads. In some environments (notably
+              Eclipse), this permission may not be given to the compiler. If
+              this is the case, then the message "WARNING: missing
+              modifyThread permission" is printed on the standard error.
+              Lacking this permission causes a "thread leak", but the effects
+              are minor unless an extremely large number of templates are
+              being compiled. If this is the case, then you should either
+              change the configuration to grant this permission to the
+              compiler, or work in an environment that grants it by default
+              (e.g. using ant from the command line).</para>
+
+              <para>This problem is fixed if using Java6. If you have several
+              JREs installed, be sure to configure Eclipse to use Java 6. Go
+              to Window → Preferences → Java → Installed JREs. If you don't
+              see the JRE you want (and you have it installed), use the
+              "Search" button to have eclipse configure the new JRE for you.
+              Make sure you select it after it is found.</para>
+            </question>
+          </qandaentry>
+
+          <qandaentry>
+            <question>
+              <para>Unnecessary rebuild of clusters</para>
+
+              <para>It can happen that a cluster is always rebuilt when you
+              run ant, even if there was no change in the dependencies. In
+              this case, you may suspect a Java issue with optimizations
+              enabled by default (JIT). The only workaround is to disable
+              these optimizations by adding the option -Xint to Java VM when
+              running ant. It is achieved differently depending how you
+              started ant:</para>
+
+              <itemizedlist>
+                <listitem>
+                  <para>From command line: define environment variable
+                  ANT_OPTS.</para>
+                </listitem>
+
+                <listitem>
+                  <para>From Eclipse: right click on build.xml in ant pane,
+                  choose Run As... → External Tools... and then click on JRE
+                  tab. Be sure to use a separate JRE (if possible Java 6 or
+                  later) and add option in the options area.</para>
+                </listitem>
+              </itemizedlist>
+
+              <para>This problem has been seen on Windows only, with Java 5
+              and Java 6.</para>
+            </question>
+          </qandaentry>
+        </qandadiv>
+      </qandaset>
+    </section>
+
+    <section>
+      <title>Bug Reporting</title>
+
+      <para>The pan compiler, like all software, contains bugs. If the problem
+      your experiencing looks to be misbehavior by the compiler, please report
+      the problem. Bug reports can be filed in the standard Quattor bug
+      tracking system on SourceForge. When submitting a bug, please use the
+      following options to be sure that the bug is noticed as soon as
+      possible.</para>
+
+      <screen>Project: quattor
+Category: panc
+Assigned to: loomisc</screen>
+
+      <para>to ensure that the bug is treated as soon as possible. Bug fixes
+      are generally rolled into the next planned release. Major releases are
+      scheduled every six months. Bug fix releases are planned monthly, if
+      needed.</para>
+    </section>
   </chapter>
 
   <xi:include href="appendix/appendix-obtain-panc.xml" xpointer="element(/1)" />

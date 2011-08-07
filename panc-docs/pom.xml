@@ -45,14 +45,8 @@
             </goals>
             <configuration>
               <!-- Any parameters specific to the PDF version go here -->
-<!--
-              <paperType>A4</paperType>
-              <sectionAutolabel>true</sectionAutolabel>
-              <calloutGraphics>false</calloutGraphics>
-              <calloutUnicode>true</calloutUnicode>
-              <hyphenate>false</hyphenate>
--->
 
+              <!-- These are now specified in the customized stylesheet. -->
               <foCustomization>${basedir}/src/docbkx/panc-docbook-fo.xsl</foCustomization>
             </configuration>
             <phase>prepare-package</phase>

@@ -11,6 +11,9 @@
   <!-- Only label the chapters, appendices, etc. -->
   <xsl:param name="section.autolabel">0</xsl:param>
 
+  <!-- Only three levels for TOC. -->
+  <xsl:param name="toc.section.depth">1</xsl:param>
+
   <!-- Use unicode characters for callouts. -->
   <xsl:param name="callout.graphics">0</xsl:param>
   <xsl:param name="callout.unicode">1</xsl:param>

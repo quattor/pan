@@ -5,13 +5,16 @@
                 version="1.0">
   
   <xsl:import href="urn:docbkx:stylesheet" />
+<!--
+  <xsl:import href="mytitlepages.xsl" />
+-->
   
   <xsl:param name="body.font.size">12pt</xsl:param>
 
   <!-- Only label the chapters, appendices, etc. -->
   <xsl:param name="section.autolabel">0</xsl:param>
 
-  <!-- Only three levels for TOC. -->
+  <!-- Only two levels for TOC. -->
   <xsl:param name="toc.section.depth">1</xsl:param>
 
   <!-- Use unicode characters for callouts. -->
@@ -67,22 +70,6 @@ task before
     </xsl:attribute>
   </xsl:attribute-set>
 
-  <!-- Put LOT entries for main divisions in bold. -->
-  <xsl:attribute-set name="lot.line.properties">
-    <xsl:attribute name="font-weight">
-      <xsl:choose>
-        <xsl:when test="position()=1">bold</xsl:when>
-        <xsl:otherwise>normal</xsl:otherwise>
-      </xsl:choose>
-    </xsl:attribute>
-    <xsl:attribute name="space-before">
-      <xsl:choose>
-        <xsl:when test="position()=1">12pt</xsl:when>
-        <xsl:otherwise>0pt</xsl:otherwise>
-      </xsl:choose>
-    </xsl:attribute>
-  </xsl:attribute-set>
-
   <!-- Turn off header rules. -->
   <xsl:param name="header.rule" select="0"/>
 
@@ -98,7 +85,6 @@ task before
   <!-- Footer properties -->
   <xsl:attribute-set name="footer.table.properties">
     <xsl:attribute name="font-family">sans-serif</xsl:attribute>
-    <xsl:attribute name="font-weight">bold</xsl:attribute>
   </xsl:attribute-set>
 
   <xsl:param name="footer.column.widths">1 1 8</xsl:param>
@@ -197,12 +183,23 @@ task before
       <xsl:value-of select="translate($component.label,'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ')"/>
     </xsl:variable>
 
+    <xsl:variable name="final.component.label">
+      <xsl:choose>
+        <xsl:when test="$uppercase.component.label='PREFACE'">
+          <xsl:value-of select="''"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="$uppercase.component.label"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+
     <fo:block font-size="14pt"
               text-align="start"
               space-before="0pt"
               space-after="0pt">
 
-      <xsl:value-of select="$uppercase.component.label"/>
+      <xsl:value-of select="$final.component.label"/>
       <xsl:text> </xsl:text>
       <xsl:apply-templates select="$node" mode="label.markup"/>
     </fo:block>

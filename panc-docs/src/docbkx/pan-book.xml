@@ -1030,7 +1030,7 @@ prefix '/batch/server/nodes';
     templates is especially simple: a template declaration followed by a list
     of statements that are executed in sequence. The compiler will serialize a
     machine profile, usually in XML format, for each "object" template it
-    encounters. </para>
+    encounters.</para>
 
     <section>
       <title>Templates</title>
@@ -1065,7 +1065,7 @@ prefix '/batch/server/nodes';
         any terms separated with slashes corresponding to subdirectories. For
         example, a template with the name "service/batch/worker-23" must have
         a file name of <filename>worker-23.pan</filename> and reside in a
-        subdirectory <filename>service/batch/</filename>. </para>
+        subdirectory <filename>service/batch/</filename>.</para>
 
         <note>
           <para>The older file extension "tpl" is also accepted by the pan
@@ -1152,7 +1152,7 @@ prefix '/batch/server/nodes';
       will be taken to be part of the string itself.</para>
 
       <para>Whitespace in the template files is ignored except when it is used
-      to separate language tokens. </para>
+      to separate language tokens.</para>
     </section>
 
     <section>
@@ -1367,7 +1367,7 @@ prefix '/batch/server/nodes';
     <para>The data typing system forms the foundation of the validation
     features of the pan language. All configuration elements are implicitly
     typed based on values assigned to them. Types, once inferred, are enforced
-    by the compiler. </para>
+    by the compiler.</para>
 
     <section>
       <title>Type Hierarchy</title>
@@ -1386,7 +1386,7 @@ prefix '/batch/server/nodes';
 
       <para>The complete type hierarchy is shown in <xref
       linkend="fig-types" />, including the two special types
-      <literal>undef</literal> and <literal>null</literal>. </para>
+      <literal>undef</literal> and <literal>null</literal>.</para>
 
       <figure xml:id="fig-types">
         <title>Pan language type hierarchy</title>
@@ -1616,7 +1616,7 @@ EOT</programlisting>
 
         <para>When the compiler can infer that a string literal must be a
         regular expression, it will validate the regular expression at compile
-        time, failing when an invalid regular expression is provided. </para>
+        time, failing when an invalid regular expression is provided.</para>
       </section>
     </section>
 
@@ -1685,7 +1685,7 @@ EOT</programlisting>
     configuration language, fulfills this role. This subset has the features
     of many imperative programming languages, but can
     <emphasis>only</emphasis> be used on the right-hand side of a statement,
-    that is, to calculate a value. </para>
+    that is, to calculate a value.</para>
 
     <section>
       <title>DML Syntax</title>
@@ -1695,7 +1695,7 @@ EOT</programlisting>
       one statement. The value of the block is the value of the last statement
       executed within the block. <emphasis>All</emphasis> DML statements
       return a value, even flow control statements like <literal>if</literal>
-      and <literal>foreach</literal>. </para>
+      and <literal>foreach</literal>.</para>
     </section>
 
     <section>
@@ -2171,7 +2171,7 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
     <para>The pan configuration has a rich set of build-in functions for
     manipulating elements and for debugging. In addition, user-defined
     functions can be specified, which are often used to make configurations
-    more modular and maintainable. </para>
+    more modular and maintainable.</para>
 
     <section>
       <title>Built-In Functions</title>
@@ -3784,7 +3784,7 @@ bind '/pair' = KV_PAIR;
     <para>As you use the pan configuration, you will discover certain idioms
     which appear. This chapter describes some of the common idioms so that you
     can take advantage of them from the start and not need to rediscover them
-    yourself. </para>
+    yourself.</para>
 
     <section>
       <title>Configuration File Templates</title>

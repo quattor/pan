@@ -9,6 +9,8 @@
   <info>
     <title>Pan Configuration Language</title>
 
+    <subtitle><?eval ${project.version}?></subtitle>
+
     <author>
       <personname><firstname>Charles</firstname><surname>Loomis</surname></personname>
 
@@ -37,7 +39,36 @@
       xlink:href="http://creativecommons.org/licenses/by/3.0/">http://creativecommons.org/licenses/by/3.0/</uri>
       or send a letter to Creative Commons, 171 Second Street, Suite 300, San
       Francisco, California, 94105, USA.</para>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center" fileref="images/by.png" format="PNG"
+                     scalefit="1" valign="middle" width="15%"></imagedata>
+        </imageobject>
+
+        <imageobject>
+          <imagedata align="center" fileref="images/by.svg" format="SVG"
+                     scalefit="1" valign="middle" width="15%"></imagedata>
+        </imageobject>
+      </mediaobject>
     </legalnotice>
+
+    <mediaobject>
+      <imageobject>
+        <imagedata align="center" fileref="images/quattor_logo.png"
+                   format="PNG" scalefit="1" valign="middle" width="80%"></imagedata>
+      </imageobject>
+
+      <imageobject>
+        <imagedata align="center" fileref="images/quattor_logo.svg"
+                   format="SVG" scalefit="1" valign="middle" width="80%"></imagedata>
+      </imageobject>
+
+      <imageobject>
+        <imagedata align="center" fileref="images/quattor_logo.pdf"
+                   format="PDF" scalefit="1" valign="middle" width="80%"></imagedata>
+      </imageobject>
+    </mediaobject>
   </info>
 
   <preface>

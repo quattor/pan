@@ -24,22 +24,27 @@
   <section>
     <title>Source</title>
 
-    <para>The source for the pan compiler is managed through a subversion
-    repository. The mainline development ("trunk") can be checked out with a
-    subversion client with the command:</para>
+    <para>The source for the pan compiler is managed through a git repository.
+    The software can be checked out with the following command:</para>
 
-    <programlisting>svn checkout https://quattor.svn.sourceforge.net/svnroot/quattor/trunk/pan/panc</programlisting>
+    <programlisting>git clone git://quattor.git.sourceforge.net/gitroot/quattor/quattor/pan</programlisting>
 
-    <para>As this is the active development branch, code checked out from it
-    may or may not work. For use in a production environment, check out a
-    specific version of the compiler with a command like:</para>
+    <para>This provides a <emphasis>read-only</emphasis> copy of the pan
+    repository. If you need write access to the repository, consult the
+    SourceForge documentation to find how to checkout a hosted git repository
+    with write access. You will need to be a member of the Quattor SourceForge
+    project.</para>
 
-    <programlisting>svn checkout https://quattor.svn.sourceforge.net/svnroot/quattor/tags/pan-8.2.9/panc</programlisting>
+    <para>The master branch is the main development branch. Although an effort
+    is made to ensure that this code functions correctly, there may be times
+    when it is broken. Released versions can be found through the named
+    branches and tags. Use the git commands:</para>
 
-    <para>where the tags correspond to the version of the compiler. Unless you
-    have special requirements, use the latest <emphasis>production</emphasis>
-    version of the compiler. All of the tags can be found by pointing a web
-    browser at the subversion repository.</para>
+    <programlisting>git branch -r
+git tag -l
+</programlisting>
+
+    <para>to see the available branches and tags.</para>
 
     <section>
       <title>Building</title>
@@ -52,10 +57,10 @@
       Windows can be obtained from Oracle. Maven can be obtained from the
       Apache Foundation web site.</para>
 
-      <para>The build of the compiler is done via <command>maven</command>
-      that also depends on Java. For <command>maven</command> to find the
-      correct version of the compiler, the environment variable
-      <envar>JAVA_HOME</envar> should be defined:</para>
+      <para>The build of the compiler is done via Apache Maven that also
+      depends on Java. For Maven to find the correct version of the compiler,
+      the environment variable <envar>JAVA_HOME</envar> should be
+      defined:</para>
 
       <para><programlisting>export JAVA_HOME=&lt;path to java area&gt;</programlisting></para>
 
@@ -75,6 +80,11 @@
       platforms. The build will also create an RPM on platforms that support
       it. The final packages can be found in the <filename>target</filename>
       subdirectory.</para>
+
+      <note>
+        <para>Current builds of the compiler are done with Maven 2.2.1. The
+        builds have not yet been tested with the Maven 3 releases. </para>
+      </note>
     </section>
   </section>
 

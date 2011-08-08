@@ -5,9 +5,7 @@
                 version="1.0">
   
   <xsl:import href="urn:docbkx:stylesheet" />
-<!--
-  <xsl:import href="mytitlepages.xsl" />
--->
+  <xsl:import href="titlepage-with-logo.xsl" />
   
   <xsl:param name="body.font.size">12pt</xsl:param>
 

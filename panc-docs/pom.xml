@@ -2,12 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.quattor.pan</groupId>
   <artifactId>panc-docs</artifactId>
   <packaging>pom</packaging>
-  <version>9.0.0-SNAPSHOT</version>
   <name>panc-docs</name>
-  <url>http://quattor.org/</url>
   <description>Pan Language and Pan Compiler Documentation</description>
 
   <parent>
@@ -76,6 +73,13 @@
             <configuration>
               <!-- Any parameters specific to epub version go here -->
               <epubAutolabel>true</epubAutolabel>
+              <preProcess>
+                <copy todir="${project.build.directory}/docbkx/epub/pan-book/images">
+                  <fileset dir="src/docbkx/images">
+                    <include name="**/*.png" />
+                  </fileset>
+                 </copy>
+              </preProcess>
             </configuration>
             <phase>prepare-package</phase>
           </execution>

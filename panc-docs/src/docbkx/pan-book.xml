@@ -1837,7 +1837,7 @@ EOT</programlisting>
         <?dbfo table-width="50%"?>
 
         <tgroup cols="3">
-          <colspec align="left" colname="" colnum="1" colwidth="1*" />
+          <colspec align="left" colnum="1" colwidth="1*" />
 
           <colspec align="left" colnum="2" colwidth="2*" />
 

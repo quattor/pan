@@ -75,7 +75,7 @@
       <xsl:apply-templates select="//d:part|
                                    //d:book[*[last()][self::d:bookinfo]]|
                                    //d:book[d:bookinfo]|
-                                   /d:book[d:info]|
+                                   //d:info|
                                    /d:set|
                                    /d:set/d:book|
                                    //d:reference|

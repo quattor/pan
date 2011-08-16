@@ -67,7 +67,7 @@
               <goal>generate-epub</goal>
             </goals>
             <configuration>
-              <epubCustomization>src/docbkx/epub-customization.xsl</epubCustomization>
+              <epubCustomization>${basedir}/src/docbkx/epub-customization.xsl</epubCustomization>
               <epubAutolabel>true</epubAutolabel>
               <preProcess>
                 <copy todir="${project.build.directory}/docbkx/epub/pan-book/images">

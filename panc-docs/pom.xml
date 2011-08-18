@@ -69,6 +69,8 @@
             <configuration>
               <epubCustomization>${basedir}/src/docbkx/epub-customization.xsl</epubCustomization>
               <epubAutolabel>true</epubAutolabel>
+              <epubNcxDepth>2</epubNcxDepth>
+              <htmlStylesheet>pan.css</htmlStylesheet>
               <preProcess>
                 <copy todir="${project.build.directory}/docbkx/epub/pan-book/images">
                   <fileset dir="src/docbkx/images">
@@ -79,6 +81,12 @@
                   <fileset dir="src/docbkx/images">
                     <include name="**/hello.png" />
                   </fileset>
+                 </copy>
+                 <copy todir="${project.build.directory}/docbkx/epub/pan-book/"
+                       file="src/docbkx/pan.css">
+                 </copy>
+                 <copy todir="${project.build.directory}/docbkx/epub/pan-tutorial/"
+                       file="src/docbkx/pan.css">
                  </copy>
               </preProcess>
             </configuration>

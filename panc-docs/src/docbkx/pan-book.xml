@@ -42,31 +42,31 @@
 
       <mediaobject>
         <imageobject>
-          <imagedata align="center" fileref="images/by.png" format="PNG"
-                     scalefit="1" valign="middle" width="15%"></imagedata>
+          <imagedata align="center" contentwidth="3cm" fileref="images/by.png"
+                     format="PNG" valign="middle" width="15%"></imagedata>
         </imageobject>
 
         <imageobject>
-          <imagedata align="center" fileref="images/by.svg" format="SVG"
-                     scalefit="1" valign="middle" width="15%"></imagedata>
+          <imagedata align="center" contentwidth="3cm" fileref="images/by.svg"
+                     format="SVG" valign="middle" width="15%"></imagedata>
         </imageobject>
       </mediaobject>
     </legalnotice>
 
     <mediaobject>
       <imageobject>
-        <imagedata align="center" fileref="images/quattor_logo.png"
-                   format="PNG" scalefit="1" valign="middle" width="80%"></imagedata>
+        <imagedata align="center" contentwidth="10cm"
+                   fileref="images/quattor_logo.png" format="PNG"></imagedata>
       </imageobject>
 
       <imageobject>
-        <imagedata align="center" fileref="images/quattor_logo.svg"
-                   format="SVG" scalefit="1" valign="middle" width="80%"></imagedata>
+        <imagedata align="center" contentwidth="10cm" depth=""
+                   fileref="images/quattor_logo.svg" format="SVG"></imagedata>
       </imageobject>
 
       <imageobject>
-        <imagedata align="center" fileref="images/quattor_logo.pdf"
-                   format="PDF" scalefit="1" valign="middle" width="80%"></imagedata>
+        <imagedata align="center" contentwidth="10cm"
+                   fileref="images/quattor_logo.pdf" format="PDF"></imagedata>
       </imageobject>
     </mediaobject>
   </info>

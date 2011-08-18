@@ -1426,16 +1426,15 @@ prefix '/batch/server/nodes';
           <alt>Pan language type hierarchy</alt>
 
           <imageobject role="html">
-            <imagedata align="center"
+            <imagedata align="center" contentwidth="14cm"
                        fileref="images/pan-type-hierarchy-truncated.png"
-                       format="PNG" role="" scale="10" scalefit="1"
-                       valign="middle"></imagedata>
+                       format="PNG"></imagedata>
           </imageobject>
 
           <imageobject role="fo">
-            <imagedata align="center"
+            <imagedata align="center" contentwidth="14cm"
                        fileref="images/pan-type-hierarchy-truncated.svg"
-                       format="SVG" scale="40" scalefit="1" valign="middle"></imagedata>
+                       format="SVG" valign="middle"></imagedata>
           </imageobject>
         </mediaobject>
       </figure>
@@ -2199,7 +2198,7 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
   <chapter>
     <title>Functions</title>
 
-    <para>The pan configuration has a rich set of build-in functions for
+    <para>The pan configuration has a rich set of built-in functions for
     manipulating elements and for debugging. In addition, user-defined
     functions can be specified, which are often used to make configurations
     more modular and maintainable.</para>
@@ -2211,7 +2210,7 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
       DML language. Because of this, they are highly optimized and often
       process their arguments specially. In all cases, users should prefer
       built-in functions to user-defined functions when possible. The
-      following tables describe all of the build-in functions; refer to the
+      following tables describe all of the built-in functions; refer to the
       appendix to see the arguments and other detailed information about the
       functions.</para>
 

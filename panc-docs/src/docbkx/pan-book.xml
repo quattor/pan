@@ -342,7 +342,7 @@ $ cat hello.xml
       use for a particular element is very close (but not identical) to the
       pan language path.</para>
 
-      <para>In this book, the most convenient representation is the the text
+      <para>In this book, the most convenient representation is the text
       format. This provides a clean representation of the configuration tree
       in plain text.</para>
 
@@ -431,8 +431,8 @@ edge [ color = black ]
           <term>Workers</term>
 
           <listitem>
-            <para>One or more machines that accept jobs from the server,
-            execute them, and then return the results to the server.</para>
+            <para>Machines that accept jobs from the server, execute them, and
+            then return the results to the server.</para>
           </listitem>
         </varlistentry>
       </variablelist>
@@ -440,7 +440,7 @@ edge [ color = black ]
       <para>Users send a script containing the job description to the server.
       The server then queues the request for later execution. The scheduler
       periodically checks the queued jobs and resources, sending a queued job
-      for execution on a worker if one is available. The worker execute the
+      for execution on a worker if one is available. The worker executes the
       job it has been given and keeps the server informed about the state of
       the job. At the end of the job, results are returned to the server. The
       user can interact with the server to determine the status of jobs and to
@@ -484,11 +484,11 @@ edge [ color = black ]
 '/batch/server/queues/default/maxCpuHours' = 1;
 '/batch/server/queues/default/enabled' = true;</programlisting>
 
-      <para>It is customary to use the machine name as the object template.
-      For this server, there is one worker node named 'worker01.example.org'
-      and one queue named 'default'. The worker node participates in the
-      'default' queue and has a couple of capabilities. The 'default' queue
-      has a CPU limit of 1 hour.</para>
+      <para>It is customary to use the machine name as the object template
+      name. For this server, there is one worker node named
+      'worker01.example.org' and one queue named 'default'. The worker node
+      participates in the 'default' queue and has a couple of capabilities.
+      The 'default' queue has a CPU limit of 1 hour.</para>
 
       <para>Create the file <filename>worker01.example.org.pan</filename> for
       the worker:</para>
@@ -538,7 +538,7 @@ edge [ color = black ]
       <title>Using Namespaces and Includes</title>
 
       <para>The naive configuration shown in the previous section has a couple
-      of problems. First, it will become tedious to maintain especially if
+      of problems. First, it will become tedious to maintain, especially if
       individual machines contain a mix of different services. Second, similar
       configurations would be duplicated between object templates, increasing
       the likelihood of errors. These problems can be eliminated by
@@ -568,10 +568,10 @@ edge [ color = black ]
 '/batch/worker/enabled' = true;</programlisting>
 
       <para>Note that these files are not object templates (i.e. there is no
-      <literal>object</literal> keyword) and will not produce any output files
-      themselves. Note also that they are namespaced; the relative directory
-      of the template must match the path hierarchy in the file system. In
-      this particular case, these both must appear in a
+      <literal>object</literal> modifier) and will not produce any output
+      files themselves. Note also that they are namespaced; the relative
+      directory of the template must match the path hierarchy in the file
+      system. In this particular case, these both must appear in a
       <filename>services</filename> subdirectory.</para>
 
       <para>Object templates can also be namespaced; here we will put them
@@ -669,7 +669,7 @@ type batch_worker<co xml:id="batch-types-batch_worker" /> = {
           non-negative long value. The range specification
           <literal>(0..)</literal> limits the allowed values. Range limits
           like this apply to the numeric value for long and double types; it
-          applied to the length of strings.</para>
+          applies to the length for strings.</para>
         </callout>
 
         <callout arearefs="batch-types-batch_node">
@@ -694,10 +694,11 @@ type batch_worker<co xml:id="batch-types-batch_worker" /> = {
         </callout>
 
         <callout arearefs="batch-types-declaration">
-          <para>The template declaration uses the declaration modifier. This
-          means that the template will only be executed once during the build
-          of a particular machine profile. It also limits the content of the
-          template to variable, function, and type definitions.</para>
+          <para>The template <literal>declaration</literal> uses the
+          declaration modifier. This means that the template will only be
+          executed once during the build of a particular machine profile. It
+          also limits the content of the template to variable, function, and
+          type definitions.</para>
         </callout>
       </calloutlist>
 
@@ -738,9 +739,10 @@ bind '/batch/worker' = batch_worker;
       <literal>bind</literal> statements. If any of the content does not
       conform to the specified types, then an error will occur during the
       compilation. Note that we have not limited the values for paths other
-      than these two paths. Configuration in other paths can be added without
-      being subject to these type definitions. A global schema can be defined
-      by binding a type definition to the root path '/'.</para>
+      than these two paths and their children. Configuration in other paths
+      can be added without being subject to these type definitions. A global
+      schema can be defined by binding a type definition to the root path
+      '/'.</para>
     </section>
 
     <section>
@@ -849,11 +851,11 @@ bind '/batch/worker' = batch_worker;
       queues and 2) the worker list on the server and the defined workers
       should be consistent.</para>
 
-      <para>The file batch-types.pan will be expanded to include validation
-      functions for these cases. Each validation function must return
-      <literal>true</literal> if the value is valid. If the value is not
-      valid, then the function can return <literal>false</literal> or throw an
-      exception via the <function>error</function> function. The
+      <para>The file <filename>batch-types.pan</filename> will be expanded to
+      include validation functions for these cases. Each validation function
+      must return <literal>true</literal> if the value is valid. If the value
+      is not valid, then the function can return <literal>false</literal> or
+      throw an exception via the <function>error</function> function. The
       <function>error</function> function allows you to provide a descriptive
       error message for the user. The contents of the modified file
       are:</para>
@@ -987,8 +989,8 @@ type batch_worker = {
       associated with the given type. Although any block of code can be used
       in the type definition, it is best practice to define a validation
       function with the code and reference that validation function. This
-      makes the type definition easier to read. The with clauses for the
-      cross-element and cross-machine validation are:</para>
+      makes the type definition easier to read. The <literal>with</literal>
+      clauses for the cross-element and cross-machine validation are:</para>
 
       <calloutlist>
         <callout arearefs="validate-batch_queue_list">
@@ -1360,7 +1362,7 @@ prefix '/batch/server/nodes';
 
         <para>Note that the compiler keeps distinct function and type
         namespaces. One can define a function and type with the same
-        names.</para>
+        name.</para>
       </section>
 
       <section>
@@ -1456,9 +1458,9 @@ prefix '/batch/server/nodes';
         <para>All of the elements in a configuration will have a concrete data
         type assigned to them. Usually this is inferred from the configuration
         itself. Once a concrete data type has been assigned to an element, the
-        compiler will enforce the data type, disallowing replacing a long
+        compiler will enforce the data type, disallowing replacement of a long
         value with a string, for instance. More detailed validation must be
-        explicitly defined in the configuration (see Validation
+        explicitly defined in the configuration (see the Validation
         chapter).</para>
       </section>
     </section>
@@ -1613,9 +1615,9 @@ EOT</programlisting>
         <para>Terms may consist of letters, digits, underscores, hyphens, and
         pluses. Terms beginning with a digit must be a valid long literal.
         Terms that contain other characters must be escaped, either by using
-        the escape() function within a DML block or by enclosing the term
-        within braces for a path literal. For example, the following creates
-        an absolute path with three terms:</para>
+        the <function>escape</function> function within a DML block or by
+        enclosing the term within braces for a path literal. For example, the
+        following creates an absolute path with three terms:</para>
 
         <programlisting>/alpha/{a/b}/gamma</programlisting>
 
@@ -1674,14 +1676,14 @@ EOT</programlisting>
 
       <para>Within a given path, lists and nlists can be distinguished by the
       names of their children. Lists always have children whose names are
-      valid long literals. In the following example, /mylist is a list with
-      three children:</para>
+      valid long literals. In the following example,
+      <filename>/mylist</filename> is a list with three children:</para>
 
       <programlisting>object template mylist;
 
 '/mylist/0' = 'decimal index';
 '/mylist/01' = 'octal index';
-'/mylist/0x3' = 'hexadecimal index';</programlisting>
+'/mylist/0x2' = 'hexadecimal index';</programlisting>
 
       <para>The indices can be specified in decimal, octal, or hexadecimal.
       The names of children in an nlist must begin with a letter or

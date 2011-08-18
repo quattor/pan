@@ -16,6 +16,9 @@
   
   <xsl:import href="urn:docbkx:stylesheet" />
 
+  <!-- Turn this off for epub, otherwise all functions are prefixed with fsfunc in the output. -->
+  <xsl:param name="funcsynopsis.decoration" select="0"/>
+
   <xsl:template name="opf.manifest">
     <xsl:element namespace="http://www.idpf.org/2007/opf" name="manifest">
       <xsl:element namespace="http://www.idpf.org/2007/opf" name="item">

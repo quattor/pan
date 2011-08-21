@@ -82,9 +82,12 @@
     (println (.formatStats compiler-results))))
 
 (defn -main [& args]
+
   (let [options (apply parse-options args)
-        compiler-options (create-compiler-options options)]
+        compiler-options (create-compiler-options options)
+        arguments args]
     (println options)
+    (println arguments)
     (println compiler-options)
     (run-compiler compiler-options)
     ))

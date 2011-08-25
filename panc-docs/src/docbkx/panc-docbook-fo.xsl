@@ -35,6 +35,20 @@ procedure before
 task before
   </xsl:param>
 
+  <!-- Reduce the margin sizes to have about 80 characters per line -->
+  <xsl:param name="page.margin.inner">
+    <xsl:choose>
+      <xsl:when test="$double.sided != 0">1.75in</xsl:when>
+      <xsl:otherwise>1.5in</xsl:otherwise>
+    </xsl:choose>
+  </xsl:param>
+  <xsl:param name="page.margin.outer">
+    <xsl:choose>
+      <xsl:when test="$double.sided != 0">1.25in</xsl:when>
+      <xsl:otherwise>1.5in</xsl:otherwise>
+    </xsl:choose>
+  </xsl:param>
+
   <!-- Make body flush with left margin. -->
   <xsl:param name="body.start.indent">0pt</xsl:param>
 

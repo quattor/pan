@@ -1787,14 +1787,16 @@ EOT</programlisting>
       <table>
         <title>Unary DML Operators</title>
 
-        <?dbfo table-width="50%"?>
+        <?dbfo table-width="75%"?>
+
+        <?dbfo table-layout="fixed"?>
 
         <tgroup cols="3">
-          <colspec align="left" colnum="1" colwidth="1*" />
+          <colspec align="center" colnum="1" colwidth="1*" />
 
           <colspec align="left" colnum="2" colwidth="2*" />
 
-          <colspec align="left" colnum="3" colwidth="2*" />
+          <colspec align="left" colnum="3" colwidth="5*" />
 
           <tbody>
             <row>
@@ -1835,14 +1837,16 @@ EOT</programlisting>
       <table>
         <title>Binary DML Operators</title>
 
-        <?dbfo table-width="50%"?>
+        <?dbfo table-width="75%"?>
+
+        <?dbfo table-layout="fixed"?>
 
         <tgroup cols="3">
-          <colspec align="left" colnum="1" colwidth="1*" />
+          <colspec align="center" colnum="1" colwidth="1*" />
 
           <colspec align="left" colnum="2" colwidth="2*" />
 
-          <colspec align="left" colnum="3" colwidth="2*" />
+          <colspec align="left" colnum="3" colwidth="5*" />
 
           <tbody>
             <row>
@@ -2035,9 +2039,9 @@ EOT</programlisting>
       <table>
         <title>Operator Precedence (lowest to highest)</title>
 
-        <?dbfo table-width="25%"?>
+        <?dbfo table-width="50%"?>
 
-        <tgroup cols="1">
+        <tgroup align="center" cols="1">
           <tbody>
             <row>
               <entry>||</entry>

@@ -60,6 +60,15 @@ task before
     <xsl:attribute name="text-align">center</xsl:attribute>
   </xsl:attribute-set>
 
+  <!-- Reduce the size of fonts in verbatim environments. -->
+  <xsl:attribute-set name="monospace.verbatim.properties" 
+                     use-attribute-sets="verbatim.properties monospace.properties">
+    <xsl:attribute name="text-align">start</xsl:attribute>
+    <xsl:attribute name="wrap-option">no-wrap</xsl:attribute>
+    <xsl:attribute name="font-size">66%</xsl:attribute>
+  </xsl:attribute-set>
+  <xsl:param name="monospace.verbatim.font.width">0.40em</xsl:param>
+
   <!-- Put TOC entries for main divisions in bold. -->
   <xsl:attribute-set name="toc.line.properties">
     <xsl:attribute name="font-weight">

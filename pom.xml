@@ -118,28 +118,6 @@
 
   </profiles>
 
-  <distributionManagement>
-
-    <repository>
-      <id>quattor-releases</id>
-      <name>quattor-releases</name>
-      <url>http://lapp-repo01.in2p3.fr:8081/nexus/content/repositories/releases</url>
-    </repository>
-
-    <snapshotRepository>
-      <id>quattor-snapshots</id>
-      <name>quattor-snapshots</name>
-      <url>http://lapp-repo01.in2p3.fr:8081/nexus/content/repositories/snapshots</url>
-    </snapshotRepository>
-
-    <site>
-      <id>sourceforge-web-autodocs</id>
-      <name>sourceforge-web-autodocs</name>
-      <url>scp://shell.sourceforge.net/home/groups/q/qu/quattor/htdocs/autodoc</url>
-    </site>
-
-  </distributionManagement>
-
   <dependencyManagement>
     <dependencies>
       
@@ -193,6 +171,7 @@
 	    <preparationGoals>clean install</preparationGoals>
 	    <autoVersionSubmodules>true</autoVersionSubmodules>
 	    <goals>deploy site:stage-deploy</goals>
+            <mavenExecutorId>forked-path</mavenExecutorId>
 	  </configuration>
 	</plugin>
 	<plugin>

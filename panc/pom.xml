@@ -93,6 +93,7 @@
         </configuration>
       </plugin>
 
+<!--
       <plugin>
         <groupId>com.theoryinpractise</groupId>
         <artifactId>clojure-maven-plugin</artifactId>
@@ -122,6 +123,7 @@
           </execution>
         </executions>
       </plugin>
+-->
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -242,12 +244,14 @@
       <scope>provided</scope>
     </dependency>
 
+<!--
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>clojure</artifactId>
       <version>1.2.1</version>
-      <scope>compile</scope>
+      <scope>provided</scope>
     </dependency>
+-->
     
 <!--
     <dependency>
@@ -257,13 +261,15 @@
       <scope>compile</scope>
     </dependency>
 -->
-    
+
+<!--    
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>tools.cli</artifactId>
       <version>0.1.0</version>
-      <scope>compile</scope>
+      <scope>provided</scope>
     </dependency>
+-->
 
   </dependencies>
 

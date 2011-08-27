@@ -71,6 +71,7 @@ task before
 
   <!-- Put TOC entries for main divisions in bold. -->
   <xsl:attribute-set name="toc.line.properties">
+    <xsl:attribute name="font-family">sans-serif</xsl:attribute>
     <xsl:attribute name="font-weight">
       <xsl:choose>
         <xsl:when test="name(.)='preface' or name(.)='chapter' or name(.)='appendix'">bold</xsl:when>

@@ -34,7 +34,14 @@
 			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>target/docbkx/manpages</directory>
+			<directory>target/docbkx/epub</directory>
+			<outputDirectory>epub</outputDirectory>
+			<includes>
+				<include>**/*.epub</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>target/docbkx/manpages/pan-book</directory>
 			<outputDirectory>man</outputDirectory>
 		</fileSet>
 	</fileSets>

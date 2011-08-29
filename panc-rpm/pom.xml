@@ -9,7 +9,7 @@
   <parent>
     <groupId>org.quattor.pan</groupId>
     <artifactId>pan</artifactId>
-    <version>9.0.0-SNAPSHOT</version>
+    <version>9.0.0-RC1-SNAPSHOT</version>
   </parent>
 
   <build>
@@ -131,6 +131,7 @@
       <groupId>org.quattor.pan</groupId>
       <artifactId>panc-docs</artifactId>
       <classifier>bundle</classifier>
+      <version>${project.version}</version>
       <type>zip</type>
       <scope>package</scope>
     </dependency>
@@ -138,6 +139,7 @@
     <dependency>
       <groupId>org.quattor.pan</groupId>
       <artifactId>panc</artifactId>
+      <version>${project.version}</version>
       <type>zip</type>
       <scope>package</scope>
     </dependency>

@@ -10,7 +10,7 @@
   <parent>
     <groupId>org.quattor.pan</groupId>
     <artifactId>pan</artifactId>
-    <version>9.0.0-RC2-SNAPSHOT</version>
+    <version>9.0.0-RC1-SNAPSHOT</version>
   </parent>
 
   <build>
@@ -77,15 +77,19 @@
                     <include name="**/*.png" />
                   </fileset>
                  </copy>
+		 <!--
                 <copy todir="${project.build.directory}/docbkx/epub/pan-tutorial/images">
                   <fileset dir="src/docbkx/images">
                     <include name="**/hello.png" />
                   </fileset>
                  </copy>
+		 -->
                  <copy todir="${project.build.directory}/docbkx/epub/pan-book/" file="src/docbkx/pan.css">
                  </copy>
+		 <!--
                  <copy todir="${project.build.directory}/docbkx/epub/pan-tutorial/" file="src/docbkx/pan.css">
                  </copy>
+		 -->
               </preProcess>
             </configuration>
             <phase>prepare-package</phase>

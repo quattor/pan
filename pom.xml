@@ -5,7 +5,7 @@
 
   <groupId>org.quattor.pan</groupId>
   <artifactId>pan</artifactId>
-  <version>9.0.0-RC2-SNAPSHOT</version>
+  <version>9.0.0-RC1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>pan</name>
@@ -83,15 +83,18 @@
     <profile>
       <id>release-signed-artifacts</id>
       <activation>
+
+	<!--
         <file>
           <exists>/tmp</exists>
         </file>
-<!--
-        <property>
-          <name>performRelease</name>
-          <value>true</value>
-        </property>
--->
+	-->
+
+	<property>
+	  <name>performRelease</name>
+	  <value>true</value>
+	</property>
+
       </activation>
       <build>
         <plugins>
@@ -145,13 +148,13 @@
       <dependency>
         <groupId>org.quattor.pan</groupId>
         <artifactId>panc-docs</artifactId>
-        <version>9.0.0-RC2-SNAPSHOT</version>
+        <version>9.0.0-RC1-SNAPSHOT</version>
       </dependency>
       
       <dependency>
         <groupId>org.quattor.pan</groupId>
         <artifactId>panc</artifactId>
-        <version>9.0.0-RC2-SNAPSHOT</version>
+        <version>9.0.0-RC1-SNAPSHOT</version>
       </dependency>
 
     </dependencies>

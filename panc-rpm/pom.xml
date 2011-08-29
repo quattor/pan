@@ -131,6 +131,7 @@
       <groupId>org.quattor.pan</groupId>
       <artifactId>panc-docs</artifactId>
       <classifier>bundle</classifier>
+      <version>${project.version}</version>
       <type>zip</type>
       <scope>package</scope>
     </dependency>
@@ -138,6 +139,7 @@
     <dependency>
       <groupId>org.quattor.pan</groupId>
       <artifactId>panc</artifactId>
+      <version>${project.version}</version>
       <type>zip</type>
       <scope>package</scope>
     </dependency>

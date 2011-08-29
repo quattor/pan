@@ -167,7 +167,7 @@
 	  <configuration>
 	    <preparationGoals>clean install</preparationGoals>
 	    <autoVersionSubmodules>true</autoVersionSubmodules>
-	    <goals>deploy site:stage-deploy</goals>
+	    <goals>deploy</goals>
             <mavenExecutorId>forked-path</mavenExecutorId>
 	  </configuration>
 	</plugin>

@@ -33,7 +33,7 @@ else
 	fi
 fi
 
-if [ -z $1 ] ; then
+if [ -z "$1" ] ; then
 	exit 0
 elif [ "$1" = "--version" -o "$1" = "-v" ] ; then
 	panc_show_version=true

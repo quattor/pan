@@ -3712,6 +3712,34 @@ bind '/pair' = KV_PAIR;
       included in the distribution as analysis scripts. See the command
       reference appendix for details.</para>
     </section>
+
+    <section>
+      <title>Build Metadata</title>
+
+      <para>It is sometimes useful to be able to inject values into the
+      compiled profiles without having to explicitly include a template into
+      each object template. This is particularly appropriate for metadata like
+      build numbers, build times, build machines, etc. This can be achieved by
+      setting the root element that is used to start the build of all
+      profiles. Use the <option>rootElement</option> attribute for ant and the
+      <option>--root-element</option> option for the command line. The value
+      must be a DML expression that evaluates to an nlist. For example, this
+      expression</para>
+
+      <programlisting>nlist('build-metadata', nlist('number', 1, 'date', '2012-01-01'))</programlisting>
+
+      <para>would result in having the paths
+      <filename>/build-metadata/number</filename>,
+      <filename>/build-metadata/date</filename> being set to
+      <literal>1</literal> and <literal>2012-01-01</literal>, respectively, in
+      all object templates.</para>
+
+      <caution>
+        <para>Values inserted into the profiles in this way are still subject
+        to the usual validation. When inserting values, they must obey the
+        schema you have defined for the profile.</para>
+      </caution>
+    </section>
   </chapter>
 
   <chapter>

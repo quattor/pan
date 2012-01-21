@@ -42,7 +42,15 @@
 
         <arg>-d | --debug</arg>
 
-        <arg>--debug-pattern <replaceable>pattern</replaceable></arg>
+        <arg>--debug-include <replaceable>regex</replaceable></arg>
+
+        <arg>--debug-exclude <replaceable>regex</replaceable></arg>
+
+        <arg>--root-element <replaceable>nlist-dml</replaceable></arg>
+
+        <arg>--dump-annotations</arg>
+
+        <arg>--annotation-dir <replaceable>dir</replaceable></arg>
 
         <arg>-a | --verbose</arg>
 
@@ -143,6 +151,17 @@
         </varlistentry>
 
         <varlistentry>
+          <term><option>--root-element=<replaceable>nlist-dml</replaceable></option></term>
+
+          <listitem>
+            <para>A DML expression that evaluates to an nlist. This value will
+            be used as the starting nlist for all object templates. This is a
+            convenient mechanism for injecting build numbers and other
+            metadata in the profiles.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
           <term><option>--dump-annotations</option></term>
 
           <listitem>
@@ -152,7 +171,7 @@
         </varlistentry>
 
         <varlistentry>
-          <term><option>--annotation-dir</option></term>
+          <term><option>--annotation-dir=<replaceable>dir</replaceable></option></term>
 
           <listitem>
             <para>Directory that will hold the files containing annotation

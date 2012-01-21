@@ -36,6 +36,7 @@ import org.quattor.pan.Compiler;
 import org.quattor.pan.CompilerLogging;
 import org.quattor.pan.CompilerOptions;
 import org.quattor.pan.CompilerResults;
+import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.output.Formatter;
 import org.quattor.pan.output.FormatterUtils;
 import org.quattor.pan.repository.SourceType;
@@ -114,6 +115,8 @@ public class PanCompilerTask extends Task {
 
     private int batchSize = 0;
 
+    private String rootElement = null;
+
     public PanCompilerTask() {
         setFormatter("xmldb");
     }
@@ -139,12 +142,17 @@ public class PanCompilerTask extends Task {
         }
 
         // Collect the options for the compilation.
-        CompilerOptions options = new CompilerOptions(debugIncludePatterns,
-                debugExcludePatterns, xmlWriteEnabled, depWriteEnabled,
-                iterationLimit, callDepthLimit, formatter, outputDirectory,
-                sessionDirectory, includeDirectories, nthread, gzipOutput,
-                deprecationLevel, forceBuild, annotationDirectory,
-                annotationBaseDirectory, failOnWarn);
+        CompilerOptions options = null;
+        try {
+            options = new CompilerOptions(debugIncludePatterns,
+                    debugExcludePatterns, xmlWriteEnabled, depWriteEnabled,
+                    iterationLimit, callDepthLimit, formatter, outputDirectory,
+                    sessionDirectory, includeDirectories, nthread, gzipOutput,
+                    deprecationLevel, forceBuild, annotationDirectory,
+                    annotationBaseDirectory, failOnWarn, rootElement);
+        } catch (SyntaxException e) {
+            throw new BuildException("invalid root element: " + e.getMessage());
+        }
 
         // If the debugging for the task is enabled, then print out the options
         // and the arguments.
@@ -590,6 +598,10 @@ public class PanCompilerTask extends Task {
 
     public void setBatchSize(int batchSize) {
         this.batchSize = (batchSize > 0) ? batchSize : 0;
+    }
+
+    public void setRootElement(String rootElement) {
+        this.rootElement = rootElement;
     }
 
     /**

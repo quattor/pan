@@ -391,8 +391,8 @@ public class PanParserAstUtils {
             }
         }
 
-        Template t = new Template(file, ast.getSourceRange(), ast
-                .getTemplateType(), ast.getIdentifier(), statements);
+        Template t = new Template(file, ast.getSourceRange(),
+                ast.getTemplateType(), ast.getIdentifier(), statements);
         return t;
     }
 
@@ -459,16 +459,16 @@ public class PanParserAstUtils {
 
             // This is a delete statement.
             Element element = Null.VALUE;
-            statement = AssignmentStatement.createAssignmentStatement(ast
-                    .getSourceRange(), path, element, ast.getConditionalFlag(),
-                    !ast.getFinalFlag());
+            statement = AssignmentStatement.createAssignmentStatement(
+                    ast.getSourceRange(), path, element,
+                    ast.getConditionalFlag(), !ast.getFinalFlag());
         } else {
 
             // This is a normal assignment statement.
             ASTOperation child = (ASTOperation) ast.jjtGetChild(0);
             Operation dml = astToDml(child);
-            statement = AssignmentStatement.createAssignmentStatement(ast
-                    .getSourceRange(), path, dml, ast.getConditionalFlag(),
+            statement = AssignmentStatement.createAssignmentStatement(
+                    ast.getSourceRange(), path, dml, ast.getConditionalFlag(),
                     !ast.getFinalFlag());
         }
 
@@ -557,8 +557,8 @@ public class PanParserAstUtils {
             Path path = createPathFromIdentifier(ast);
             if (!path.isAbsolute()) {
                 throw SyntaxException.create(ast.getSourceRange(),
-                        MessageUtils.MSG_PREFIX_MUST_BE_ABSOLUTE_PATH, path
-                                .toString());
+                        MessageUtils.MSG_PREFIX_MUST_BE_ABSOLUTE_PATH,
+                        path.toString());
             }
             return path;
 
@@ -603,8 +603,8 @@ public class PanParserAstUtils {
                 ASTOperation dml = (ASTOperation) op.jjtGetChild(0);
                 assert (dml.getOperationType() == OperationType.DML);
                 defaultDml = astToDml(dml);
-                sourceRange = SourceRange.combineSourceRanges(sourceRange, dml
-                        .getSourceRange());
+                sourceRange = SourceRange.combineSourceRanges(sourceRange,
+                        dml.getSourceRange());
                 break;
             case WITH:
                 assert (op.jjtGetNumChildren() == 1);
@@ -612,8 +612,8 @@ public class PanParserAstUtils {
                 ASTOperation with = (ASTOperation) op.jjtGetChild(0);
                 assert (with.getOperationType() == OperationType.DML);
                 withDml = astToDml(with);
-                sourceRange = SourceRange.combineSourceRanges(sourceRange, with
-                        .getSourceRange());
+                sourceRange = SourceRange.combineSourceRanges(sourceRange,
+                        with.getSourceRange());
                 break;
             default:
                 throw CompilerError.create(MSG_REACHED_IMPOSSIBLE_BRANCH);
@@ -778,7 +778,7 @@ public class PanParserAstUtils {
         return op;
     }
 
-    static private Operation astToDml(ASTOperation node) throws SyntaxException {
+    static public Operation astToDml(ASTOperation node) throws SyntaxException {
 
         // Verify that this really is a DML block.
         assert (node.getOperationType() == OperationType.DML);
@@ -801,8 +801,8 @@ public class PanParserAstUtils {
                 // Update the source range for this operation. This must be done
                 // afterwards because the source range for the children may be
                 // modified by iterating over them.
-                sourceRange = SourceRange.combineSourceRanges(sourceRange, n
-                        .getSourceRange());
+                sourceRange = SourceRange.combineSourceRanges(sourceRange,
+                        n.getSourceRange());
             }
         }
 
@@ -993,8 +993,8 @@ public class PanParserAstUtils {
                 }
             }
 
-            baseType = new RecordType(source, base.getSourceRange(), base
-                    .isExtensible(), base.getRange(), includes, reqFields,
+            baseType = new RecordType(source, base.getSourceRange(),
+                    base.isExtensible(), base.getRange(), includes, reqFields,
                     optFields);
         } else {
             // This is an alias type.

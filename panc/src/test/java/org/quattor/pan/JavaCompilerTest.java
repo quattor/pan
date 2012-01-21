@@ -49,6 +49,7 @@ import javax.xml.xpath.XPathExpressionException;
 import org.apache.tools.ant.BuildException;
 import org.junit.Test;
 import org.quattor.pan.exceptions.EvaluationException;
+import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.output.Formatter;
 import org.quattor.pan.output.XmlDBFormatter;
 import org.xml.sax.InputSource;
@@ -56,24 +57,25 @@ import org.xml.sax.InputSource;
 public class JavaCompilerTest {
 
     protected Compiler getDefaultCompiler(File tplfile, File dir,
-            Formatter formatter) {
+            Formatter formatter) throws SyntaxException {
         List<File> path = new LinkedList<File>();
         path.add(dir);
         CompilerOptions options = new CompilerOptions(null, null, true, false,
                 100, 50, formatter, getTmpdir(), null, path, 0, false, 2,
-                false, null, null, false);
+                false, null, null, false, null);
         List<File> tplfiles = new LinkedList<File>();
         tplfiles.add(tplfile);
         return new Compiler(options, new LinkedList<String>(), tplfiles);
     }
 
-    protected Compiler getDependencyCompiler(File tplfile, File dir) {
+    protected Compiler getDependencyCompiler(File tplfile, File dir)
+            throws SyntaxException {
         List<File> path = new LinkedList<File>();
         path.add(dir);
         Formatter formatter = XmlDBFormatter.getInstance();
         CompilerOptions options = new CompilerOptions(null, null, true, true,
                 100, 50, formatter, getTmpdir(), null, path, 0, false, 2,
-                false, null, null, false);
+                false, null, null, false, null);
         List<File> tplfiles = new LinkedList<File>();
         tplfiles.add(tplfile);
         return new Compiler(options, new LinkedList<String>(), tplfiles);
@@ -81,14 +83,14 @@ public class JavaCompilerTest {
 
     // Tests that an object name that doesn't exist raises an exception.
     @Test(expected = EvaluationException.class)
-    public void testErrorOnMissingObjectFile() {
+    public void testErrorOnMissingObjectFile() throws SyntaxException {
 
         List<File> path = new LinkedList<File>();
         path.add(getTmpdir());
 
         CompilerOptions options = new CompilerOptions(null, null, true, false,
                 100, 50, XmlDBFormatter.getInstance(), getTmpdir(), null, path,
-                0, false, 2, false, null, null, false);
+                0, false, 2, false, null, null, false, null);
 
         List<String> objects = new LinkedList<String>();
         objects.add("non-existant/object/template");
@@ -129,7 +131,7 @@ public class JavaCompilerTest {
 
         CompilerOptions options = new CompilerOptions(null, null, true, false,
                 100, 50, XmlDBFormatter.getInstance(), tmpdir, null, path, 0,
-                false, 2, false, null, null, false);
+                false, 2, false, null, null, false, null);
 
         // Create the list of input files.
         List<File> tplfiles = new LinkedList<File>();
@@ -145,7 +147,7 @@ public class JavaCompilerTest {
     }
 
     @Test
-    public void javaFunctionalTests() {
+    public void javaFunctionalTests() throws SyntaxException {
 
         // Locate the directory with the functionality tests and extract all of
         // the children.
@@ -217,7 +219,8 @@ public class JavaCompilerTest {
      * 
      * @return message (String) if there is an error, null otherwise
      */
-    protected String invokeTest(File rootdir, File objtpl) {
+    protected String invokeTest(File rootdir, File objtpl)
+            throws SyntaxException {
 
         // Create the name of the output XML file from the template name.
         String fname = objtpl.getName();
@@ -330,7 +333,7 @@ public class JavaCompilerTest {
     }
 
     @Test
-    public void javaDependencyTests() {
+    public void javaDependencyTests() throws SyntaxException {
 
         // Locate the directory with the dependency tests and extract all of
         // the children.
@@ -397,7 +400,8 @@ public class JavaCompilerTest {
      * 
      * @return message (String) if there is an error, null otherwise
      */
-    protected String invokeDependencyTest(File rootdir, File objtpl) {
+    protected String invokeDependencyTest(File rootdir, File objtpl)
+            throws SyntaxException {
 
         // Create the name of the output XML file from the template name.
         String fname = objtpl.getName();

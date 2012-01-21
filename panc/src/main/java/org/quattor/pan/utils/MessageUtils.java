@@ -421,6 +421,10 @@ public class MessageUtils {
 
     public final static String MSG_INVALID_FIRST_ARG_FORMAT = "MSG_INVALID_FIRST_ARG_FORMAT";
 
+    public final static String MSG_INVALID_SYNTAX_ROOT_ELEMENT = "MSG_INVALID_SYNTAX_ROOT_ELEMENT";
+
+    public final static String MSG_INVALID_TYPE_FOR_ROOT_ELEMENT = "MSG_INVALID_TYPE_FOR_ROOT_ELEMENT";
+
     // Name of the resource bundle to use for compiler messages.
     private final static String bundleName = "org.quattor.pan.Messages";
 

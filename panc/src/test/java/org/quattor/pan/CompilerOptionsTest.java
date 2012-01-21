@@ -20,20 +20,26 @@
 
 package org.quattor.pan;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
+import org.quattor.pan.dml.data.Element;
+import org.quattor.pan.dml.data.HashResource;
+import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.output.Formatter;
 import org.quattor.pan.output.XmlDBFormatter;
 
 public class CompilerOptionsTest {
 
     @Test
-    public void testConstructorAndGetters1() {
+    public void testConstructorAndGetters1() throws SyntaxException {
 
         boolean xmlWriteEnabled = true;
         boolean depWriteEnabled = false;
@@ -49,7 +55,7 @@ public class CompilerOptionsTest {
         CompilerOptions options = new CompilerOptions(null, null,
                 xmlWriteEnabled, depWriteEnabled, iterationLimit,
                 callDepthLimit, formatter, outputDirectory, sessionDirectory,
-                includeDirectories, 0, false, 0, false, null, null, false);
+                includeDirectories, 0, false, 0, false, null, null, false, null);
 
         assertTrue(xmlWriteEnabled == options.xmlWriteEnabled);
         assertTrue(depWriteEnabled == options.depWriteEnabled);
@@ -63,7 +69,7 @@ public class CompilerOptionsTest {
     }
 
     @Test
-    public void testConstructorAndGetters2() {
+    public void testConstructorAndGetters2() throws SyntaxException {
 
         boolean xmlWriteEnabled = false;
         boolean depWriteEnabled = true;
@@ -78,7 +84,7 @@ public class CompilerOptionsTest {
         CompilerOptions options = new CompilerOptions(null, null,
                 xmlWriteEnabled, depWriteEnabled, iterationLimit,
                 callDepthLimit, formatter, outputDirectory, sessionDirectory,
-                includeDirectories, 0, false, 0, false, null, null, false);
+                includeDirectories, 0, false, 0, false, null, null, false, null);
 
         assertTrue(xmlWriteEnabled == options.xmlWriteEnabled);
         assertTrue(depWriteEnabled == options.depWriteEnabled);
@@ -92,7 +98,7 @@ public class CompilerOptionsTest {
     }
 
     @Test
-    public void checkUnlimitedValues() {
+    public void checkUnlimitedValues() throws SyntaxException {
 
         boolean xmlWriteEnabled = true;
         boolean depWriteEnabled = false;
@@ -108,14 +114,14 @@ public class CompilerOptionsTest {
         CompilerOptions options = new CompilerOptions(null, null,
                 xmlWriteEnabled, depWriteEnabled, iterationLimit,
                 callDepthLimit, formatter, outputDirectory, sessionDirectory,
-                includeDirectories, 0, false, 0, false, null, null, false);
+                includeDirectories, 0, false, 0, false, null, null, false, null);
 
         assertTrue(Integer.MAX_VALUE == options.iterationLimit);
         assertTrue(Integer.MAX_VALUE == options.callDepthLimit);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void checkBadOutputDirectory() {
+    public void checkBadOutputDirectory() throws SyntaxException {
 
         boolean xmlWriteEnabled = true;
         boolean depWriteEnabled = false;
@@ -130,12 +136,12 @@ public class CompilerOptionsTest {
 
         new CompilerOptions(null, null, xmlWriteEnabled, depWriteEnabled,
                 iterationLimit, callDepthLimit, formatter, outputDirectory,
-                sessionDirectory, includeDirectories, 0, false, 0, false,
-                null, null, false);
+                sessionDirectory, includeDirectories, 0, false, 0, false, null,
+                null, false, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void checkBadSessionDirectory() {
+    public void checkBadSessionDirectory() throws SyntaxException {
 
         boolean xmlWriteEnabled = true;
         boolean depWriteEnabled = false;
@@ -150,12 +156,12 @@ public class CompilerOptionsTest {
 
         new CompilerOptions(null, null, xmlWriteEnabled, depWriteEnabled,
                 iterationLimit, callDepthLimit, formatter, outputDirectory,
-                sessionDirectory, includeDirectories, 0, false, 0, false,
-                null, null, false);
+                sessionDirectory, includeDirectories, 0, false, 0, false, null,
+                null, false, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void checkIncludeDirectory() {
+    public void checkIncludeDirectory() throws SyntaxException {
 
         boolean xmlWriteEnabled = true;
         boolean depWriteEnabled = false;
@@ -169,12 +175,12 @@ public class CompilerOptionsTest {
 
         new CompilerOptions(null, null, xmlWriteEnabled, depWriteEnabled,
                 iterationLimit, callDepthLimit, formatter, outputDirectory,
-                sessionDirectory, includeDirectories, 0, false, 0, false,
-                null, null, false);
+                sessionDirectory, includeDirectories, 0, false, 0, false, null,
+                null, false, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void checkMissingFormatter() {
+    public void checkMissingFormatter() throws SyntaxException {
 
         boolean xmlWriteEnabled = true;
         boolean depWriteEnabled = false;
@@ -189,12 +195,12 @@ public class CompilerOptionsTest {
 
         new CompilerOptions(null, null, xmlWriteEnabled, depWriteEnabled,
                 iterationLimit, callDepthLimit, formatter, outputDirectory,
-                sessionDirectory, includeDirectories, 0, false, 0, false,
-                null, null, false);
+                sessionDirectory, includeDirectories, 0, false, 0, false, null,
+                null, false, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void checkMissingOutputDirectory1() {
+    public void checkMissingOutputDirectory1() throws SyntaxException {
 
         boolean xmlWriteEnabled = true;
         boolean depWriteEnabled = false;
@@ -209,12 +215,12 @@ public class CompilerOptionsTest {
 
         new CompilerOptions(null, null, xmlWriteEnabled, depWriteEnabled,
                 iterationLimit, callDepthLimit, formatter, outputDirectory,
-                sessionDirectory, includeDirectories, 0, false, 0, false,
-                null, null, false);
+                sessionDirectory, includeDirectories, 0, false, 0, false, null,
+                null, false, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void checkMissingOutputDirectory2() {
+    public void checkMissingOutputDirectory2() throws SyntaxException {
 
         boolean xmlWriteEnabled = false;
         boolean depWriteEnabled = true;
@@ -227,12 +233,12 @@ public class CompilerOptionsTest {
 
         new CompilerOptions(null, null, xmlWriteEnabled, depWriteEnabled,
                 iterationLimit, callDepthLimit, formatter, outputDirectory,
-                sessionDirectory, includeDirectories, 0, false, 0, false,
-                null, null, false);
+                sessionDirectory, includeDirectories, 0, false, 0, false, null,
+                null, false, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void checkNullIncludeDirectory() {
+    public void checkNullIncludeDirectory() throws SyntaxException {
 
         boolean xmlWriteEnabled = false;
         boolean depWriteEnabled = true;
@@ -246,8 +252,39 @@ public class CompilerOptionsTest {
 
         new CompilerOptions(null, null, xmlWriteEnabled, depWriteEnabled,
                 iterationLimit, callDepthLimit, formatter, outputDirectory,
-                sessionDirectory, includeDirectories, 0, false, 0, false,
-                null, null, false);
+                sessionDirectory, includeDirectories, 0, false, 0, false, null,
+                null, false, null);
+    }
+
+    @Test
+    public void checkNullAndEmptyInputForRootElement() throws SyntaxException {
+        String[] inputs = new String[] { null, "", " ", "\t" };
+        for (String input : inputs) {
+            Element rootElement = CompilerOptions.createRootElement(input);
+            assertTrue(rootElement.isNlist());
+            HashResource hash = (HashResource) rootElement;
+            assertTrue(hash.size() == 0);
+        }
+    }
+
+    @Test
+    public void checkCorrectRootElement() throws SyntaxException {
+        Map<String, Integer> inputs = new HashMap<String, Integer>();
+        inputs.put("nlist()", 0);
+        inputs.put("nlist('a', 1)", 1);
+        inputs.put("nlist('a', nlist('b', 1))", 1);
+        inputs.put("nlist('a', 1, 'b', 2)", 2);
+        inputs.put("nlist('a', nlist(), 'b', nlist('c', 2))", 2);
+        for (Map.Entry<String, Integer> entry : inputs.entrySet()) {
+            String dml = entry.getKey();
+            int value = entry.getValue();
+
+            Element rootElement = CompilerOptions.createRootElement(dml);
+            assertTrue(rootElement.isNlist());
+
+            HashResource hash = (HashResource) rootElement;
+            assertEquals(value, hash.size());
+        }
     }
 
 }

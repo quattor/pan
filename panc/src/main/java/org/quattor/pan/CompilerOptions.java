@@ -21,8 +21,12 @@
 package org.quattor.pan;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_CANNOT_LOCATE_OBJECT_TEMPLATE;
+import static org.quattor.pan.utils.MessageUtils.MSG_FILE_BUG_REPORT;
+import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_SYNTAX_ROOT_ELEMENT;
+import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_TYPE_FOR_ROOT_ELEMENT;
 
 import java.io.File;
+import java.io.StringReader;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -31,13 +35,21 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
+import org.quattor.pan.dml.Operation;
+import org.quattor.pan.dml.data.HashResource;
+import org.quattor.pan.exceptions.CompilerError;
 import org.quattor.pan.exceptions.ConfigurationException;
 import org.quattor.pan.exceptions.EvaluationException;
+import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.output.Formatter;
+import org.quattor.pan.parser.ASTOperation;
+import org.quattor.pan.parser.PanParser;
+import org.quattor.pan.parser.PanParserAstUtils;
 import org.quattor.pan.repository.ParameterList;
 import org.quattor.pan.repository.SourceFile;
 import org.quattor.pan.repository.SourceRepository;
 import org.quattor.pan.repository.SourceRepositoryFactory;
+import org.quattor.pan.template.CompileTimeContext;
 import org.quattor.pan.template.Context;
 import org.quattor.pan.template.SourceRange;
 
@@ -136,6 +148,8 @@ public class CompilerOptions {
      */
     public final File annotationBaseDirectory;
 
+    public final HashResource rootElement;
+
     /**
      * Construct a CompilerOptions instance to drive a Compiler run. Instances
      * of this class are immutable.
@@ -179,6 +193,11 @@ public class CompilerOptions {
      *            base directory of source files for annotation output
      * @param failOnWarn
      *            if set to true, all warnings will cause compilation to fail
+     * @param rootElement
+     *            string containing description of root element to use; if null
+     *            or empty string, this defaults to an empty nlist
+     * @throws SyntaxException
+     *             if the expression for the rootElement is invalid
      */
     public CompilerOptions(List<Pattern> debugIncludePatterns,
             List<Pattern> debugExcludePatterns, boolean xmlWriteEnabled,
@@ -186,7 +205,8 @@ public class CompilerOptions {
             Formatter formatter, File outputDirectory, File sessionDirectory,
             List<File> includeDirectories, int nthread, boolean gzipOutput,
             int deprecationLevel, boolean forceBuild, File annotationDirectory,
-            File annotationBaseDirectory, boolean failOnWarn) {
+            File annotationBaseDirectory, boolean failOnWarn, String rootElement)
+            throws SyntaxException {
 
         // Check that the iteration and call depth limits are sensible. If
         // negative or zero set these effectively to infinity.
@@ -282,6 +302,7 @@ public class CompilerOptions {
             checkDirectory(annotationBaseDirectory, "annotation base");
         }
 
+        this.rootElement = createRootElement(rootElement);
     }
 
     /**
@@ -314,13 +335,44 @@ public class CompilerOptions {
         File annotationBaseDirectory = null;
         LinkedList<File> includeDirectories = new LinkedList<File>();
 
-        return new CompilerOptions(debugIncludePatterns, debugExcludePatterns,
-                xmlWriteEnabled, depWriteEnabled, iterationLimit,
-                callDepthLimit, formatter, outputDirectory, sessionDirectory,
-                includeDirectories, nthread, gzipOutput, deprecationLevel,
-                forceBuild, annotationDirectory, annotationBaseDirectory,
-                failOnWarn);
+        try {
+            return new CompilerOptions(debugIncludePatterns,
+                    debugExcludePatterns, xmlWriteEnabled, depWriteEnabled,
+                    iterationLimit, callDepthLimit, formatter, outputDirectory,
+                    sessionDirectory, includeDirectories, nthread, gzipOutput,
+                    deprecationLevel, forceBuild, annotationDirectory,
+                    annotationBaseDirectory, failOnWarn, null);
 
+        } catch (SyntaxException consumed) {
+            throw CompilerError.create(MSG_FILE_BUG_REPORT);
+        }
+    }
+
+    public static HashResource createRootElement(String rootElement)
+            throws SyntaxException {
+
+        if (rootElement == null || "".equals(rootElement.trim())) {
+
+            return new HashResource();
+
+        } else {
+
+            try {
+
+                PanParser parser = new PanParser(new StringReader(rootElement));
+                ASTOperation ast = parser.dml();
+                Operation dml = PanParserAstUtils.astToDml(ast);
+                return (HashResource) dml.execute(new CompileTimeContext());
+
+            } catch (SyntaxException e) {
+                throw SyntaxException.create(null,
+                        MSG_INVALID_SYNTAX_ROOT_ELEMENT, e.getMessage());
+            } catch (ClassCastException e) {
+                throw SyntaxException.create(null,
+                        MSG_INVALID_TYPE_FOR_ROOT_ELEMENT);
+            }
+
+        }
     }
 
     /**

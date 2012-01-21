@@ -31,6 +31,7 @@ import java.util.Vector;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.output.Formatter;
 import org.quattor.pan.output.FormatterUtils;
 
@@ -84,6 +85,8 @@ public class Panc {
         authorizedOptArg.addElement("debug-include");
         authorizedOpt.addElement("debug-exclude");
         authorizedOptArg.addElement("debug-exclude");
+        authorizedOpt.addElement("root-element");
+        authorizedOptArg.addElement("root-element");
         authorizedOpt.addElement("xml-write");
         authorizedOpt.addElement("no-xml-write");
         authorizedOpt.addElement("objects");
@@ -290,8 +293,8 @@ public class Panc {
             type = TypeOptBfor.JOPT;
         }
         // authorized options
-        else if (!Pattern.matches("^[h?dlbweznjJfcSIOxyirgpa]*$", arg
-                .substring(1))) {
+        else if (!Pattern.matches("^[h?dlbweznjJfcSIOxyirgpa]*$",
+                arg.substring(1))) {
             catchError(1, arg);
         } else if ((lastArg) && (!Pattern.matches("^[h?]*$", arg.substring(1)))) {
             for (String opt : endingOptChar) {
@@ -310,8 +313,8 @@ public class Panc {
             if (Pattern.matches("^[h?]*$", arg.substring(1))) {
                 postHelp();
                 System.exit(-1);
-            } else if (Pattern.matches("[jJfSIOxir]", arg.substring((arg
-                    .length()) - 1))) {
+            } else if (Pattern.matches("[jJfSIOxir]",
+                    arg.substring((arg.length()) - 1))) {
                 type = TypeOptBfor.OPTARG;
             } else if ((arg.substring((arg.length()) - 1)).equals("p")) {
                 type = TypeOptBfor.DEPR;
@@ -433,6 +436,8 @@ public class Panc {
 
         String logfilename = "";
 
+        String rootElement = null;
+
         File logfile = null;
 
         /* List of debug include patterns. */
@@ -457,22 +462,24 @@ public class Panc {
             } else if (opt.equals("debug-exclude")) {
                 Pattern p = verifyPattern(arguments.elementAt(compteur));
                 debugExcludePatterns.add(p);
+            } else if ((opt.equals("root-element"))) {
+                rootElement = arguments.elementAt(compteur);
             } else if (opt.equals("annotation-dir")) {
-                annotationOutputDirectory = new File(arguments
-                        .elementAt(compteur));
+                annotationOutputDirectory = new File(
+                        arguments.elementAt(compteur));
                 if (!annotationOutputDirectory.isAbsolute()) {
-                    annotationOutputDirectory = new File(System
-                            .getProperty("user.dir"), arguments
-                            .elementAt(compteur));
+                    annotationOutputDirectory = new File(
+                            System.getProperty("user.dir"),
+                            arguments.elementAt(compteur));
                 }
                 veriDir(annotationOutputDirectory);
             } else if (opt.equals("annotation-base-dir")) {
-                annotationBaseDirectory = new File(arguments
-                        .elementAt(compteur));
+                annotationBaseDirectory = new File(
+                        arguments.elementAt(compteur));
                 if (!annotationBaseDirectory.isAbsolute()) {
-                    annotationBaseDirectory = new File(System
-                            .getProperty("user.dir"), arguments
-                            .elementAt(compteur));
+                    annotationBaseDirectory = new File(
+                            System.getProperty("user.dir"),
+                            arguments.elementAt(compteur));
                 }
                 veriDir(annotationBaseDirectory);
             } else if ((opt.equals("z")) || (opt.equals("xml-write"))) {
@@ -565,27 +572,34 @@ public class Panc {
             includeFiles.add(path2include);
         }
 
-        CompilerOptions coptions = new CompilerOptions(debugIncludePatterns,
-                debugExcludePatterns, xmlWriteEnabled, depWriteEnabled,
-                iteration, callDepth, formatter, outputDirectory,
-                sessionDirectory, includeDirectories, 0, gzip, deprecation,
-                false, annotationOutputDirectory, annotationBaseDirectory,
-                failOnWarn);
+        try {
+            CompilerOptions coptions = new CompilerOptions(
+                    debugIncludePatterns, debugExcludePatterns,
+                    xmlWriteEnabled, depWriteEnabled, iteration, callDepth,
+                    formatter, outputDirectory, sessionDirectory,
+                    includeDirectories, 0, gzip, deprecation, false,
+                    annotationOutputDirectory, annotationBaseDirectory,
+                    failOnWarn, rootElement);
 
-        CompilerResults results = Compiler.run(coptions, objectOutput,
-                includeFiles);
+            CompilerResults results = Compiler.run(coptions, objectOutput,
+                    includeFiles);
 
-        String errors = results.formatErrors();
-        if (errors != null) {
-            System.err.println(errors);
+            String errors = results.formatErrors();
+            if (errors != null) {
+                System.err.println(errors);
+            }
+
+            if (verbose) {
+                System.out.println(results.formatStats());
+            }
+
+            // Return the exit code. (Non-zero if there was an error.)
+            return ((errors != null) ? 1 : 0);
+
+        } catch (SyntaxException e) {
+            catchError(e.getMessage());
+            return 1; // never reached
         }
-
-        if (verbose) {
-            System.out.println(results.formatStats());
-        }
-
-        // Return the exit code. (Non-zero if there was an error.)
-        return ((errors != null) ? 1 : 0);
     }
 
     /**
@@ -599,6 +613,8 @@ public class Panc {
                 .printf("    --debug-include           enable regex for debug/traceback functions\n");
         System.out
                 .printf("    --debug-exclude           exclude regex debug/traceback functions\n");
+        System.out
+                .printf("    --root-element            set root element; must be an nlist\n");
         System.out
                 .printf("    --annotation-dir=PATH     where to store the annotation files\n");
         System.out
@@ -683,8 +699,7 @@ public class Panc {
      *            the type of error
      */
     public static void catchError(String error) {
-        System.err.println("panc: " + error);
-        System.err.printf("\n");
+        System.err.println("panc: " + error + "\n");
         postHelp();
         System.exit(-1);
     }

@@ -68,6 +68,18 @@ public class JavaCompilerTest {
         return new Compiler(options, new LinkedList<String>(), tplfiles);
     }
 
+    protected Compiler getRootElementCompiler(File tplfile, File dir,
+            Formatter formatter) throws SyntaxException {
+        List<File> path = new LinkedList<File>();
+        path.add(dir);
+        CompilerOptions options = new CompilerOptions(null, null, true, false,
+                100, 50, formatter, getTmpdir(), null, path, 0, false, 2,
+                false, null, null, false, "nlist('root-element-test', 'OK')");
+        List<File> tplfiles = new LinkedList<File>();
+        tplfiles.add(tplfile);
+        return new Compiler(options, new LinkedList<String>(), tplfiles);
+    }
+
     protected Compiler getDependencyCompiler(File tplfile, File dir)
             throws SyntaxException {
         List<File> path = new LinkedList<File>();
@@ -181,7 +193,68 @@ public class JavaCompilerTest {
                 // Run an individual test and collect any errors that arise.
                 if (tpl != null) {
                     if (tpl.exists()) {
-                        String message = invokeTest(rootdir, tpl);
+                        String message = invokeTest(rootdir, tpl, true);
+                        if (message != null) {
+                            errors.add(tpl.getName() + ": " + message);
+                        }
+                    } else {
+                        errors.add(tpl.getName() + ": test does not exist");
+                    }
+                } else {
+                    errors.add(t.getName()
+                            + ": file is not ordinary file or directory");
+                }
+            }
+        }
+
+        // If the error list isn't empty, then fail.
+        if (errors.size() > 0) {
+            StringBuilder sb = new StringBuilder();
+            for (String message : errors) {
+                sb.append(message);
+                sb.append("\n");
+            }
+            fail(sb.toString());
+        }
+
+    }
+
+    @Test
+    public void javaRootElementTests() throws SyntaxException {
+
+        // Locate the directory with the functionality tests and extract all of
+        // the children.
+        File root = new File(getTestdir(), "RootElement");
+        TreeSet<File> testdirs = collectDirectories(root);
+
+        // Create a list to hold all of the errors.
+        List<String> errors = new LinkedList<String>();
+
+        // Loop over all of the children and treat each of those in turn.
+        for (File dir : testdirs) {
+
+            TreeSet<File> tests = collectTests(dir);
+
+            for (File t : tests) {
+
+                File tpl = null;
+                File rootdir = null;
+
+                // Set the root directory and name of the template. In the case
+                // of a directory, the main test template is expected to have
+                // the same name as the directory with ".tpl" appended.
+                if (t.isFile()) {
+                    tpl = t;
+                    rootdir = t.getParentFile();
+                } else if (t.isDirectory()) {
+                    tpl = new File(t, t.getName() + ".tpl");
+                    rootdir = t;
+                }
+
+                // Run an individual test and collect any errors that arise.
+                if (tpl != null) {
+                    if (tpl.exists()) {
+                        String message = invokeTest(rootdir, tpl, false);
                         if (message != null) {
                             errors.add(tpl.getName() + ": " + message);
                         }
@@ -216,11 +289,13 @@ public class JavaCompilerTest {
      *            root directory for build of this object template
      * @param objtpl
      *            the object template to compile
-     * 
+     * @param defaultCompiler
+     *            use default compiler; if false, then use the RootElement
+     *            compiler
      * @return message (String) if there is an error, null otherwise
      */
-    protected String invokeTest(File rootdir, File objtpl)
-            throws SyntaxException {
+    protected String invokeTest(File rootdir, File objtpl,
+            boolean defaultCompiler) throws SyntaxException {
 
         // Create the name of the output XML file from the template name.
         String fname = objtpl.getName();
@@ -244,7 +319,9 @@ public class JavaCompilerTest {
         Formatter formatter = extractFormatter(objtpl);
 
         // Compile the given template and collect any errors.
-        Compiler compiler = getDefaultCompiler(objtpl, rootdir, formatter);
+        Compiler compiler = defaultCompiler ? getDefaultCompiler(objtpl,
+                rootdir, formatter) : getRootElementCompiler(objtpl, rootdir,
+                formatter);
         Set<Throwable> exceptions = compiler.process().getErrors();
 
         if (expectation instanceof Class<?>) {

@@ -133,7 +133,7 @@
       <classifier>bundle</classifier>
       <version>${project.version}</version>
       <type>zip</type>
-      <scope>package</scope>
+      <scope>runtime</scope>
     </dependency>
 
     <dependency>
@@ -141,7 +141,7 @@
       <artifactId>panc</artifactId>
       <version>${project.version}</version>
       <type>zip</type>
-      <scope>package</scope>
+      <scope>runtime</scope>
     </dependency>
 
   </dependencies>

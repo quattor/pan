@@ -60,6 +60,50 @@
     <title>ChangeLog</title>
 
     <section>
+      <title>Version 9.1</title>
+
+      <itemizedlist>
+        <listitem>
+          <para>(SF Bug #3483938) Fix the README file to contain information
+          on changes up through the production 9.0 release.</para>
+        </listitem>
+      </itemizedlist>
+    </section>
+
+    <section>
+      <title>Version 9.0</title>
+
+      <para>Production release contains the same features as RC3. All version
+      numbers will be considered production releases unless marked explicitly
+      as alpha, beta, or release candidates. </para>
+    </section>
+
+    <section>
+      <title>Version 9.0.0-RC3</title>
+
+      <itemizedlist>
+        <listitem>
+          <para>(SF RFE #3422390) The root element used as the starting point
+          for all machine profiles can be specified from the command line and
+          ant task. This allows the injection of data into all of the profiles
+          without having to include explicitly a template in all machine
+          profiles. This will be useful for injecting build metadata into the
+          profiles. Note that the injected data must still follow the global
+          schema (if defined), otherwise builds will fail with validation
+          errors. </para>
+        </listitem>
+      </itemizedlist>
+    </section>
+
+    <section>
+      <title>Version 9.0.0-RC2</title>
+
+      <para>The documentation has been significantly reorganized with all of
+      the documentation apart from this README combined into a single "pan
+      book".</para>
+    </section>
+
+    <section>
       <title>Version 9.0.0-RC1</title>
 
       <para>This release contains the following changes:</para>

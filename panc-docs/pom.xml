@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>panc-docs</artifactId>
-  <packaging>pom</packaging>
+  <packaging>jar</packaging>
   <name>panc-docs</name>
   <description>Pan Language and Pan Compiler Documentation</description>
 

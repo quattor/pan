@@ -173,14 +173,14 @@ public class SourceFile implements Comparable<SourceFile> {
 
         // If the file is absent, then the path must be empty.
         if (type.isAbsent() && path != null) {
-            throw CompilerError.create(MSG_ABSOLUTE_PATH_REQ);
+            throw CompilerError.create(MSG_ABSENT_FILE_MUST_HAVE_NULL_PATH);
         }
 
         // The path can be null, but if it isn't it must be an absolute path.
         // The current working directory may have changed so we can not reliably
         // create an absolute path from a relative one.
         if (path != null && !path.isAbsolute()) {
-            throw CompilerError.create(MSG_ABSENT_FILE_MUST_HAVE_NULL_PATH);
+            throw CompilerError.create(MSG_ABSOLUTE_PATH_REQ);
         }
 
         // The name must be a valid template name, even if it is just a normal

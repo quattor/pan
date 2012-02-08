@@ -27,46 +27,53 @@ import org.quattor.pan.exceptions.CompilerError;
 
 public class SourceFileTest {
 
-	@Test(expected = CompilerError.class)
-	public void testIllegalArguments() {
-		new SourceFile(null, true, null);
-	}
+    @Test(expected = CompilerError.class)
+    public void testIllegalArguments() {
+        new SourceFile(null, true, null);
+    }
 
-	@Test
-	public void validNullPath() {
-		new SourceFile("valid.tpl", true, null);
-	}
+    @Test
+    public void validNullPath() {
+        new SourceFile("valid.tpl", true, null);
+    }
 
-	@Test(expected = IllegalArgumentException.class)
-	public void invalidSourceFileName1() {
-		new SourceFile("/illegal-name.tpl", true, null);
-	}
+    @Test(expected = IllegalArgumentException.class)
+    public void invalidSourceFileName1() {
+        new SourceFile("/illegal-name.tpl", true, null);
+    }
 
-	@Test(expected = IllegalArgumentException.class)
-	public void invalidSourceFileName2() {
-		new SourceFile("path/.illegal-name.tpl", true, null);
-	}
+    @Test(expected = IllegalArgumentException.class)
+    public void invalidSourceFileName2() {
+        new SourceFile("path/.illegal-name.tpl", true, null);
+    }
 
-	@Test(expected = CompilerError.class)
-	public void invalidRelativePath() {
-		new SourceFile("valid.tpl", true, new File("home/valid.tpl"));
-	}
+    @Test(expected = CompilerError.class)
+    public void invalidRelativePath() {
+        new SourceFile("valid.tpl", true, new File("home/valid.tpl"));
+    }
 
-	@Test
-	public void matchedNameAndSource() {
-		new SourceFile("a/b/name", true, new File("/home/a/b/name.tpl"));
-		new SourceFile("a/b/name.tpl", false, new File("/home/a/b/name.tpl"));
-		new SourceFile("a/b/name.txt", false, new File("/home/a/b/name.txt"));
-	}
+    // Force an absolute file to be generated because on windows just a leading
+    // slash is not sufficient.
+    @Test
+    public void matchedNameAndSource() {
+        new SourceFile("a/b/name", true,
+                new File("/home/a/b/name.tpl").getAbsoluteFile());
+        new SourceFile("a/b/name.tpl", false,
+                new File("/home/a/b/name.tpl").getAbsoluteFile());
+        new SourceFile("a/b/name.txt", false,
+                new File("/home/a/b/name.txt").getAbsoluteFile());
+    }
 
-	@Test(expected = IllegalArgumentException.class)
-	public void mismatchedNameAndSource1() {
-		new SourceFile("a/b/name", true, new File("/home/a/c/name.tpl"));
-	}
+    @Test(expected = IllegalArgumentException.class)
+    public void mismatchedNameAndSource1() {
+        new SourceFile("a/b/name", true,
+                new File("/home/a/c/name.tpl").getAbsoluteFile());
+    }
 
-	@Test(expected = IllegalArgumentException.class)
-	public void mismatchedNameAndSource2() {
-		new SourceFile("a/c/name.tpl", false, new File("/home/a/b/name.tpl"));
-	}
+    @Test(expected = IllegalArgumentException.class)
+    public void mismatchedNameAndSource2() {
+        new SourceFile("a/c/name.tpl", false,
+                new File("/home/a/b/name.tpl").getAbsoluteFile());
+    }
 
 }

@@ -36,136 +36,138 @@ import org.quattor.pan.repository.SourceType;
 
 public class DependencyCheckerTest {
 
-	@Test
-	public void ensureExtensionStrippingWorks() {
-		String name = "ok/";
-		for (SourceType type : SourceType.values()) {
+    @Test
+    public void ensureExtensionStrippingWorks() {
+        String name = "ok/";
+        for (SourceType type : SourceType.values()) {
 
-			if (type.isSource()) {
-				String extendedName = name + type.getExtension();
-				String strippedName = DependencyChecker
-						.stripPanExtensions(extendedName);
-				assertEquals(name, strippedName);
-			}
-		}
-	}
+            if (type.isSource()) {
+                String extendedName = name + type.getExtension();
+                String strippedName = DependencyChecker
+                        .stripPanExtensions(extendedName);
+                assertEquals(name, strippedName);
+            }
+        }
+    }
 
-	@Test
-	public void checkFileComparison() {
+    @Test
+    public void checkFileComparison() {
 
-		File file1 = new File("/first/file.txt");
-		File file2 = new File("/second/file.txt");
-		File file3 = new File("/first/file.txt");
+        File file1 = new File("/first/file.txt");
+        File file2 = new File("/second/file.txt");
+        File file3 = new File("/first/file.txt");
 
-		assertTrue(DependencyChecker.isSingleDependencyDifferent(file1, file2));
-		assertFalse(DependencyChecker.isSingleDependencyDifferent(file1, file3));
+        assertTrue(DependencyChecker.isSingleDependencyDifferent(file1, file2));
+        assertFalse(DependencyChecker.isSingleDependencyDifferent(file1, file3));
 
-		// This is a special case for the algorithm.
-		assertFalse(DependencyChecker.isSingleDependencyDifferent(file1, null));
-	}
+        // This is a special case for the algorithm.
+        assertFalse(DependencyChecker.isSingleDependencyDifferent(file1, null));
+    }
 
-	@Test
-	public void checkDependencyReconstruction() throws URISyntaxException {
-		String schema = "file:";
-		String templatePath = "/alpha/beta/gamma/";
-		String namespace = "delta";
-		String name = "name";
-		String tplName = namespace + "/" + name;
+    @Test
+    public void checkDependencyReconstruction() throws URISyntaxException {
+        String schema = "file:";
+        String templatePath = "/alpha/beta/gamma/";
+        String namespace = "delta";
+        String name = "name";
+        String tplName = namespace + "/" + name;
 
-		String expectedPath = templatePath + namespace;
+        String expectedPath = new File(templatePath + namespace)
+                .getAbsolutePath();
 
-		for (SourceType type : SourceType.values()) {
+        for (SourceType type : SourceType.values()) {
 
-			File file = DependencyChecker.reconstructSingleDependency(schema
-					+ templatePath, tplName, type);
+            File file = DependencyChecker.reconstructSingleDependency(schema
+                    + templatePath, tplName, type);
 
-			String reconName = file.getName();
-			String reconPath = file.getParent();
+            String reconName = file.getName();
+            String reconPath = file.getParent();
 
-			String expectedName = name + type.getExtension();
+            String expectedName = name + type.getExtension();
 
-			assertEquals(expectedName, reconName);
-			assertEquals(expectedPath, reconPath);
+            assertEquals(expectedName, reconName);
+            assertEquals(expectedPath, reconPath);
 
-		}
-	}
+        }
+    }
 
-	@Test(expected = BuildException.class)
-	public void checkTooFewFields() {
-		String line = "too-few-fields";
-		new DependencyInfo(line);
-	}
+    @Test(expected = BuildException.class)
+    public void checkTooFewFields() {
+        String line = "too-few-fields";
+        new DependencyInfo(line);
+    }
 
-	@Test(expected = BuildException.class)
-	public void checkTooManyFields() {
-		String line = "too many fields in line";
-		new DependencyInfo(line);
-	}
+    @Test(expected = BuildException.class)
+    public void checkTooManyFields() {
+        String line = "too many fields in line";
+        new DependencyInfo(line);
+    }
 
-	@Test(expected = BuildException.class)
-	public void checkMissingPath() {
-		String line = "my/profile " + SourceType.PAN.toString();
-		new DependencyInfo(line);
-	}
+    @Test(expected = BuildException.class)
+    public void checkMissingPath() {
+        String line = "my/profile " + SourceType.PAN.toString();
+        new DependencyInfo(line);
+    }
 
-	@Test
-	public void checkCorrectAbsentFileInfo() {
-		String name = "my/profile";
-		SourceType type = SourceType.ABSENT_SOURCE;
-		String line = name + " " + type.toString();
+    @Test
+    public void checkCorrectAbsentFileInfo() {
+        String name = "my/profile";
+        SourceType type = SourceType.ABSENT_SOURCE;
+        String line = name + " " + type.toString();
 
-		DependencyInfo info = new DependencyInfo(line);
+        DependencyInfo info = new DependencyInfo(line);
 
-		assertEquals(name, info.name);
-		assertEquals(type, info.type);
-		assertNull(info.file);
-	}
+        assertEquals(name, info.name);
+        assertEquals(type, info.type);
+        assertNull(info.file);
+    }
 
-	@Test(expected = BuildException.class)
-	public void checkAbsentFileWithPath() {
-		String name = "my/profile";
-		SourceType type = SourceType.ABSENT_SOURCE;
-		String line = name + " " + type.toString() + " "
-				+ "file:/root/directory/";
+    @Test(expected = BuildException.class)
+    public void checkAbsentFileWithPath() {
+        String name = "my/profile";
+        SourceType type = SourceType.ABSENT_SOURCE;
+        String line = name + " " + type.toString() + " "
+                + "file:/root/directory/";
 
-		new DependencyInfo(line);
-	}
+        new DependencyInfo(line);
+    }
 
-	@Test(expected = BuildException.class)
-	public void checkInvalidURI() {
-		String name = "my/profile";
-		SourceType type = SourceType.PAN;
-		String invalidURI = ":---";
-		String line = name + " " + type.toString() + " " + invalidURI;
+    @Test(expected = BuildException.class)
+    public void checkInvalidURI() {
+        String name = "my/profile";
+        SourceType type = SourceType.PAN;
+        String invalidURI = ":---";
+        String line = name + " " + type.toString() + " " + invalidURI;
 
-		new DependencyInfo(line);
-	}
+        new DependencyInfo(line);
+    }
 
-	@Test(expected = BuildException.class)
-	public void checkSourceFileWithoutPath() {
-		String name = "my/profile";
-		SourceType type = SourceType.PAN;
-		String line = name + " " + type.toString();
+    @Test(expected = BuildException.class)
+    public void checkSourceFileWithoutPath() {
+        String name = "my/profile";
+        SourceType type = SourceType.PAN;
+        String line = name + " " + type.toString();
 
-		new DependencyInfo(line);
-	}
+        new DependencyInfo(line);
+    }
 
-	@Test
-	public void checkCorrectSourceFileInfo() throws URISyntaxException {
-		String name = "my/profile";
-		SourceType type = SourceType.PAN;
-		URI uri = new URI("file:/root/directory/");
+    @Test
+    public void checkCorrectSourceFileInfo() {
+        String name = "my/profile";
+        SourceType type = SourceType.PAN;
+        File rootDirectory = new File("/root/directory/").getAbsoluteFile();
+        URI uri = rootDirectory.toURI();
 
-		String line = name + " " + type.toString() + " " + uri.toString();
+        String line = name + " " + type.toString() + " " + uri.toString();
 
-		DependencyInfo info = new DependencyInfo(line);
+        DependencyInfo info = new DependencyInfo(line);
 
-		assertEquals(name, info.name);
-		assertEquals(type, info.type);
+        assertEquals(name, info.name);
+        assertEquals(type, info.type);
 
-		URI fullname = uri.resolve(name + type.getExtension());
-		File fullfile = new File(fullname);
-		assertEquals(fullfile, info.file);
-	}
+        URI fullname = uri.resolve(name + type.getExtension());
+        File fullfile = new File(fullname);
+        assertEquals(fullfile, info.file);
+    }
 
 }

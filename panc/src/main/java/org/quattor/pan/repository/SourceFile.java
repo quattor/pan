@@ -18,8 +18,8 @@ import java.net.URISyntaxException;
 import net.jcip.annotations.Immutable;
 
 import org.quattor.pan.exceptions.CompilerError;
-import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.template.Template;
+import org.quattor.pan.utils.MessageUtils;
 
 @Immutable
 public class SourceFile implements Comparable<SourceFile> {
@@ -51,8 +51,8 @@ public class SourceFile implements Comparable<SourceFile> {
                 } else if (".panx".equals(extension)) {
                     this.type = SourceType.PANX;
                 } else {
-                    throw EvaluationException
-                            .create(MSG_INVALID_TPL_NAME, name);
+                    throw new IllegalArgumentException(MessageUtils.format(
+                            MSG_INVALID_TPL_NAME, name));
                 }
             }
 
@@ -186,7 +186,8 @@ public class SourceFile implements Comparable<SourceFile> {
         // The name must be a valid template name, even if it is just a normal
         // text file to be included through a file_contents() call.
         if (!Template.isValidTemplateName(name)) {
-            throw EvaluationException.create(MSG_INVALID_TPL_NAME, name);
+            throw new IllegalArgumentException(MessageUtils.format(
+                    MSG_INVALID_TPL_NAME, name));
         }
     }
 
@@ -220,7 +221,8 @@ public class SourceFile implements Comparable<SourceFile> {
             // on different platforms.
             String uri = source.toURI().toString();
             if (!uri.endsWith(ending)) {
-                throw EvaluationException.create(MSG_MISNAMED_TPL, name);
+                throw new IllegalArgumentException(MessageUtils.format(
+                        MSG_MISNAMED_TPL, name));
             }
 
             // Strip off the ending to get the load path for this file.

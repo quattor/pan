@@ -60,9 +60,18 @@
     <title>ChangeLog</title>
 
     <section>
-      <title>Version 9.1</title>
+      <title>Version 9.1-RC1</title>
 
       <itemizedlist>
+        <listitem>
+          <para>(SF Bug #3485801) pan does not build on Windows</para>
+        </listitem>
+
+        <listitem>
+          <para>(SF Bug #3485492) <function>file_contents</function> does not
+          work correctly on Windows</para>
+        </listitem>
+
         <listitem>
           <para>(SF Bug #3483938) Fix the README file to contain information
           on changes up through the production 9.0 release.</para>
@@ -75,7 +84,7 @@
 
       <para>Production release contains the same features as RC3. All version
       numbers will be considered production releases unless marked explicitly
-      as alpha, beta, or release candidates. </para>
+      as alpha, beta, or release candidates.</para>
     </section>
 
     <section>
@@ -90,7 +99,7 @@
           profiles. This will be useful for injecting build metadata into the
           profiles. Note that the injected data must still follow the global
           schema (if defined), otherwise builds will fail with validation
-          errors. </para>
+          errors.</para>
         </listitem>
       </itemizedlist>
     </section>

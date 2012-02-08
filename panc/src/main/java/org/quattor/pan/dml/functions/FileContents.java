@@ -25,7 +25,6 @@ import static org.quattor.pan.utils.MessageUtils.MSG_NONEXISTANT_FILE;
 import static org.quattor.pan.utils.MessageUtils.MSG_ONE_ARG_REQ;
 import static org.quattor.pan.utils.MessageUtils.MSG_RELATIVE_FILE_REQ;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 
@@ -38,7 +37,6 @@ import org.quattor.pan.exceptions.SystemException;
 import org.quattor.pan.repository.SourceFile;
 import org.quattor.pan.template.Context;
 import org.quattor.pan.template.SourceRange;
-import org.quattor.pan.utils.FileUtils;
 import org.quattor.pan.utils.StringUtils;
 
 /**
@@ -124,23 +122,14 @@ final public class FileContents extends BuiltInFunction {
 
             String name = ((StringProperty) element).getValue();
 
-            if ("".equals(name)) {
+            // An empty path is not considered a valid relative path. Any path
+            // starting with a slash is not relative. (Do NOT use File class to
+            // determine an absolute file name because paths starting with a
+            // slash are not absolute on windows!)
+            if ("".equals(name) || name.startsWith("/")) {
                 return null;
             }
 
-            // Replace all of the slashes by the platform's file separator.
-            String localizedName = FileUtils.localizeFilename(name);
-
-            // Create a File object from this and verify that it is a relative
-            // path.
-            File f = new File(localizedName);
-            if (f.isAbsolute()) {
-                return null;
-            }
-
-            // Return original string WITHOUT the replaced file separators. The
-            // substitution should be done later when converting to a
-            // SourceFile.
             return name;
 
         } catch (ClassCastException e) {

@@ -144,11 +144,12 @@
           <execution>
             <id>regenerate-epub</id>
             <goals>
-              <goal>exec</goal>
+              <goal>java</goal>
             </goals>
             <phase>package</phase>
             <configuration>
-              <executable>src/main/scripts/make-epub.py</executable>
+              <mainClass>org.quattor.epub.EpubCreator</mainClass>
+              <classpathScope>compile</classpathScope>
               <arguments>
                 <argument>target/docbkx/epub</argument>
               </arguments>

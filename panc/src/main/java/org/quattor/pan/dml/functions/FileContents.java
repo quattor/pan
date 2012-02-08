@@ -101,8 +101,8 @@ final public class FileContents extends BuiltInFunction {
             try {
                 return readFileAsStringProperty(srcFile);
             } catch (IOException e) {
-                throw new SystemException(e.getLocalizedMessage(), srcFile
-                        .getPath());
+                throw new SystemException(e.getLocalizedMessage(),
+                        srcFile.getPath());
             }
         } else {
             throw EvaluationException.create(sourceRange, MSG_NONEXISTANT_FILE,
@@ -118,26 +118,30 @@ final public class FileContents extends BuiltInFunction {
         return StringProperty.getInstance(contents);
     }
 
-    // TODO: Determine if the system file separator is needed
-    // TODO: Determine if empty string is valid
     private static String verifyRelativePath(Element element) {
 
         try {
 
-            String s = ((StringProperty) element).getValue();
+            String name = ((StringProperty) element).getValue();
+
+            if ("".equals(name)) {
+                return null;
+            }
 
             // Replace all of the slashes by the platform's file separator.
-            s = FileUtils.localizeFilename(s);
+            String localizedName = FileUtils.localizeFilename(name);
 
             // Create a File object from this and verify that it is a relative
             // path.
-            File f = new File(s);
+            File f = new File(localizedName);
             if (f.isAbsolute()) {
                 return null;
             }
 
-            // Everything's OK, so return the created file.
-            return f.toString();
+            // Return original string WITHOUT the replaced file separators. The
+            // substitution should be done later when converting to a
+            // SourceFile.
+            return name;
 
         } catch (ClassCastException e) {
             return null;

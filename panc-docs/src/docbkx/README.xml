@@ -60,16 +60,18 @@
     <title>ChangeLog</title>
 
     <section>
-      <title>Version 9.1-RC1</title>
+      <title>Version 9.1</title>
 
       <itemizedlist>
         <listitem>
-          <para>(SF Bug #3485801) pan does not build on Windows</para>
+          <para>(SF Bug #3485801) pan does not build on Windows; full build
+          and unit tests now run correctly on windows</para>
         </listitem>
 
         <listitem>
           <para>(SF Bug #3485492) <function>file_contents</function> does not
-          work correctly on Windows</para>
+          work correctly on Windows; problems with file name handling have
+          been resolved</para>
         </listitem>
 
         <listitem>

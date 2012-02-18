@@ -48,8 +48,6 @@ public class SourceFile implements Comparable<SourceFile> {
                     this.type = SourceType.TPL;
                 } else if (".pan".equals(extension)) {
                     this.type = SourceType.PAN;
-                } else if (".panx".equals(extension)) {
-                    this.type = SourceType.PANX;
                 } else {
                     throw new IllegalArgumentException(MessageUtils.format(
                             MSG_INVALID_TPL_NAME, name));

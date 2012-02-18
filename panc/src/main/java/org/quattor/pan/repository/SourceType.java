@@ -11,56 +11,56 @@ import java.util.List;
  * 
  */
 public enum SourceType {
-	PAN(false, ".pan"), PANX(false, ".panx"), TPL(false, ".tpl"), TEXT(false,
-			""), ABSENT_SOURCE(true, ""), ABSENT_TEXT(true, "");
+    PAN(false, ".pan"), TPL(false, ".tpl"), TEXT(false, ""), ABSENT_SOURCE(
+            true, ""), ABSENT_TEXT(true, "");
 
-	private boolean absent;
-	private String extension;
+    private boolean absent;
+    private String extension;
 
-	private final static List<String> extensions;
+    private final static List<String> extensions;
 
-	static {
+    static {
 
-		ArrayList<String> values = new ArrayList<String>();
+        ArrayList<String> values = new ArrayList<String>();
 
-		for (SourceType type : SourceType.values()) {
-			if (type.isSource()) {
-				values.add(type.getExtension());
-			}
-		}
+        for (SourceType type : SourceType.values()) {
+            if (type.isSource()) {
+                values.add(type.getExtension());
+            }
+        }
 
-		values.trimToSize();
+        values.trimToSize();
 
-		extensions = Collections.unmodifiableList(values);
-	}
+        extensions = Collections.unmodifiableList(values);
+    }
 
-	private SourceType(boolean absent, String extension) {
-		this.absent = absent;
-		this.extension = extension;
-	}
+    private SourceType(boolean absent, String extension) {
+        this.absent = absent;
+        this.extension = extension;
+    }
 
-	public boolean isSource() {
-		return (!"".equals(extension));
-	}
+    public boolean isSource() {
+        return (!"".equals(extension));
+    }
 
-	public boolean isAbsent() {
-		return absent;
-	}
+    public boolean isAbsent() {
+        return absent;
+    }
 
-	public String getExtension() {
-		return extension;
-	}
+    public String getExtension() {
+        return extension;
+    }
 
-	public static List<String> getExtensions() {
-		return extensions;
-	}
+    public static List<String> getExtensions() {
+        return extensions;
+    }
 
-	public static boolean hasSourceFileExtension(String filename) {
-		for (String extension : extensions) {
-			if (filename.endsWith(extension)) {
-				return true;
-			}
-		}
-		return false;
-	}
+    public static boolean hasSourceFileExtension(String filename) {
+        for (String extension : extensions) {
+            if (filename.endsWith(extension)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

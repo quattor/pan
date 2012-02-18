@@ -172,8 +172,6 @@ public class DependencyChecker {
             return isSourceDependencyOutdated(info, targetTime);
         case PAN:
             return isSourceDependencyOutdated(info, targetTime);
-        case PANX:
-            return isSourceDependencyOutdated(info, targetTime);
         case TEXT:
             return isTextDependencyOutdated(info, targetTime);
         case ABSENT_SOURCE:

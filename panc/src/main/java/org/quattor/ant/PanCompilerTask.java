@@ -118,7 +118,7 @@ public class PanCompilerTask extends Task {
     private String rootElement = null;
 
     public PanCompilerTask() {
-        setFormatter("xmldb");
+        setFormatter("pan");
     }
 
     @Override
@@ -441,7 +441,8 @@ public class PanCompilerTask extends Task {
 
     /**
      * Define which formatter will be used to write the machine profiles to
-     * disk. Valid values are "pan", "xmldb", "txt", or "dot".
+     * disk. Valid values are "pan", "json", "txt", or "dot". The "xmldb" value
+     * is accepted, but deprecated.
      * 
      * @param name
      *            name of formatter to use

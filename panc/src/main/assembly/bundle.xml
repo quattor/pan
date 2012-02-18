@@ -10,7 +10,7 @@
 
   <files>
     <file>
-      <source>target/panc-${project.version}.jar</source>
+      <source>target/panc-${project.version}-jar-with-dependencies.jar</source>
       <destName>panc.jar</destName>
       <outputDirectory>lib</outputDirectory>
       <fileMode>0755</fileMode>

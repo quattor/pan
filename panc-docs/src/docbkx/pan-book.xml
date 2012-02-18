@@ -324,23 +324,21 @@ $ cat hello_world.xml
       field in the pan template.</para>
 
       <para>The pan compiler can generate output in three additional formats:
-      xmldb, text, and dot. The xmldb format is a format in which the pan
-      names are used for XML elements and the type attribute gives the element
-      type. (If not specified, the default type is <type>string</type>.) The
-      following shows the output for the xmldb format.</para>
+      json, text, and dot. The following shows the output for the json
+      format.</para>
 
-      <screen>$ panc --xml-style=xmldb hello_world.pan
+      <screen>$ panc --xml-style=json hello_world.pan 
 
-$ cat hello.xml
-&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;profile format="xmldb"&gt;
-&lt;message type="string"&gt;Hello World!&lt;/message&gt;
-&lt;/profile&gt;</screen>
+$ cat hello_world.json 
+{
+  "message": "Hello World!"
+} </screen>
 
-      <para>This format is convenient if the resulting output will be
-      processed with tools like XSLT or XQuery because the XPath expression to
-      use for a particular element is very close (but not identical) to the
-      pan language path.</para>
+      <warning>
+        <para>The alternate XML format "xmldb" is deprecated. This format is
+        not compatible with arbitrary nlist keys. Use the 'pan' XML format for
+        the JSON format instead. </para>
+      </warning>
 
       <para>In this book, the most convenient representation is the text
       format. This provides a clean representation of the configuration tree

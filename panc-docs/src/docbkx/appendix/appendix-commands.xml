@@ -289,8 +289,9 @@
           <listitem>
             <para>Select the output style to use for the machine configuration
             files. This is usually an XML formatted file, but not always.
-            Allowed values are "pan", "xmldb", "text", and "dot". The default
-            is value is "pan".</para>
+            Allowed values are "pan", "json", "text", and "dot". The default
+            is value is "pan". The value "xmldb" is accepted, but
+            deprecated.</para>
           </listitem>
         </varlistentry>
 

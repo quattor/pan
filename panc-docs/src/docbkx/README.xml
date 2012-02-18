@@ -64,6 +64,18 @@
 
       <itemizedlist>
         <listitem>
+          <para>(SF RFE #3477756) Provide JSON output option. Initial JSON
+          formatter is available; detailed serialization may change based on
+          feedback. The pan compiler now includes the GSON library (Apache 2
+          license) to handle the JSON serialization.</para>
+        </listitem>
+
+        <listitem>
+          <para>(SF RFE #3477753) Deprecate xmldb format. Use the standard pan
+          XML format instead of the xmldb format.</para>
+        </listitem>
+
+        <listitem>
           <para>(SF Bug #3488948) Annotation information in pan book is
           inaccurate.</para>
         </listitem>

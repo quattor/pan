@@ -262,6 +262,15 @@ public class CompilerOptions {
         this.failOnWarn = failOnWarn;
         this.forceBuild = forceBuild;
 
+        if ("xmldb".equals(formatter.getFormatKey())) {
+            String msg = "WARNING: xmldb format is deprecated; use another formatter";
+            if (failOnWarn) {
+                throw new IllegalArgumentException(msg);
+            } else {
+                System.err.println(msg);
+            }
+        }
+
         // Setup the debug patterns, ensuring that the debug pattern lists are
         // not null.
         if (debugIncludePatterns == null) {

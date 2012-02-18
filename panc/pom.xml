@@ -162,20 +162,6 @@
         <executions>
 
           <execution>
-            <id>bundle</id>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <phase>package</phase>
-            <configuration>
-              <descriptors>
-                <descriptor>src/main/assembly/bundle.xml</descriptor>
-              </descriptors>
-              <appendAssemblyId>false</appendAssemblyId>
-            </configuration>
-          </execution>
-
-          <execution>
             <id>jar-with-dependencies</id>
             <goals>
               <goal>single</goal>
@@ -186,6 +172,20 @@
                 <descriptorRef>jar-with-dependencies</descriptorRef>
               </descriptorRefs>
               <appendAssemblyId>true</appendAssemblyId>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>bundle</id>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <descriptors>
+                <descriptor>src/main/assembly/bundle.xml</descriptor>
+              </descriptors>
+              <appendAssemblyId>false</appendAssemblyId>
             </configuration>
           </execution>
 
@@ -271,6 +271,11 @@
       <classifier>bundle</classifier>
       <type>zip</type>
       <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
     </dependency>
 
 <!--

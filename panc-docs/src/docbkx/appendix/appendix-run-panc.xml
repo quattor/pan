@@ -270,7 +270,8 @@
             <entry>formatter</entry>
 
             <entry>The formatter to use for the output file. The accepted
-            values are: "pan", "xmldb", "text", and "dot".</entry>
+            values are: "pan", "json", "text", and "dot". The value "xmldb" is
+            accepted, but deprecated.</entry>
 
             <entry>No. Default value: pan</entry>
           </row>

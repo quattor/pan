@@ -3563,13 +3563,23 @@ bind '/pair' = KV_PAIR;
 '/pair/key' = 'KEY';
 '/pair/value' = 'VALUE';</programlisting>
 
-      <para>Using the following command to process the file:</para>
+      <para>The command will produce one output file for each source file,
+      using the directory hierarchy of the source files, <emphasis>not the
+      namespace hierarchy</emphasis>. When processing the files, you must
+      provide both the desired output directory (which must exist) using the
+      <option>--annotation-dir</option> option, as well as the root file
+      system directory for all of the processed files with the
+      <option>--annotation-base-dir</option> option. Using the following
+      command to process the file:</para>
 
-      <programlisting>$ panc --annotation-dir=annotations annotations.pan</programlisting>
+      <programlisting>$ panc \
+  --annotation-dir=annotations \
+  --annotation-base-dir=. \
+  annotations.pan</programlisting>
 
       <para>will produce the following output in the file
-      <filename>annotations.annotation.xml</filename>. Note that white space
-      and indentation have been added for clarity.</para>
+      <filename>annotations.pan.annotation.xml</filename> (with whitespace and
+      indentation added for clarity).</para>
 
       <programlisting>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;template xmlns="http://quattor.org/pan/annotations" 
@@ -3631,6 +3641,9 @@ bind '/pair' = KV_PAIR;
     &lt;/type&gt;
     &lt;basetype name="KV_PAIR" extensible="no"/&gt;
 &lt;/template&gt;</programlisting>
+
+      <para>The output filename includes the full input filename because
+      variants with different suffixes may be present.</para>
     </section>
 
     <section>

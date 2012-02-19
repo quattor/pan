@@ -64,6 +64,11 @@
 
       <itemizedlist>
         <listitem>
+          <para>(SF RFE #3489048) Switch unit tests to use the pan XML format.
+          </para>
+        </listitem>
+
+        <listitem>
           <para>(SF RFE #3489084) Remove support for panx extension. This has
           been removed as an XML input format is no longer in the
           roadmap.</para>

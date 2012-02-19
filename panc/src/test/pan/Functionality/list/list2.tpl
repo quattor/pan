@@ -1,7 +1,8 @@
 #
 # tests of list creation with list(), merge() and nlist()
 #
-# @expect="/profile"
+# @expect="/nlist[@name='profile']"
+# @format=pan
 #
 
 object template list2;

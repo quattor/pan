@@ -1,5 +1,6 @@
 #
-# @expect="/profile"
+# @expect="/nlist[@name='profile']"
+# @format=pan
 #
 object template bug8604;
 

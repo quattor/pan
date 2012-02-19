@@ -1,7 +1,8 @@
 object template bug10640;
 "/re"=1.2;
 
-# @expect="/profile"
+# @expect="/nlist[@name='profile']"
+# @format=pan
 #
 # This fails on solaris with the optimizer turned on for the lexer.
 # It is a segmentation fault in the new_double_constant_node function.

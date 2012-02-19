@@ -1,6 +1,6 @@
 #
-# @expect="/profile/data1=1 and /profile/data2=1 and /profile/data3=1"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/long[@name='data1']=1 and /nlist[@name='profile']/long[@name='data2']=1 and /nlist[@name='profile']/long[@name='data3']=1"
+# @format=pan
 #
 object template loop5;
 

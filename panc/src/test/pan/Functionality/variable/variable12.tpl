@@ -2,6 +2,7 @@
 # test of the self variable
 #
 # @expect="/profile/test1=3 and /profile/test2=2.1 and /profile/test3='true' and /profile/test4='true'"
+# @format=xmldb
 #
 
 object template variable12;

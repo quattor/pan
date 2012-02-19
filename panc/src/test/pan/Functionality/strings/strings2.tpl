@@ -2,6 +2,7 @@
 # test of big string
 #
 # @expect="/profile/big1 and /profile/big2"
+# @format=xmldb
 #
 
 object template strings2;

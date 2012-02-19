@@ -2,6 +2,7 @@
 # test to_boolean function
 #
 # @expect="/profile/t1='true' and /profile/t1='true' and /profile/t3='true' and /profile/t4='true' and /profile/f1='false' and /profile/f2='false' and /profile/f3='false' and /profile/f4='false'"
+# @format=xmldb
 #
 
 object template function9;

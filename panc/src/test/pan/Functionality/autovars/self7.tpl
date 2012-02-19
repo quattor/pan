@@ -3,6 +3,7 @@
 # visible in the configuration tree.
 #
 # @expect="/profile/result1/a='OK' and /profile/result1/b='OK' and /profile/result2[1]='OK' and /profile/result2[2]='OK'"
+# @format=xmldb
 #
 object template self7;
 

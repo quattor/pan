@@ -2,6 +2,7 @@
 # test key within a loop
 #
 # @expect="/profile/keys='blue green red'"
+# @format=xmldb
 #
 object template key4;
 

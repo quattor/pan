@@ -3,6 +3,7 @@
 # get changed from one profile to another
 #
 # @expect="/profile/a/result='ok'"
+# @format=xmldb
 #
 
 object template prefix1;

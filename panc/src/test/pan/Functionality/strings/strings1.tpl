@@ -5,6 +5,7 @@
 # FIXME: Make expectation do something.
 #
 # @expect="count(/profile/*)=9"
+# @format=xmldb
 #
 
 object template strings1;

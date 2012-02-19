@@ -1,5 +1,6 @@
 #
 # @expect="/profile/result=0"
+# @format=xmldb
 #
 
 object template bug-trac-171;

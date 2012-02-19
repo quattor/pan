@@ -1,5 +1,6 @@
 #
 # @expect="/profile/y='a' and /profile/z='b'"
+# @format=xmldb
 #
 object template key1;
 "/x/a" = 1;

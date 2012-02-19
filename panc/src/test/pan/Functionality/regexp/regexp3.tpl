@@ -2,6 +2,7 @@
 # regexp for IPv4 addresses
 #
 # @expect="/profile/checks[1]='BAD' and /profile/checks[2]='BAD' and /profile/checks[3]='BIG' and /profile/checks[4]='OK'"
+# @format=xmldb
 #
 
 object template regexp3;

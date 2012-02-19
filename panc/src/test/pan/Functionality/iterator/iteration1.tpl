@@ -1,5 +1,6 @@
 #
 # @expect="/profile/result/a=1 and /profile/result/b='OK'"
+# @format=xmldb
 #
 object template iteration1;
 

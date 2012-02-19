@@ -2,6 +2,7 @@
 # test of iteration with first/next
 #
 # @expect="/profile/test1_list[1]='012' and /profile/test1_list[2]='aaabbbccc' and /profile/test1_nlist[1]='abc' and /profile/test1_nlist[2]='111222333' and /profile/test2_list[1]='012' and /profile/test2_list[2]='aaabbbccc' and /profile/test2_nlist[1]='abc' and /profile/test2_nlist[2]='111222333'"
+# @format=xmldb
 #
 
 object template key5;

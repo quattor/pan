@@ -2,6 +2,7 @@
 # variables can be (ab)used to create hardlinks and even loops :-(
 #
 # @expect="/profile/x3[1]='OK' and /profile/x3[2]='OK'"
+# @format=xmldb
 #
 
 object template weird3;

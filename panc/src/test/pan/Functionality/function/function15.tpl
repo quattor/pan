@@ -2,6 +2,7 @@
 # make sure that to_long() understands the different bases
 #
 # @expect="/profile/x1=12 and /profile/x2=10 and /profile/x3=18 and /profile/y1=12 and /profile/y2=10 and /profile/y3=18"
+# @format=xmldb
 #
 
 object template function15;

@@ -1,5 +1,6 @@
 #
 # @expect="/profile/result[1]/a='true' and /profile/result[1]/b=1.2 and /profile/result[2]/a='true' and /profile/result[2]/b=3.4"
+# @format=xmldb
 #
 object template default17;
 

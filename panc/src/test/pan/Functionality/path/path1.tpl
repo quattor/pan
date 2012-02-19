@@ -2,6 +2,7 @@
 # check of escaped paths
 #
 # @expect="/profile/a_2fb='OK' and /profile/alpha='OK'"
+# @format=xmldb
 #
 
 object template path1;

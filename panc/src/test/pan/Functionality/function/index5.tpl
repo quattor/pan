@@ -2,6 +2,7 @@
 # test of index() builtin
 #
 # @expect="/profile/nn1='b' and /profile/nn2='d'"
+# @format=xmldb
 #
 
 object template index5;

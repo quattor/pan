@@ -2,6 +2,7 @@
 # test of to_long function
 #
 # @expect="/profile/l1=291 and /profile/l2=291 and /profile/l3=46 and /profile/l4=1"
+# @format=xmldb
 #
 
 object template function11;

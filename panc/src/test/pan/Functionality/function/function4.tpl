@@ -2,6 +2,7 @@
 # test yet more builtin functions
 #
 # @expect="/profile/s1='cdef' and /profile/s2='b' and /profile/s3='bcde' and /profile/s4='cdef' and /profile/s5='c' and /profile/s6='cde'"
+# @format=xmldb
 #
 
 object template function4;

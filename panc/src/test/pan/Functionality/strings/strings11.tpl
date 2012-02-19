@@ -2,6 +2,7 @@
 # test of string escaping
 #
 # @expect="count(/profile/test/*)=8"
+# @format=xmldb
 #
 
 object template strings11;

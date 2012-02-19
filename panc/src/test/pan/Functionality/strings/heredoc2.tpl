@@ -4,6 +4,7 @@
 # (savannah bug #21115)
 #
 # @expect="/profile/result"
+# @format=xmldb
 #
 object template heredoc2;
 

@@ -1,5 +1,6 @@
 #
 # @expect="/profile/result[1]/index=0 and /profile/result[2]/index=1 and /profile/result[3]/index=2"
+# @format=xmldb
 #
 object template iterator1;
 

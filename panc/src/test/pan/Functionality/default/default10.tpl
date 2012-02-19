@@ -1,5 +1,6 @@
 #
 # @expect="/profile/result=4"
+# @format=xmldb
 #
 object template default10;
 

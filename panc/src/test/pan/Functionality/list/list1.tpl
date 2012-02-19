@@ -2,6 +2,7 @@
 # test of list creation by index
 #
 # @expect="/profile/l1[1]='first' and /profile/l2[1]='first' and /profile/l3[1]='first' and /profile/l1[2]='second' and /profile/l2[2]='second' and /profile/l3[2]='second' and /profile/l1[3]='third' and /profile/l2[3]='third' and /profile/l3[3]='third'"
+# @format=xmldb
 #
 
 object template list1;

@@ -2,6 +2,7 @@
 # Check that iteration over a resource works.
 #
 # @expect="/profile/result=5"
+# @format=xmldb
 #
 object template forloop4;
 

@@ -2,6 +2,7 @@
 # sample file to test floating point numbers
 #
 # @expect="count(/profile/*)=4"
+# @format=xmldb
 #
 
 object template floats1;

@@ -2,6 +2,7 @@
 # test data manipulation language constructs
 #
 # @expect="/profile/x1=3 and /profile/x2=3 and /profile/x3='ok' and /profile/x4='ok' and /profile/x5=8 and /profile/x6=720"
+# @format=xmldb
 #
 
 object template simple2;

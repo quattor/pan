@@ -2,6 +2,7 @@
 # test to_string function
 #
 # @expect="/profile/s1='hello' and /profile/s2='123' and /profile/s3='4.56' and /profile/s4='true'"
+# @format=xmldb
 #
 
 object template function8;

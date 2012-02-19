@@ -2,6 +2,7 @@
 # test of first/next like in the documentation
 #
 # @expect="/profile/ex1=15 and /profile/ex2[1]='a' and /profile/ex2[2]='b' and /profile/ex2[3]='c'"
+# @format=xmldb
 #
 
 object template key9;

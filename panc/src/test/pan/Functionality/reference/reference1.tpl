@@ -1,5 +1,6 @@
 #
 # @expect="/profile/result/a/gamma='a' and /profile/result/b/gamma='b'"
+# @format=xmldb
 #
 object template reference1;
 

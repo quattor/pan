@@ -2,6 +2,7 @@
 # test of return pseudo-function
 #
 # @expect="/profile/x1='ok3' and /profile/x2='ok'"
+# @format=xmldb
 #
 
 object template return1;

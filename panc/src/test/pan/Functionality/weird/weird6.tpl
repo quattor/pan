@@ -2,6 +2,7 @@
 # show a nasty bug with reference counting :-(
 #
 # @expect="/profile/result/key[1]='aaa' and /profile/result/key[2]='bbb'"
+# @format=xmldb
 #
 
 object template weird6;

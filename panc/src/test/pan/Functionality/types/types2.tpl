@@ -4,6 +4,7 @@
 # and the end)
 #
 # @expect="count(/profile/*)=3"
+# @format=xmldb
 #
 
 object template types2;

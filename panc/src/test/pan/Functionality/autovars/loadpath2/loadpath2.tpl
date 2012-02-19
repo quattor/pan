@@ -1,5 +1,6 @@
 #
 # @expect="/profile/result1='OK' and /profile/result2='OK' and /profile/result3='OK' and /profile/result4='OK'"
+# @format=xmldb
 #
 object template loadpath2; 
 

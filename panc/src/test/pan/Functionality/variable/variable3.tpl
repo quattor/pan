@@ -2,6 +2,7 @@
 # test of variable child
 #
 # @expect="/profile/a[1]='OK' and /profile/x1[1]='OK' and /profile/x2='OK' and /profile/x3/a[1]='OK'"
+# @format=xmldb
 #
 
 object template variable3;

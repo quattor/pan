@@ -3,6 +3,7 @@
 # create all necessary resources.
 #
 # @expect="/profile/result/a/b='OK'"
+# @format=xmldb
 #
 object template self5;
 

@@ -1,5 +1,6 @@
 #
 # @expect="count(/profile/first/*)=2 and count(/profile/second/*)=3"
+# @format=xmldb
 #
 object template extensible2;
 

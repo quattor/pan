@@ -3,6 +3,7 @@
 # in different stack frames.
 #
 # @expect="/profile/result/a='OK' and /profile/result/b='OK'"
+# @format=xmldb
 #
 object template self12;
 

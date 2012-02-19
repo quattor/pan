@@ -3,6 +3,7 @@
 # frames are properly propagated to other frames.
 #
 # @expect="/profile/result/a='OK'"
+# @format=xmldb
 #
 object template self11;
 

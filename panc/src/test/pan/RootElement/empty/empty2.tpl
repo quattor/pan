@@ -2,6 +2,7 @@
 # empty object templates are permitted
 #
 # @expect="/profile/root-element-test='OK'"
+# @format=xmldb
 #
 
 object template empty2;

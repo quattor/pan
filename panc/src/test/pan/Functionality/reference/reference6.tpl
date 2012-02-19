@@ -1,5 +1,6 @@
 #
 # @expect="count(/profile/result/*)=0"
+# @format=xmldb
 #
 object template reference6;
 

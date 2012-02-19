@@ -1,5 +1,7 @@
 #
 # @expect="count(/profile/result2)-count(/profile/result1)=1"
+# @format=xmldb
+# @format=xmldb
 #
 object template loadpath1;
 

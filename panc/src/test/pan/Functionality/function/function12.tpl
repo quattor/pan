@@ -2,6 +2,7 @@
 # test to_double function
 #
 # @expect="/profile/d1=45.6 and /profile/d2=123.0 and /profile/d3=45.6 and /profile/d4=1.0"
+# @format=xmldb
 #
 
 object template function12;

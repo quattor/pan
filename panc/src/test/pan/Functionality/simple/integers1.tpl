@@ -2,6 +2,7 @@
 # sample file to test integers
 #
 # @expect="count(/profile/*)=6"
+# @format=xmldb
 #
 
 object template integers1;

@@ -2,6 +2,7 @@
 # test of delete as statement
 #
 # @expect="count(/profile/list)=2 and /profile/list[1]='aa' and /profile/list[2]='dd' and count(/profile/nlist/*)=2 and /profile/nlist/xx=1 and /profile/nlist/zz=3"
+# @format=xmldb
 #
 
 object template delete1;

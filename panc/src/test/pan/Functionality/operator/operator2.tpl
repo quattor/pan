@@ -2,6 +2,7 @@
 # test of numerical operators
 #
 # @expect="/profile/n[1]=0 and /profile/n[2]>0.0 and /profile/n[3]>0.0 and /profile/n[4]>0.0 and /profile/n[5]=0.0 and /profile/n[6]=0.0"
+# @format=xmldb
 #
 
 object template operator2;

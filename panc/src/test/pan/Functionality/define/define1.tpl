@@ -1,5 +1,6 @@
 #
 # @expect="/profile/gamma=0"
+# @format=xmldb
 #
 object template define1;
 

@@ -1,5 +1,6 @@
 #
 # @expect="/profile/result/a/b='OK'"
+# @format=xmldb
 #
 
 # 

@@ -2,6 +2,7 @@
 # test of index() builtin
 #
 # @expect="/profile/name1='green' and /profile/name2=''"
+# @format=xmldb
 #
 
 object template index3;

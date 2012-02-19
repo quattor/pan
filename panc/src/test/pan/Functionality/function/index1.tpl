@@ -2,6 +2,7 @@
 # test of index() builtin
 #
 # @expect="/profile/s1=3 and /profile/s2=-1 and /profile/s3=8"
+# @format=xmldb
 #
 
 object template index1;

@@ -1,5 +1,6 @@
 #
 # @expect="/profile/result[1]='OK'"
+# @format=xmldb
 #
 
 object template bug-trac-161-3;

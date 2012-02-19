@@ -2,6 +2,7 @@
 # tests of splice on strings
 #
 # @expect="/profile/s1='12abcde' and /profile/s2='abcde12' and /profile/s3='ab12cde' and /profile/s4='bcde' and /profile/s5='abcd' and /profile/s6='abce' and /profile/s7='abXXXe'"
+# @format=xmldb
 #
 
 object template function5;

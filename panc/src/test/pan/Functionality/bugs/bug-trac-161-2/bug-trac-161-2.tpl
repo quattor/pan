@@ -1,6 +1,6 @@
 #
-# @expect="/profile/result[1]/a='OK'"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/list[@name='result']/*[1]/string[@name='a']='OK'"
+# @format=pan
 #
 
 object template bug-trac-161-2;

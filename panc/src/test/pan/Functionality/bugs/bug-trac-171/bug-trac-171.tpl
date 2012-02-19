@@ -1,6 +1,6 @@
 #
-# @expect="/profile/result=0"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/long[@name='result']=0"
+# @format=pan
 #
 
 object template bug-trac-171;

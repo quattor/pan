@@ -1,8 +1,8 @@
 #
 # test of delete as statement
 #
-# @expect="count(/profile/list)=2 and /profile/list[1]='aa' and /profile/list[2]='dd' and count(/profile/nlist/*)=2 and /profile/nlist/xx=1 and /profile/nlist/zz=3"
-# @format=xmldb
+# @expect="count(/nlist[@name='profile']/list[@name='list']/*)=2 and /nlist[@name='profile']/list[@name='list']/*[1]='aa' and /nlist[@name='profile']/list[@name='list']/*[2]='dd' and count(/nlist[@name='profile']/nlist[@name='nlist']/*)=2 and /nlist[@name='profile']/nlist[@name='nlist']/long[@name='xx']=1 and /nlist[@name='profile']/nlist[@name='nlist']/long[@name='zz']=3"
+# @format=pan
 #
 
 object template delete1;

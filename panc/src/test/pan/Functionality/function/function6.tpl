@@ -1,8 +1,8 @@
 #
 # tests of splice on lists
 #
-# @expect="count(/profile/s1)=7 and count(/profile/s2)=7 and count(/profile/s3)=7 and count(/profile/s4)=4 and count(/profile/s5)=4 and count(/profile/s6)=4 and count(/profile/s7)=4 and /profile/s1[1]='1' and /profile/s2[6]='1' and /profile/s3[3]='1' and /profile/s4[1]='b' and /profile/s5[4]='d' and /profile/s6[4]='e' and /profile/s7[3]='XXX'"
-# @format=xmldb
+# @expect="count(/nlist[@name='profile']/list[@name='s1']/*)=7 and count(/nlist[@name='profile']/list[@name='s2']/*)=7 and count(/nlist[@name='profile']/list[@name='s3']/*)=7 and count(/nlist[@name='profile']/list[@name='s4']/*)=4 and count(/nlist[@name='profile']/list[@name='s5']/*)=4 and count(/nlist[@name='profile']/list[@name='s6']/*)=4 and count(/nlist[@name='profile']/list[@name='s7']/*)=4 and /nlist[@name='profile']/list[@name='s1']/*[1]='1' and /nlist[@name='profile']/list[@name='s2']/*[6]='1' and /nlist[@name='profile']/list[@name='s3']/*[3]='1' and /nlist[@name='profile']/list[@name='s4']/*[1]='b' and /nlist[@name='profile']/list[@name='s5']/*[4]='d' and /nlist[@name='profile']/list[@name='s6']/*[4]='e' and /nlist[@name='profile']/list[@name='s7']/*[3]='XXX'"
+# @format=pan
 #
 
 object template function6;

@@ -1,8 +1,8 @@
 #
 # tests of splice on strings
 #
-# @expect="/profile/s1='12abcde' and /profile/s2='abcde12' and /profile/s3='ab12cde' and /profile/s4='bcde' and /profile/s5='abcd' and /profile/s6='abce' and /profile/s7='abXXXe'"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/string[@name='s1']='12abcde' and /nlist[@name='profile']/string[@name='s2']='abcde12' and /nlist[@name='profile']/string[@name='s3']='ab12cde' and /nlist[@name='profile']/string[@name='s4']='bcde' and /nlist[@name='profile']/string[@name='s5']='abcd' and /nlist[@name='profile']/string[@name='s6']='abce' and /nlist[@name='profile']/string[@name='s7']='abXXXe'"
+# @format=pan
 #
 
 object template function5;

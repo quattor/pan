@@ -1,8 +1,8 @@
 #
 # test of variable child
 #
-# @expect="/profile/a[1]='OK' and /profile/x1[1]='OK' and /profile/x2='OK' and /profile/x3/a[1]='OK'"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/list[@name='a']/*[1]='OK' and /nlist[@name='profile']/list[@name='x1']/*[1]='OK' and /nlist[@name='profile']/string[@name='x2']='OK' and /nlist[@name='profile']/nlist[@name='x3']/list[@name='a']/*[1]='OK'"
+# @format=pan
 #
 
 object template variable3;

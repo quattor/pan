@@ -1,6 +1,6 @@
 #
-# @expect="count(/profile/result/*)=4 and /profile/result/a and /profile/result/b and /profile/result/c and /profile/result/d"
-# @format=xmldb
+# @expect="count(/nlist[@name='profile']/nlist[@name='result']/*)=4 and /nlist[@name='profile']/nlist[@name='result']/*[@name='a'] and /nlist[@name='profile']/nlist[@name='result']/*[@name='b'] and /nlist[@name='profile']/nlist[@name='result']/*[@name='c'] and /nlist[@name='profile']/nlist[@name='result']/*[@name='d']"
+# @format=pan
 #
 object template reference3;
 

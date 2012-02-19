@@ -1,8 +1,8 @@
 #
 # simple tests of regexps
 #
-# @expect="/profile/s1='true' and /profile/s2='false' and count(/profile/s3)=5 and count(/profile/s4)=3 and /profile/s4[2]='16.' and /profile/s5='false' and /profile/s6='true' and count(/profile/s7)=3 and /profile/s7[2]='dd'"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/boolean[@name='s1']='true' and /nlist[@name='profile']/boolean[@name='s2']='false' and count(/nlist[@name='profile']/list[@name='s3']/*)=5 and count(/nlist[@name='profile']/list[@name='s4']/*)=3 and /nlist[@name='profile']/list[@name='s4']/*[2]='16.' and /nlist[@name='profile']/boolean[@name='s5']='false' and /nlist[@name='profile']/boolean[@name='s6']='true' and count(/nlist[@name='profile']/list[@name='s7']/*)=3 and /nlist[@name='profile']/list[@name='s7']/*[2]='dd'"
+# @format=pan
 #
 object template regexp1;
 

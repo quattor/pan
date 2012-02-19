@@ -1,8 +1,8 @@
 #
 # complicated nested variable lookups
 #
-# @expect="/profile/x1[1]/x1[1]=0 and /profile/x1[2]/x1[1]=1 and /profile/x1[3]/x1[1]=3 and /profile/x1[3]/x1[2]=2"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/list[@name='x1']/*[1]/*[1]=0 and /nlist[@name='profile']/list[@name='x1']/*[2]/*[1]=1 and /nlist[@name='profile']/list[@name='x1']/*[3]/*[1]=3 and /nlist[@name='profile']/list[@name='x1']/*[3]/*[2]=2"
+# @format=pan
 #
 
 object template variable4;

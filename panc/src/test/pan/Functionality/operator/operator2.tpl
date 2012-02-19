@@ -1,8 +1,8 @@
 #
 # test of numerical operators
 #
-# @expect="/profile/n[1]=0 and /profile/n[2]>0.0 and /profile/n[3]>0.0 and /profile/n[4]>0.0 and /profile/n[5]=0.0 and /profile/n[6]=0.0"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/list[@name='n']/*[1]=0 and /nlist[@name='profile']/list[@name='n']/*[2]>0.0 and /nlist[@name='profile']/list[@name='n']/*[3]>0.0 and /nlist[@name='profile']/list[@name='n']/*[4]>0.0 and /nlist[@name='profile']/list[@name='n']/*[5]=0.0 and /nlist[@name='profile']/list[@name='n']/*[6]=0.0"
+# @format=pan
 #
 
 object template operator2;

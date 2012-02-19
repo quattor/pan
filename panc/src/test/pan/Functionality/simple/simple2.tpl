@@ -1,8 +1,8 @@
 #
 # test data manipulation language constructs
 #
-# @expect="/profile/x1=3 and /profile/x2=3 and /profile/x3='ok' and /profile/x4='ok' and /profile/x5=8 and /profile/x6=720"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/long[@name='x1']=3 and /nlist[@name='profile']/long[@name='x2']=3 and /nlist[@name='profile']/string[@name='x3']='ok' and /nlist[@name='profile']/string[@name='x4']='ok' and /nlist[@name='profile']/long[@name='x5']=8 and /nlist[@name='profile']/long[@name='x6']=720"
+# @format=pan
 #
 
 object template simple2;

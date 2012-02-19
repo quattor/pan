@@ -1,8 +1,8 @@
 #
 # regexp for IPv4 addresses
 #
-# @expect="/profile/checks[1]='BAD' and /profile/checks[2]='BAD' and /profile/checks[3]='BIG' and /profile/checks[4]='OK'"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/list[@name='checks']/*[1]='BAD' and /nlist[@name='profile']/list[@name='checks']/*[2]='BAD' and /nlist[@name='profile']/list[@name='checks']/*[3]='BIG' and /nlist[@name='profile']/list[@name='checks']/*[4]='OK'"
+# @format=pan
 #
 
 object template regexp3;

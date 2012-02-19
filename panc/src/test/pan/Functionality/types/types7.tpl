@@ -1,8 +1,8 @@
 #
 # test of included record types
 #
-# @expect="/profile/t2 and /profile/t3"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/nlist[@name='t2'] and /nlist[@name='profile']/nlist[@name='t3']"
+# @format=pan
 #
 
 object template types7;

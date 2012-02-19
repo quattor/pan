@@ -1,8 +1,8 @@
 #
 # show a nasty bug with reference counting :-(
 #
-# @expect="/profile/result/key[1]='aaa' and /profile/result/key[2]='bbb'"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/nlist[@name='result']/list[@name='key']/*[1]='aaa' and /nlist[@name='profile']/nlist[@name='result']/list[@name='key']/*[2]='bbb'"
+# @format=pan
 #
 
 object template weird6;

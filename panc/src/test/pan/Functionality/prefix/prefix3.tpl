@@ -2,8 +2,8 @@
 # make sure protected resources when optimizing don't
 # get changed from one profile to another
 #
-# @expect="/profile/a/result='ok' and /profile/b/result='ok'"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/nlist[@name='a']/string[@name='result']='ok' and /nlist[@name='profile']/nlist[@name='b']/string[@name='result']='ok'"
+# @format=pan
 #
 
 object template prefix3;

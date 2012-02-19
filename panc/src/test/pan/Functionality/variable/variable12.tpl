@@ -1,8 +1,8 @@
 #
 # test of the self variable
 #
-# @expect="/profile/test1=3 and /profile/test2=2.1 and /profile/test3='true' and /profile/test4='true'"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/long[@name='test1']=3 and /nlist[@name='profile']/double[@name='test2']=2.1 and /nlist[@name='profile']/boolean[@name='test3']='true' and /nlist[@name='profile']/boolean[@name='test4']='true'"
+# @format=pan
 #
 
 object template variable12;

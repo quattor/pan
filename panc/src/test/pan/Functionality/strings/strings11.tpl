@@ -1,8 +1,8 @@
 #
 # test of string escaping
 #
-# @expect="count(/profile/test/*)=8"
-# @format=xmldb
+# @expect="count(/nlist[@name='profile']/nlist[@name='test']/*)=8"
+# @format=pan
 #
 
 object template strings11;

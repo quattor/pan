@@ -1,6 +1,6 @@
 #
-# @expect="/profile/result/a/gamma='a' and /profile/result/b/gamma='b'"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/nlist[@name='result']/nlist[@name='a']/string[@name='gamma']='a' and /nlist[@name='profile']/nlist[@name='result']/nlist[@name='b']/string[@name='gamma']='b'"
+# @format=pan
 #
 object template reference1;
 

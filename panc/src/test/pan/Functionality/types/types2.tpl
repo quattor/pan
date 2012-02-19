@@ -3,8 +3,8 @@
 # to the end of processing (all type checking is performed
 # and the end)
 #
-# @expect="count(/profile/*)=3"
-# @format=xmldb
+# @expect="count(/nlist[@name='profile']/*)=3"
+# @format=pan
 #
 
 object template types2;

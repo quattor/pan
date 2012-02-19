@@ -4,8 +4,8 @@
 # FIXME: The entity reference &#1 for \x00isn't properly read by the XML reader.
 # FIXME: Make expectation do something.
 #
-# @expect="count(/profile/*)=9"
-# @format=xmldb
+# @expect="count(/nlist[@name='profile']/*)=9"
+# @format=pan
 #
 
 object template strings1;

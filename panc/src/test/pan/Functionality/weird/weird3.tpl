@@ -1,8 +1,8 @@
 #
 # variables can be (ab)used to create hardlinks and even loops :-(
 #
-# @expect="/profile/x3[1]='OK' and /profile/x3[2]='OK'"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/list[@name='x3']/*[1]='OK' and /nlist[@name='profile']/list[@name='x3']/*[2]='OK'"
+# @format=pan
 #
 
 object template weird3;

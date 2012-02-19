@@ -1,8 +1,8 @@
 #
 # single quoted strings are supported too
 #
-# @expect="/profile/x1='foo' and /profile/x2='f^o$o"b\a`r' and /profile/x3="foo'bar" and /profile/x4="foo''""
-# @format=xmldb
+# @expect="/nlist[@name='profile']/string[@name='x1']='foo' and /nlist[@name='profile']/string[@name='x2']='f^o$o"b\a`r' and /nlist[@name='profile']/string[@name='x3']="foo'bar" and /nlist[@name='profile']/string[@name='x4']="foo''""
+# @format=pan
 #
 
 object template strings9;

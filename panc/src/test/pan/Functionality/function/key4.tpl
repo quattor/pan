@@ -1,8 +1,8 @@
 #
 # test key within a loop
 #
-# @expect="/profile/keys='blue green red'"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/string[@name='keys']='blue green red'"
+# @format=pan
 #
 object template key4;
 

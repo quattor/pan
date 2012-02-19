@@ -1,8 +1,8 @@
 #
 # empty object templates are permitted
 #
-# @expect="/profile/root-element-test='OK'"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/string[@name='root-element-test']='OK'"
+# @format=pan
 #
 
 object template empty2;

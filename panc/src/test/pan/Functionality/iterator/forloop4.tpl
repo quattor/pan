@@ -1,8 +1,8 @@
 #
 # Check that iteration over a resource works.
 #
-# @expect="/profile/result=5"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/long[@name='result']=5"
+# @format=pan
 #
 object template forloop4;
 

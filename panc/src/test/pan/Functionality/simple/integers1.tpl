@@ -1,8 +1,8 @@
 #
 # sample file to test integers
 #
-# @expect="count(/profile/*)=6"
-# @format=xmldb
+# @expect="count(/nlist[@name='profile']/*)=6"
+# @format=pan
 #
 
 object template integers1;

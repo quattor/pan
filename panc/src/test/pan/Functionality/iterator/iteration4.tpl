@@ -1,6 +1,6 @@
 #
-# @expect="/profile/result[1]=1 and /profile/result[2]='OK'"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/list[@name='result']/*[1]=1 and /nlist[@name='profile']/list[@name='result']/*[2]='OK'"
+# @format=pan
 #
 object template iteration4;
 

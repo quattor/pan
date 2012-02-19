@@ -1,8 +1,8 @@
 #
 # test of global variables
 #
-# @expect="/profile/global/object='variable5'"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/nlist[@name='global']/string[@name='object']='variable5'"
+# @format=pan
 #
 
 object template variable5;

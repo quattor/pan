@@ -1,8 +1,8 @@
 #
 # test of big string
 #
-# @expect="/profile/big1 and /profile/big2"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/string[@name='big1'] and /nlist[@name='profile']/string[@name='big2']"
+# @format=pan
 #
 
 object template strings2;

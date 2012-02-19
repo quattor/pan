@@ -1,8 +1,8 @@
 #
 # Check that loop goes as expected.  (10 iterations) 
 #
-# @expect="/profile/result=10"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/long[@name='result']=10"
+# @format=pan
 #
 object template forloop2;
 

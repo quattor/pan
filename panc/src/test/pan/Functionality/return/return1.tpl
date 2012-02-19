@@ -1,8 +1,8 @@
 #
 # test of return pseudo-function
 #
-# @expect="/profile/x1='ok3' and /profile/x2='ok'"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/string[@name='x1']='ok3' and /nlist[@name='profile']/string[@name='x2']='ok'"
+# @format=pan
 #
 
 object template return1;

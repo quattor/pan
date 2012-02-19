@@ -1,8 +1,8 @@
 #
 # test of link type
 #
-# @expect="/profile/foo/bar and /profile/link"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/nlist[@name='foo']/long[@name='bar'] and /nlist[@name='profile']/string[@name='link']"
+# @format=pan
 #
 
 object template types5;

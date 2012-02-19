@@ -3,8 +3,8 @@
 # versions of the compiler.
 # (savannah bug #21115)
 #
-# @expect="/profile/result"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/string[@name='result']"
+# @format=pan
 #
 object template heredoc2;
 

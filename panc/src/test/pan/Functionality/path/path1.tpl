@@ -1,8 +1,8 @@
 #
 # check of escaped paths
 #
-# @expect="/profile/a_2fb='OK' and /profile/alpha='OK'"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/string[@name='a_2fb']='OK' and /nlist[@name='profile']/string[@name='alpha']='OK'"
+# @format=pan
 #
 
 object template path1;

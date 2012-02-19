@@ -1,8 +1,8 @@
 #
 # test to_string function
 #
-# @expect="/profile/s1='hello' and /profile/s2='123' and /profile/s3='4.56' and /profile/s4='true'"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/string[@name='s1']='hello' and /nlist[@name='profile']/string[@name='s2']='123' and /nlist[@name='profile']/string[@name='s3']='4.56' and /nlist[@name='profile']/string[@name='s4']='true'"
+# @format=pan
 #
 
 object template function8;

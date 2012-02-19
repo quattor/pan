@@ -1,6 +1,6 @@
 #
-# @expect="/profile/result/a/b='OK'"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/nlist[@name='result']/nlist[@name='a']/string[@name='b']='OK'"
+# @format=pan
 #
 
 # 

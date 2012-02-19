@@ -1,8 +1,8 @@
 #
 # test to_double function
 #
-# @expect="/profile/d1=45.6 and /profile/d2=123.0 and /profile/d3=45.6 and /profile/d4=1.0"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/double[@name='d1']=45.6 and /nlist[@name='profile']/double[@name='d2']=123.0 and /nlist[@name='profile']/double[@name='d3']=45.6 and /nlist[@name='profile']/double[@name='d4']=1.0"
+# @format=pan
 #
 
 object template function12;

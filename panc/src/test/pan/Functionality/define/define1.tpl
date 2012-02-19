@@ -1,6 +1,6 @@
 #
-# @expect="/profile/gamma=0"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/long[@name='gamma']=0"
+# @format=pan
 #
 object template define1;
 

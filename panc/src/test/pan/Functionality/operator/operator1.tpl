@@ -1,8 +1,8 @@
 #
 # test of operators
 #
-# @expect="/profile/t[1]='true' and /profile/t[2]='true' and /profile/t[3]='true' and /profile/t[4]='true' and /profile/t[5]='true' and /profile/t[6]='true' and /profile/t[7]='true' and /profile/t[8]='true' and /profile/t[9]='true' and /profile/f[1]='false' and /profile/f[2]='false' and /profile/f[3]='false' and /profile/f[4]='false' and /profile/f[5]='false' and /profile/f[6]='false' and /profile/f[7]='false' and /profile/f[8]='false' and /profile/f[9]='false'"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/list[@name='t']/*[1]='true' and /nlist[@name='profile']/list[@name='t']/*[2]='true' and /nlist[@name='profile']/list[@name='t']/*[3]='true' and /nlist[@name='profile']/list[@name='t']/*[4]='true' and /nlist[@name='profile']/list[@name='t']/*[5]='true' and /nlist[@name='profile']/list[@name='t']/*[6]='true' and /nlist[@name='profile']/list[@name='t']/*[7]='true' and /nlist[@name='profile']/list[@name='t']/*[8]='true' and /nlist[@name='profile']/list[@name='t']/*[9]='true' and /nlist[@name='profile']/list[@name='f']/*[1]='false' and /nlist[@name='profile']/list[@name='f']/*[2]='false' and /nlist[@name='profile']/list[@name='f']/*[3]='false' and /nlist[@name='profile']/list[@name='f']/*[4]='false' and /nlist[@name='profile']/list[@name='f']/*[5]='false' and /nlist[@name='profile']/list[@name='f']/*[6]='false' and /nlist[@name='profile']/list[@name='f']/*[7]='false' and /nlist[@name='profile']/list[@name='f']/*[8]='false' and /nlist[@name='profile']/list[@name='f']/*[9]='false'"
+# @format=pan
 #
 
 object template operator1;

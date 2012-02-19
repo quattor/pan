@@ -1,8 +1,8 @@
 #
 # test of to_long function
 #
-# @expect="/profile/l1=291 and /profile/l2=291 and /profile/l3=46 and /profile/l4=1"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/long[@name='l1']=291 and /nlist[@name='profile']/long[@name='l2']=291 and /nlist[@name='profile']/long[@name='l3']=46 and /nlist[@name='profile']/long[@name='l4']=1"
+# @format=pan
 #
 
 object template function11;

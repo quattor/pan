@@ -1,8 +1,8 @@
 #
 # test yet more builtin functions
 #
-# @expect="/profile/s1='cdef' and /profile/s2='b' and /profile/s3='bcde' and /profile/s4='cdef' and /profile/s5='c' and /profile/s6='cde'"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/string[@name='s1']='cdef' and /nlist[@name='profile']/string[@name='s2']='b' and /nlist[@name='profile']/string[@name='s3']='bcde' and /nlist[@name='profile']/string[@name='s4']='cdef' and /nlist[@name='profile']/string[@name='s5']='c' and /nlist[@name='profile']/string[@name='s6']='cde'"
+# @format=pan
 #
 
 object template function4;

@@ -1,6 +1,6 @@
 #
-# @expect="count(/profile/first/*)=2 and count(/profile/second/*)=3"
-# @format=xmldb
+# @expect="count(/nlist[@name='profile']/nlist[@name='first']/*)=2 and count(/nlist[@name='profile']/nlist[@name='second']/*)=3"
+# @format=pan
 #
 object template extensible2;
 

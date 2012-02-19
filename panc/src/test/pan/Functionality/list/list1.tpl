@@ -1,8 +1,8 @@
 #
 # test of list creation by index
 #
-# @expect="/profile/l1[1]='first' and /profile/l2[1]='first' and /profile/l3[1]='first' and /profile/l1[2]='second' and /profile/l2[2]='second' and /profile/l3[2]='second' and /profile/l1[3]='third' and /profile/l2[3]='third' and /profile/l3[3]='third'"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/list[@name='l1']/*[1]='first' and /nlist[@name='profile']/list[@name='l2']/*[1]='first' and /nlist[@name='profile']/list[@name='l3']/*[1]='first' and /nlist[@name='profile']/list[@name='l1']/*[2]='second' and /nlist[@name='profile']/list[@name='l2']/*[2]='second' and /nlist[@name='profile']/list[@name='l3']/*[2]='second' and /nlist[@name='profile']/list[@name='l1']/*[3]='third' and /nlist[@name='profile']/list[@name='l2']/*[3]='third' and /nlist[@name='profile']/list[@name='l3']/*[3]='third'"
+# @format=pan
 #
 
 object template list1;

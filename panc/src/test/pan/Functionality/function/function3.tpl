@@ -1,8 +1,8 @@
 #
 # test of function recursion and parameter passing
 #
-# @expect="/profile/x1=1 and /profile/x2=6 and /profile/x3=362880"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/long[@name='x1']=1 and /nlist[@name='profile']/long[@name='x2']=6 and /nlist[@name='profile']/long[@name='x3']=362880"
+# @format=pan
 #
 object template function3;
 

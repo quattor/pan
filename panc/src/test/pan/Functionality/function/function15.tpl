@@ -1,8 +1,8 @@
 #
 # make sure that to_long() understands the different bases
 #
-# @expect="/profile/x1=12 and /profile/x2=10 and /profile/x3=18 and /profile/y1=12 and /profile/y2=10 and /profile/y3=18"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/long[@name='x1']=12 and /nlist[@name='profile']/long[@name='x2']=10 and /nlist[@name='profile']/long[@name='x3']=18 and /nlist[@name='profile']/long[@name='y1']=12 and /nlist[@name='profile']/long[@name='y2']=10 and /nlist[@name='profile']/long[@name='y3']=18"
+# @format=pan
 #
 
 object template function15;

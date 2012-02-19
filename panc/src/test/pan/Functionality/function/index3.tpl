@@ -1,8 +1,8 @@
 #
 # test of index() builtin
 #
-# @expect="/profile/name1='green' and /profile/name2=''"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/string[@name='name1']='green' and /nlist[@name='profile']/string[@name='name2']=''"
+# @format=pan
 #
 
 object template index3;

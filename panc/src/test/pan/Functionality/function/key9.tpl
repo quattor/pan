@@ -1,8 +1,8 @@
 #
 # test of first/next like in the documentation
 #
-# @expect="/profile/ex1=15 and /profile/ex2[1]='a' and /profile/ex2[2]='b' and /profile/ex2[3]='c'"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/long[@name='ex1']=15 and /nlist[@name='profile']/list[@name='ex2']/*[1]='a' and /nlist[@name='profile']/list[@name='ex2']/*[2]='b' and /nlist[@name='profile']/list[@name='ex2']/*[3]='c'"
+# @format=pan
 #
 
 object template key9;

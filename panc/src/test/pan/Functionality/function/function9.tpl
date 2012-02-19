@@ -1,8 +1,8 @@
 #
 # test to_boolean function
 #
-# @expect="/profile/t1='true' and /profile/t1='true' and /profile/t3='true' and /profile/t4='true' and /profile/f1='false' and /profile/f2='false' and /profile/f3='false' and /profile/f4='false'"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/boolean[@name='t1']='true' and /nlist[@name='profile']/boolean[@name='t1']='true' and /nlist[@name='profile']/boolean[@name='t3']='true' and /nlist[@name='profile']/boolean[@name='t4']='true' and /nlist[@name='profile']/boolean[@name='f1']='false' and /nlist[@name='profile']/boolean[@name='f2']='false' and /nlist[@name='profile']/boolean[@name='f3']='false' and /nlist[@name='profile']/boolean[@name='f4']='false'"
+# @format=pan
 #
 
 object template function9;

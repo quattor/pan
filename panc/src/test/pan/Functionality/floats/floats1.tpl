@@ -1,8 +1,8 @@
 #
 # sample file to test floating point numbers
 #
-# @expect="count(/profile/*)=4"
-# @format=xmldb
+# @expect="count(/nlist[@name='profile']/*)=4"
+# @format=pan
 #
 
 object template floats1;

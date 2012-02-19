@@ -1,8 +1,8 @@
 #
 # here is an empty object template
 #
-# @expect="count(/profile/*)=0"
-# @format=xmldb
+# @expect="count(/nlist[@name='profile']/*)=0"
+# @format=pan
 #
 
 object template empty3;

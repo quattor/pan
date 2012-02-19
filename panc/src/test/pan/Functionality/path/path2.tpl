@@ -1,7 +1,8 @@
 #
 # make sure that escaped literal paths refer to the correct things
 #
-# @expect="/profile/result='OK'"
+# @expect="/nlist[@name='profile']/string[@name='result']='OK'"
+# @format=pan
 #
 
 object template path2;

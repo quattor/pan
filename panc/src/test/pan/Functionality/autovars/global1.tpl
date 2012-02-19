@@ -1,7 +1,8 @@
 #
 # check that self is properly defined for variable definitions
 #
-# @expect="/profile/result='OK'"
+# @expect="/nlist[@name='profile']/string[@name='result']='OK'"
+# @format=pan
 #
 object template global1;
 

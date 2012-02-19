@@ -3,7 +3,8 @@
 # (so you can safely use it without performance penalty)
 #
 #
-# @expect="/profile/result='OK'"
+# @expect="/nlist[@name='profile']/string[@name='result']='OK'"
+# @format=pan
 #
 
 object template function10;

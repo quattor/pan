@@ -51,7 +51,7 @@ import org.junit.Test;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.output.Formatter;
-import org.quattor.pan.output.XmlDBFormatter;
+import org.quattor.pan.output.PanFormatter;
 import org.xml.sax.InputSource;
 
 public class JavaCompilerTest {
@@ -84,7 +84,7 @@ public class JavaCompilerTest {
             throws SyntaxException {
         List<File> path = new LinkedList<File>();
         path.add(dir);
-        Formatter formatter = XmlDBFormatter.getInstance();
+        Formatter formatter = PanFormatter.getInstance();
         CompilerOptions options = new CompilerOptions(null, null, true, true,
                 100, 50, formatter, getTmpdir(), null, path, 0, false, 2,
                 false, null, null, false, null);
@@ -101,7 +101,7 @@ public class JavaCompilerTest {
         path.add(getTmpdir());
 
         CompilerOptions options = new CompilerOptions(null, null, true, false,
-                100, 50, XmlDBFormatter.getInstance(), getTmpdir(), null, path,
+                100, 50, PanFormatter.getInstance(), getTmpdir(), null, path,
                 0, false, 2, false, null, null, false, null);
 
         List<String> objects = new LinkedList<String>();
@@ -142,7 +142,7 @@ public class JavaCompilerTest {
         path.add(tpldir);
 
         CompilerOptions options = new CompilerOptions(null, null, true, false,
-                100, 50, XmlDBFormatter.getInstance(), tmpdir, null, path, 0,
+                100, 50, PanFormatter.getInstance(), tmpdir, null, path, 0,
                 false, 2, false, null, null, false, null);
 
         // Create the list of input files.

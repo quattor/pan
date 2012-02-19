@@ -1,7 +1,8 @@
 # This template should produce a traceback that includes
 # the location of the function definition.
 #
-# @expect="/profile/result='OK'"
+# @expect="/nlist[@name='profile']/string[@name='result']='OK'"
+# @format=pan
 #
 object template bug-trac-69;
 

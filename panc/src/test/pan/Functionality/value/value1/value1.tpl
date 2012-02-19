@@ -1,5 +1,6 @@
 #
-# @expect="/profile/result='OK'"
+# @expect="/nlist[@name='profile']/string[@name='result']='OK'"
+# @format=pan
 #
 # Partially tests SF bug #2860089.
 #

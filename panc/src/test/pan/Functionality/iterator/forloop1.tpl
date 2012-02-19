@@ -2,7 +2,8 @@
 # Check that loop with no iterations returns the
 # initialization value. 
 #
-# @expect="/profile/result='OK'"
+# @expect="/nlist[@name='profile']/string[@name='result']='OK'"
+# @format=pan
 #
 object template forloop1;
 

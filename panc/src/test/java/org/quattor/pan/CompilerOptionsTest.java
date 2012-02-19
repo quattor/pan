@@ -34,7 +34,7 @@ import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.HashResource;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.output.Formatter;
-import org.quattor.pan.output.XmlDBFormatter;
+import org.quattor.pan.output.PanFormatter;
 
 public class CompilerOptionsTest {
 
@@ -45,7 +45,7 @@ public class CompilerOptionsTest {
         boolean depWriteEnabled = false;
         int iterationLimit = 1001;
         int callDepthLimit = 101;
-        Formatter formatter = XmlDBFormatter.getInstance();
+        Formatter formatter = PanFormatter.getInstance();
         File outputDirectory = new File(System.getProperty("user.dir"));
         File sessionDirectory = new File(System.getProperty("user.dir"));
         List<File> includeDirectories = new LinkedList<File>();
@@ -75,7 +75,7 @@ public class CompilerOptionsTest {
         boolean depWriteEnabled = true;
         int iterationLimit = 2002;
         int callDepthLimit = 202;
-        Formatter formatter = XmlDBFormatter.getInstance();
+        Formatter formatter = PanFormatter.getInstance();
         File outputDirectory = new File(System.getProperty("user.dir"));
         File sessionDirectory = null;
         List<File> includeDirectories = new LinkedList<File>();
@@ -104,7 +104,7 @@ public class CompilerOptionsTest {
         boolean depWriteEnabled = false;
         int iterationLimit = -1;
         int callDepthLimit = 0;
-        Formatter formatter = XmlDBFormatter.getInstance();
+        Formatter formatter = PanFormatter.getInstance();
         File outputDirectory = new File(System.getProperty("user.dir"));
         File sessionDirectory = new File(System.getProperty("user.dir"));
         List<File> includeDirectories = new LinkedList<File>();
@@ -127,7 +127,7 @@ public class CompilerOptionsTest {
         boolean depWriteEnabled = false;
         int iterationLimit = -1;
         int callDepthLimit = 0;
-        Formatter formatter = XmlDBFormatter.getInstance();
+        Formatter formatter = PanFormatter.getInstance();
         File outputDirectory = new File("/xxxyyy");
         File sessionDirectory = new File(System.getProperty("user.dir"));
         List<File> includeDirectories = new LinkedList<File>();
@@ -147,7 +147,7 @@ public class CompilerOptionsTest {
         boolean depWriteEnabled = false;
         int iterationLimit = -1;
         int callDepthLimit = 0;
-        Formatter formatter = XmlDBFormatter.getInstance();
+        Formatter formatter = PanFormatter.getInstance();
         File outputDirectory = new File(System.getProperty("user.dir"));
         File sessionDirectory = new File("/xxxyyy");
         List<File> includeDirectories = new LinkedList<File>();
@@ -167,7 +167,7 @@ public class CompilerOptionsTest {
         boolean depWriteEnabled = false;
         int iterationLimit = -1;
         int callDepthLimit = 0;
-        Formatter formatter = XmlDBFormatter.getInstance();
+        Formatter formatter = PanFormatter.getInstance();
         File outputDirectory = new File(System.getProperty("user.dir"));
         File sessionDirectory = new File(System.getProperty("user.dir"));
         List<File> includeDirectories = new LinkedList<File>();

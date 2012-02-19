@@ -1,7 +1,8 @@
 #
 # Try various empty templates.  If this compiles, everything's OK.
 #
-# @expect="/profile/result='OK'"
+# @expect="/nlist[@name='profile']/string[@name='result']='OK'"
+# @format=pan
 #
 object template empty-nonobj;
 

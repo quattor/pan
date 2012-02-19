@@ -37,7 +37,7 @@ import org.quattor.pan.Compiler;
 import org.quattor.pan.CompilerOptions;
 import org.quattor.pan.cache.BuildCache;
 import org.quattor.pan.exceptions.EvaluationException;
-import org.quattor.pan.output.XmlDBFormatter;
+import org.quattor.pan.output.PanFormatter;
 import org.quattor.pan.tasks.BuildResult;
 import org.quattor.pan.template.Context;
 import org.quattor.pan.utils.ExceptionUtils;
@@ -74,8 +74,8 @@ public class StatementTestUtils {
         files.add(tplfile);
 
         CompilerOptions options = new CompilerOptions(null, null, true, true,
-                1000, 50, XmlDBFormatter.getInstance(), tmpfile, null, paths,
-                0, false, 0, false, null, null, false, null);
+                1000, 50, PanFormatter.getInstance(), tmpfile, null, paths, 0,
+                false, 0, false, null, null, false, null);
 
         Compiler compiler = new Compiler(options, new LinkedList<String>(),
                 files);
@@ -115,8 +115,8 @@ public class StatementTestUtils {
         files.add(tplfile);
 
         CompilerOptions options = new CompilerOptions(null, null, true, true,
-                1000, 50, XmlDBFormatter.getInstance(), tmpfile, null, paths,
-                0, false, 0, false, null, null, false, null);
+                1000, 50, PanFormatter.getInstance(), tmpfile, null, paths, 0,
+                false, 0, false, null, null, false, null);
 
         Compiler compiler = new Compiler(options, new LinkedList<String>(),
                 files);
@@ -164,8 +164,8 @@ public class StatementTestUtils {
         files.add(tplfile);
 
         CompilerOptions options = new CompilerOptions(null, null, true, true,
-                1000, 50, XmlDBFormatter.getInstance(), tmpfile, null, paths,
-                0, false, 0, false, null, null, false, null);
+                1000, 50, PanFormatter.getInstance(), tmpfile, null, paths, 0,
+                false, 0, false, null, null, false, null);
 
         Compiler compiler = new Compiler(options, new LinkedList<String>(),
                 files);

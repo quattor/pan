@@ -1,7 +1,6 @@
 #
-# @expect="count(/profile/result2)-count(/profile/result1)=1"
-# @format=xmldb
-# @format=xmldb
+# @expect="count(/nlist[@name='profile']/list[@name='result2']/*)-count(/nlist[@name='profile']/list[@name='result1']/*)=1"
+# @format=pan
 #
 object template loadpath1;
 

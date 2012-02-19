@@ -2,8 +2,8 @@
 # Ensure that indirect changes to self are immediately 
 # visible in the configuration tree.
 #
-# @expect="/profile/result1/a='OK' and /profile/result1/b='OK' and /profile/result2[1]='OK' and /profile/result2[2]='OK'"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/nlist[@name='result1']/string[@name='a']='OK' and /nlist[@name='profile']/nlist[@name='result1']/string[@name='b']='OK' and /nlist[@name='profile']/list[@name='result2']/*[1]='OK' and /nlist[@name='profile']/list[@name='result2']/*[2]='OK'"
+# @format=pan
 #
 object template self7;
 

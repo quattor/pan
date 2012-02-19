@@ -2,8 +2,8 @@
 # Ensure that changes of the SELF variable is visible
 # in different stack frames.
 #
-# @expect="/profile/result/a='OK' and /profile/result/b='OK'"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/nlist[@name='result']/string[@name='a']='OK' and /nlist[@name='profile']/nlist[@name='result']/string[@name='b']='OK'"
+# @format=pan
 #
 object template self12;
 

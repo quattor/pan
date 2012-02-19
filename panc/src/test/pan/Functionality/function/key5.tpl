@@ -1,8 +1,8 @@
 #
 # test of iteration with first/next
 #
-# @expect="/profile/test1_list[1]='012' and /profile/test1_list[2]='aaabbbccc' and /profile/test1_nlist[1]='abc' and /profile/test1_nlist[2]='111222333' and /profile/test2_list[1]='012' and /profile/test2_list[2]='aaabbbccc' and /profile/test2_nlist[1]='abc' and /profile/test2_nlist[2]='111222333'"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/list[@name='test1_list']/*[1]='012' and /nlist[@name='profile']/list[@name='test1_list']/*[2]='aaabbbccc' and /nlist[@name='profile']/list[@name='test1_nlist']/*[1]='abc' and /nlist[@name='profile']/list[@name='test1_nlist']/*[2]='111222333' and /nlist[@name='profile']/list[@name='test2_list']/*[1]='012' and /nlist[@name='profile']/list[@name='test2_list']/*[2]='aaabbbccc' and /nlist[@name='profile']/list[@name='test2_nlist']/*[1]='abc' and /nlist[@name='profile']/list[@name='test2_nlist']/*[2]='111222333'"
+# @format=pan
 #
 
 object template key5;

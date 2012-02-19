@@ -2,8 +2,8 @@
 # Multi-level assignment to non-existant SELF should
 # create all necessary resources.
 #
-# @expect="/profile/result[1]/result[1]='OK'"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/list[@name='result']/*[1]/*[1]='OK'"
+# @format=pan
 #
 object template self4;
 

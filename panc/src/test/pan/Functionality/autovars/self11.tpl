@@ -2,8 +2,8 @@
 # Ensure that changes of the SELF variable in different
 # frames are properly propagated to other frames.
 #
-# @expect="/profile/result/a='OK'"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/nlist[@name='result']/string[@name='a']='OK'"
+# @format=pan
 #
 object template self11;
 

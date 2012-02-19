@@ -1,5 +1,6 @@
 #
-# @expect="/profile/result='true'"
+# @expect="/nlist[@name='profile']/boolean[@name='result']='true'"
+# @format=pan
 #
 
 object template bug-trac-192-2;

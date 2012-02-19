@@ -2,7 +2,8 @@
 # Test that self can be modified directly as long
 # as self is not the direct target of an assignment.
 #
-# @expect="/profile/result='true'"
+# @expect="/nlist[@name='profile']/boolean[@name='result']='true'"
+# @format=pan
 #
 object template self2;
 

@@ -1,6 +1,6 @@
 #
-# @expect="/profile/result/a='true' and /profile/result/b='true'"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/nlist[@name='result']/boolean[@name='a']='true' and /nlist[@name='profile']/nlist[@name='result']/boolean[@name='b']='true'"
+# @format=pan
 #
 object template default14;
 

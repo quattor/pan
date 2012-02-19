@@ -1,6 +1,6 @@
 #
-# @expect="/profile/a=1 and /profile/b=2"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/string[@name='a']=1 and /nlist[@name='profile']/string[@name='b']=2"
+# @format=pan
 #
 object template default22;
 

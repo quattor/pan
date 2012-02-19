@@ -1,6 +1,6 @@
 #
-# @expect="/profile/test='OK'"
-# @format=xmldb
+# @expect="/nlist[@name='profile']/string[@name='test']='OK'"
+# @format=pan
 #
 object template default1; 
 

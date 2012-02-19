@@ -1,5 +1,6 @@
 #
-# @expect="/profile/result='false'"
+# @expect="/nlist[@name='profile']/boolean[@name='result']='false'"
+# @format=pan
 #
 # Partially tests SF bug #2860089.
 #

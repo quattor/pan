@@ -1,5 +1,6 @@
 #
-# @expect="/profile/result='false'"
+# @expect="/nlist[@name='profile']/boolean[@name='result']='false'"
+# @format=pan
 #
 object template exists5;
 

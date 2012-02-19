@@ -42,6 +42,7 @@ import org.quattor.pan.exceptions.ConfigurationException;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.output.Formatter;
+import org.quattor.pan.output.PanFormatter;
 import org.quattor.pan.parser.ASTOperation;
 import org.quattor.pan.parser.PanParser;
 import org.quattor.pan.parser.PanParserAstUtils;
@@ -334,7 +335,7 @@ public class CompilerOptions {
         boolean depWriteEnabled = false;
         int iterationLimit = 5000;
         int callDepthLimit = 50;
-        Formatter formatter = null;
+        Formatter formatter = PanFormatter.getInstance();
         File outputDirectory = null;
         File sessionDirectory = null;
         int nthread = 0;

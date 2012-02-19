@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>panc-maven-archetype</artifactId>
+
+  <name>panc maven archetype</name>
+
+  <parent>
+    <groupId>org.quattor.pan</groupId>
+    <artifactId>pan</artifactId>
+    <version>9.2-SNAPSHOT</version>
+  </parent>
+
+  <build>
+    <plugins>
+      <plugin>
+	
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-resources-plugin</artifactId>
+	
+	<executions>
+	  
+	  <execution>
+	    <id>filter-archetype-resources</id>
+	    <goals>
+	      <goal>copy-resources</goal>
+	    </goals>
+	    <phase>process-resources</phase>
+	    <configuration>
+	      <encoding>UTF-8</encoding>
+	      <useDefaultDelimiters>false</useDefaultDelimiters>
+	      <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+	      <delimiters>
+		<delimiter>%%{*}%%</delimiter>
+	      </delimiters>
+	      <resources>
+		<resource>
+		  <directory>src/main/resources</directory>
+		  <filtering>true</filtering>
+		</resource>
+	      </resources>
+	    </configuration> 
+	  </execution>
+	  
+	</executions>
+	
+      </plugin>
+      
+    </plugins>
+  </build>
+
+</project>

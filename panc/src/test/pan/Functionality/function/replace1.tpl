@@ -1,5 +1,6 @@
 #
-# @expect="/profile/result='a-b-c-d'"
+# @expect="/nlist[@name='profile']/string[@name='result']='a-b-c-d'"
+# @format=pan
 #
 object template replace1;
 

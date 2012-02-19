@@ -2,7 +2,8 @@
 # verify that global variables cannot be modified indirectly
 # through local variables
 #
-# @expect="/profile/result='true' and /profile/result2='true'"
+# @expect="/nlist[@name='profile']/boolean[@name='result']='true' and /nlist[@name='profile']/boolean[@name='result2']='true' "
+# @format=pan
 #
 object template global4;
 

@@ -1,5 +1,6 @@
 #
-# @expect="/profile/result='/mylong' and /profile/mylong=10"
+# @expect="/nlist[@name='profile']/string[@name='result']='/mylong' and /nlist[@name='profile']/long[@name='mylong']='10'"
+# @format=pan
 #
 object template default19;
 

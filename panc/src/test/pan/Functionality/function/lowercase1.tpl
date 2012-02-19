@@ -1,5 +1,6 @@
 #
-# @expect="/profile/result='ok'"
+# @expect="/nlist[@name='profile']/string[@name='result']='ok'"
+# @format=pan
 #
 object template lowercase1;
 

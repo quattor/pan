@@ -15,6 +15,7 @@
 
   <build>
     <plugins>
+
       <plugin>
 	
 	<groupId>org.apache.maven.plugins</groupId>
@@ -30,15 +31,22 @@
 	    <phase>process-resources</phase>
 	    <configuration>
 	      <encoding>UTF-8</encoding>
-	      <useDefaultDelimiters>false</useDefaultDelimiters>
-	      <outputDirectory>${project.build.outputDirectory}</outputDirectory>
-	      <delimiters>
-		<delimiter>%%{*}%%</delimiter>
-	      </delimiters>
+              <escapeString>\</escapeString>
+              <outputDirectory>${project.build.outputDirectory}</outputDirectory>
 	      <resources>
 		<resource>
 		  <directory>src/main/resources</directory>
 		  <filtering>true</filtering>
+                  <includes>
+                    <include>archetype-resources/pom.xml</include>
+                  </includes>
+		</resource>
+		<resource>
+		  <directory>src/main/resources</directory>
+		  <filtering>false</filtering>
+                  <excludes>
+                    <excludes>archetype-resources/pom.xml</excludes>
+                  </excludes>
 		</resource>
 	      </resources>
 	    </configuration> 

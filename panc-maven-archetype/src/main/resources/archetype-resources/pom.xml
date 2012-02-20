@@ -1,16 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   
-  <groupId>org.quattor.pan.build</groupId>
-  <artifactId>example</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <name>pan example build</name>
-
-  <url>http://quattor.org</url>
-
-  <description>
-    An example maven project for pan syntax checks and builds.
-  </description>
+  <groupId>\${groupId}</groupId>
+  <artifactId>\${artifactId}</artifactId>
+  <version>\${version}</version>
 
   <packaging>pom</packaging>
 
@@ -18,7 +11,7 @@
     <dependency>
       <groupId>org.quattor.pan</groupId>
       <artifactId>pan</artifactId>
-      <version>%%{project.version}%%</version>
+      <version>${project.version}</version>
       <classifier>jar-with-dependencies</classifier>
     </dependency>
   </dependencies>
@@ -30,7 +23,7 @@
         <plugin>
           <groupId>org.quattor.pan</groupId>
           <artifactId>panc-maven-plugin</artifactId>
-          <version>9.2-SNAPSHOT</version>
+          <version>${project.version}</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -54,7 +47,8 @@
               <goal>pan-build</goal>
             </goals>
             <configuration>
-              <formatterName>json</formatterName>
+              <formatterName>pan</formatterName>
+              <!-- <formatterName>json</formatterName> -->
             </configuration>
           </execution>
 

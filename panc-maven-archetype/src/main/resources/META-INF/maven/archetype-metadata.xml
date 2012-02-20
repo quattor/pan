@@ -1,14 +1,21 @@
 <archetype-descriptor
-    xmlns="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0 http://maven.apache.org/xsd/archetype-descriptor-1.0.0.xsd"
     name="Pan Compiler Maven Project Archetype"
     partial="false" >
 
+  <requiredProperties>
+    <requiredProperty key="package">
+      <defaultValue></defaultValue>
+    </requiredProperty>
+  </requiredProperties>
+
   <fileSets>
-    <fileSet filtered="true" packaged="true" encoding="UTF-8" >
+    <fileSet filtered="true" packaged="false" encoding="UTF-8" >
       <directory>src/main/pan</directory>
       <includes>
-	<include>**/*</include>
+	<include>**/*.pan</include>
       </includes>
     </fileSet>
   </fileSets>

@@ -5,7 +5,7 @@
 
   <groupId>org.quattor.pan</groupId>
   <artifactId>pan</artifactId>
-  <version>9.2</version>
+  <version>9.3-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>pan</name>
@@ -162,13 +162,13 @@
       <dependency>
         <groupId>org.quattor.pan</groupId>
         <artifactId>panc-docs</artifactId>
-        <version>9.2</version>
+        <version>9.3-SNAPSHOT</version>
       </dependency>
       
       <dependency>
         <groupId>org.quattor.pan</groupId>
         <artifactId>panc</artifactId>
-        <version>9.2</version>
+        <version>9.3-SNAPSHOT</version>
       </dependency>
 
     </dependencies>

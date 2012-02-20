@@ -64,8 +64,18 @@
 
       <itemizedlist>
         <listitem>
-          <para>(SF RFE #3489048) Switch unit tests to use the pan XML format.
-          </para>
+          <para>(SF RFE #3489506) Provide a pan maven archetype. A rudimentary
+          implementation is available which uses the panc maven plugin.</para>
+        </listitem>
+
+        <listitem>
+          <para>(SF RFE #3489504) Provide a maven build mojo. A rudimentary
+          implementation is available in the panc maven plugin. </para>
+        </listitem>
+
+        <listitem>
+          <para>(SF RFE #3489048) Switch unit tests to use the pan XML format
+          instead of xmldb.</para>
         </listitem>
 
         <listitem>
@@ -88,7 +98,8 @@
 
         <listitem>
           <para>(SF Bug #3488948) Annotation information in pan book is
-          inaccurate.</para>
+          inaccurate. The description has been correct and expanded
+          somewhat.</para>
         </listitem>
       </itemizedlist>
     </section>

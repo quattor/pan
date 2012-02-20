@@ -48,90 +48,97 @@
     <title>Maven</title>
 
     <para>The pan compiler release now contains a simple maven plug-in that
-    will perform a pan syntax check on a set of source files. The plug-in is
-    available from the Quattor maven repository. To use this, you will need to
-    configure maven for that repository. This can be done by adding the
-    following to your own settings file
-    (<filename>~/.m2/settings.xml</filename>):</para>
+    will perform a pan syntax check and build on a simple set of files. The
+    plug-in is available from the central maven repository. To use this, you
+    will need to configure maven for that repository. A maven archetype is
+    also provided that can be used to generate a working skeleton that
+    demonstrates the pan maven plugin.</para>
 
-    <programlisting>&lt;settings&gt;
+    <para>To generate a skeleton maven project from the archetype use the
+    following command (use the latest version of the archetype):</para>
 
- ...
+    <programlisting>$ mvn archetype:generate \
+  -DarchetypeArtifactId=panc-maven-archetype \
+  -DarchetypeGroupId=org.quattor.pan \
+  -DarchetypeVersion=9.2
 
-  &lt;profiles&gt;
-    &lt;profile&gt;
-      &lt;id&gt;quattor-plugins&lt;/id&gt;
-      &lt;pluginRepositories&gt;
-        &lt;pluginRepository&gt;
-          &lt;id&gt;quattor-releases&lt;/id&gt;
-          &lt;url&gt;http://lapp-repo01.in2p3.fr:8081/nexus/content/repositories/releases/&lt;/url&gt;
-        &lt;/pluginRepository&gt;
-      &lt;/pluginRepositories&gt;
-    &lt;/profile&gt;    
-  &lt;/profiles&gt;
-  
-  &lt;activeProfiles&gt;
-    &lt;activeProfile&gt;quattor-plugins&lt;/activeProfile&gt;
-  &lt;/activeProfiles&gt;
+...
 
-&lt;/settings&gt;</programlisting>
+Define value for property 'groupId': : org.example.pan
+Define value for property 'artifactId': : mysite
+Define value for property 'version':  1.0-SNAPSHOT: : 
+Define value for property 'package':  org.example.pan: : 
+Confirm properties configuration:
+groupId: org.example.pan
+artifactId: mysite
+version: 1.0-SNAPSHOT
+package: org.example.pan
+ Y: : 
 
-    <para>This will allow the Quattor maven repository to be searched for
-    plug-ins. The plug-in can be invoked from the command line like
-    this:</para>
+...
 
-    <programlisting>$ mvn org.quattor.pan:maven-panc-plugin:check-syntax</programlisting>
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 19.690s
+[INFO] Finished at: Mon Feb 20 08:23:52 CET 2012
+[INFO] Final Memory: 9M/81M
+[INFO] ------------------------------------------------------------------------</programlisting>
 
-    <para>but must be done from an area with an existing
-    <filename>pom.xml</filename> file.</para>
+    <para>As can be seen above, the process will ask for general information
+    about the project that you want to create. The process should end with a
+    "BUILD SUCCESS" and create a subdirectory with the maven project. In the
+    example, the subdirectory (and artifactId) are named "mysite".</para>
 
-    <para>To run this as part of a normal build, add the following to the
-    <filename>pom.xml</filename> file associated with the project:</para>
+    <para>Within this subdirectory ("mysite"), you can then invoke the entire
+    build process by doing the following:</para>
 
-    <programlisting>&lt;project&gt;
+    <programlisting>$ cd mysite/
+$ mvn clean install
 
-  ...
+...
 
-  &lt;pluginRepositories&gt;
-    &lt;pluginRepository&gt;
-      &lt;id&gt;quattor-releases&lt;/id&gt;
-      &lt;url&gt;http://lapp-repo01.in2p3.fr:8081/nexus/content/repositories/releases/&lt;/url&gt;
-    &lt;/pluginRepository&gt;
-  &lt;/pluginRepositories&gt;
+[INFO] --- panc-maven-plugin:9.2-SNAPSHOT:pan-check-syntax (check-syntax) @ mysite ---
+[INFO] 
+[INFO] --- panc-maven-plugin:9.2-SNAPSHOT:pan-build (build) @ mysite ---
 
-  ...
+...
 
-  &lt;build&gt;
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 1.782s
+[INFO] Finished at: Mon Feb 20 08:27:51 CET 2012
+[INFO] Final Memory: 3M/81M
+[INFO] ------------------------------------------------------------------------</programlisting>
 
-    &lt;plugins&gt;
-      &lt;plugin&gt;
-        &lt;groupId&gt;org.quattor.pan&lt;/groupId&gt;
-        &lt;artifactId&gt;maven-panc-plugin&lt;/artifactId&gt;
+    <para>Again, this should end with a "BUILD SUCCESS". It will have
+    generated the machine profile in the
+    <filename>target/profiles/node.example.org.xml</filename> file:</para>
 
-        &lt;executions&gt;
-          &lt;execution&gt;
-            &lt;goals&gt;
-              &lt;goal&gt;check-syntax&lt;/goal&gt;
-            &lt;/goals&gt;
-            &lt;configuration&gt;
-              &lt;verbose&gt;true&lt;/verbose&gt;
-            &lt;/configuration&gt;
-          &lt;/execution&gt;
-        &lt;/executions&gt;
+    <programlisting>$ cat target/profiles/node.example.org.xml
 
-      &lt;/plugin&gt;
-    &lt;/plugins&gt;
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;nlist format="pan" name="profile"&gt;
+    &lt;list name="alpha"&gt;
+        &lt;long&gt;1&lt;/long&gt;
+        &lt;long&gt;2&lt;/long&gt;
+        &lt;long&gt;3&lt;/long&gt;
+        &lt;long&gt;4&lt;/long&gt;
+    &lt;/list&gt;
+    &lt;nlist name="beta"&gt;
+        &lt;string name="delta"&gt;OK&lt;/string&gt;
+        &lt;boolean name="epsilon"&gt;true&lt;/boolean&gt;
+        &lt;string name="gamma"&gt;OK&lt;/string&gt;
+        &lt;double name="zeta"&gt;3.14&lt;/double&gt;
+    &lt;/nlist&gt;
+&lt;/nlist&gt;</programlisting>
 
-  &lt;/build&gt;
+    <para>The <filename>pom.xml</filename> file in the skeleton provides a
+    good example on how to run the plugin. You can also obtain more detailed
+    help via the maven help system:</para>
 
-&lt;/project&gt;</programlisting>
-
-    <para>The <literal>check-syntax</literal> goal will run by default in the
-    <literal>process-sources</literal> stage of the lifecycle. By default, the
-    plug-in will recursively look for pan sources (<filename>*.pan</filename>
-    and <filename>*.tpl</filename>) in the <filename>src/main/pan</filename>
-    subdirectory of a project. The plug-in checks all of the pan sources that
-    were found.</para>
+    <programlisting>$ mvn help:describe -Dplugin=panc -Ddetail=true</programlisting>
   </section>
 
   <section>

@@ -285,6 +285,12 @@
       <artifactId>tools.cli</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>autodoc</groupId>
+      <artifactId>autodoc</artifactId>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <licenses>

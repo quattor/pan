@@ -1,0 +1,22 @@
+#!/bin/sh
+
+if [ -n "$JAVA_HOME" ] ; then
+	javaexe=$JAVA_HOME"/bin/java"
+else
+	javaexe=`which java`
+fi
+
+if [ ! -x $javaexe ]; then
+	echo " ERROR: cannot find executable for java"
+	exit 1;
+fi
+
+panc_jar_path="`dirname $0`/../lib/panc.jar";
+panc_class="org.quattor.pan.pan_annotations"
+
+if [ ! -r $panc_jar_path ]; then
+    echo "ERROR: cannot find pan compiler jar file; tried " $panc_jar_path
+    exit 1;
+fi;
+
+$javaexe -cp $panc_jar_path $panc_class "$@"

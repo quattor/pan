@@ -3,7 +3,7 @@
   (:use clojure.tools.cli
         [clojure.string :only (blank?)])
   (:import (java.io File)
-           org.quattor.pan.CompilerOptions))
+           (org.quattor.pan CompilerOptions CompilerResults)))
 
 (defn path-splitter-re []
   (re-pattern (str "[^" File/pathSeparator "]+")))
@@ -30,18 +30,25 @@
 (defn get-compiler-options [{base-dir :base-dir output-dir :output-dir}]
     (CompilerOptions/createAnnotationOptions output-dir base-dir))
 
-(defn generate-annotations [options]
-  (let [compiler-options (get-compiler-options options)]
-    (println compiler-options)))
+(defn generate-annotations [options files]
+  (let [compiler-options (get-compiler-options options)
+        pan-sources (map #(File. %) files)]
+    (org.quattor.pan.Compiler/run compiler-options nil pan-sources)))
 
 (defn -main [& args]
   (let [[options files banner]
         (cli args
-             ["--base-dir" "base directory for templates" :parse-fn parse-directory]
-             ["--output-dir" "output directory" :parse-fn parse-directory]
+             ["--base-dir" "base directory for templates" 
+              :default (current-directory) :parse-fn parse-directory]
+             ["--output-dir" "output directory" 
+              :default (current-directory) :parse-fn parse-directory]
              ["--jvm-options" "options for JVM"]
              ["-h" "--help" "print command help" :default false :flag true])]
     (when (:help options)
       (println banner)
       (System/exit 0))
-    (generate-annotations options)))
+    (let [results (generate-annotations options files)]
+      (if-let [errors (.formatErrors results)]
+        (println errors)
+        "")
+      (println (.formatStats results)))))

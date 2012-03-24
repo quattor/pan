@@ -17,7 +17,5 @@
 			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/pan/panc/clojure-contrib.jar" sourcepath="/pan/panc/clojure-contrib-src.jar"/>
-	<classpathentry kind="lib" path="/pan/panc/classes"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

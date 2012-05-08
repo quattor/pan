@@ -82,8 +82,7 @@
         (System/exit 0))
       (let [results (build-profiles options files)]
         (if-let [errors (.formatErrors results)]
-          (println errors)
-          "")
+          (println errors))
         (println (.formatStats results))))
     (catch Exception e
       (println (.getMessage e))

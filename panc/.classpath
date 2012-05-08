@@ -1,22 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" output="target/classes" path="src/main/java"/>
-	<classpathentry kind="src" path="src/test/clojure"/>
+	<classpathentry including="**/*.java" kind="src" output="target/test-classes" path="src/test/java"/>
+	<classpathentry including="**/*.java" kind="src" path="src/main/java"/>
+	<classpathentry including="**/*.java" kind="src" path="target/generated-sources/javacc"/>
+	<classpathentry including="**/*.java" kind="src" path="target/generated-sources/jjtree"/>
+	<classpathentry excluding="**/*.java" kind="src" path="src/main/resources"/>
 	<classpathentry kind="src" path="src/main/clojure"/>
-	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources"/>
-	<classpathentry kind="src" output="target/test-classes" path="src/test/java"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
-	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER"/>
-	<classpathentry kind="src" output="target/classes" path="target/generated-sources/jjtree">
-		<attributes>
-			<attribute name="optional" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="src" output="target/classes" path="target/generated-sources/javacc">
-		<attributes>
-			<attribute name="optional" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/pan/panc/classes"/>
+	<classpathentry kind="src" path="src/test/clojure"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="var" path="M2_REPO/net/jcip/jcip-annotations/1.0/jcip-annotations-1.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/ant/ant/1.8.3/ant-1.8.3.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/ant/ant-launcher/1.8.3/ant-launcher-1.8.3.jar"/>
+	<classpathentry kind="var" path="M2_REPO/junit/junit/4.10/junit-4.10.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/hamcrest/hamcrest-core/1.1/hamcrest-core-1.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/com/google/code/gson/gson/2.2/gson-2.2.jar"/>
+	<classpathentry kind="var" path="M2_REPO/jline/jline/2.6/jline-2.6.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/clojure/clojure/1.4.0/clojure-1.4.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/clojure/tools.cli/0.2.1/tools.cli-0.2.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/autodoc/autodoc/0.9.0/autodoc-0.9.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/clojure/data.json/0.1.1/data.json-0.1.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/clojure/data.zip/0.1.0/data.zip-0.1.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/clojure/tools.namespace/0.1.0/tools.namespace-0.1.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/clojure/java.classpath/0.1.0/java.classpath-0.1.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/enlive/enlive/1.0.0/enlive-1.0.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/ccil/cowan/tagsoup/tagsoup/1.2/tagsoup-1.2.jar"/>
+	<classpathentry kind="var" path="M2_REPO/lancet/lancet/1.0.1/lancet-1.0.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/ant/ant-nodeps/1.7.1/ant-nodeps-1.7.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-ant-tasks/2.0.10/maven-ant-tasks-2.0.10.jar"/>
+	<classpathentry kind="var" path="M2_REPO/classworlds/classworlds/1.1-alpha-2/classworlds-1.1-alpha-2.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/codehaus/plexus/plexus-container-default/1.0-alpha-9-stable-1/plexus-container-default-1.0-alpha-9-stable-1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/codehaus/plexus/plexus-utils/1.5.5/plexus-utils-1.5.5.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-artifact/2.0.10/maven-artifact-2.0.10.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-artifact-manager/2.0.10/maven-artifact-manager-2.0.10.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-repository-metadata/2.0.10/maven-repository-metadata-2.0.10.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/maven/wagon/wagon-provider-api/1.0-beta-2/wagon-provider-api-1.0-beta-2.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-model/2.0.10/maven-model-2.0.10.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-project/2.0.10/maven-project-2.0.10.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-settings/2.0.10/maven-settings-2.0.10.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/codehaus/plexus/plexus-interpolation/1.1/plexus-interpolation-1.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-profile/2.0.10/maven-profile-2.0.10.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-plugin-registry/2.0.10/maven-plugin-registry-2.0.10.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/maven/maven-error-diagnostics/2.0.10/maven-error-diagnostics-2.0.10.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/maven/wagon/wagon-file/1.0-beta-2/wagon-file-1.0-beta-2.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/maven/wagon/wagon-http-lightweight/1.0-beta-2/wagon-http-lightweight-1.0-beta-2.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/maven/wagon/wagon-http-shared/1.0-beta-2/wagon-http-shared-1.0-beta-2.jar"/>
+	<classpathentry kind="var" path="M2_REPO/jtidy/jtidy/4aug2000r7-dev/jtidy-4aug2000r7-dev.jar"/>
+	<classpathentry kind="var" path="M2_REPO/xml-apis/xml-apis/1.0.b2/xml-apis-1.0.b2.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

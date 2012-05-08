@@ -8,15 +8,45 @@ fi
 
 if [ ! -x $javaexe ]; then
 	echo " ERROR: cannot find executable for java"
-	exit 1;
+	exit 1
 fi
 
-panc_jar_path="`dirname $0`/../lib/panc.jar";
+jopts=""
+if [ -n $JAVA_OPTS ]; then
+    jopts=$JAVA_OPTS
+fi
+
+#
+# Process all of the command line arguments.  Collect
+# java options, overriding the environmental variable.
+# All other options must have spaces escaped.
+#
+copts=""
+while (($#)) ; do
+
+    if [ "$1" == "--java-opts" ]; then
+        shift
+        jopts=$1
+    else
+        copts="${copts}`echo "$1" | sed 's/ /\\\\ /g'` "
+    fi
+
+    shift
+done
+
+panc_jar_path="`dirname $0`/../lib/panc.jar"
 panc_class="org.quattor.pan.pan_compiler"
 
 if [ ! -r $panc_jar_path ]; then
     echo "ERROR: cannot find pan compiler jar file; tried " $panc_jar_path
-    exit 1;
-fi;
+    exit 1
+fi
 
-$javaexe -cp $panc_jar_path $panc_class "$@"
+#
+# Start java!
+#
+cmd="$javaexe $jopts -cp $panc_jar_path $panc_class $copts"
+$cmd
+
+
+

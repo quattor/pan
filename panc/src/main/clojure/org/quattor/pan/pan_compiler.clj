@@ -67,7 +67,6 @@
                ["--session-dir" "session directory"]
                ["--output-dir" "output directory" ]
                ["--formats" "generated output formats" :default "pan,dep"]
-               ["--compress" "compress output" :default false :flag true]
                ["--java-opts" "options for JVM"]
                ["--max-iteration" "set max. no. of iterations" :default 10000]
                ["--max-recursion" "set max. depth of recursion" :default 10]

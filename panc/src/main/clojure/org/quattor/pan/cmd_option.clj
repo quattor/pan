@@ -1,34 +1,12 @@
 (ns org.quattor.pan.cmd-option
-  (:use [clojure.string :only [split blank?]])
+  (:use org.quattor.pan.cmd-option-utils
+        [clojure.string :only [split blank? join]]
+        [clojure.java.io :only [as-file]])
   (:import (org.quattor.pan.output TxtFormatter 
                                    JsonFormatter 
                                    DotFormatter 
                                    PanFormatter 
                                    XmlDBFormatter)))
-(defn pattern-list
-  "Takes a list of regular expression patterns in a single
-   string separated by whitespace and returns a list of
-   regular expressions."
-  [s]
-  (let [patterns (or s "")]
-    (map re-pattern (filter (complement blank?) (split patterns #"\s+")))))
-
-(defn to-integer
-  "Converts string to integer.  If the string is not a valid
-   integer, then the method returns nil."
-  [s]
-  (try
-    (Integer/valueOf s)
-    (catch Exception e nil)))
-
-(defn positive-integer
-  [name value]
-  (if-let [i (to-integer value)]
-    (if (pos? i)
-      {name i}
-      (throw (Exception. (str "only postive values for " name "are allowed"))))
-    (throw (Exception. (str "invalid integer value (" value ") for " name)))))
-
 
 (defmulti process
   "Process a command line option given the name and
@@ -41,35 +19,12 @@
   [name value]
   {(keyword name) value})
 
-(defmethod process :warnings
-  [name value]
-  (case value
-    "off" {:deprecationLevel -1 :failOnWarn false}
-    "on" {:deprecationLevel 1 :failOnWarn false}
-    "fail" {:deprecationLevel 1 :failOnWarn true}
-    (throw (Exception. "warnings value must be off, on, or fail"))))
-
-(defmethod process :formats
-  [name value]
-  (let [formatter-names (split value #"\s*,\s*")]
-    (apply merge
-           (map
-             (fn [formatter-name]
-               (case formatter-name
-                 "text" {:formatter (TxtFormatter/getInstance)}
-                 "json" {:formatter (JsonFormatter/getInstance)}
-                 "dot" {:formatter (DotFormatter/getInstance)}
-                 "pan" {:formatter (PanFormatter/getInstance)}
-                 "xmldb" {:formatter (XmlDBFormatter/getInstance)}
-                 "dep" {:depWriteEnabled true}
-                 (throw (Exception. (str "unknown formatter in formats: " formatter-name)))))
-             formatter-names))))
-
-(defmethod process :compress
+(defmethod process :debug
   [name value]
   (if value
-    {:gzip-output true}
-    {:gzip-output false}))
+    {:debug-exclude-patterns []
+     :debug-include-patterns [#".*"]}
+    {}))
 
 (defmethod process :debug-exclude-patterns
   [name value]
@@ -79,13 +34,78 @@
   [name value]
   {name (pattern-list value)})
 
-(defmethod process :iteration-limit
+(defmethod process :include-path
+  [name value]
+  (let [paths (split-on-commas value)
+        dirs (map absolute-file paths)
+        bad-dirs (filter (complement directory?) dirs)]
+    (if (= 0 (count bad-dirs))
+      {name dirs}
+      (throw (Exception. (str 
+                           "include path must contain only existing directories: " 
+                           (join " " bad-dirs)))))))
+
+(defmethod process :session-dir
+  [name value]
+  (let [d (absolute-file value)
+        ok? (directory? d)]
+    (if ok?          
+      {name d}
+      (throw (Exception. (str name " must be an existing directory"))))))
+
+(defmethod process :output-dir
+  [name value]
+  (let [d (absolute-file value)
+        ok? (directory? d)]
+    (if ok?          
+      {name d}
+      (throw (Exception. (str name " must be an existing directory"))))))
+
+(defmethod process :formats
+  [name value]
+  (let [formatter-names (split value #"\s*,\s*")]
+    (apply merge
+           (map
+             (fn [formatter-name]
+               (case formatter-name
+                 "text" {:xmlWriteEnabled true
+                         :formatter (TxtFormatter/getInstance)}
+                 "json" {:xmlWriteEnabled true
+                         :formatter (JsonFormatter/getInstance)}
+                 "dot" {:xmlWriteEnabled true
+                        :formatter (DotFormatter/getInstance)}
+                 "pan" {:xmlWriteEnabled true
+                        :formatter (PanFormatter/getInstance)}
+                 "pan.gz" {:xmlWriteEnabled true
+                           :formatter (PanFormatter/getInstance)
+                           :gzip-output true}
+                 "xmldb" {:xmlWriteEnabled true
+                          :formatter (XmlDBFormatter/getInstance)}
+                 "dep" {:depWriteEnabled true}
+                 (throw (Exception. (str "unknown formatter in formats: " formatter-name)))))
+             formatter-names))))
+
+(defmethod process :max-iteration
   [name value]
   (positive-integer name value))
 
-(defmethod process :call-depth-limit
+(defmethod process :max-recursion
   [name value]
   (positive-integer name value))
 
+(defmethod process :logging
+  [name value]
+  {name (split-on-commas value)})
 
+(defmethod process :log-file
+  [name value]
+  {name (absolute-file value)})
 
+(defmethod process :warnings
+  [name value]
+  (let [switches {"off" {:deprecationLevel -1 :failOnWarn false}
+                  "on" {:deprecationLevel 1 :failOnWarn false}
+                  "fail" {:deprecationLevel 1 :failOnWarn true}}]
+    (if-let [switch (switches value)]
+      switch
+      (throw (Exception. (str name " value must be off, on, or fail"))))))

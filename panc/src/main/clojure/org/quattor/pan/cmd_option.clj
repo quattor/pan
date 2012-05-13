@@ -13,57 +13,57 @@
    string value passed in.  Returns validated and
    updated value.  The dispatch value is the parameter
    name as a keyword."
-  (fn [name value] (keyword name)))
+  (fn [[k v]] (keyword k)))
 
 (defmethod process :default
-  [name value]
-  {(keyword name) value})
+  [[k v]]
+  {(keyword k) v})
 
 (defmethod process :debug
-  [name value]
-  (if value
+  [[k v]]
+  (if v
     {:debug-exclude-patterns []
      :debug-include-patterns [#".*"]}
     {}))
 
 (defmethod process :debug-exclude-patterns
-  [name value]
-  {name (pattern-list value)})
+  [[k v]]
+  {(keyword k) (pattern-list v)})
 
 (defmethod process :debug-include-patterns
-  [name value]
-  {name (pattern-list value)})
+  [[k v]]
+  {(keyword k) (pattern-list v)})
 
 (defmethod process :include-path
-  [name value]
-  (let [paths (split-on-commas value)
+  [[k v]]
+  (let [paths (split-on-commas v)
         dirs (map absolute-file paths)
         bad-dirs (filter (complement directory?) dirs)]
     (if (= 0 (count bad-dirs))
-      {name dirs}
+      {(keyword k) dirs}
       (throw (Exception. (str 
                            "include path must contain only existing directories: " 
                            (join " " bad-dirs)))))))
 
 (defmethod process :session-dir
-  [name value]
-  (let [d (absolute-file value)
+  [[k v]]
+  (let [d (absolute-file v)
         ok? (directory? d)]
     (if ok?          
-      {name d}
+      {(keyword k) d}
       (throw (Exception. (str name " must be an existing directory"))))))
 
 (defmethod process :output-dir
-  [name value]
-  (let [d (absolute-file value)
+  [[k v]]
+  (let [d (absolute-file v)
         ok? (directory? d)]
     (if ok?          
-      {name d}
+      {(keyword k) d}
       (throw (Exception. (str name " must be an existing directory"))))))
 
 (defmethod process :formats
-  [name value]
-  (let [formatter-names (split value #"\s*,\s*")]
+  [[k v]]
+  (let [formatter-names (split v #"\s*,\s*")]
     (apply merge
            (map
              (fn [formatter-name]
@@ -86,26 +86,26 @@
              formatter-names))))
 
 (defmethod process :max-iteration
-  [name value]
-  (positive-integer name value))
+  [[k v]]
+  (positive-integer (keyword k) v))
 
 (defmethod process :max-recursion
-  [name value]
-  (positive-integer name value))
+  [[k v]]
+  (positive-integer (keyword k) v))
 
 (defmethod process :logging
-  [name value]
-  {name (split-on-commas value)})
+  [[k v]]
+  {(keyword k) (split-on-commas v)})
 
 (defmethod process :log-file
-  [name value]
-  {name (absolute-file value)})
+  [[k v]]
+  {(keyword k) (absolute-file v)})
 
 (defmethod process :warnings
-  [name value]
+  [[k v]]
   (let [switches {"off" {:deprecationLevel -1 :failOnWarn false}
                   "on" {:deprecationLevel 1 :failOnWarn false}
                   "fail" {:deprecationLevel 1 :failOnWarn true}}]
-    (if-let [switch (switches value)]
+    (if-let [switch (switches v)]
       switch
-      (throw (Exception. (str name " value must be off, on, or fail"))))))
+      (throw (Exception. (str k " value must be off, on, or fail"))))))

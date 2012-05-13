@@ -10,16 +10,16 @@
            (java.util.regex Pattern)))
 
 (deftest test-default
-  (let [unknown (process :unknown "ok")]
+  (let [unknown (process [:unknown "ok"])]
     (is (= "ok" (:unknown unknown)))
     (is (= 1 (count unknown)))))
     
 (deftest test-formats
-  (let [pandep (process :formats "pan,dep")
-        text (process :formats "text")
-        json (process :formats "json")
-        dot (process :formats "dot")
-        xmldb (process :formats "xmldb")]
+  (let [pandep (process [:formats "pan,dep"])
+        text (process [:formats "text"])
+        json (process [:formats "json"])
+        dot (process [:formats "dot"])
+        xmldb (process [:formats "xmldb"])]
     (is (instance? PanFormatter (:formatter pandep)))
     (is (:depWriteEnabled pandep))
     (is (instance? TxtFormatter (:formatter text)))
@@ -31,7 +31,7 @@
 (deftest test-debug-exclude-patterns
   (let [patterns [".*OK.*" ".*OK2.*"]
         patterns-as-string (join " " patterns)
-        result (process :debug-exclude-patterns patterns-as-string)
+        result (process [:debug-exclude-patterns patterns-as-string])
         regex (:debug-exclude-patterns result)]
     (is (= 1 (count result)))
     (is (= 2 (count regex)))
@@ -47,7 +47,7 @@
 (deftest test-debug-include-patterns
   (let [patterns [".*OK.*" ".*OK2.*"]
         patterns-as-string (join " " patterns)
-        result (process :debug-include-patterns patterns-as-string)
+        result (process [:debug-include-patterns patterns-as-string])
         regex (:debug-include-patterns result)]
     (is (= 1 (count result)))
     (is (= 2 (count regex)))
@@ -61,30 +61,30 @@
       (is (not (re-matches regex2 "...BAD2..."))))))
 
 (deftest test-max-iteration
-  (is (= 1 (:max-iteration (process :max-iteration "1"))))
-  (is (= 1000 (:max-iteration (process :max-iteration "1000"))))
-  (is (thrown? Exception (process :max-iteration "-1")))
-  (is (thrown? Exception (process :max-iteration "a"))))
+  (is (= 1 (:max-iteration (process [:max-iteration "1"]))))
+  (is (= 1000 (:max-iteration (process [:max-iteration "1000"]))))
+  (is (thrown? Exception (process [:max-iteration "-1"])))
+  (is (thrown? Exception (process [:max-iteration "a"]))))
 
 (deftest test-max-recursion
-  (is (= 1 (:max-recursion (process :max-recursion "1"))))
-  (is (= 1000 (:max-recursion (process :max-recursion "1000"))))
-  (is (thrown? Exception (process :max-recursion "-1")))
-  (is (thrown? Exception (process :max-recursion "a"))))
+  (is (= 1 (:max-recursion (process [:max-recursion "1"]))))
+  (is (= 1000 (:max-recursion (process [:max-recursion "1000"]))))
+  (is (thrown? Exception (process [:max-recursion "-1"])))
+  (is (thrown? Exception (process [:max-recursion "a"]))))
 
 (deftest test-warnings
-  (let [off (process :warnings "off")
-        on (process :warnings "on")
-        fail (process :warnings "fail")]
+  (let [off (process [:warnings "off"])
+        on (process [:warnings "on"])
+        fail (process [:warnings "fail"])]
     (is (= -1 (:deprecationLevel off)))
     (is (not (:failOnWarn off)))
     (is (= 1 (:deprecationLevel on)))
     (is (not (:failOnWarn on)))
     (is (= 1 (:deprecationLevel fail)))
     (is (:failOnWarn fail)))
-  (is (thrown? Exception (process :warnings "unknown"))))
+  (is (thrown? Exception (process [:warnings "unknown"]))))
   
 (deftest test-verbose
-  (are [x y] (= x (:verbose (process :verbose y)))
+  (are [x y] (= x (:verbose (process [:verbose y])))
        false false
        true true))

@@ -19,6 +19,7 @@
 
 (deftest test-split-on-commas []
   (let [correct ["a" "b" "c"]]
+    (is (= [] (split-on-commas nil)))
     (are [x] (= correct (split-on-commas x))
          "a,b,c"
          "a,,b,,c"
@@ -40,6 +41,7 @@
 
 (deftest test-directory? []
   (is (directory? (absolute-file)))
+  (is (not (directory? nil)))
   (is (not (directory? (absolute-file "/dummy/file/")))))
 
 (deftest test-pattern-list []

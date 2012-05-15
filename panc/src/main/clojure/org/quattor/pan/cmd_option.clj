@@ -1,12 +1,18 @@
 (ns org.quattor.pan.cmd-option
-  (:use org.quattor.pan.cmd-option-utils
+  (:use [org.quattor.pan.cmd-option-utils]
         [clojure.string :only [split blank? join]]
         [clojure.java.io :only [as-file]])
+  (:require [org.quattor.pan.settings :as settings])
   (:import (org.quattor.pan.output TxtFormatter 
                                    JsonFormatter 
                                    DotFormatter 
                                    PanFormatter 
                                    XmlDBFormatter)))
+
+(declare process)
+
+(defn to-settings [cli-options]
+  (settings/merge-defaults (into {} (mapcat process cli-options))))
 
 (defmulti process
   "Process a command line option given the name and

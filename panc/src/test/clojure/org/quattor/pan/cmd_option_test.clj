@@ -1,6 +1,7 @@
 (ns org.quattor.pan.cmd-option-test
   (:use clojure.test
-        [clojure.string :only [join]]
+        [clojure.string :only (join)]
+        [clojure.set :only (subset?)]
         org.quattor.pan.cmd-option)
   (:import (org.quattor.pan.output TxtFormatter 
                                    JsonFormatter 
@@ -8,6 +9,10 @@
                                    PanFormatter 
                                    XmlDBFormatter)
            (java.util.regex Pattern)))
+
+(deftest test-to-settings
+  (is (subset? (set (seq {:verbose true :compress true}))
+               (set (seq (to-settings {:verbose true :compress true}))))))
 
 (deftest test-default
   (let [unknown (process [:unknown "ok"])]

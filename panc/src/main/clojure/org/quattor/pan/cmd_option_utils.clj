@@ -1,11 +1,12 @@
 (ns org.quattor.pan.cmd-option-utils
-  (:use [clojure.string :only [split blank?]]
-        [clojure.java.io :only [as-file file]])
-  (:import (org.quattor.pan.output TxtFormatter 
-                                   JsonFormatter 
-                                   DotFormatter 
-                                   PanFormatter 
-                                   XmlDBFormatter)))
+  (:use [clojure.string :only (split blank?)]
+        [clojure.java.io :only (as-file file)])
+  (:import java.io.File
+           [org.quattor.pan.output TxtFormatter 
+            JsonFormatter 
+            DotFormatter 
+            PanFormatter 
+            XmlDBFormatter]))
 
 (defn to-integer
   "Converts string to integer.  If the string is not a valid
@@ -30,8 +31,8 @@
   [s]
   (filter (complement blank?)
           (filter (complement nil?)
-                  (split s #"[\s,]+"))))
-        
+                  (split (or s "") #"[\s,]+"))))  
+
 (defn absolute-file
   "Returns an absolute File object based on the argument.
    If no argument is given or is nil, then the current
@@ -45,8 +46,10 @@
       (.getAbsoluteFile (as-file x)))))
 
 (defn directory?
+  "Returns true if the given file exists and is a directory."
   [file]
-  (.isDirectory file))
+  (if (instance? File file)
+    (.isDirectory file)))
 
 (defn pattern-list
   "Takes a list of regular expression patterns in a single

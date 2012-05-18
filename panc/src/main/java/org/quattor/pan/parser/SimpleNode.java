@@ -123,6 +123,10 @@ public class SimpleNode implements Node {
 		return id;
 	}
 
+	public Object getSubtype() {
+		return null;
+	}
+
 	public void addSpecialToken(Token specialToken) {
 		specialTokens.add(specialToken);
 	}

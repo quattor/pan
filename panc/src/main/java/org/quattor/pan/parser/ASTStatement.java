@@ -39,6 +39,11 @@ public class ASTStatement extends SimpleNode {
 		super(p, id);
 	}
 
+	@Override
+	public Object getSubtype() {
+		return type;
+	}
+
 	public void setStatementType(StatementType type) {
 		this.type = type;
 	}

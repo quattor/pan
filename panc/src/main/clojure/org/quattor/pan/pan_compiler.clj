@@ -44,6 +44,44 @@
                      failOnWarn 
                      rootElement)))
 
+(defn default-compiler-options []
+  (let [ {:keys [debugIncludePatterns
+                 debugExcludePatterns 
+                 xmlWriteEnabled 
+                 depWriteEnabled 
+                 iterationLimit 
+                 callDepthLimit 
+                 formatter 
+                 outputDirectory 
+                 sessionDirectory 
+                 includeDirectories 
+                 nthread 
+                 gzipOutput 
+                 deprecationLevel 
+                 forceBuild 
+                 annotationDirectory 
+                 annotationBaseDirectory 
+                 failOnWarn 
+                 rootElement] } (settings/defaults) ]
+   (CompilerOptions. debugIncludePatterns 
+                     debugExcludePatterns 
+                     xmlWriteEnabled 
+                     depWriteEnabled 
+                     iterationLimit 
+                     callDepthLimit 
+                     formatter 
+                     outputDirectory 
+                     sessionDirectory 
+                     includeDirectories 
+                     nthread 
+                     gzipOutput
+                     deprecationLevel 
+                     forceBuild 
+                     annotationDirectory
+                     annotationBaseDirectory
+                     failOnWarn 
+                     rootElement)))
+
 (defn process-cli-args [args]
   (cli args
        ["--debug" "enable all debugging" :default false :flag true]

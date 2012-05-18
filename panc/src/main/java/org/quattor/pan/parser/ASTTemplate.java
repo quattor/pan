@@ -27,7 +27,7 @@ public class ASTTemplate extends SimpleNode {
 	private TemplateType type = TemplateType.ORDINARY;
 
 	private String identifier = null;
-	
+
 	public ASTTemplate(int id) {
 		super(id);
 	}
@@ -57,6 +57,11 @@ public class ASTTemplate extends SimpleNode {
 		}
 	}
 
+	@Override
+	public Object getSubtype() {
+		return type;
+	}
+
 	public TemplateType getTemplateType() {
 		return type;
 	}
@@ -68,7 +73,7 @@ public class ASTTemplate extends SimpleNode {
 	public String getIdentifier() {
 		return identifier;
 	}
-	
+
 	@Override
 	public String toString() {
 		String s = type.toString() + " template";

@@ -54,6 +54,11 @@ public class ASTOperation extends SimpleNode {
 		this.operationType = operationType;
 	}
 
+	@Override
+	public Object getSubtype() {
+		return operationType;
+	}
+
 	/**
 	 * Return the associated Operation. Subclasses should not need to override
 	 * this method.

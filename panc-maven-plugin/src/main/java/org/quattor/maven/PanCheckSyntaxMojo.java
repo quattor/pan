@@ -11,7 +11,7 @@ import org.quattor.pan.CompilerResults;
 /**
  * Goal which runs a pan syntax check on source files.
  * 
- * @goal pan-check-syntax
+ * @goal check-syntax
  * 
  * @phase process-sources
  */

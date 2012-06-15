@@ -771,12 +771,15 @@ org.quattor.pan.template.SourceRange hashClause() #TypeClause :
    used to specify the bounds.  Previous versions only allowed decimal
    long values. */
 org.quattor.pan.utils.Range range() #void :
-{ String min=null, max=null; Token t=null; }
+{ String min=null, max=null; Token negmin=null, t=null, negmax=null; }
 {
-  min=longLiteral() [ t=<RANGE> [ max=longLiteral() ] ]
+  [ negmin=<MINUS> ] min=longLiteral() [ t=<RANGE> [ [ negmax=<MINUS> ] max=longLiteral() ] ]
   { 
     jjtree.popNode(); 
     if (max!=null) jjtree.popNode();
+
+    if (negmin!=null) min = ("-" + min);
+    if (negmax!=null && max!=null) max = ("-" + max);
     if (max==null && t==null) max=min;
     return new org.quattor.pan.utils.Range(min,max); 
   }

@@ -22,7 +22,6 @@ package org.quattor.pan.utils;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_MAX_RANGE_VALUE_IS_NOT_VALID_LONG;
 import static org.quattor.pan.utils.MessageUtils.MSG_MIN_MUST_BE_LESS_OR_EQUAL_TO_MAX;
-import static org.quattor.pan.utils.MessageUtils.MSG_MIN_RANGE_VALUE_CANNOT_BE_NEGATIVE;
 import static org.quattor.pan.utils.MessageUtils.MSG_MIN_RANGE_VALUE_IS_NOT_VALID_LONG;
 
 import org.quattor.pan.exceptions.EvaluationException;
@@ -124,19 +123,14 @@ public class Range {
 	}
 
 	/**
-	 * Checks whether the range values are valid. Specifically whether the lower
-	 * index is non-negative and the minimum is less than or equal to the
-	 * maximum. This will throw an EvaluationException if any problems are
-	 * found.
+	 * Checks whether the range values are valid. Specifically whether the
+	 * minimum is less than or equal to the maximum. This will throw an
+	 * EvaluationException if any problems are found.
 	 * 
 	 * @param minimum
 	 * @param maximum
 	 */
 	private void checkRangeValues(long minimum, long maximum) {
-		if (minimum < 0) {
-			throw EvaluationException.create(
-					MSG_MIN_RANGE_VALUE_CANNOT_BE_NEGATIVE, minimum);
-		}
 		if (minimum > maximum) {
 			throw EvaluationException.create(
 					MSG_MIN_MUST_BE_LESS_OR_EQUAL_TO_MAX, minimum, maximum);

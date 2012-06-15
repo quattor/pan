@@ -82,11 +82,30 @@ public class RangeTest {
 
 		// Run the tests.
 		internalRangeCheck(minimum, maximum, range);
-	}
 
-	@Test(expected = EvaluationException.class)
-	public void testInvalidRange1() {
-		new Range(-1, 10);
+		strmin = "-1";
+		strmax = "10";
+
+		minimum = -1;
+		maximum = 10;
+
+		// Verify that creating the range is OK.
+		range = new Range(strmin, strmax);
+
+		// Run the tests.
+		internalRangeCheck(minimum, maximum, range);
+
+		strmin = "-10";
+		strmax = "-4";
+
+		minimum = -10;
+		maximum = -4;
+
+		// Verify that creating the range is OK.
+		range = new Range(strmin, strmax);
+
+		// Run the tests.
+		internalRangeCheck(minimum, maximum, range);
 	}
 
 	@Test(expected = EvaluationException.class)
@@ -116,10 +135,7 @@ public class RangeTest {
 		assertTrue(range.isInRange(middle));
 		assertTrue(range.isInRange((double) middle));
 
-		// Check that values outside of the range do throw exceptions. Any
-		// negative values and those above or below the range should do so.
-		assertFalse(range.isInRange(-1));
-		assertFalse(range.isInRange(-1.0));
+		// Check that values outside of the range do throw exceptions.
 		if (minimum != Long.MIN_VALUE) {
 			assertFalse(range.isInRange(minimum - 1));
 			assertFalse(range.isInRange((double) (minimum - 1)));

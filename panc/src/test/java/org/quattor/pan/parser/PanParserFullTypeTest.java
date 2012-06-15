@@ -36,9 +36,4 @@ public class PanParserFullTypeTest {
 		parseFullType("extensible { 'one' : long(1..10)[]{2..20}**[..300]{3..} = 1 with {return(true)} 'two' ? long include alpha/beta/gamma }(0..10)");
 	}
 
-	@Test(expected = ParseException.class)
-	public void testInvalidFullType() {
-		parseFullType("string(-1..100)");
-	}
-
 }

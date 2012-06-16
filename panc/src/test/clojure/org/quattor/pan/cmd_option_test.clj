@@ -25,12 +25,12 @@
         json (process [:formats "json"])
         dot (process [:formats "dot"])
         xmldb (process [:formats "xmldb"])]
-    (is (instance? PanFormatter (:formatter pandep)))
+    (is (instance? PanFormatter (first (:formatter pandep))))
     (is (:depWriteEnabled pandep))
-    (is (instance? TxtFormatter (:formatter text)))
-    (is (instance? JsonFormatter (:formatter json)))
-    (is (instance? DotFormatter (:formatter dot)))
-    (is (instance? XmlDBFormatter (:formatter xmldb))))
+    (is (instance? TxtFormatter (first (:formatter text))))
+    (is (instance? JsonFormatter (first (:formatter json))))
+    (is (instance? DotFormatter (first (:formatter dot))))
+    (is (instance? XmlDBFormatter (first (:formatter xmldb)))))
   (is (thrown? Exception (process :formats "unknown"))))
 
 (deftest test-debug-exclude-patterns

@@ -67,6 +67,7 @@
       {(keyword k) d}
       (throw (Exception. (str name " must be an existing directory"))))))
 
+;; FIXME: The formatters need to be accumulated into a single vector.
 (defmethod process :formats
   [[k v]]
   (let [formatter-names (split v #"\s*,\s*")]
@@ -75,18 +76,18 @@
              (fn [formatter-name]
                (case formatter-name
                  "text" {:xmlWriteEnabled true
-                         :formatter (TxtFormatter/getInstance)}
+                         :formatter [(TxtFormatter/getInstance)]}
                  "json" {:xmlWriteEnabled true
-                         :formatter (JsonFormatter/getInstance)}
+                         :formatter [(JsonFormatter/getInstance)]}
                  "dot" {:xmlWriteEnabled true
-                        :formatter (DotFormatter/getInstance)}
+                        :formatter [(DotFormatter/getInstance)]}
                  "pan" {:xmlWriteEnabled true
-                        :formatter (PanFormatter/getInstance)}
+                        :formatter [(PanFormatter/getInstance)]}
                  "pan.gz" {:xmlWriteEnabled true
-                           :formatter (PanFormatter/getInstance)
+                           :formatter [(PanFormatter/getInstance)]
                            :gzip-output true}
                  "xmldb" {:xmlWriteEnabled true
-                          :formatter (XmlDBFormatter/getInstance)}
+                          :formatter [(XmlDBFormatter/getInstance)]}
                  "dep" {:depWriteEnabled true}
                  (throw (Exception. (str "unknown formatter in formats: " formatter-name)))))
              formatter-names))))

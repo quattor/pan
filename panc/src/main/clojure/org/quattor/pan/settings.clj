@@ -22,7 +22,7 @@
    :depWriteEnabled true
    :iterationLimit 10000
    :callDepthLimit 10
-   :formatter (PanFormatter/getInstance)
+   :formatter [(PanFormatter/getInstance)]
    :outputDirectory (absolute-file)
    :sessionDirectory nil
    :includeDirectories [(absolute-file)]

@@ -38,253 +38,280 @@ import org.quattor.pan.output.PanFormatter;
 
 public class CompilerOptionsTest {
 
-    @Test
-    public void testConstructorAndGetters1() throws SyntaxException {
+	@Test
+	public void testConstructorAndGetters1() throws SyntaxException {
 
-        boolean xmlWriteEnabled = true;
-        boolean depWriteEnabled = false;
-        int iterationLimit = 1001;
-        int callDepthLimit = 101;
-        Formatter formatter = PanFormatter.getInstance();
-        File outputDirectory = new File(System.getProperty("user.dir"));
-        File sessionDirectory = new File(System.getProperty("user.dir"));
-        List<File> includeDirectories = new LinkedList<File>();
-        includeDirectories.add(outputDirectory);
-        includeDirectories.add(sessionDirectory);
+		boolean xmlWriteEnabled = true;
+		boolean depWriteEnabled = false;
+		int iterationLimit = 1001;
+		int callDepthLimit = 101;
+		Formatter formatter = PanFormatter.getInstance();
+		File outputDirectory = new File(System.getProperty("user.dir"));
+		File sessionDirectory = new File(System.getProperty("user.dir"));
+		List<File> includeDirectories = new LinkedList<File>();
+		includeDirectories.add(outputDirectory);
+		includeDirectories.add(sessionDirectory);
 
-        CompilerOptions options = new CompilerOptions(null, null,
-                xmlWriteEnabled, depWriteEnabled, iterationLimit,
-                callDepthLimit, formatter, outputDirectory, sessionDirectory,
-                includeDirectories, 0, false, 0, false, null, null, false, null);
+		List<Formatter> formatters = new LinkedList<Formatter>();
+		formatters.add(formatter);
 
-        assertTrue(xmlWriteEnabled == options.xmlWriteEnabled);
-        assertTrue(depWriteEnabled == options.depWriteEnabled);
+		CompilerOptions options = new CompilerOptions(null, null,
+				xmlWriteEnabled, depWriteEnabled, iterationLimit,
+				callDepthLimit, formatters, outputDirectory, sessionDirectory,
+				includeDirectories, 0, false, 0, false, null, null, false, null);
 
-        assertTrue(iterationLimit == options.iterationLimit);
-        assertTrue(callDepthLimit == options.callDepthLimit);
+		assertTrue(xmlWriteEnabled == options.xmlWriteEnabled);
+		assertTrue(depWriteEnabled == options.depWriteEnabled);
 
-        assertTrue(formatter == options.formatter);
+		assertTrue(iterationLimit == options.iterationLimit);
+		assertTrue(callDepthLimit == options.callDepthLimit);
 
-        assertTrue(outputDirectory.equals(options.outputDirectory));
-    }
+		assertTrue(formatter == options.formatter.get(0));
 
-    @Test
-    public void testConstructorAndGetters2() throws SyntaxException {
+		assertTrue(outputDirectory.equals(options.outputDirectory));
+	}
 
-        boolean xmlWriteEnabled = false;
-        boolean depWriteEnabled = true;
-        int iterationLimit = 2002;
-        int callDepthLimit = 202;
-        Formatter formatter = PanFormatter.getInstance();
-        File outputDirectory = new File(System.getProperty("user.dir"));
-        File sessionDirectory = null;
-        List<File> includeDirectories = new LinkedList<File>();
-        includeDirectories.add(outputDirectory);
+	@Test
+	public void testConstructorAndGetters2() throws SyntaxException {
 
-        CompilerOptions options = new CompilerOptions(null, null,
-                xmlWriteEnabled, depWriteEnabled, iterationLimit,
-                callDepthLimit, formatter, outputDirectory, sessionDirectory,
-                includeDirectories, 0, false, 0, false, null, null, false, null);
+		boolean xmlWriteEnabled = false;
+		boolean depWriteEnabled = true;
+		int iterationLimit = 2002;
+		int callDepthLimit = 202;
+		Formatter formatter = PanFormatter.getInstance();
+		File outputDirectory = new File(System.getProperty("user.dir"));
+		File sessionDirectory = null;
+		List<File> includeDirectories = new LinkedList<File>();
+		includeDirectories.add(outputDirectory);
 
-        assertTrue(xmlWriteEnabled == options.xmlWriteEnabled);
-        assertTrue(depWriteEnabled == options.depWriteEnabled);
+		List<Formatter> formatters = new LinkedList<Formatter>();
+		formatters.add(formatter);
 
-        assertTrue(iterationLimit == options.iterationLimit);
-        assertTrue(callDepthLimit == options.callDepthLimit);
+		CompilerOptions options = new CompilerOptions(null, null,
+				xmlWriteEnabled, depWriteEnabled, iterationLimit,
+				callDepthLimit, formatters, outputDirectory, sessionDirectory,
+				includeDirectories, 0, false, 0, false, null, null, false, null);
 
-        assertTrue(formatter == options.formatter);
+		assertTrue(xmlWriteEnabled == options.xmlWriteEnabled);
+		assertTrue(depWriteEnabled == options.depWriteEnabled);
 
-        assertTrue(outputDirectory.equals(options.outputDirectory));
-    }
+		assertTrue(iterationLimit == options.iterationLimit);
+		assertTrue(callDepthLimit == options.callDepthLimit);
 
-    @Test
-    public void checkUnlimitedValues() throws SyntaxException {
+		assertTrue(formatter == options.formatter.get(0));
 
-        boolean xmlWriteEnabled = true;
-        boolean depWriteEnabled = false;
-        int iterationLimit = -1;
-        int callDepthLimit = 0;
-        Formatter formatter = PanFormatter.getInstance();
-        File outputDirectory = new File(System.getProperty("user.dir"));
-        File sessionDirectory = new File(System.getProperty("user.dir"));
-        List<File> includeDirectories = new LinkedList<File>();
-        includeDirectories.add(outputDirectory);
-        includeDirectories.add(sessionDirectory);
+		assertTrue(outputDirectory.equals(options.outputDirectory));
+	}
 
-        CompilerOptions options = new CompilerOptions(null, null,
-                xmlWriteEnabled, depWriteEnabled, iterationLimit,
-                callDepthLimit, formatter, outputDirectory, sessionDirectory,
-                includeDirectories, 0, false, 0, false, null, null, false, null);
+	@Test
+	public void checkUnlimitedValues() throws SyntaxException {
 
-        assertTrue(Integer.MAX_VALUE == options.iterationLimit);
-        assertTrue(Integer.MAX_VALUE == options.callDepthLimit);
-    }
+		boolean xmlWriteEnabled = true;
+		boolean depWriteEnabled = false;
+		int iterationLimit = -1;
+		int callDepthLimit = 0;
+		Formatter formatter = PanFormatter.getInstance();
+		File outputDirectory = new File(System.getProperty("user.dir"));
+		File sessionDirectory = new File(System.getProperty("user.dir"));
+		List<File> includeDirectories = new LinkedList<File>();
+		includeDirectories.add(outputDirectory);
+		includeDirectories.add(sessionDirectory);
 
-    @Test(expected = IllegalArgumentException.class)
-    public void checkBadOutputDirectory() throws SyntaxException {
+		List<Formatter> formatters = new LinkedList<Formatter>();
+		formatters.add(formatter);
 
-        boolean xmlWriteEnabled = true;
-        boolean depWriteEnabled = false;
-        int iterationLimit = -1;
-        int callDepthLimit = 0;
-        Formatter formatter = PanFormatter.getInstance();
-        File outputDirectory = new File("/xxxyyy");
-        File sessionDirectory = new File(System.getProperty("user.dir"));
-        List<File> includeDirectories = new LinkedList<File>();
-        includeDirectories.add(outputDirectory);
-        includeDirectories.add(sessionDirectory);
+		CompilerOptions options = new CompilerOptions(null, null,
+				xmlWriteEnabled, depWriteEnabled, iterationLimit,
+				callDepthLimit, formatters, outputDirectory, sessionDirectory,
+				includeDirectories, 0, false, 0, false, null, null, false, null);
 
-        new CompilerOptions(null, null, xmlWriteEnabled, depWriteEnabled,
-                iterationLimit, callDepthLimit, formatter, outputDirectory,
-                sessionDirectory, includeDirectories, 0, false, 0, false, null,
-                null, false, null);
-    }
+		assertTrue(Integer.MAX_VALUE == options.iterationLimit);
+		assertTrue(Integer.MAX_VALUE == options.callDepthLimit);
+	}
 
-    @Test(expected = IllegalArgumentException.class)
-    public void checkBadSessionDirectory() throws SyntaxException {
+	@Test(expected = IllegalArgumentException.class)
+	public void checkBadOutputDirectory() throws SyntaxException {
 
-        boolean xmlWriteEnabled = true;
-        boolean depWriteEnabled = false;
-        int iterationLimit = -1;
-        int callDepthLimit = 0;
-        Formatter formatter = PanFormatter.getInstance();
-        File outputDirectory = new File(System.getProperty("user.dir"));
-        File sessionDirectory = new File("/xxxyyy");
-        List<File> includeDirectories = new LinkedList<File>();
-        includeDirectories.add(outputDirectory);
-        includeDirectories.add(sessionDirectory);
+		boolean xmlWriteEnabled = true;
+		boolean depWriteEnabled = false;
+		int iterationLimit = -1;
+		int callDepthLimit = 0;
+		Formatter formatter = PanFormatter.getInstance();
+		File outputDirectory = new File("/xxxyyy");
+		File sessionDirectory = new File(System.getProperty("user.dir"));
+		List<File> includeDirectories = new LinkedList<File>();
+		includeDirectories.add(outputDirectory);
+		includeDirectories.add(sessionDirectory);
 
-        new CompilerOptions(null, null, xmlWriteEnabled, depWriteEnabled,
-                iterationLimit, callDepthLimit, formatter, outputDirectory,
-                sessionDirectory, includeDirectories, 0, false, 0, false, null,
-                null, false, null);
-    }
+		List<Formatter> formatters = new LinkedList<Formatter>();
+		formatters.add(formatter);
 
-    @Test(expected = IllegalArgumentException.class)
-    public void checkIncludeDirectory() throws SyntaxException {
+		new CompilerOptions(null, null, xmlWriteEnabled, depWriteEnabled,
+				iterationLimit, callDepthLimit, formatters, outputDirectory,
+				sessionDirectory, includeDirectories, 0, false, 0, false, null,
+				null, false, null);
+	}
 
-        boolean xmlWriteEnabled = true;
-        boolean depWriteEnabled = false;
-        int iterationLimit = -1;
-        int callDepthLimit = 0;
-        Formatter formatter = PanFormatter.getInstance();
-        File outputDirectory = new File(System.getProperty("user.dir"));
-        File sessionDirectory = new File(System.getProperty("user.dir"));
-        List<File> includeDirectories = new LinkedList<File>();
-        includeDirectories.add(new File("/xxxyyy"));
+	@Test(expected = IllegalArgumentException.class)
+	public void checkBadSessionDirectory() throws SyntaxException {
 
-        new CompilerOptions(null, null, xmlWriteEnabled, depWriteEnabled,
-                iterationLimit, callDepthLimit, formatter, outputDirectory,
-                sessionDirectory, includeDirectories, 0, false, 0, false, null,
-                null, false, null);
-    }
+		boolean xmlWriteEnabled = true;
+		boolean depWriteEnabled = false;
+		int iterationLimit = -1;
+		int callDepthLimit = 0;
+		Formatter formatter = PanFormatter.getInstance();
+		File outputDirectory = new File(System.getProperty("user.dir"));
+		File sessionDirectory = new File("/xxxyyy");
+		List<File> includeDirectories = new LinkedList<File>();
+		includeDirectories.add(outputDirectory);
+		includeDirectories.add(sessionDirectory);
 
-    @Test(expected = IllegalArgumentException.class)
-    public void checkMissingFormatter() throws SyntaxException {
+		List<Formatter> formatters = new LinkedList<Formatter>();
+		formatters.add(formatter);
 
-        boolean xmlWriteEnabled = true;
-        boolean depWriteEnabled = false;
-        int iterationLimit = -1;
-        int callDepthLimit = 0;
-        Formatter formatter = null;
-        File outputDirectory = new File(System.getProperty("user.dir"));
-        File sessionDirectory = new File(System.getProperty("user.dir"));
-        List<File> includeDirectories = new LinkedList<File>();
-        includeDirectories.add(outputDirectory);
-        includeDirectories.add(sessionDirectory);
+		new CompilerOptions(null, null, xmlWriteEnabled, depWriteEnabled,
+				iterationLimit, callDepthLimit, formatters, outputDirectory,
+				sessionDirectory, includeDirectories, 0, false, 0, false, null,
+				null, false, null);
+	}
 
-        new CompilerOptions(null, null, xmlWriteEnabled, depWriteEnabled,
-                iterationLimit, callDepthLimit, formatter, outputDirectory,
-                sessionDirectory, includeDirectories, 0, false, 0, false, null,
-                null, false, null);
-    }
+	@Test(expected = IllegalArgumentException.class)
+	public void checkIncludeDirectory() throws SyntaxException {
 
-    @Test(expected = IllegalArgumentException.class)
-    public void checkMissingOutputDirectory1() throws SyntaxException {
+		boolean xmlWriteEnabled = true;
+		boolean depWriteEnabled = false;
+		int iterationLimit = -1;
+		int callDepthLimit = 0;
+		Formatter formatter = PanFormatter.getInstance();
+		File outputDirectory = new File(System.getProperty("user.dir"));
+		File sessionDirectory = new File(System.getProperty("user.dir"));
+		List<File> includeDirectories = new LinkedList<File>();
+		includeDirectories.add(new File("/xxxyyy"));
 
-        boolean xmlWriteEnabled = true;
-        boolean depWriteEnabled = false;
-        int iterationLimit = -1;
-        int callDepthLimit = 0;
-        Formatter formatter = null;
-        File outputDirectory = null;
-        File sessionDirectory = new File(System.getProperty("user.dir"));
-        List<File> includeDirectories = new LinkedList<File>();
-        includeDirectories.add(outputDirectory);
-        includeDirectories.add(sessionDirectory);
+		List<Formatter> formatters = new LinkedList<Formatter>();
+		formatters.add(formatter);
 
-        new CompilerOptions(null, null, xmlWriteEnabled, depWriteEnabled,
-                iterationLimit, callDepthLimit, formatter, outputDirectory,
-                sessionDirectory, includeDirectories, 0, false, 0, false, null,
-                null, false, null);
-    }
+		new CompilerOptions(null, null, xmlWriteEnabled, depWriteEnabled,
+				iterationLimit, callDepthLimit, formatters, outputDirectory,
+				sessionDirectory, includeDirectories, 0, false, 0, false, null,
+				null, false, null);
+	}
 
-    @Test(expected = IllegalArgumentException.class)
-    public void checkMissingOutputDirectory2() throws SyntaxException {
+	@Test(expected = IllegalArgumentException.class)
+	public void checkMissingFormatter() throws SyntaxException {
 
-        boolean xmlWriteEnabled = false;
-        boolean depWriteEnabled = true;
-        int iterationLimit = -1;
-        int callDepthLimit = 0;
-        Formatter formatter = null;
-        File outputDirectory = null;
-        File sessionDirectory = new File(System.getProperty("user.dir"));
-        List<File> includeDirectories = new LinkedList<File>();
+		boolean xmlWriteEnabled = true;
+		boolean depWriteEnabled = false;
+		int iterationLimit = -1;
+		int callDepthLimit = 0;
+		List<Formatter> formatters = null;
+		File outputDirectory = new File(System.getProperty("user.dir"));
+		File sessionDirectory = new File(System.getProperty("user.dir"));
+		List<File> includeDirectories = new LinkedList<File>();
+		includeDirectories.add(outputDirectory);
+		includeDirectories.add(sessionDirectory);
 
-        new CompilerOptions(null, null, xmlWriteEnabled, depWriteEnabled,
-                iterationLimit, callDepthLimit, formatter, outputDirectory,
-                sessionDirectory, includeDirectories, 0, false, 0, false, null,
-                null, false, null);
-    }
+		new CompilerOptions(null, null, xmlWriteEnabled, depWriteEnabled,
+				iterationLimit, callDepthLimit, formatters, outputDirectory,
+				sessionDirectory, includeDirectories, 0, false, 0, false, null,
+				null, false, null);
+	}
 
-    @Test(expected = IllegalArgumentException.class)
-    public void checkNullIncludeDirectory() throws SyntaxException {
+	@Test(expected = IllegalArgumentException.class)
+	public void checkMissingOutputDirectory1() throws SyntaxException {
 
-        boolean xmlWriteEnabled = false;
-        boolean depWriteEnabled = true;
-        int iterationLimit = -1;
-        int callDepthLimit = 0;
-        Formatter formatter = null;
-        File outputDirectory = null;
-        File sessionDirectory = new File(System.getProperty("user.dir"));
-        List<File> includeDirectories = new LinkedList<File>();
-        includeDirectories.add(null);
+		boolean xmlWriteEnabled = true;
+		boolean depWriteEnabled = false;
+		int iterationLimit = -1;
+		int callDepthLimit = 0;
+		Formatter formatter = null;
+		File outputDirectory = null;
+		File sessionDirectory = new File(System.getProperty("user.dir"));
+		List<File> includeDirectories = new LinkedList<File>();
+		includeDirectories.add(outputDirectory);
+		includeDirectories.add(sessionDirectory);
 
-        new CompilerOptions(null, null, xmlWriteEnabled, depWriteEnabled,
-                iterationLimit, callDepthLimit, formatter, outputDirectory,
-                sessionDirectory, includeDirectories, 0, false, 0, false, null,
-                null, false, null);
-    }
+		List<Formatter> formatters = new LinkedList<Formatter>();
+		formatters.add(formatter);
 
-    @Test
-    public void checkNullAndEmptyInputForRootElement() throws SyntaxException {
-        String[] inputs = new String[] { null, "", " ", "\t" };
-        for (String input : inputs) {
-            Element rootElement = CompilerOptions.createRootElement(input);
-            assertTrue(rootElement.isNlist());
-            HashResource hash = (HashResource) rootElement;
-            assertTrue(hash.size() == 0);
-        }
-    }
+		new CompilerOptions(null, null, xmlWriteEnabled, depWriteEnabled,
+				iterationLimit, callDepthLimit, formatters, outputDirectory,
+				sessionDirectory, includeDirectories, 0, false, 0, false, null,
+				null, false, null);
+	}
 
-    @Test
-    public void checkCorrectRootElement() throws SyntaxException {
-        Map<String, Integer> inputs = new HashMap<String, Integer>();
-        inputs.put("nlist()", 0);
-        inputs.put("nlist('a', 1)", 1);
-        inputs.put("nlist('a', nlist('b', 1))", 1);
-        inputs.put("nlist('a', 1, 'b', 2)", 2);
-        inputs.put("nlist('a', nlist(), 'b', nlist('c', 2))", 2);
-        for (Map.Entry<String, Integer> entry : inputs.entrySet()) {
-            String dml = entry.getKey();
-            int value = entry.getValue();
+	@Test(expected = IllegalArgumentException.class)
+	public void checkMissingOutputDirectory2() throws SyntaxException {
 
-            Element rootElement = CompilerOptions.createRootElement(dml);
-            assertTrue(rootElement.isNlist());
+		boolean xmlWriteEnabled = false;
+		boolean depWriteEnabled = true;
+		int iterationLimit = -1;
+		int callDepthLimit = 0;
+		Formatter formatter = null;
+		File outputDirectory = null;
+		File sessionDirectory = new File(System.getProperty("user.dir"));
+		List<File> includeDirectories = new LinkedList<File>();
 
-            HashResource hash = (HashResource) rootElement;
-            assertEquals(value, hash.size());
-        }
-    }
+		List<Formatter> formatters = new LinkedList<Formatter>();
+		formatters.add(formatter);
+
+		new CompilerOptions(null, null, xmlWriteEnabled, depWriteEnabled,
+				iterationLimit, callDepthLimit, formatters, outputDirectory,
+				sessionDirectory, includeDirectories, 0, false, 0, false, null,
+				null, false, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void checkNullIncludeDirectory() throws SyntaxException {
+
+		boolean xmlWriteEnabled = false;
+		boolean depWriteEnabled = true;
+		int iterationLimit = -1;
+		int callDepthLimit = 0;
+		Formatter formatter = null;
+		File outputDirectory = null;
+		File sessionDirectory = new File(System.getProperty("user.dir"));
+		List<File> includeDirectories = new LinkedList<File>();
+		includeDirectories.add(null);
+
+		List<Formatter> formatters = new LinkedList<Formatter>();
+		formatters.add(formatter);
+
+		new CompilerOptions(null, null, xmlWriteEnabled, depWriteEnabled,
+				iterationLimit, callDepthLimit, formatters, outputDirectory,
+				sessionDirectory, includeDirectories, 0, false, 0, false, null,
+				null, false, null);
+	}
+
+	@Test
+	public void checkNullAndEmptyInputForRootElement() throws SyntaxException {
+		String[] inputs = new String[] { null, "", " ", "\t" };
+		for (String input : inputs) {
+			Element rootElement = CompilerOptions.createRootElement(input);
+			assertTrue(rootElement.isNlist());
+			HashResource hash = (HashResource) rootElement;
+			assertTrue(hash.size() == 0);
+		}
+	}
+
+	@Test
+	public void checkCorrectRootElement() throws SyntaxException {
+		Map<String, Integer> inputs = new HashMap<String, Integer>();
+		inputs.put("nlist()", 0);
+		inputs.put("nlist('a', 1)", 1);
+		inputs.put("nlist('a', nlist('b', 1))", 1);
+		inputs.put("nlist('a', 1, 'b', 2)", 2);
+		inputs.put("nlist('a', nlist(), 'b', nlist('c', 2))", 2);
+		for (Map.Entry<String, Integer> entry : inputs.entrySet()) {
+			String dml = entry.getKey();
+			int value = entry.getValue();
+
+			Element rootElement = CompilerOptions.createRootElement(dml);
+			assertTrue(rootElement.isNlist());
+
+			HashResource hash = (HashResource) rootElement;
+			assertEquals(value, hash.size());
+		}
+	}
 
 }

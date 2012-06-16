@@ -37,6 +37,7 @@ import org.quattor.pan.Compiler;
 import org.quattor.pan.CompilerOptions;
 import org.quattor.pan.cache.BuildCache;
 import org.quattor.pan.exceptions.EvaluationException;
+import org.quattor.pan.output.Formatter;
 import org.quattor.pan.output.PanFormatter;
 import org.quattor.pan.tasks.BuildResult;
 import org.quattor.pan.template.Context;
@@ -44,152 +45,161 @@ import org.quattor.pan.utils.ExceptionUtils;
 
 public class StatementTestUtils {
 
-    protected void writeStringToFile(String contents, File file) {
+	protected void writeStringToFile(String contents, File file) {
 
-        try {
-            FileWriter fw = new FileWriter(file);
-            fw.write(contents);
-            fw.close();
-        } catch (IOException ioe) {
-            fail("unexpected IO exception writing file (" + file + "): "
-                    + ioe.getMessage());
-        }
-    }
+		try {
+			FileWriter fw = new FileWriter(file);
+			fw.write(contents);
+			fw.close();
+		} catch (IOException ioe) {
+			fail("unexpected IO exception writing file (" + file + "): "
+					+ ioe.getMessage());
+		}
+	}
 
-    protected void runExpectingException(String name, String statement)
-            throws Exception {
+	protected void runExpectingException(String name, String statement)
+			throws Exception {
 
-        File tmpfile = getTmpdir();
+		File tmpfile = getTmpdir();
 
-        String fullName = "statement_test_" + name;
-        File tplfile = new File(tmpfile, fullName + ".tpl");
+		String fullName = "statement_test_" + name;
+		File tplfile = new File(tmpfile, fullName + ".tpl");
 
-        writeStringToFile("object template " + fullName + ";\n" + statement
-                + "\n", tplfile);
+		writeStringToFile("object template " + fullName + ";\n" + statement
+				+ "\n", tplfile);
 
-        List<File> paths = new LinkedList<File>();
-        paths.add(tmpfile);
+		List<File> paths = new LinkedList<File>();
+		paths.add(tmpfile);
 
-        List<File> files = new LinkedList<File>();
-        files.add(tplfile);
+		List<File> files = new LinkedList<File>();
+		files.add(tplfile);
 
-        CompilerOptions options = new CompilerOptions(null, null, true, true,
-                1000, 50, PanFormatter.getInstance(), tmpfile, null, paths, 0,
-                false, 0, false, null, null, false, null);
+		List<Formatter> formatters = new LinkedList<Formatter>();
+		formatters.add(PanFormatter.getInstance());
 
-        Compiler compiler = new Compiler(options, new LinkedList<String>(),
-                files);
-        Set<Throwable> throwables = compiler.process().getErrors();
+		CompilerOptions options = new CompilerOptions(null, null, true, true,
+				1000, 50, formatters, tmpfile, null, paths, 0, false, 0, false,
+				null, null, false, null);
 
-        if (throwables.size() == 1) {
-            Throwable[] errorArray = throwables
-                    .toArray(new Throwable[throwables.size()]);
-            Throwable t = errorArray[0];
-            if (t instanceof Exception) {
-                throw (Exception) t;
-            } else {
-                fail("unexpected throwable encountered: " + t.getClass() + " "
-                        + t.getMessage());
-            }
-        } else if (throwables.size() > 1) {
-            fail("too many throwables found: " + throwables.size());
-        }
+		Compiler compiler = new Compiler(options, new LinkedList<String>(),
+				files);
+		Set<Throwable> throwables = compiler.process().getErrors();
 
-    }
+		if (throwables.size() == 1) {
+			Throwable[] errorArray = throwables
+					.toArray(new Throwable[throwables.size()]);
+			Throwable t = errorArray[0];
+			if (t instanceof Exception) {
+				throw (Exception) t;
+			} else {
+				fail("unexpected throwable encountered: " + t.getClass() + " "
+						+ t.getMessage());
+			}
+		} else if (throwables.size() > 1) {
+			fail("too many throwables found: " + throwables.size());
+		}
 
-    protected Context setupTemplateToRun2(String name, String statement,
-            boolean fullBuild) throws Exception {
+	}
 
-        File tmpfile = getTmpdir();
+	protected Context setupTemplateToRun2(String name, String statement,
+			boolean fullBuild) throws Exception {
 
-        String fullName = "statement_test_" + name;
-        File tplfile = new File(tmpfile, fullName + ".tpl");
+		File tmpfile = getTmpdir();
 
-        writeStringToFile("object template " + fullName + ";\n" + statement
-                + "\n", tplfile);
+		String fullName = "statement_test_" + name;
+		File tplfile = new File(tmpfile, fullName + ".tpl");
 
-        List<File> paths = new LinkedList<File>();
-        paths.add(tmpfile);
+		writeStringToFile("object template " + fullName + ";\n" + statement
+				+ "\n", tplfile);
 
-        List<File> files = new LinkedList<File>();
-        files.add(tplfile);
+		List<File> paths = new LinkedList<File>();
+		paths.add(tmpfile);
 
-        CompilerOptions options = new CompilerOptions(null, null, true, true,
-                1000, 50, PanFormatter.getInstance(), tmpfile, null, paths, 0,
-                false, 0, false, null, null, false, null);
+		List<File> files = new LinkedList<File>();
+		files.add(tplfile);
 
-        Compiler compiler = new Compiler(options, new LinkedList<String>(),
-                files);
-        compiler.process();
+		List<Formatter> formatters = new LinkedList<Formatter>();
+		formatters.add(PanFormatter.getInstance());
 
-        BuildCache ocache = compiler.getBuildCache();
-        Future<BuildResult> ft = ocache.retrieve(fullName);
-        if (ft == null) {
-            fail("object template for " + fullName
-                    + " didn't exist in object cache");
-        }
+		CompilerOptions options = new CompilerOptions(null, null, true, true,
+				1000, 50, formatters, tmpfile, null, paths, 0, false, 0, false,
+				null, null, false, null);
 
-        BuildResult result = null;
-        try {
-            result = ft.get();
-        } catch (InterruptedException ie) {
-            throw new EvaluationException("compilation interrupted");
-        } catch (CancellationException ce) {
-            throw new EvaluationException("compilation cancelled");
-        } catch (ExecutionException ee) {
-            throw ExceptionUtils.launder(ee);
-        }
+		Compiler compiler = new Compiler(options, new LinkedList<String>(),
+				files);
+		compiler.process();
 
-        return result.getObjectContext();
-    }
+		BuildCache ocache = compiler.getBuildCache();
+		Future<BuildResult> ft = ocache.retrieve(fullName);
+		if (ft == null) {
+			fail("object template for " + fullName
+					+ " didn't exist in object cache");
+		}
 
-    protected Context setupTemplateToRun3(String name, String statement1,
-            String statement2, boolean fullBuild) throws Exception {
+		BuildResult result = null;
+		try {
+			result = ft.get();
+		} catch (InterruptedException ie) {
+			throw new EvaluationException("compilation interrupted");
+		} catch (CancellationException ce) {
+			throw new EvaluationException("compilation cancelled");
+		} catch (ExecutionException ee) {
+			throw ExceptionUtils.launder(ee);
+		}
 
-        File tmpfile = getTmpdir();
+		return result.getObjectContext();
+	}
 
-        String fullName = "statement_test_" + name;
-        File tplfile = new File(tmpfile, fullName + ".tpl");
-        File incfile = new File(tmpfile, fullName + "_include.tpl");
+	protected Context setupTemplateToRun3(String name, String statement1,
+			String statement2, boolean fullBuild) throws Exception {
 
-        writeStringToFile("object template " + fullName + ";\n" + statement1
-                + "\n", tplfile);
-        writeStringToFile("template " + fullName + "_include;\n" + statement2
-                + "\n", incfile);
+		File tmpfile = getTmpdir();
 
-        List<File> paths = new LinkedList<File>();
-        paths.add(tmpfile);
+		String fullName = "statement_test_" + name;
+		File tplfile = new File(tmpfile, fullName + ".tpl");
+		File incfile = new File(tmpfile, fullName + "_include.tpl");
 
-        List<File> files = new LinkedList<File>();
-        files.add(tplfile);
+		writeStringToFile("object template " + fullName + ";\n" + statement1
+				+ "\n", tplfile);
+		writeStringToFile("template " + fullName + "_include;\n" + statement2
+				+ "\n", incfile);
 
-        CompilerOptions options = new CompilerOptions(null, null, true, true,
-                1000, 50, PanFormatter.getInstance(), tmpfile, null, paths, 0,
-                false, 0, false, null, null, false, null);
+		List<File> paths = new LinkedList<File>();
+		paths.add(tmpfile);
 
-        Compiler compiler = new Compiler(options, new LinkedList<String>(),
-                files);
-        compiler.process();
+		List<File> files = new LinkedList<File>();
+		files.add(tplfile);
 
-        BuildCache ocache = compiler.getBuildCache();
-        Future<BuildResult> ft = ocache.retrieve(fullName);
-        if (ft == null) {
-            fail("object template for " + fullName
-                    + " didn't exist in object cache");
-        }
+		List<Formatter> formatters = new LinkedList<Formatter>();
+		formatters.add(PanFormatter.getInstance());
 
-        BuildResult result = null;
-        try {
-            result = ft.get();
-        } catch (InterruptedException ie) {
-            throw new EvaluationException("compilation interrupted");
-        } catch (CancellationException ce) {
-            throw new EvaluationException("compilation cancelled");
-        } catch (ExecutionException ee) {
-            throw ExceptionUtils.launder(ee);
-        }
+		CompilerOptions options = new CompilerOptions(null, null, true, true,
+				1000, 50, formatters, tmpfile, null, paths, 0, false, 0, false,
+				null, null, false, null);
 
-        return result.getObjectContext();
-    }
+		Compiler compiler = new Compiler(options, new LinkedList<String>(),
+				files);
+		compiler.process();
+
+		BuildCache ocache = compiler.getBuildCache();
+		Future<BuildResult> ft = ocache.retrieve(fullName);
+		if (ft == null) {
+			fail("object template for " + fullName
+					+ " didn't exist in object cache");
+		}
+
+		BuildResult result = null;
+		try {
+			result = ft.get();
+		} catch (InterruptedException ie) {
+			throw new EvaluationException("compilation interrupted");
+		} catch (CancellationException ce) {
+			throw new EvaluationException("compilation cancelled");
+		} catch (ExecutionException ee) {
+			throw ExceptionUtils.launder(ee);
+		}
+
+		return result.getObjectContext();
+	}
 
 }

@@ -42,7 +42,6 @@ import org.quattor.pan.exceptions.ConfigurationException;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.output.Formatter;
-import org.quattor.pan.output.PanFormatter;
 import org.quattor.pan.parser.ASTOperation;
 import org.quattor.pan.parser.PanParser;
 import org.quattor.pan.parser.PanParserAstUtils;
@@ -96,7 +95,7 @@ public class CompilerOptions {
 	 * The <code>Formatter</code> that will be used to format the machine
 	 * profiles.
 	 */
-	public final Formatter formatter;
+	public final List<Formatter> formatter;
 
 	/**
 	 * The directory that will contain the produced machine profiles and
@@ -203,11 +202,11 @@ public class CompilerOptions {
 	public CompilerOptions(List<Pattern> debugIncludePatterns,
 			List<Pattern> debugExcludePatterns, boolean xmlWriteEnabled,
 			boolean depWriteEnabled, int iterationLimit, int callDepthLimit,
-			Formatter formatter, File outputDirectory, File sessionDirectory,
-			List<File> includeDirectories, int nthread, boolean gzipOutput,
-			int deprecationLevel, boolean forceBuild, File annotationDirectory,
-			File annotationBaseDirectory, boolean failOnWarn, String rootElement)
-			throws SyntaxException {
+			List<Formatter> formatters, File outputDirectory,
+			File sessionDirectory, List<File> includeDirectories, int nthread,
+			boolean gzipOutput, int deprecationLevel, boolean forceBuild,
+			File annotationDirectory, File annotationBaseDirectory,
+			boolean failOnWarn, String rootElement) throws SyntaxException {
 
 		// Check that the iteration and call depth limits are sensible. If
 		// negative or zero set these effectively to infinity.
@@ -245,7 +244,7 @@ public class CompilerOptions {
 		}
 
 		// Must have a formatter if the XML output is desired.
-		if (formatter == null && xmlWriteEnabled) {
+		if (formatters == null && xmlWriteEnabled) {
 			throw new IllegalArgumentException(
 					"formatter must be specified if XML file is to be written");
 		}
@@ -255,7 +254,6 @@ public class CompilerOptions {
 		this.depWriteEnabled = depWriteEnabled;
 		this.iterationLimit = iterationLimit;
 		this.callDepthLimit = callDepthLimit;
-		this.formatter = formatter;
 		this.outputDirectory = outputDirectory;
 		this.activeThreadsPerQueue = nthread;
 		this.gzipOutput = gzipOutput;
@@ -263,12 +261,21 @@ public class CompilerOptions {
 		this.failOnWarn = failOnWarn;
 		this.forceBuild = forceBuild;
 
-		if ("xmldb".equals(formatter.getFormatKey())) {
-			String msg = "WARNING: xmldb format is deprecated; use another formatter";
-			if (failOnWarn) {
-				throw new IllegalArgumentException(msg);
-			} else {
-				System.err.println(msg);
+		// Deal with the formatter(s).
+		List<Formatter> fmts = new LinkedList<Formatter>();
+		if (formatters != null) {
+			fmts.addAll(formatters);
+		}
+		this.formatter = Collections.unmodifiableList(fmts);
+
+		for (Formatter formatter : this.formatter) {
+			if ("xmldb".equals(formatter.getFormatKey())) {
+				String msg = "WARNING: xmldb format is deprecated; use another formatter";
+				if (failOnWarn) {
+					throw new IllegalArgumentException(msg);
+				} else {
+					System.err.println(msg);
+				}
 			}
 		}
 
@@ -335,7 +342,7 @@ public class CompilerOptions {
 		boolean depWriteEnabled = false;
 		int iterationLimit = 5000;
 		int callDepthLimit = 50;
-		Formatter formatter = PanFormatter.getInstance();
+		List<Formatter> formatters = new LinkedList<Formatter>();
 		File outputDirectory = null;
 		File sessionDirectory = null;
 		int nthread = 0;
@@ -348,10 +355,11 @@ public class CompilerOptions {
 		try {
 			return new CompilerOptions(debugIncludePatterns,
 					debugExcludePatterns, xmlWriteEnabled, depWriteEnabled,
-					iterationLimit, callDepthLimit, formatter, outputDirectory,
-					sessionDirectory, includeDirectories, nthread, gzipOutput,
-					deprecationLevel, forceBuild, annotationDirectory,
-					annotationBaseDirectory, failOnWarn, null);
+					iterationLimit, callDepthLimit, formatters,
+					outputDirectory, sessionDirectory, includeDirectories,
+					nthread, gzipOutput, deprecationLevel, forceBuild,
+					annotationDirectory, annotationBaseDirectory, failOnWarn,
+					null);
 
 		} catch (SyntaxException consumed) {
 			throw CompilerError.create(MSG_FILE_BUG_REPORT);
@@ -378,7 +386,7 @@ public class CompilerOptions {
 		boolean depWriteEnabled = false;
 		int iterationLimit = 5000;
 		int callDepthLimit = 50;
-		Formatter formatter = PanFormatter.getInstance();
+		List<Formatter> formatters = new LinkedList<Formatter>();
 		File outputDirectory = null;
 		File sessionDirectory = null;
 		int nthread = 0;
@@ -391,10 +399,11 @@ public class CompilerOptions {
 		try {
 			return new CompilerOptions(debugIncludePatterns,
 					debugExcludePatterns, xmlWriteEnabled, depWriteEnabled,
-					iterationLimit, callDepthLimit, formatter, outputDirectory,
-					sessionDirectory, includeDirectories, nthread, gzipOutput,
-					deprecationLevel, forceBuild, annotationDirectory,
-					annotationBaseDirectory, failOnWarn, null);
+					iterationLimit, callDepthLimit, formatters,
+					outputDirectory, sessionDirectory, includeDirectories,
+					nthread, gzipOutput, deprecationLevel, forceBuild,
+					annotationDirectory, annotationBaseDirectory, failOnWarn,
+					null);
 
 		} catch (SyntaxException consumed) {
 			throw CompilerError.create(MSG_FILE_BUG_REPORT);

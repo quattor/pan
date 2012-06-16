@@ -706,6 +706,112 @@
     </info>
 
     <refmeta>
+      <refentrytitle>panc-annotations</refentrytitle>
+
+      <manvolnum>1</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>panc-annotations</refname>
+
+      <refpurpose>process annotations in pan configuration files</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <cmdsynopsis>
+        <command>panc-annotations</command>
+
+        <arg>--base-dir <replaceable>base-directory</replaceable></arg>
+
+        <arg>--output-dir <replaceable>dir</replaceable></arg>
+
+        <arg>--java-opts <replaceable>jvm-options</replaceable></arg>
+
+        <arg>-v | --no-verbose | --verbose</arg>
+
+        <arg>-h | --no-help | --help</arg>
+
+        <arg choice="opt"
+        rep="repeat"><replaceable>template</replaceable></arg>
+      </cmdsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>The <command>panc-annotations</command> command will process the
+      annotations contains within pan configuration files within the given
+      base directory.</para>
+
+      <variablelist>
+        <varlistentry>
+          <term><option>--base-dir=<replaceable>base-directory</replaceable></option></term>
+
+          <listitem>
+            <para>Defines a base directory containing all pan configuration
+            files to process. The default is value is the current working
+            directory.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><option>--output-dir=<replaceable>dir</replaceable></option></term>
+
+          <listitem>
+            <para>Set where the annotation files will be written. If this
+            option is not specified, then the current working directory is
+            used by default.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><option>--java-opts=<replaceable>string</replaceable></option></term>
+
+          <listitem>
+            <para>List of options to use when starting the java virtual
+            machine. These are passed directly to the <command>java</command>
+            command and must be valid. Multiple options can be specified by
+            separating them with a space. When using multiple options, the
+            full value must be enclosed in quotes.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><option>-v, --no-verbose, --verbose</option></term>
+
+          <listitem>
+            <para>At the end of a compilation, print run statistics including
+            the numbers of files processed, total time, and memory used. The
+            default is not to print these values.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><option>-h, --no-help, --help</option></term>
+
+          <listitem>
+            <para>Print a short summary of command usage if requested. No
+            other processing is done if this option is given.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>The <command>panc-annotations</command> command is just a wrapper
+      script around the <command>java</command> command to simplify setting
+      various options.</para>
+    </refsection>
+  </refentry>
+
+  <refentry>
+    <info>
+      <productnumber><?eval ${project.version}?></productnumber>
+
+      <productname>panc</productname>
+
+      <date><?eval ${buildTimestamp}?></date>
+    </info>
+
+    <refmeta>
       <refentrytitle>panc-build-stats.pl</refentrytitle>
 
       <manvolnum>1</manvolnum>

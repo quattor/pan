@@ -42,7 +42,8 @@
               :default (current-directory) :parse-fn parse-directory]
              ["--output-dir" "output directory" 
               :default (current-directory) :parse-fn parse-directory]
-             ["--jvm-options" "options for JVM"]
+             ["--java-opts" "options for JVM"]
+             ["-v" "--verbose" "show statistics and progress" :default false :flag true]
              ["-h" "--help" "print command help" :default false :flag true])]
     (when (:help options)
       (println banner)

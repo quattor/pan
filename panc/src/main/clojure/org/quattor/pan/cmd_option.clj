@@ -14,6 +14,49 @@
 (defn to-settings [cli-options]
   (settings/merge-defaults (into {} (mapcat process cli-options))))
 
+(defn str->formatters
+  "Returns map with vector of formatters from comma-separated list of formatter names."
+  [s]
+  (let [names (split s #"\s*,\s*")]
+    {:formatter 
+     (reduce
+       (fn [v name]
+         (case name
+           "text" (conj v (TxtFormatter/getInstance))
+           "json" (conj v (JsonFormatter/getInstance))
+           "dot" (conj v (DotFormatter/getInstance))
+           "pan" (conj v(PanFormatter/getInstance))
+           "pan.gz" (conj v (PanFormatter/getInstance))
+           "xml" (conj v(PanFormatter/getInstance))
+           "xml.gz" (conj v (PanFormatter/getInstance))
+           "xmldb" (conj v (XmlDBFormatter/getInstance))
+           "dep" v
+           "none" v
+           (throw (Exception. (str "unknown formatter in formats: " name)))))
+       []
+       names)}))
+
+(defn str->formatter-options
+  "Returns map of formatters options from comma-separated list of formatter names."
+  [s]
+  (let [names (split s #"\s*,\s*")]
+    (reduce 
+      (fn [m name]
+        (case name
+          "text" (assoc m :xmlWriteEnabled true)
+          "json" (assoc m :xmlWriteEnabled true)
+          "dot" (assoc m :xmlWriteEnabled true)
+          "pan" (assoc m :xmlWriteEnabled true)
+          "pan.gz" (assoc m :xmlWriteEnabled true :gzipOutput true)
+          "xml" (assoc m :xmlWriteEnabled true)
+          "xml.gz" (assoc m :xmlWriteEnabled true :gzipOutput true)
+          "xmldb" (assoc m :xmlWriteEnabled true)
+          "dep" (assoc m :depWriteEnabled true)
+          "none" (assoc m :xmlWriteEnabled false)
+          (throw (Exception. (str "unknown formatter in formats: " name)))))
+      {}
+      names)))
+
 (defmulti process
   "Process a command line option given the name and
    string value passed in.  Returns validated and
@@ -70,27 +113,9 @@
 ;; FIXME: The formatters need to be accumulated into a single vector.
 (defmethod process :formats
   [[k v]]
-  (let [formatter-names (split v #"\s*,\s*")]
-    (apply merge
-           (map
-             (fn [formatter-name]
-               (case formatter-name
-                 "text" {:xmlWriteEnabled true
-                         :formatter [(TxtFormatter/getInstance)]}
-                 "json" {:xmlWriteEnabled true
-                         :formatter [(JsonFormatter/getInstance)]}
-                 "dot" {:xmlWriteEnabled true
-                        :formatter [(DotFormatter/getInstance)]}
-                 "pan" {:xmlWriteEnabled true
-                        :formatter [(PanFormatter/getInstance)]}
-                 "pan.gz" {:xmlWriteEnabled true
-                           :formatter [(PanFormatter/getInstance)]
-                           :gzip-output true}
-                 "xmldb" {:xmlWriteEnabled true
-                          :formatter [(XmlDBFormatter/getInstance)]}
-                 "dep" {:depWriteEnabled true}
-                 (throw (Exception. (str "unknown formatter in formats: " formatter-name)))))
-             formatter-names))))
+  (let [formatters (str->formatters v)
+        formatter-options (str->formatter-options v)]
+    (merge formatters formatter-options)))
 
 (defmethod process :max-iteration
   [[k v]]

@@ -18,8 +18,8 @@
 (defn defaults []
   {:debugIncludePatterns []
    :debugExcludePatterns []
-   :xmlWriteEnabled true
-   :depWriteEnabled true
+   :xmlWriteEnabled false
+   :depWriteEnabled false
    :iterationLimit 10000
    :callDepthLimit 10
    :formatter [(PanFormatter/getInstance)]

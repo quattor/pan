@@ -458,6 +458,254 @@
     </info>
 
     <refmeta>
+      <refentrytitle>panc-new</refentrytitle>
+
+      <manvolnum>1</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>panc-new</refname>
+
+      <refpurpose>compile pan language templates</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <cmdsynopsis>
+        <command>panc</command>
+
+        <arg>--no-debug | --debug</arg>
+
+        <arg>--debug-ns-include <replaceable>regex</replaceable></arg>
+
+        <arg>--debug-ns-exclude <replaceable>regex</replaceable></arg>
+
+        <arg>--initial-data <replaceable>nlist-dml</replaceable></arg>
+
+        <arg>--include-path <replaceable>path</replaceable></arg>
+
+        <arg>--session-dir <replaceable>path</replaceable></arg>
+
+        <arg>--output-dir <replaceable>dir</replaceable></arg>
+
+        <arg>--formats <replaceable>formats</replaceable></arg>
+
+        <arg>--java-opts <replaceable>java-options</replaceable></arg>
+
+        <arg>--max-iteration <replaceable>limit</replaceable></arg>
+
+        <arg>--max-recursion <replaceable>limit</replaceable></arg>
+
+        <arg>--logging <replaceable>string</replaceable></arg>
+
+        <arg>--log-file <replaceable>file</replaceable></arg>
+
+        <arg>--warnings <replaceable>flag</replaceable></arg>
+
+        <arg>-v | --no-verbose | --verbose</arg>
+
+        <arg>-h | --no-help | --help</arg>
+
+        <arg choice="opt"
+        rep="repeat"><replaceable>template</replaceable></arg>
+      </cmdsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>The <command>panc-new</command> command will compile a collection
+      of pan language templates into a set of machine configuration files.
+      This command, with its reorganized and simplified options, will
+      eventually replace the <command>panc</command> command. </para>
+
+      <variablelist>
+        <varlistentry>
+          <term><option>--no-debug, --debug</option></term>
+
+          <listitem>
+            <para>Enable or disable all debugging. By default, debugging is
+            turned off.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><option>--debug-ns-include=<replaceable>regex</replaceable></option></term>
+
+          <listitem>
+            <para>Define a pattern to selectively enable the pan
+            <function>debug</function> and <function>traceback</function>
+            functions. Those functions will be enabled for templates where the
+            template name matches one of the include regular expressions
+            <emphasis>and</emphasis> does not match an exclude regular
+            expression. This option may appear multiple times.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><option>--debug-ns-exclude=<replaceable>regex</replaceable></option></term>
+
+          <listitem>
+            <para>Define a pattern to selectively disable the pan
+            <function>debug</function> and <function>traceback</function>
+            functions. Those functions will be disabled for templates where
+            the template name matches one of the exclude regular expressions.
+            This option may appear multiple times. Exclusion takes precedence
+            over inclusion.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><option>--initial-data=<replaceable>nlist-dml</replaceable></option></term>
+
+          <listitem>
+            <para>A DML expression that evaluates to an nlist. This value will
+            be used as the starting nlist for all object templates. This is a
+            convenient mechanism for injecting build numbers and other
+            metadata in the profiles.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><option>--include-path=<replaceable>path</replaceable></option></term>
+
+          <listitem>
+            <para>Defines the source directories to search when looking for
+            templates. The value must be a list of absolute directories
+            delimited by the platform's path separator. If this is not
+            specified, the current working directory is used.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><option>--session-dir=<replaceable>path</replaceable></option></term>
+
+          <listitem>
+            <para>Defines a session directory to search when looking for
+            templates. The default is value is an empty list.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><option>--output-dir=<replaceable>dir</replaceable></option></term>
+
+          <listitem>
+            <para>Set where the machine configuration files will be written.
+            If this option is not specified, then the current working
+            directory is used by default.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><option>--formats=<replaceable>formats</replaceable></option></term>
+
+          <listitem>
+            <para>A comma separated list of desired output formats. Allowed
+            values are "pan", "dep", "json", "text", and "dot". The default is
+            value is "pan,dep". The value "xmldb" is accepted, but
+            deprecated.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><option>--java-opts=<replaceable>string</replaceable></option></term>
+
+          <listitem>
+            <para>List of options to use when starting the java virtual
+            machine. These are passed directly to the <command>java</command>
+            command and must be valid. Multiple options can be specified by
+            separating them with a space. When using multiple options, the
+            full value must be enclosed in quotes.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><option>--max-iteration=<replaceable>limit</replaceable></option></term>
+
+          <listitem>
+            <para>Set the limit on the maximum number of permitted loop
+            iterations. This is used to avoid infinite loops. The default
+            value is 5000.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><option>--max-recursion=<replaceable>limit</replaceable></option></term>
+
+          <listitem>
+            <para>Set the limit on the maximum number of permitted recursions.
+            The default value is 10.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><option>--logging=<replaceable>string</replaceable></option></term>
+
+          <listitem>
+            <para>Enable compiler logging; possible values are "all", "none",
+            "include", "call", "task", and "memory". A log file must be
+            specified with the <option>--log-file</option> option to capture
+            the logging information.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><option>--log-file=<replaceable>file</replaceable></option></term>
+
+          <listitem>
+            <para>Set the name of the file to use to store logging
+            information.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><option>--warnings=<replaceable>flag</replaceable></option></term>
+
+          <listitem>
+            <para>Possible values are "on", "off", and "fatal". The last value
+            will turn all warnings into fatal errors.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><option>-v, --no-verbose, --verbose</option></term>
+
+          <listitem>
+            <para>At the end of a compilation, print run statistics including
+            the numbers of files processed, total time, and memory used. The
+            default is not to print these values.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><option>-h, --no-help, --help</option></term>
+
+          <listitem>
+            <para>Print a short summary of command usage if requested. No
+            other processing is done if this option is given.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>The <command>panc-new</command> command is just a wrapper script
+      around the <command>java</command> command to simplify setting various
+      options. The typical case is that the command is invoked without options
+      and just a list of object templates as the arguments. Larger sets of
+      templates will need to set the memory option for the Java Virtual
+      Machine; this should be done through the <option>--java-opts</option>
+      option.</para>
+    </refsection>
+  </refentry>
+
+  <refentry>
+    <info>
+      <productnumber><?eval ${project.version}?></productnumber>
+
+      <productname>panc</productname>
+
+      <date><?eval ${buildTimestamp}?></date>
+    </info>
+
+    <refmeta>
       <refentrytitle>panc-build-stats.pl</refentrytitle>
 
       <manvolnum>1</manvolnum>

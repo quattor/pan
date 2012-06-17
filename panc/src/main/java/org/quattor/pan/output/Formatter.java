@@ -24,6 +24,7 @@ import java.io.PrintWriter;
 import java.net.URI;
 
 import org.quattor.pan.dml.data.Element;
+import org.quattor.pan.tasks.Valid2Result;
 
 /**
  * 
@@ -62,5 +63,8 @@ public interface Formatter {
 	 *            the PrintStream used to write the file
 	 */
 	public void write(Element root, String rootName, PrintWriter ps);
+
+	public void write(String objectName, URI outputDirectory,
+			Valid2Result result) throws Exception;
 
 }

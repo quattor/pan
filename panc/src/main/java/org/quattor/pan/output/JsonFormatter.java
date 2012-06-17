@@ -20,6 +20,9 @@
 
 package org.quattor.pan.output;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Type;
 import java.net.URI;
@@ -35,6 +38,7 @@ import org.quattor.pan.dml.data.ProtectedHashResource;
 import org.quattor.pan.dml.data.ProtectedListResource;
 import org.quattor.pan.dml.data.Resource;
 import org.quattor.pan.dml.data.StringProperty;
+import org.quattor.pan.tasks.Valid2Result;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -71,6 +75,35 @@ public class JsonFormatter implements Formatter {
     public String getFormatKey() {
         return key;
     }
+
+	public void write(String objectName, URI outputDirectory,
+			Valid2Result result) throws Exception {
+
+		URI resultURI = getResultURI(objectName);
+		URI absoluteURI = outputDirectory.resolve(resultURI);
+		File absolutePath = new File(absoluteURI);
+
+		FormatterUtils.createParentDirectories(absolutePath);
+
+		OutputStream os = new FileOutputStream(absolutePath);
+
+		// GZIP OUTPUT
+		// absolutePath = new File(absolutePath.toString() + ".gz");
+		// os = new GZIPOutputStream(new FileOutputStream(absolutePath));
+
+		PrintWriter ps = new PrintWriter(os);
+		write(result.getRoot(), "profile", ps);
+		ps.close();
+
+		// Make sure that the file has the timestamp passed into the
+		// constructor.
+		if (!absolutePath.setLastModified(result.timestamp)) {
+			// Probably a warning should be emitted here, but currently
+			// there are no facilities for warnings in the pan compiler
+			// yet.
+		}
+
+	}
 
     public void write(Element root, String rootName, PrintWriter ps) {
         Gson gson = new GsonBuilder()

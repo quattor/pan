@@ -21,20 +21,14 @@
 package org.quattor.pan.tasks;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.zip.GZIPOutputStream;
 
 import org.quattor.pan.Compiler;
 import org.quattor.pan.CompilerLogging.LoggingType;
 import org.quattor.pan.cache.Valid2Cache;
-import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.output.Formatter;
-import org.quattor.pan.output.FormatterUtils;
 
 /**
  * Wraps the <code>WriteXmlTask</code> as a <code>Task</code>. This wrapping is
@@ -66,21 +60,19 @@ public class WriteXmlTask extends Task<TaskResult> {
 
 		private final Formatter formatter;
 
-		private final boolean gzipOutput;
-
 		private final Compiler compiler;
 
 		private final String objectName;
 
 		private final File outputDirectory;
 
+		// FIXME: The gzipOutput flag is no longer used.
 		public CallImpl(Formatter formatter, boolean gzipOutput,
 				Compiler compiler, String objectName, File outputDirectory) {
 
 			assert (formatter != null);
 
 			this.formatter = formatter;
-			this.gzipOutput = gzipOutput;
 
 			this.compiler = compiler;
 			this.objectName = objectName;
@@ -95,36 +87,11 @@ public class WriteXmlTask extends Task<TaskResult> {
 			// result isn't yet available.
 			Valid2Result result = (Valid2Result) v2cache
 					.waitForResult(objectName);
-			Element root = result.getRoot();
-			long timestamp = result.timestamp;
 
 			// Mark the beginning of writing XML file.
 			taskLogger.log(Level.FINER, "START_XMLFILE", objectName);
 
-			File absolutePath = FormatterUtils.getOutputFile(outputDirectory,
-					objectName, formatter.getFileExtension());
-
-			FormatterUtils.createParentDirectories(absolutePath);
-
-			OutputStream os = null;
-			if (!gzipOutput) {
-				os = new FileOutputStream(absolutePath);
-			} else {
-				absolutePath = new File(absolutePath.toString() + ".gz");
-				os = new GZIPOutputStream(new FileOutputStream(absolutePath));
-			}
-
-			PrintWriter ps = new PrintWriter(os);
-			formatter.write(root, "profile", ps);
-			ps.close();
-
-			// Make sure that the file has the timestamp passed into the
-			// constructor.
-			if (!absolutePath.setLastModified(timestamp)) {
-				// Probably a warning should be emitted here, but currently
-				// there are no facilities for warnings in the pan compiler
-				// yet.
-			}
+			formatter.write(objectName, outputDirectory.toURI(), result);
 
 			// Mark the end of writing XML file.
 			taskLogger.log(Level.FINER, "END_XMLFILE", objectName);

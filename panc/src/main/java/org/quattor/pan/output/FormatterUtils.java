@@ -85,11 +85,32 @@ public class FormatterUtils {
 			String fileExtension) throws URISyntaxException {
 
 		URI odir = outputDirectory.toURI();
-		URI oname = new URI(objectName + "." + fileExtension);
+		URI oname = getResultURI(objectName, fileExtension);
 		URI resolvedAbsoluteURI = odir.resolve(oname);
-		String resolvedAbsolutePath = resolvedAbsoluteURI
-				.getSchemeSpecificPart();
-		return new File(resolvedAbsolutePath);
+		return new File(resolvedAbsoluteURI);
+	}
+
+	/**
+	 * Utility to provide the URI for the formatter's result. This will return a
+	 * relative URI that must be resolved against an absolute URI before being
+	 * used.
+	 * 
+	 * @param objectName
+	 *            full namespaced pan object name
+	 * @param fileExtension
+	 *            file extension without a leading period (".")
+	 * 
+	 * @throws CompilerError
+	 *             if an invalid objectName is encountered
+	 * 
+	 */
+	public static URI getResultURI(String objectName, String fileExtension) {
+		try {
+			return new URI(objectName + "." + fileExtension);
+		} catch (URISyntaxException e) {
+			throw new CompilerError(
+					"invalid object template name encountered: " + objectName);
+		}
 	}
 
 	/**
@@ -97,7 +118,8 @@ public class FormatterUtils {
 	 * 
 	 * @param file
 	 * 
-	 * @throws SystemException if directory or directories cannot be created
+	 * @throws SystemException
+	 *             if directory or directories cannot be created
 	 */
 	public static void createParentDirectories(File file) {
 		File parent = file.getParentFile();

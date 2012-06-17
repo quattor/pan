@@ -21,6 +21,7 @@
 package org.quattor.pan.output;
 
 import java.io.PrintWriter;
+import java.net.URI;
 
 import org.quattor.pan.dml.data.Element;
 
@@ -50,6 +51,10 @@ public class TxtFormatter extends PanTxtFormatter {
 
 	public String getFileExtension() {
 		return suffix;
+	}
+
+	public URI getResultURI(String objectName) {
+		return FormatterUtils.getResultURI(objectName, suffix);
 	}
 
 	public String getFormatKey() {

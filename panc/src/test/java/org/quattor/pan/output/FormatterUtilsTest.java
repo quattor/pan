@@ -20,8 +20,11 @@
 
 package org.quattor.pan.output;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -39,6 +42,15 @@ public class FormatterUtilsTest {
 	public void setupDirectory() throws IOException {
 		File root = tmpDir.getRoot();
 		existingTempFile = File.createTempFile("tmp.", ".existing", root);
+	}
+
+	@Test
+	public void validNameToURI() {
+		String objectName = "my/ns/object-template";
+		String suffix = "dummy";
+		URI result = FormatterUtils.getResultURI(objectName, suffix);
+		String uriPath = result.getPath();
+		assertEquals(objectName + "." + suffix, uriPath);
 	}
 
 	@Test

@@ -21,6 +21,7 @@
 package org.quattor.pan.output;
 
 import java.io.PrintWriter;
+import java.net.URI;
 
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.Property;
@@ -51,6 +52,10 @@ public class DotFormatter implements Formatter {
 
 	public String getFileExtension() {
 		return suffix;
+	}
+
+	public URI getResultURI(String objectName) {
+		return FormatterUtils.getResultURI(objectName, suffix);
 	}
 
 	public String getFormatKey() {

@@ -22,6 +22,7 @@ package org.quattor.pan.output;
 
 import java.io.PrintWriter;
 import java.lang.reflect.Type;
+import java.net.URI;
 
 import org.quattor.pan.dml.data.BooleanProperty;
 import org.quattor.pan.dml.data.DoubleProperty;
@@ -62,6 +63,10 @@ public class JsonFormatter implements Formatter {
     public String getFileExtension() {
         return suffix;
     }
+
+	public URI getResultURI(String objectName) {
+		return FormatterUtils.getResultURI(objectName, suffix);
+	}
 
     public String getFormatKey() {
         return key;

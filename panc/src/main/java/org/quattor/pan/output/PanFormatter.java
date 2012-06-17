@@ -23,6 +23,7 @@ package org.quattor.pan.output;
 import static org.quattor.pan.utils.MessageUtils.MSG_UNEXPECTED_EXCEPTION_WHILE_WRITING_OUTPUT;
 
 import java.io.PrintWriter;
+import java.net.URI;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.sax.TransformerHandler;
@@ -59,6 +60,10 @@ public class PanFormatter implements Formatter {
 
 	public String getFileExtension() {
 		return suffix;
+	}
+
+	public URI getResultURI(String objectName) {
+		return FormatterUtils.getResultURI(objectName, suffix);
 	}
 
 	public String getFormatKey() {

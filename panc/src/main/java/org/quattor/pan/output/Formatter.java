@@ -21,6 +21,7 @@
 package org.quattor.pan.output;
 
 import java.io.PrintWriter;
+import java.net.URI;
 
 import org.quattor.pan.dml.data.Element;
 
@@ -38,6 +39,8 @@ public interface Formatter {
 	 * @return String containing the file extension to use
 	 */
 	public String getFileExtension();
+
+	public URI getResultURI(String objectName);
 
 	/**
 	 * Returns the name of the formatter that will be used to identify it. This

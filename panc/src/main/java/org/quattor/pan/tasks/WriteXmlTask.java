@@ -20,13 +20,10 @@
 
 package org.quattor.pan.tasks;
 
-import static org.quattor.pan.utils.MessageUtils.MSG_CANNOT_CREATE_OUTPUT_DIRECTORY;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.net.URI;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,9 +33,8 @@ import org.quattor.pan.Compiler;
 import org.quattor.pan.CompilerLogging.LoggingType;
 import org.quattor.pan.cache.Valid2Cache;
 import org.quattor.pan.dml.data.Element;
-import org.quattor.pan.exceptions.SystemException;
 import org.quattor.pan.output.Formatter;
-import org.quattor.pan.utils.MessageUtils;
+import org.quattor.pan.output.FormatterUtils;
 
 /**
  * Wraps the <code>WriteXmlTask</code> as a <code>Task</code>. This wrapping is
@@ -105,25 +101,10 @@ public class WriteXmlTask extends Task<TaskResult> {
 			// Mark the beginning of writing XML file.
 			taskLogger.log(Level.FINER, "START_XMLFILE", objectName);
 
-			// Use URI instances to operate on the output directory and the
-			// object name. The object name can be namespaced, so this extra
-			// processing is needed.
-			URI odir = outputDirectory.toURI();
-			URI oname = new URI(objectName);
-			URI resolvedAbsoluteURI = odir.resolve(oname);
-			String resolvedAbsolutePath = resolvedAbsoluteURI
-					.getSchemeSpecificPart()
-					+ "." + formatter.getFileExtension();
-			File absolutePath = new File(resolvedAbsolutePath);
+			File absolutePath = FormatterUtils.getOutputFile(outputDirectory,
+					objectName, formatter.getFileExtension());
 
-			// Extract the parent directory and ensure that it exists. If the
-			// creation fails, ignore it. The error will be caught below.
-			File parent = absolutePath.getParentFile();
-			if (!parent.exists() && !parent.mkdirs()) {
-				throw new SystemException(MessageUtils.format(
-						MSG_CANNOT_CREATE_OUTPUT_DIRECTORY, parent
-								.getAbsolutePath()), parent);
-			}
+			FormatterUtils.createParentDirectories(absolutePath);
 
 			OutputStream os = null;
 			if (!gzipOutput) {

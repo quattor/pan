@@ -32,7 +32,7 @@
            "xmldb" (conj v (XmlDBFormatter/getInstance))
            "dep" v
            "none" v
-           (throw (Exception. (str "unknown formatter in formats: " name)))))
+           (throw (Exception. (str "unknown formatter: " name)))))
        []
        names)}))
 
@@ -53,7 +53,7 @@
           "xmldb" (assoc m :xmlWriteEnabled true)
           "dep" (assoc m :depWriteEnabled true)
           "none" (assoc m :xmlWriteEnabled false)
-          (throw (Exception. (str "unknown formatter in formats: " name)))))
+          (throw (Exception. (str "unknown formatter: " name)))))
       {}
       names)))
 

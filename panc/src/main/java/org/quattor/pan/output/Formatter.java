@@ -24,7 +24,7 @@ import java.io.PrintWriter;
 import java.net.URI;
 
 import org.quattor.pan.dml.data.Element;
-import org.quattor.pan.tasks.Valid2Result;
+import org.quattor.pan.tasks.FinalResult;
 
 /**
  * 
@@ -32,14 +32,6 @@ import org.quattor.pan.tasks.Valid2Result;
  * 
  */
 public interface Formatter {
-
-	/**
-	 * Return the file extension for files written with this formatter. The
-	 * implementation may not return null.
-	 * 
-	 * @return String containing the file extension to use
-	 */
-	public String getFileExtension();
 
 	public URI getResultURI(String objectName);
 
@@ -60,11 +52,10 @@ public interface Formatter {
 	 * @param rootName
 	 *            name of root element
 	 * @param ps
-	 *            the PrintStream used to write the file
+	 *            the PrintWriter used to write the file
 	 */
 	public void write(Element root, String rootName, PrintWriter ps);
 
-	public void write(String objectName, URI outputDirectory,
-			Valid2Result result) throws Exception;
+	public void write(FinalResult result, PrintWriter ps) throws Exception;
 
 }

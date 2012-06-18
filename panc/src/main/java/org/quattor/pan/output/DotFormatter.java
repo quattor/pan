@@ -20,9 +20,6 @@
 
 package org.quattor.pan.output;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.URI;
 
@@ -30,7 +27,7 @@ import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.Property;
 import org.quattor.pan.dml.data.Resource;
 import org.quattor.pan.dml.data.StringProperty;
-import org.quattor.pan.tasks.Valid2Result;
+import org.quattor.pan.tasks.FinalResult;
 
 /**
  * A formatter that will transform a machine profile into a graph in dot syntax.
@@ -54,10 +51,6 @@ public class DotFormatter implements Formatter {
 		return instance;
 	}
 
-	public String getFileExtension() {
-		return suffix;
-	}
-
 	public URI getResultURI(String objectName) {
 		return FormatterUtils.getResultURI(objectName, suffix);
 	}
@@ -66,33 +59,8 @@ public class DotFormatter implements Formatter {
 		return key;
 	}
 
-	public void write(String objectName, URI outputDirectory,
-			Valid2Result result) throws Exception {
-
-		URI resultURI = getResultURI(objectName);
-		URI absoluteURI = outputDirectory.resolve(resultURI);
-		File absolutePath = new File(absoluteURI);
-
-		FormatterUtils.createParentDirectories(absolutePath);
-
-		OutputStream os = new FileOutputStream(absolutePath);
-
-		// GZIP OUTPUT
-		// absolutePath = new File(absolutePath.toString() + ".gz");
-		// os = new GZIPOutputStream(new FileOutputStream(absolutePath));
-
-		PrintWriter ps = new PrintWriter(os);
+	public void write(FinalResult result, PrintWriter ps) throws Exception {
 		write(result.getRoot(), "profile", ps);
-		ps.close();
-
-		// Make sure that the file has the timestamp passed into the
-		// constructor.
-		if (!absolutePath.setLastModified(result.timestamp)) {
-			// Probably a warning should be emitted here, but currently
-			// there are no facilities for warnings in the pan compiler
-			// yet.
-		}
-
 	}
 
 	public void write(Element root, String rootName, PrintWriter ps) {

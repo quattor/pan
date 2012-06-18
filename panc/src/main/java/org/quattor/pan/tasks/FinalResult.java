@@ -21,9 +21,14 @@
 package org.quattor.pan.tasks;
 
 import java.util.Collections;
-import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
+import java.util.Stack;
+import java.util.TreeSet;
 
+import org.quattor.pan.Compiler;
+import org.quattor.pan.cache.Valid2Cache;
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.repository.SourceFile;
 
@@ -33,7 +38,7 @@ import org.quattor.pan.repository.SourceFile;
  * @author loomis
  * 
  */
-public class Valid2Result extends TaskResult {
+public class FinalResult extends TaskResult {
 
 	private final Element root;
 
@@ -41,41 +46,55 @@ public class Valid2Result extends TaskResult {
 
 	public final String objectName;
 
-	Set<String> objectDependencies;
-
 	Set<SourceFile> dependencies;
 
-	Set<SourceFile> allDependencies;
-
-	public Valid2Result(String objectName, Element root,
-			Set<String> objectDependencies, Set<SourceFile> dependencies,
-			Set<SourceFile> allDependencies) {
+	public FinalResult(Compiler compiler, Valid2Result result) {
 		super(ResultType.VALID2);
 
-		this.root = root;
-		this.objectName = objectName;
-		this.objectDependencies = Collections
-				.unmodifiableSet(objectDependencies);
-		this.dependencies = Collections.unmodifiableSet(dependencies);
-		this.allDependencies = allDependencies;
-
-		timestamp = (new Date()).getTime();
+		this.root = result.getRoot();
+		this.timestamp = result.timestamp;
+		this.objectName = result.objectName;
+		this.dependencies = resolveAllDependencies(compiler);
 	}
 
 	public Element getRoot() {
 		return root;
 	}
 
-	public Set<String> getObjectDependencies() {
-		return objectDependencies;
-	}
-
 	public Set<SourceFile> getDependencies() {
 		return dependencies;
 	}
 
-	public Set<SourceFile> getAllDependencies() {
-		return allDependencies;
+	public Set<SourceFile> resolveAllDependencies(Compiler compiler) {
+
+		Set<SourceFile> allDependencies = new TreeSet<SourceFile>();
+
+		Valid2Cache v2cache = compiler.getValid2Cache();
+
+		List<String> processed = new LinkedList<String>();
+		Stack<String> unprocessed = new Stack<String>();
+		unprocessed.push(objectName);
+
+		// Loop until there are no more unprocessed object templates.
+		while (!unprocessed.empty()) {
+			String objectToProcess = unprocessed.pop();
+
+			// Only do something if the object template hasn't already been
+			// processed.
+			if (!processed.contains(objectToProcess)) {
+				processed.add(objectToProcess);
+
+				Valid2Result result = (Valid2Result) v2cache
+						.waitForResult(objectToProcess);
+
+				allDependencies.addAll(result.getDependencies());
+
+				unprocessed.addAll(result.getObjectDependencies());
+			}
+
+		}
+
+		return Collections.unmodifiableSet(allDependencies);
 	}
 
 }

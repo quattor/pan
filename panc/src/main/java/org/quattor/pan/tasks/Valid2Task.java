@@ -22,7 +22,6 @@ package org.quattor.pan.tasks;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_OBJECT_DEPENDENCY_RAISED_EXCEPTION;
 
-import java.util.Date;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
@@ -35,6 +34,7 @@ import org.quattor.pan.CompilerLogging.LoggingType;
 import org.quattor.pan.cache.Valid1Cache;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.ValidationException;
+import org.quattor.pan.repository.SourceFile;
 import org.quattor.pan.template.Context;
 
 /**
@@ -93,14 +93,15 @@ public class Valid2Task extends Task<Valid2Result> {
 			// Log the end of the build phase.
 			taskLogger.log(Level.FINER, "END_VALID2", objectName);
 
-			// Create a common timestamp to be used for output files.
-			long timestamp = (new Date()).getTime();
+			// Set<SourceFile> allDependencies = resolveAllDependencies();
+			Set<SourceFile> allDependencies = new TreeSet<SourceFile>();
 
 			// Return the actual result. Always protect the final root value.
 			// This will force any values coming out of the finished
 			// configuration to be protected as well.
-			return new Valid2Result(context.getRoot().protect(), timestamp,
-					context.getObjectDependencies(), context.getDependencies());
+			return new Valid2Result(objectName, context.getRoot().protect(),
+					context.getObjectDependencies(), context.getDependencies(),
+					allDependencies);
 		}
 
 		/**

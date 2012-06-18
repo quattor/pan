@@ -21,6 +21,9 @@
 package org.quattor.pan.tasks;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
+import java.net.URI;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,6 +32,7 @@ import org.quattor.pan.Compiler;
 import org.quattor.pan.CompilerLogging.LoggingType;
 import org.quattor.pan.cache.Valid2Cache;
 import org.quattor.pan.output.Formatter;
+import org.quattor.pan.output.FormatterUtils;
 
 /**
  * Wraps the <code>WriteXmlTask</code> as a <code>Task</code>. This wrapping is
@@ -88,10 +92,34 @@ public class WriteXmlTask extends Task<TaskResult> {
 			Valid2Result result = (Valid2Result) v2cache
 					.waitForResult(objectName);
 
+			// FIXME: This should be done as another stage to avoid calculating
+			// the dependencies every time a new type of output file is written.
+			FinalResult finalResult = new FinalResult(compiler, result);
+
 			// Mark the beginning of writing XML file.
 			taskLogger.log(Level.FINER, "START_XMLFILE", objectName);
 
-			formatter.write(objectName, outputDirectory.toURI(), result);
+			URI resultURI = formatter.getResultURI(result.objectName);
+			URI absoluteURI = outputDirectory.toURI().resolve(resultURI);
+			File absolutePath = new File(absoluteURI);
+
+			FormatterUtils.createParentDirectories(absolutePath);
+
+			PrintWriter pw = null;
+
+			try {
+				pw = new PrintWriter(new FileOutputStream(absolutePath));
+				formatter.write(finalResult, pw);
+			} finally {
+				if (pw != null) {
+					try {
+						pw.close();
+					} catch (Exception consumed) {
+					}
+				}
+			}
+
+			FormatterUtils.setOutputTimestamp(absolutePath, result.timestamp);
 
 			// Mark the end of writing XML file.
 			taskLogger.log(Level.FINER, "END_XMLFILE", objectName);

@@ -20,9 +20,6 @@
 
 package org.quattor.pan.output;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Type;
 import java.net.URI;
@@ -38,7 +35,7 @@ import org.quattor.pan.dml.data.ProtectedHashResource;
 import org.quattor.pan.dml.data.ProtectedListResource;
 import org.quattor.pan.dml.data.Resource;
 import org.quattor.pan.dml.data.StringProperty;
-import org.quattor.pan.tasks.Valid2Result;
+import org.quattor.pan.tasks.FinalResult;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -51,128 +48,99 @@ import com.google.gson.JsonSerializer;
 
 public class JsonFormatter implements Formatter {
 
-    private static final JsonFormatter instance = new JsonFormatter();
+	private static final JsonFormatter instance = new JsonFormatter();
 
-    private static final String suffix = "json";
+	private static final String suffix = "json";
 
-    private static final String key = "json";
+	private static final String key = "json";
 
-    private JsonFormatter() {
-    }
+	private JsonFormatter() {
+	}
 
-    public static JsonFormatter getInstance() {
-        return instance;
-    }
-
-    public String getFileExtension() {
-        return suffix;
-    }
+	public static JsonFormatter getInstance() {
+		return instance;
+	}
 
 	public URI getResultURI(String objectName) {
 		return FormatterUtils.getResultURI(objectName, suffix);
 	}
 
-    public String getFormatKey() {
-        return key;
-    }
-
-	public void write(String objectName, URI outputDirectory,
-			Valid2Result result) throws Exception {
-
-		URI resultURI = getResultURI(objectName);
-		URI absoluteURI = outputDirectory.resolve(resultURI);
-		File absolutePath = new File(absoluteURI);
-
-		FormatterUtils.createParentDirectories(absolutePath);
-
-		OutputStream os = new FileOutputStream(absolutePath);
-
-		// GZIP OUTPUT
-		// absolutePath = new File(absolutePath.toString() + ".gz");
-		// os = new GZIPOutputStream(new FileOutputStream(absolutePath));
-
-		PrintWriter ps = new PrintWriter(os);
-		write(result.getRoot(), "profile", ps);
-		ps.close();
-
-		// Make sure that the file has the timestamp passed into the
-		// constructor.
-		if (!absolutePath.setLastModified(result.timestamp)) {
-			// Probably a warning should be emitted here, but currently
-			// there are no facilities for warnings in the pan compiler
-			// yet.
-		}
-
+	public String getFormatKey() {
+		return key;
 	}
 
-    public void write(Element root, String rootName, PrintWriter ps) {
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter(BooleanProperty.class,
-                        new PropertySerializer())
-                .registerTypeAdapter(DoubleProperty.class,
-                        new PropertySerializer())
-                .registerTypeAdapter(LongProperty.class,
-                        new PropertySerializer())
-                .registerTypeAdapter(StringProperty.class,
-                        new PropertySerializer())
-                .registerTypeAdapter(HashResource.class, new HashSerializer())
-                .registerTypeAdapter(ProtectedHashResource.class,
-                        new HashSerializer())
-                .registerTypeAdapter(ListResource.class, new ListSerializer())
-                .registerTypeAdapter(ProtectedListResource.class,
-                        new ListSerializer()).setPrettyPrinting().create();
+	public void write(FinalResult result, PrintWriter ps) throws Exception {
+		write(result.getRoot(), "profile", ps);
+	}
 
-        ps.write(gson.toJson(root));
-        ps.close();
-    }
+	public void write(Element root, String rootName, PrintWriter ps) {
+		Gson gson = new GsonBuilder()
+				.registerTypeAdapter(BooleanProperty.class,
+						new PropertySerializer())
+				.registerTypeAdapter(DoubleProperty.class,
+						new PropertySerializer())
+				.registerTypeAdapter(LongProperty.class,
+						new PropertySerializer())
+				.registerTypeAdapter(StringProperty.class,
+						new PropertySerializer())
+				.registerTypeAdapter(HashResource.class, new HashSerializer())
+				.registerTypeAdapter(ProtectedHashResource.class,
+						new HashSerializer())
+				.registerTypeAdapter(ListResource.class, new ListSerializer())
+				.registerTypeAdapter(ProtectedListResource.class,
+						new ListSerializer()).setPrettyPrinting().create();
 
-    private class PropertySerializer implements JsonSerializer<Property> {
-        public JsonElement serialize(Property src, Type typeOfSrc,
-                JsonSerializationContext context) {
+		ps.write(gson.toJson(root));
+		ps.close();
+	}
 
-            if (src instanceof BooleanProperty) {
-                return new JsonPrimitive(((BooleanProperty) src).getValue());
-            } else if (src instanceof DoubleProperty) {
-                return new JsonPrimitive(((DoubleProperty) src).getValue());
-            } else if (src instanceof LongProperty) {
-                return new JsonPrimitive(((LongProperty) src).getValue());
-            } else {
-                return new JsonPrimitive(src.getValue().toString());
-            }
-        }
-    }
+	private class PropertySerializer implements JsonSerializer<Property> {
+		public JsonElement serialize(Property src, Type typeOfSrc,
+				JsonSerializationContext context) {
 
-    private class HashSerializer implements JsonSerializer<HashResource> {
+			if (src instanceof BooleanProperty) {
+				return new JsonPrimitive(((BooleanProperty) src).getValue());
+			} else if (src instanceof DoubleProperty) {
+				return new JsonPrimitive(((DoubleProperty) src).getValue());
+			} else if (src instanceof LongProperty) {
+				return new JsonPrimitive(((LongProperty) src).getValue());
+			} else {
+				return new JsonPrimitive(src.getValue().toString());
+			}
+		}
+	}
 
-        public JsonElement serialize(HashResource src, Type typeOfSrc,
-                JsonSerializationContext context) {
+	private class HashSerializer implements JsonSerializer<HashResource> {
 
-            JsonObject map = new JsonObject();
+		public JsonElement serialize(HashResource src, Type typeOfSrc,
+				JsonSerializationContext context) {
 
-            for (Resource.Entry entry : src) {
-                String property = entry.getKey().toString();
-                JsonElement value = context.serialize(entry.getValue());
-                map.add(property, value);
-            }
+			JsonObject map = new JsonObject();
 
-            return map;
-        }
-    }
+			for (Resource.Entry entry : src) {
+				String property = entry.getKey().toString();
+				JsonElement value = context.serialize(entry.getValue());
+				map.add(property, value);
+			}
 
-    private class ListSerializer implements JsonSerializer<ListResource> {
+			return map;
+		}
+	}
 
-        public JsonElement serialize(ListResource src, Type typeOfSrc,
-                JsonSerializationContext context) {
+	private class ListSerializer implements JsonSerializer<ListResource> {
 
-            JsonArray array = new JsonArray();
+		public JsonElement serialize(ListResource src, Type typeOfSrc,
+				JsonSerializationContext context) {
 
-            for (Resource.Entry entry : src) {
-                JsonElement value = context.serialize(entry.getValue());
-                array.add(value);
-            }
+			JsonArray array = new JsonArray();
 
-            return array;
-        }
-    }
+			for (Resource.Entry entry : src) {
+				JsonElement value = context.serialize(entry.getValue());
+				array.add(value);
+			}
+
+			return array;
+		}
+	}
 
 }

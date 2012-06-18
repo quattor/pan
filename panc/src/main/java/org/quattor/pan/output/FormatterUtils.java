@@ -68,29 +68,6 @@ public class FormatterUtils {
 	}
 
 	/**
-	 * Utility to provide the output URI for a pan object template, given the
-	 * output directory and the extension.
-	 * 
-	 * @param outputDirectory
-	 *            directory to use for output files
-	 * @param objectName
-	 *            full namespaced pan object name
-	 * @param fileExtension
-	 *            file extension without a leading period (".")
-	 * 
-	 * @throws URISyntaxException
-	 * 
-	 */
-	public static File getOutputFile(File outputDirectory, String objectName,
-			String fileExtension) throws URISyntaxException {
-
-		URI odir = outputDirectory.toURI();
-		URI oname = getResultURI(objectName, fileExtension);
-		URI resolvedAbsoluteURI = odir.resolve(oname);
-		return new File(resolvedAbsoluteURI);
-	}
-
-	/**
 	 * Utility to provide the URI for the formatter's result. This will return a
 	 * relative URI that must be resolved against an absolute URI before being
 	 * used.
@@ -129,6 +106,19 @@ public class FormatterUtils {
 					parent.getAbsolutePath()), parent);
 		}
 
+	}
+
+	/**
+	 * Sets the modification time of the given file to the given timestamp.
+	 * Errors are silently ignored.
+	 * 
+	 * @param absolutePath
+	 * @param timestamp
+	 */
+	public static void setOutputTimestamp(File absolutePath, long timestamp) {
+		if (!absolutePath.setLastModified(timestamp)) {
+			// Should emit a warning to the user....
+		}
 	}
 
 }

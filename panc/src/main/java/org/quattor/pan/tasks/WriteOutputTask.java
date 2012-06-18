@@ -42,11 +42,11 @@ import org.quattor.pan.output.FormatterUtils;
  * @author loomis
  * 
  */
-public class WriteXmlTask extends Task<TaskResult> {
+public class WriteOutputTask extends Task<TaskResult> {
 
 	private static final Logger taskLogger = LoggingType.TASK.logger();
 
-	public WriteXmlTask(Formatter formatter, boolean gzipOutput,
+	public WriteOutputTask(Formatter formatter, boolean gzipOutput,
 			Compiler compiler, String objectName, File outputDirectory) {
 		super(TaskResult.ResultType.XML, objectName, new CallImpl(formatter,
 				gzipOutput, compiler, objectName, outputDirectory));

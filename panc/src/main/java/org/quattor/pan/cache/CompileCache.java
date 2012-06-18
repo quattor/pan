@@ -33,8 +33,7 @@ import org.quattor.pan.tasks.CompileTask;
 import org.quattor.pan.tasks.Task;
 import org.quattor.pan.tasks.TaskResult;
 import org.quattor.pan.tasks.WriteAnnotationTask;
-import org.quattor.pan.tasks.WriteDepTask;
-import org.quattor.pan.tasks.WriteXmlTask;
+import org.quattor.pan.tasks.WriteOutputTask;
 import org.quattor.pan.template.Template;
 import org.quattor.pan.template.Template.TemplateType;
 import org.quattor.pan.utils.FileUtils;
@@ -111,15 +110,8 @@ public class CompileCache extends AbstractCache<CompileResult> {
 
 				for (Formatter formatter : options.formatter) {
 					File outputDirectory = options.outputDirectory;
-					task = new WriteXmlTask(formatter, options.gzipOutput,
+					task = new WriteOutputTask(formatter, options.gzipOutput,
 							compiler, objectName, outputDirectory);
-					compiler.submit(task);
-				}
-
-				if (options.depWriteEnabled) {
-					File outputDirectory = options.outputDirectory;
-					task = new WriteDepTask(compiler, objectName,
-							outputDirectory);
 					compiler.submit(task);
 				}
 

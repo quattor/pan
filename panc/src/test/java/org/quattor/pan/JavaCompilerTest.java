@@ -50,6 +50,7 @@ import org.apache.tools.ant.BuildException;
 import org.junit.Test;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
+import org.quattor.pan.output.DepFormatter;
 import org.quattor.pan.output.Formatter;
 import org.quattor.pan.output.PanFormatter;
 import org.xml.sax.InputSource;
@@ -62,6 +63,7 @@ public class JavaCompilerTest {
 		path.add(dir);
 		List<Formatter> formatters = new LinkedList<Formatter>();
 		formatters.add(formatter);
+		formatters.add(DepFormatter.getInstance());
 		CompilerOptions options = new CompilerOptions(null, null, true, false,
 				100, 50, formatters, getTmpdir(), null, path, 0, false, 2,
 				false, null, null, false, null);
@@ -76,6 +78,7 @@ public class JavaCompilerTest {
 		path.add(dir);
 		List<Formatter> formatters = new LinkedList<Formatter>();
 		formatters.add(formatter);
+		formatters.add(DepFormatter.getInstance());
 		CompilerOptions options = new CompilerOptions(null, null, true, false,
 				100, 50, formatters, getTmpdir(), null, path, 0, false, 2,
 				false, null, null, false, "nlist('root-element-test', 'OK')");
@@ -91,6 +94,7 @@ public class JavaCompilerTest {
 		Formatter formatter = PanFormatter.getInstance();
 		List<Formatter> formatters = new LinkedList<Formatter>();
 		formatters.add(formatter);
+		formatters.add(DepFormatter.getInstance());
 		CompilerOptions options = new CompilerOptions(null, null, true, true,
 				100, 50, formatters, getTmpdir(), null, path, 0, false, 2,
 				false, null, null, false, null);
@@ -108,6 +112,7 @@ public class JavaCompilerTest {
 
 		List<Formatter> formatters = new LinkedList<Formatter>();
 		formatters.add(PanFormatter.getInstance());
+		formatters.add(DepFormatter.getInstance());
 		CompilerOptions options = new CompilerOptions(null, null, true, false,
 				100, 50, formatters, getTmpdir(), null, path, 0, false, 2,
 				false, null, null, false, null);
@@ -151,6 +156,7 @@ public class JavaCompilerTest {
 
 		List<Formatter> formatters = new LinkedList<Formatter>();
 		formatters.add(PanFormatter.getInstance());
+		formatters.add(DepFormatter.getInstance());
 
 		CompilerOptions options = new CompilerOptions(null, null, true, false,
 				100, 50, formatters, tmpdir, null, path, 0, false, 2, false,

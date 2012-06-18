@@ -23,6 +23,7 @@ package org.quattor.pan.tasks;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.repository.SourceFile;
@@ -45,19 +46,16 @@ public class Valid2Result extends TaskResult {
 
 	Set<SourceFile> dependencies;
 
-	Set<SourceFile> allDependencies;
-
 	public Valid2Result(String objectName, Element root,
-			Set<String> objectDependencies, Set<SourceFile> dependencies,
-			Set<SourceFile> allDependencies) {
+			Set<String> objectDependencies, Set<SourceFile> dependencies) {
 		super(ResultType.VALID2);
 
 		this.root = root;
 		this.objectName = objectName;
-		this.objectDependencies = Collections
-				.unmodifiableSet(objectDependencies);
-		this.dependencies = Collections.unmodifiableSet(dependencies);
-		this.allDependencies = allDependencies;
+		this.objectDependencies = (objectDependencies != null) ? Collections
+				.unmodifiableSet(objectDependencies) : new TreeSet<String>();
+		this.dependencies = (dependencies != null) ? Collections
+				.unmodifiableSet(dependencies) : new TreeSet<SourceFile>();
 
 		timestamp = (new Date()).getTime();
 	}
@@ -72,10 +70,6 @@ public class Valid2Result extends TaskResult {
 
 	public Set<SourceFile> getDependencies() {
 		return dependencies;
-	}
-
-	public Set<SourceFile> getAllDependencies() {
-		return allDependencies;
 	}
 
 }

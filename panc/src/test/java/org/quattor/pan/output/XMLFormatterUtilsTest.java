@@ -25,24 +25,24 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.junit.Test;
 import org.quattor.pan.dml.data.Element;
+import org.quattor.pan.tasks.FinalResult;
+import org.quattor.pan.tasks.Valid2Result;
 
 public class XMLFormatterUtilsTest {
 
 	// This is a utility function to write the output to a byte array and then
 	// to read it back in again to check that it is well-formed.
 	public static void writeAndReadAsXML(Formatter formatter, Element root)
-			throws TransformerException, IOException {
+			throws Exception {
 
 		// Write the output to a byte array.
 		byte[] buffer = null;
@@ -50,7 +50,10 @@ public class XMLFormatterUtilsTest {
 		try {
 			baos = new ByteArrayOutputStream();
 			PrintWriter ps = new PrintWriter(baos);
-			formatter.write(root, "profile", ps);
+			Valid2Result v2result = new Valid2Result("dummy", root, null, null);
+			FinalResult finalResult = new FinalResult(null, v2result);
+			formatter.write(finalResult, ps);
+			// formatter.write(root, "profile", ps);
 		} finally {
 			if (baos != null) {
 				baos.close();

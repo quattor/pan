@@ -23,7 +23,6 @@ package org.quattor.pan.output;
 import java.io.PrintWriter;
 import java.net.URI;
 
-import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.tasks.FinalResult;
 
 /**
@@ -43,18 +42,6 @@ public interface Formatter {
 	 * @return String identifying this formatter
 	 */
 	public String getFormatKey();
-
-	/**
-	 * Reads this Tree and writes it in a file within the given context.
-	 * 
-	 * @param root
-	 *            root element of the configuration tree
-	 * @param rootName
-	 *            name of root element
-	 * @param ps
-	 *            the PrintWriter used to write the file
-	 */
-	public void write(Element root, String rootName, PrintWriter ps);
 
 	public void write(FinalResult result, PrintWriter ps) throws Exception;
 

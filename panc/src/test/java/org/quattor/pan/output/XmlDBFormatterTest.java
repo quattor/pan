@@ -31,7 +31,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
-import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -43,7 +42,8 @@ import org.quattor.pan.dml.data.HashResource;
 import org.quattor.pan.dml.data.ListResource;
 import org.quattor.pan.dml.data.LongProperty;
 import org.quattor.pan.dml.data.StringProperty;
-import org.quattor.pan.exceptions.InvalidTermException;
+import org.quattor.pan.tasks.FinalResult;
+import org.quattor.pan.tasks.Valid2Result;
 import org.quattor.pan.utils.Term;
 import org.quattor.pan.utils.TermFactory;
 import org.xml.sax.InputSource;
@@ -53,8 +53,7 @@ public class XmlDBFormatterTest {
 	private static final Pattern p = Pattern.compile("^[\\w\\.-]+$");
 
 	@Test
-	public void checkInvalidStringIsEncoded() throws InvalidTermException,
-			TransformerException, IOException {
+	public void checkInvalidStringIsEncoded() throws Exception {
 
 		Term t = TermFactory.create("element");
 		StringProperty zerostring = StringProperty.getInstance("\u0000");
@@ -67,7 +66,7 @@ public class XmlDBFormatterTest {
 	}
 
 	@Test
-	public void testXmlDBFormatter() throws IOException, InvalidTermException {
+	public void testXmlDBFormatter() throws Exception {
 
 		FormatterTestsUtils tree = new FormatterTestsUtils();
 		HashResource rootTree = tree.getRoot();
@@ -157,7 +156,10 @@ public class XmlDBFormatterTest {
 		Formatter s = XmlDBFormatter.getInstance();
 
 		PrintWriter pos = FormatterTestsUtils.createOutput(baos, optionzip);
-		s.write(rootTree, rootName, pos);
+		Valid2Result v2result = new Valid2Result("dummy", rootTree, null, null);
+		FinalResult finalResult = new FinalResult(null, v2result);
+		s.write(finalResult, pos);
+		// s.write(rootTree, rootName, pos);
 		pos.close();
 
 		/***********************************************************************

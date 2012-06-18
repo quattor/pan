@@ -69,29 +69,32 @@ public class FinalResult extends TaskResult {
 
 		Set<SourceFile> allDependencies = new TreeSet<SourceFile>();
 
-		Valid2Cache v2cache = compiler.getValid2Cache();
+		// Allowing the compiler to be null allows for testing.
+		if (compiler != null) {
+			Valid2Cache v2cache = compiler.getValid2Cache();
 
-		List<String> processed = new LinkedList<String>();
-		Stack<String> unprocessed = new Stack<String>();
-		unprocessed.push(objectName);
+			List<String> processed = new LinkedList<String>();
+			Stack<String> unprocessed = new Stack<String>();
+			unprocessed.push(objectName);
 
-		// Loop until there are no more unprocessed object templates.
-		while (!unprocessed.empty()) {
-			String objectToProcess = unprocessed.pop();
+			// Loop until there are no more unprocessed object templates.
+			while (!unprocessed.empty()) {
+				String objectToProcess = unprocessed.pop();
 
-			// Only do something if the object template hasn't already been
-			// processed.
-			if (!processed.contains(objectToProcess)) {
-				processed.add(objectToProcess);
+				// Only do something if the object template hasn't already been
+				// processed.
+				if (!processed.contains(objectToProcess)) {
+					processed.add(objectToProcess);
 
-				Valid2Result result = (Valid2Result) v2cache
-						.waitForResult(objectToProcess);
+					Valid2Result result = (Valid2Result) v2cache
+							.waitForResult(objectToProcess);
 
-				allDependencies.addAll(result.getDependencies());
+					allDependencies.addAll(result.getDependencies());
 
-				unprocessed.addAll(result.getObjectDependencies());
+					unprocessed.addAll(result.getObjectDependencies());
+				}
+
 			}
-
 		}
 
 		return Collections.unmodifiableSet(allDependencies);

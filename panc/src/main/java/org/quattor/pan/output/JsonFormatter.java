@@ -26,7 +26,6 @@ import java.net.URI;
 
 import org.quattor.pan.dml.data.BooleanProperty;
 import org.quattor.pan.dml.data.DoubleProperty;
-import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.HashResource;
 import org.quattor.pan.dml.data.ListResource;
 import org.quattor.pan.dml.data.LongProperty;
@@ -70,10 +69,7 @@ public class JsonFormatter implements Formatter {
 	}
 
 	public void write(FinalResult result, PrintWriter ps) throws Exception {
-		write(result.getRoot(), "profile", ps);
-	}
 
-	public void write(Element root, String rootName, PrintWriter ps) {
 		Gson gson = new GsonBuilder()
 				.registerTypeAdapter(BooleanProperty.class,
 						new PropertySerializer())
@@ -90,8 +86,9 @@ public class JsonFormatter implements Formatter {
 				.registerTypeAdapter(ProtectedListResource.class,
 						new ListSerializer()).setPrettyPrinting().create();
 
-		ps.write(gson.toJson(root));
+		ps.write(gson.toJson(result.getRoot()));
 		ps.close();
+
 	}
 
 	private class PropertySerializer implements JsonSerializer<Property> {

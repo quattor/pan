@@ -23,7 +23,6 @@ package org.quattor.pan.output;
 import java.io.PrintWriter;
 import java.net.URI;
 
-import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.repository.SourceFile;
 import org.quattor.pan.tasks.FinalResult;
 
@@ -56,10 +55,6 @@ public class DepFormatter implements Formatter {
 			ps.println(s.toString());
 		}
 
-	}
-
-	public void write(Element root, String rootName, PrintWriter ps) {
-		// NOOP
 	}
 
 }

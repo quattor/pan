@@ -68,10 +68,9 @@ public class XmlDBFormatter implements Formatter {
 	}
 
 	public void write(FinalResult result, PrintWriter ps) throws Exception {
-		write(result.getRoot(), "profile", ps);
-	}
 
-	public void write(Element root, String rootName, PrintWriter ps) {
+		Element root = result.getRoot();
+		String rootName = "profile";
 
 		try {
 

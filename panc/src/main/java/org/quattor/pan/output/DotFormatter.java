@@ -60,15 +60,13 @@ public class DotFormatter implements Formatter {
 	}
 
 	public void write(FinalResult result, PrintWriter ps) throws Exception {
-		write(result.getRoot(), "profile", ps);
-	}
 
-	public void write(Element root, String rootName, PrintWriter ps) {
+		Element root = result.getRoot();
+		String rootName = "profile";
 
 		writeHeader(rootName, ps);
 		writeRoot(rootName, root, ps);
 		writeFooter(ps);
-
 	}
 
 	private void writeRoot(String myName, Element node, PrintWriter ps) {

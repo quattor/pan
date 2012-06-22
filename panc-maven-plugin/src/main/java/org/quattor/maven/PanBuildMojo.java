@@ -1,6 +1,7 @@
 package org.quattor.maven;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -21,99 +22,103 @@ import org.quattor.pan.output.FormatterUtils;
  */
 public class PanBuildMojo extends AbstractPanMojo {
 
-    /**
-     * @description subdirectory with object templates
-     * @parameter expression="${panc.profiles}" default-value="profiles"
-     * @required
-     */
-    private String profiles = "profiles";
+	/**
+	 * @description subdirectory with object templates
+	 * @parameter expression="${panc.profiles}" default-value="profiles"
+	 * @required
+	 */
+	private String profiles = "profiles";
 
-    /**
-     * @description directory for generated profiles
-     * @parameter expression="${panc.outputDirectory}"
-     *            default-value="${basedir}/target"
-     * @required
-     */
-    private File outputDirectory;
+	/**
+	 * @description directory for generated profiles
+	 * @parameter expression="${panc.outputDirectory}"
+	 *            default-value="${basedir}/target"
+	 * @required
+	 */
+	private File outputDirectory;
 
-    /**
-     * @description formatter to use
-     * @parameter expression="${panc.formatterName}" default-value="pan"
-     * @required
-     */
-    private String formatterName = "pan";
+	/**
+	 * @description formatter to use
+	 * @parameter expression="${panc.formatterName}" default-value="pan"
+	 * @required
+	 */
+	private String formatterName = "pan";
 
-    private Formatter formatter;
+	private Formatter formatter;
 
-    public void execute() throws MojoExecutionException {
+	public void execute() throws MojoExecutionException {
 
-        setFormatter();
+		setFormatter();
 
-        createOutputDirectory();
+		createOutputDirectory();
 
-        CompilerOptions options = createCompilerOptions();
+		CompilerOptions options = createCompilerOptions();
 
-        File profileDirectory = new File(sourceDirectory, profiles);
+		File profileDirectory = new File(sourceDirectory, profiles);
 
-        Set<File> objects = PluginUtils.collectPanSources(profileDirectory);
+		Set<File> objects = PluginUtils.collectPanSources(profileDirectory);
 
-        CompilerResults results = Compiler.run(options, null, objects);
+		CompilerResults results = Compiler.run(options, null, objects);
 
-        boolean hadError = results.print(verbose);
+		boolean hadError = results.print(verbose);
 
-        if (hadError) {
-            throw new MojoExecutionException("pan language syntax check failed");
-        }
+		if (hadError) {
+			throw new MojoExecutionException("pan language syntax check failed");
+		}
 
-    }
+	}
 
-    private void setFormatter() throws MojoExecutionException {
-        formatter = FormatterUtils.getFormatterInstance(formatterName);
-        if (formatter == null) {
-            throw new MojoExecutionException("unknown formatter: "
-                    + formatterName);
-        }
-    }
+	private void setFormatter() throws MojoExecutionException {
+		formatter = FormatterUtils.getFormatterInstance(formatterName);
+		if (formatter == null) {
+			throw new MojoExecutionException("unknown formatter: "
+					+ formatterName);
+		}
+	}
 
-    private void createOutputDirectory() throws MojoExecutionException {
-        if (!outputDirectory.isDirectory()) {
-            if (!outputDirectory.mkdirs()) {
-                throw new MojoExecutionException("error creating "
-                        + outputDirectory);
-            }
-        }
-    }
+	private void createOutputDirectory() throws MojoExecutionException {
+		if (!outputDirectory.isDirectory()) {
+			if (!outputDirectory.mkdirs()) {
+				throw new MojoExecutionException("error creating "
+						+ outputDirectory);
+			}
+		}
+	}
 
-    private CompilerOptions createCompilerOptions()
-            throws MojoExecutionException {
+	private CompilerOptions createCompilerOptions()
+			throws MojoExecutionException {
 
-        List<Pattern> debugIncludePatterns = new LinkedList<Pattern>();
-        List<Pattern> debugExcludePatterns = new LinkedList<Pattern>();
-        boolean xmlWriteEnabled = true;
-        boolean depWriteEnabled = true;
-        int iterationLimit = 5000;
-        int callDepthLimit = 50;
-        File sessionDirectory = null;
-        int nthread = 0;
-        boolean gzipOutput = false;
-        boolean forceBuild = false;
-        File annotationDirectory = null;
-        File annotationBaseDirectory = null;
-        LinkedList<File> includeDirectories = new LinkedList<File>();
-        includeDirectories.add(sourceDirectory);
+		List<Pattern> debugIncludePatterns = new LinkedList<Pattern>();
+		List<Pattern> debugExcludePatterns = new LinkedList<Pattern>();
+		boolean xmlWriteEnabled = true;
+		boolean depWriteEnabled = true;
+		int iterationLimit = 5000;
+		int callDepthLimit = 50;
+		File sessionDirectory = null;
+		int nthread = 0;
+		boolean gzipOutput = false;
+		boolean forceBuild = false;
+		File annotationDirectory = null;
+		File annotationBaseDirectory = null;
+		LinkedList<File> includeDirectories = new LinkedList<File>();
+		includeDirectories.add(sourceDirectory);
 
-        try {
-            return new CompilerOptions(debugIncludePatterns,
-                    debugExcludePatterns, xmlWriteEnabled, depWriteEnabled,
-                    iterationLimit, callDepthLimit, formatter, outputDirectory,
-                    sessionDirectory, includeDirectories, nthread, gzipOutput,
-                    deprecationLevel, forceBuild, annotationDirectory,
-                    annotationBaseDirectory, failOnWarn, null);
+		List<Formatter> formatters = new ArrayList<Formatter>();
+		formatters.add(formatter);
 
-        } catch (SyntaxException e) {
-            throw new MojoExecutionException(
-                    "error creating compiler options: " + e.getMessage());
-        }
-    }
+		try {
+			return new CompilerOptions(debugIncludePatterns,
+					debugExcludePatterns, xmlWriteEnabled, depWriteEnabled,
+					iterationLimit, callDepthLimit, formatters,
+					outputDirectory, sessionDirectory, includeDirectories,
+					nthread, gzipOutput, deprecationLevel, forceBuild,
+					annotationDirectory, annotationBaseDirectory, failOnWarn,
+					null);
+
+		} catch (SyntaxException e) {
+			throw new MojoExecutionException(
+					"error creating compiler options: " + e.getMessage());
+		}
+	}
 
 }

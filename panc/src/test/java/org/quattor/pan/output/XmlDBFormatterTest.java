@@ -22,14 +22,14 @@ package org.quattor.pan.output;
 
 import static org.junit.Assert.assertFalse;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.InputStream;
+import java.net.URI;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.zip.GZIPInputStream;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -147,20 +147,17 @@ public class XmlDBFormatterTest {
 		tree.createChild(child11Name, child11Value, child8Value, child8Name);
 		tree.createChild(child4Name, child4Value, child2Value, child2Name);
 
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		File tmpFile = File.createTempFile("dummy", ".xml");
+		URI tmpFileURI = tmpFile.toURI();
+
 		Vector<String> expression = new Vector<String>();
-		boolean optionzip = false;
 		Boolean value = null;
 
-		// Creation of the output in a ByteArrayOutputStream
 		Formatter s = XmlDBFormatter.getInstance();
 
-		PrintWriter pos = FormatterTestsUtils.createOutput(baos, optionzip);
 		Valid2Result v2result = new Valid2Result("dummy", rootTree, null, null);
 		FinalResult finalResult = new FinalResult(null, v2result);
-		s.write(finalResult, pos);
-		// s.write(rootTree, rootName, pos);
-		pos.close();
+		s.write(finalResult, tmpFileURI);
 
 		/***********************************************************************
 		 * for the xmldb format
@@ -236,26 +233,19 @@ public class XmlDBFormatterTest {
 
 		// Test of the expressions
 		for (String exp : expression) {
-			value = evaluer(baos, exp, optionzip);
+			value = evaluer(new FileInputStream(tmpFile), exp);
 			assertFalse("The expression: \"" + exp
 					+ "\" has a wrong syntax in the tested template", !value);
 		}
 	}
 
-	public static Boolean evaluer(ByteArrayOutputStream baos,
-			String expression, boolean optionzip) throws IOException {
+	public static Boolean evaluer(InputStream is, String expression)
+			throws IOException {
 		Boolean b = null;
-		GZIPInputStream gzi = null;
-		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
 		InputSource inputSource = null;
 		try {
 			// creation of the source
-			if (optionzip) {
-				gzi = new GZIPInputStream(bais);
-				inputSource = new InputSource(gzi);
-			} else {
-				inputSource = new InputSource(bais);
-			}
+			inputSource = new InputSource(is);
 
 			// creation of the XPath
 			XPathFactory fabrique = XPathFactory.newInstance();

@@ -21,41 +21,20 @@
 package org.quattor.pan.output;
 
 import java.io.PrintWriter;
-import java.net.URI;
 
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.tasks.FinalResult;
 
 public class TxtFormatter extends PanTxtFormatter {
 
-	private static final String suffix = "txt";
-
-	private static final String key = "text";
-
-	/**
-	 * Instance
-	 */
 	private static final TxtFormatter instance = new TxtFormatter();
 
-	/**
-	 * Constructor
-	 */
 	private TxtFormatter() {
+		super("txt", "text");
 	}
 
-	/**
-	 * creation of a singleton
-	 */
 	public synchronized static TxtFormatter getInstance() {
 		return instance;
-	}
-
-	public URI getResultURI(String objectName) {
-		return FormatterUtils.getResultURI(objectName, suffix);
-	}
-
-	public String getFormatKey() {
-		return key;
 	}
 
 	public void write(FinalResult result, PrintWriter ps) throws Exception {

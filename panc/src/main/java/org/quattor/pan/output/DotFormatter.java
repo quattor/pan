@@ -21,7 +21,6 @@
 package org.quattor.pan.output;
 
 import java.io.PrintWriter;
-import java.net.URI;
 
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.Property;
@@ -36,30 +35,19 @@ import org.quattor.pan.tasks.FinalResult;
  * @author loomis
  * 
  */
-public class DotFormatter implements Formatter {
+public class DotFormatter extends AbstractFormatter {
 
 	private static final DotFormatter instance = new DotFormatter();
 
-	private static final String suffix = "dot";
-
-	private static final String key = "dot";
-
 	private DotFormatter() {
+		super("dot", "dot");
 	}
 
 	public static DotFormatter getInstance() {
 		return instance;
 	}
 
-	public URI getResultURI(String objectName) {
-		return FormatterUtils.getResultURI(objectName, suffix);
-	}
-
-	public String getFormatKey() {
-		return key;
-	}
-
-	public void write(FinalResult result, PrintWriter ps) throws Exception {
+	protected void write(FinalResult result, PrintWriter ps) throws Exception {
 
 		Element root = result.getRoot();
 		String rootName = "profile";

@@ -98,8 +98,6 @@ public class PanCompilerTask extends Task {
 
 	private boolean verbose = false;
 
-	private boolean gzipOutput = false;
-
 	private int deprecationLevel = 0;
 
 	private boolean failOnWarn = false;
@@ -164,9 +162,9 @@ public class PanCompilerTask extends Task {
 			options = new CompilerOptions(debugIncludePatterns,
 					debugExcludePatterns, iterationLimit, callDepthLimit,
 					formatters, outputDirectory, sessionDirectory,
-					includeDirectories, nthread, gzipOutput,
-					deprecationWarnings, forceBuild, annotationDirectory,
-					annotationBaseDirectory, rootElement);
+					includeDirectories, nthread, deprecationWarnings,
+					forceBuild, annotationDirectory, annotationBaseDirectory,
+					rootElement);
 		} catch (SyntaxException e) {
 			throw new BuildException("invalid root element: " + e.getMessage());
 		}
@@ -531,7 +529,7 @@ public class PanCompilerTask extends Task {
 	 *            flag indicating whether to gzip output
 	 */
 	public void setGzipOutput(boolean gzipOutput) {
-		this.gzipOutput = gzipOutput;
+		// no-op: use gzip formatter names instead
 	}
 
 	/**

@@ -1,10 +1,10 @@
 package org.quattor.maven;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -90,30 +90,26 @@ public class PanBuildMojo extends AbstractPanMojo {
 
 		List<Pattern> debugIncludePatterns = new LinkedList<Pattern>();
 		List<Pattern> debugExcludePatterns = new LinkedList<Pattern>();
-		boolean xmlWriteEnabled = true;
-		boolean depWriteEnabled = true;
 		int iterationLimit = 5000;
 		int callDepthLimit = 50;
 		File sessionDirectory = null;
 		int nthread = 0;
-		boolean gzipOutput = false;
 		boolean forceBuild = false;
 		File annotationDirectory = null;
 		File annotationBaseDirectory = null;
 		LinkedList<File> includeDirectories = new LinkedList<File>();
 		includeDirectories.add(sourceDirectory);
 
-		List<Formatter> formatters = new ArrayList<Formatter>();
+		Set<Formatter> formatters = new TreeSet<Formatter>();
 		formatters.add(formatter);
 
 		try {
 			return new CompilerOptions(debugIncludePatterns,
-					debugExcludePatterns, xmlWriteEnabled, depWriteEnabled,
-					iterationLimit, callDepthLimit, formatters,
-					outputDirectory, sessionDirectory, includeDirectories,
-					nthread, gzipOutput, deprecationLevel, forceBuild,
-					annotationDirectory, annotationBaseDirectory, failOnWarn,
-					null);
+					debugExcludePatterns, iterationLimit, callDepthLimit,
+					formatters, outputDirectory, sessionDirectory,
+					includeDirectories, nthread,
+					CompilerOptions.DeprecationWarnings.OFF, forceBuild,
+					annotationDirectory, annotationBaseDirectory, null);
 
 		} catch (SyntaxException e) {
 			throw new MojoExecutionException(

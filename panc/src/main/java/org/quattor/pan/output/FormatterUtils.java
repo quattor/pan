@@ -4,8 +4,6 @@ import static org.quattor.pan.utils.MessageUtils.MSG_CANNOT_CREATE_OUTPUT_DIRECT
 import static org.quattor.pan.utils.MessageUtils.MSG_DUPLICATE_FORMATTER_KEY;
 
 import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 
 import org.quattor.pan.exceptions.CompilerError;
@@ -24,8 +22,10 @@ public class FormatterUtils {
 		// If more formats are added, the instances should be added to this
 		// array.
 		Formatter[] instances = new Formatter[] { DotFormatter.getInstance(),
-				PanFormatter.getInstance(), TxtFormatter.getInstance(),
-				XmlDBFormatter.getInstance(), JsonFormatter.getInstance() };
+				PanFormatter.getInstance(), PanGzipFormatter.getInstance(),
+				XmlFormatter.getInstance(), XmlGzipFormatter.getInstance(),
+				TxtFormatter.getInstance(), XmlDBFormatter.getInstance(),
+				JsonFormatter.getInstance(), JsonGzipFormatter.getInstance() };
 
 		// Insert the values, letting the instances choose their key values.
 		// Ensure that the values are in lowercase.
@@ -65,29 +65,6 @@ public class FormatterUtils {
 	 */
 	public static Formatter getDefaultFormatterInstance() {
 		return defaultFormatter;
-	}
-
-	/**
-	 * Utility to provide the URI for the formatter's result. This will return a
-	 * relative URI that must be resolved against an absolute URI before being
-	 * used.
-	 * 
-	 * @param objectName
-	 *            full namespaced pan object name
-	 * @param fileExtension
-	 *            file extension without a leading period (".")
-	 * 
-	 * @throws CompilerError
-	 *             if an invalid objectName is encountered
-	 * 
-	 */
-	public static URI getResultURI(String objectName, String fileExtension) {
-		try {
-			return new URI(objectName + "." + fileExtension);
-		} catch (URISyntaxException e) {
-			throw new CompilerError(
-					"invalid object template name encountered: " + objectName);
-		}
 	}
 
 	/**

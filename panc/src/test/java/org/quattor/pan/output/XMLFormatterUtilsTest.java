@@ -23,9 +23,11 @@ package org.quattor.pan.output;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.PrintWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.net.URI;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -44,31 +46,22 @@ public class XMLFormatterUtilsTest {
 	public static void writeAndReadAsXML(Formatter formatter, Element root)
 			throws Exception {
 
+		File tmpFile = File.createTempFile("xml-check", ".xml");
+		URI tmpFileURI = tmpFile.toURI();
+
 		// Write the output to a byte array.
-		byte[] buffer = null;
-		ByteArrayOutputStream baos = null;
-		try {
-			baos = new ByteArrayOutputStream();
-			PrintWriter ps = new PrintWriter(baos);
-			Valid2Result v2result = new Valid2Result("dummy", root, null, null);
-			FinalResult finalResult = new FinalResult(null, v2result);
-			formatter.write(finalResult, ps);
-			// formatter.write(root, "profile", ps);
-		} finally {
-			if (baos != null) {
-				baos.close();
-				buffer = baos.toByteArray();
-			}
-		}
+		Valid2Result v2result = new Valid2Result("dummy", root, null, null);
+		FinalResult finalResult = new FinalResult(null, v2result);
+		formatter.write(finalResult, tmpFileURI);
 
 		// Recover the bytes that were written and create a Source for an XML
 		// transformation. The easiest way to check that the input is
 		// well-formed is just to use an identity transformation.
-		ByteArrayInputStream bais = new ByteArrayInputStream(buffer);
-		StreamSource source = new StreamSource(bais);
+		InputStream is = new FileInputStream(tmpFile);
+		StreamSource source = new StreamSource(is);
 
 		// Create a sink for the transformer output.
-		baos = new ByteArrayOutputStream();
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		StreamResult sink = new StreamResult(baos);
 
 		// Actually do the transformation. Any problems will result in an

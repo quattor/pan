@@ -26,7 +26,11 @@ import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.Property;
 import org.quattor.pan.dml.data.Resource;
 
-abstract public class PanTxtFormatter implements Formatter {
+abstract public class PanTxtFormatter extends AbstractFormatter {
+
+	protected PanTxtFormatter(String suffix, String key) {
+		super(suffix, key);
+	}
 
 	/**
 	 * Reads the configuration tree and writes it in an xml file.
@@ -76,8 +80,8 @@ abstract public class PanTxtFormatter implements Formatter {
 
 		} else {
 			Property elem = (Property) element;
-			writeProperties(ps, nbTab, name, element.getTypeAsString(), elem
-					.toString());
+			writeProperties(ps, nbTab, name, element.getTypeAsString(),
+					elem.toString());
 		}
 	}
 

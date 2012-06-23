@@ -427,8 +427,6 @@ public class Panc {
 
 		File objectsFile = null;
 
-		boolean gzip = false;
-
 		int deprecation = 0;
 
 		boolean failOnWarn = false;
@@ -548,7 +546,7 @@ public class Panc {
 				objectOutput = splitObject(arguments.elementAt(compteur),
 						objectOutput);
 			} else if ((opt.equals("g")) || (opt.equals("gzip"))) {
-				gzip = true;
+				// no-op: use named gzip formatter instead
 			} else if ((opt.equals("p")) || (opt.equals("deprecation"))) {
 				Integer i = new Integer(arguments.elementAt(compteur));
 				deprecation = i.intValue();
@@ -593,9 +591,8 @@ public class Panc {
 			CompilerOptions coptions = new CompilerOptions(
 					debugIncludePatterns, debugExcludePatterns, iteration,
 					callDepth, formatters, outputDirectory, sessionDirectory,
-					includeDirectories, 0, gzip, deprecationWarnings, false,
-					annotationOutputDirectory, annotationBaseDirectory,
-					rootElement);
+					includeDirectories, 0, deprecationWarnings, false, annotationOutputDirectory,
+					annotationBaseDirectory, rootElement);
 
 			CompilerResults results = Compiler.run(coptions, objectOutput,
 					includeFiles);

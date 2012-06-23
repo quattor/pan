@@ -20,29 +20,29 @@
 
 package org.quattor.pan.output;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.zip.GZIPOutputStream;
 
-import org.quattor.pan.repository.SourceFile;
-import org.quattor.pan.tasks.FinalResult;
+public class XmlGzipFormatter extends PanFormatter {
 
-public class DepFormatter extends AbstractFormatter {
+	private static final XmlGzipFormatter instance = new XmlGzipFormatter();
 
-	private static final DepFormatter instance = new DepFormatter();
-
-	private DepFormatter() {
-		super("xml.dep", "dep");
+	private XmlGzipFormatter() {
+		super("xml.gz", "xml.gz");
 	}
 
-	public static DepFormatter getInstance() {
+	public static XmlGzipFormatter getInstance() {
 		return instance;
 	}
 
-	protected void write(FinalResult result, PrintWriter ps) throws Exception {
-
-		for (SourceFile s : result.getDependencies()) {
-			ps.println(s.toString());
-		}
-
+	@Override
+	protected PrintWriter getPrintWriter(File file) throws Exception {
+		OutputStream os = new FileOutputStream(file);
+		OutputStream gzip = new GZIPOutputStream(os);
+		return new PrintWriter(gzip);
 	}
 
 }

@@ -23,7 +23,6 @@ package org.quattor.pan.output;
 import static org.quattor.pan.utils.MessageUtils.MSG_UNEXPECTED_EXCEPTION_WHILE_WRITING_OUTPUT;
 
 import java.io.PrintWriter;
-import java.net.URI;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.sax.TransformerHandler;
@@ -42,32 +41,25 @@ import org.quattor.pan.utils.XmlUtils;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
-public class PanFormatter implements Formatter {
+public class PanFormatter extends AbstractFormatter {
 
 	private static final PanFormatter instance = new PanFormatter();
 
 	private static final String PAN_NS = XMLConstants.NULL_NS_URI;
 
-	private static final String suffix = "xml";
-
-	private static final String key = "pan";
-
 	private PanFormatter() {
+		super("xml", "pan");
+	}
+	
+	protected PanFormatter(String suffix, String key) {
+		super(suffix, key);
 	}
 
 	public static PanFormatter getInstance() {
 		return instance;
 	}
 
-	public URI getResultURI(String objectName) {
-		return FormatterUtils.getResultURI(objectName, suffix);
-	}
-
-	public String getFormatKey() {
-		return key;
-	}
-
-	public void write(FinalResult result, PrintWriter ps) throws Exception {
+	protected void write(FinalResult result, PrintWriter ps) throws Exception {
 
 		Element root = result.getRoot();
 		String rootName = "profile";

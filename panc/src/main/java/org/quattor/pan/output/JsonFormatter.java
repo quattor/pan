@@ -22,7 +22,6 @@ package org.quattor.pan.output;
 
 import java.io.PrintWriter;
 import java.lang.reflect.Type;
-import java.net.URI;
 
 import org.quattor.pan.dml.data.BooleanProperty;
 import org.quattor.pan.dml.data.DoubleProperty;
@@ -45,30 +44,23 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-public class JsonFormatter implements Formatter {
+public class JsonFormatter extends AbstractFormatter {
 
 	private static final JsonFormatter instance = new JsonFormatter();
 
-	private static final String suffix = "json";
-
-	private static final String key = "json";
-
 	private JsonFormatter() {
+		super("json", "json");
+	}
+	
+	protected JsonFormatter(String suffix, String key) {
+		super(suffix, key);
 	}
 
 	public static JsonFormatter getInstance() {
 		return instance;
 	}
 
-	public URI getResultURI(String objectName) {
-		return FormatterUtils.getResultURI(objectName, suffix);
-	}
-
-	public String getFormatKey() {
-		return key;
-	}
-
-	public void write(FinalResult result, PrintWriter ps) throws Exception {
+	protected void write(FinalResult result, PrintWriter ps) throws Exception {
 
 		Gson gson = new GsonBuilder()
 				.registerTypeAdapter(BooleanProperty.class,

@@ -16,7 +16,6 @@
                  sessionDirectory 
                  includeDirectories 
                  nthread 
-                 gzipOutput 
                  warnings 
                  forceBuild 
                  annotationDirectory 
@@ -31,7 +30,6 @@
                      sessionDirectory 
                      includeDirectories 
                      nthread 
-                     gzipOutput
                      warnings 
                      forceBuild 
                      annotationDirectory
@@ -48,7 +46,6 @@
                  sessionDirectory 
                  includeDirectories 
                  nthread 
-                 gzipOutput 
                  warnings 
                  forceBuild 
                  annotationDirectory 
@@ -63,7 +60,6 @@
                      sessionDirectory 
                      includeDirectories 
                      nthread 
-                     gzipOutput
                      warnings 
                      forceBuild 
                      annotationDirectory

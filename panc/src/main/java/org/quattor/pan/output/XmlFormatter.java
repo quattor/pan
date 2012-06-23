@@ -14,34 +14,22 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 
- $HeadURL: https://svn.lal.in2p3.fr/LCG/QWG/panc/trunk/src/org/quattor/pan/output/Formatter.java $
- $Id: Formatter.java 2986 2008-03-01 10:10:06Z loomis $
+ $HeadURL: https://svn.lal.in2p3.fr/LCG/QWG/panc/trunk/src/org/quattor/pan/output/PanFormatter.java $
+ $Id: PanFormatter.java 3597 2008-08-17 09:08:57Z loomis $
  */
 
 package org.quattor.pan.output;
 
-import java.net.URI;
+public class XmlFormatter extends PanFormatter {
 
-import org.quattor.pan.tasks.FinalResult;
+	private static final XmlFormatter instance = new XmlFormatter();
 
-/**
- * 
- * @author duprilot
- * 
- */
-public interface Formatter {
+	private XmlFormatter() {
+		super("xml", "xml");
+	}
 
-	public URI getResultURI(String objectName);
-
-	/**
-	 * Returns the name of the formatter that will be used to identify it. This
-	 * key is used as the value for the command line and for the ant task. The
-	 * returned key must not be null.
-	 * 
-	 * @return String identifying this formatter
-	 */
-	public String getFormatKey();
-
-	public void write(FinalResult result, URI outputURI) throws Exception;
+	public static XmlFormatter getInstance() {
+		return instance;
+	}
 
 }

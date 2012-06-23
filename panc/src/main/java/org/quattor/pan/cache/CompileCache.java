@@ -110,8 +110,8 @@ public class CompileCache extends AbstractCache<CompileResult> {
 
 				for (Formatter formatter : options.formatters) {
 					File outputDirectory = options.outputDirectory;
-					task = new WriteOutputTask(formatter, options.gzipOutput,
-							compiler, objectName, outputDirectory);
+					task = new WriteOutputTask(formatter, compiler,
+							objectName, outputDirectory);
 					compiler.submit(task);
 				}
 

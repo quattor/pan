@@ -79,9 +79,8 @@ public class StatementTestUtils {
 		formatters.add(PanFormatter.getInstance());
 
 		CompilerOptions options = new CompilerOptions(null, null, 1000, 50,
-				formatters, tmpfile, null, paths, 0, false,
-				CompilerOptions.DeprecationWarnings.OFF, false, null, null,
-				null);
+				formatters, tmpfile, null, paths, 0, CompilerOptions.DeprecationWarnings.OFF,
+				false, null, null, null);
 
 		Compiler compiler = new Compiler(options, new LinkedList<String>(),
 				files);
@@ -124,9 +123,8 @@ public class StatementTestUtils {
 		formatters.add(PanFormatter.getInstance());
 
 		CompilerOptions options = new CompilerOptions(null, null, 1000, 50,
-				formatters, tmpfile, null, paths, 0, false,
-				CompilerOptions.DeprecationWarnings.OFF, false, null, null,
-				null);
+				formatters, tmpfile, null, paths, 0, CompilerOptions.DeprecationWarnings.OFF,
+				false, null, null, null);
 
 		Compiler compiler = new Compiler(options, new LinkedList<String>(),
 				files);
@@ -177,9 +175,8 @@ public class StatementTestUtils {
 		formatters.add(PanFormatter.getInstance());
 
 		CompilerOptions options = new CompilerOptions(null, null, 1000, 50,
-				formatters, tmpfile, null, paths, 0, false,
-				CompilerOptions.DeprecationWarnings.OFF, false, null, null,
-				null);
+				formatters, tmpfile, null, paths, 0, CompilerOptions.DeprecationWarnings.OFF,
+				false, null, null, null);
 
 		Compiler compiler = new Compiler(options, new LinkedList<String>(),
 				files);

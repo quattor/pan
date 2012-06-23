@@ -59,8 +59,8 @@ public class CompilerOptionsTest {
 
 		CompilerOptions options = new CompilerOptions(null, null,
 				iterationLimit, callDepthLimit, formatters, outputDirectory,
-				sessionDirectory, includeDirectories, 0, false,
-				CompilerOptions.DeprecationWarnings.ON, false, null, null, null);
+				sessionDirectory, includeDirectories, 0, CompilerOptions.DeprecationWarnings.ON,
+				false, null, null, null);
 
 		assertTrue(iterationLimit == options.iterationLimit);
 		assertTrue(callDepthLimit == options.callDepthLimit);
@@ -86,8 +86,8 @@ public class CompilerOptionsTest {
 
 		CompilerOptions options = new CompilerOptions(null, null,
 				iterationLimit, callDepthLimit, formatters, outputDirectory,
-				sessionDirectory, includeDirectories, 0, false,
-				CompilerOptions.DeprecationWarnings.ON, false, null, null, null);
+				sessionDirectory, includeDirectories, 0, CompilerOptions.DeprecationWarnings.ON,
+				false, null, null, null);
 
 		assertTrue(iterationLimit == options.iterationLimit);
 		assertTrue(callDepthLimit == options.callDepthLimit);
@@ -114,8 +114,8 @@ public class CompilerOptionsTest {
 
 		CompilerOptions options = new CompilerOptions(null, null,
 				iterationLimit, callDepthLimit, formatters, outputDirectory,
-				sessionDirectory, includeDirectories, 0, false,
-				CompilerOptions.DeprecationWarnings.ON, false, null, null, null);
+				sessionDirectory, includeDirectories, 0, CompilerOptions.DeprecationWarnings.ON,
+				false, null, null, null);
 
 		assertTrue(Integer.MAX_VALUE == options.iterationLimit);
 		assertTrue(Integer.MAX_VALUE == options.callDepthLimit);
@@ -138,8 +138,8 @@ public class CompilerOptionsTest {
 
 		new CompilerOptions(null, null, iterationLimit, callDepthLimit,
 				formatters, outputDirectory, sessionDirectory,
-				includeDirectories, 0, false,
-				CompilerOptions.DeprecationWarnings.ON, false, null, null, null);
+				includeDirectories, 0, CompilerOptions.DeprecationWarnings.ON,
+				false, null, null, null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -159,8 +159,8 @@ public class CompilerOptionsTest {
 
 		new CompilerOptions(null, null, iterationLimit, callDepthLimit,
 				formatters, outputDirectory, sessionDirectory,
-				includeDirectories, 0, false,
-				CompilerOptions.DeprecationWarnings.ON, false, null, null, null);
+				includeDirectories, 0, CompilerOptions.DeprecationWarnings.ON,
+				false, null, null, null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -179,8 +179,8 @@ public class CompilerOptionsTest {
 
 		new CompilerOptions(null, null, iterationLimit, callDepthLimit,
 				formatters, outputDirectory, sessionDirectory,
-				includeDirectories, 0, false,
-				CompilerOptions.DeprecationWarnings.ON, false, null, null, null);
+				includeDirectories, 0, CompilerOptions.DeprecationWarnings.ON,
+				false, null, null, null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -200,8 +200,8 @@ public class CompilerOptionsTest {
 
 		new CompilerOptions(null, null, iterationLimit, callDepthLimit,
 				formatters, outputDirectory, sessionDirectory,
-				includeDirectories, 0, false,
-				CompilerOptions.DeprecationWarnings.ON, false, null, null, null);
+				includeDirectories, 0, CompilerOptions.DeprecationWarnings.ON,
+				false, null, null, null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -219,8 +219,8 @@ public class CompilerOptionsTest {
 
 		new CompilerOptions(null, null, iterationLimit, callDepthLimit,
 				formatters, outputDirectory, sessionDirectory,
-				includeDirectories, 0, false,
-				CompilerOptions.DeprecationWarnings.ON, false, null, null, null);
+				includeDirectories, 0, CompilerOptions.DeprecationWarnings.ON,
+				false, null, null, null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -239,8 +239,8 @@ public class CompilerOptionsTest {
 
 		new CompilerOptions(null, null, iterationLimit, callDepthLimit,
 				formatters, outputDirectory, sessionDirectory,
-				includeDirectories, 0, false,
-				CompilerOptions.DeprecationWarnings.ON, false, null, null, null);
+				includeDirectories, 0, CompilerOptions.DeprecationWarnings.ON,
+				false, null, null, null);
 	}
 
 	@Test

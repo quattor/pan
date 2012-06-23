@@ -21,8 +21,6 @@
 package org.quattor.pan.tasks;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.PrintWriter;
 import java.net.URI;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
@@ -46,10 +44,10 @@ public class WriteOutputTask extends Task<TaskResult> {
 
 	private static final Logger taskLogger = LoggingType.TASK.logger();
 
-	public WriteOutputTask(Formatter formatter, boolean gzipOutput,
-			Compiler compiler, String objectName, File outputDirectory) {
+	public WriteOutputTask(Formatter formatter, Compiler compiler,
+			String objectName, File outputDirectory) {
 		super(TaskResult.ResultType.XML, objectName, new CallImpl(formatter,
-				gzipOutput, compiler, objectName, outputDirectory));
+				compiler, objectName, outputDirectory));
 	}
 
 	/**
@@ -70,9 +68,8 @@ public class WriteOutputTask extends Task<TaskResult> {
 
 		private final File outputDirectory;
 
-		// FIXME: The gzipOutput flag is no longer used.
-		public CallImpl(Formatter formatter, boolean gzipOutput,
-				Compiler compiler, String objectName, File outputDirectory) {
+		public CallImpl(Formatter formatter, Compiler compiler,
+				String objectName, File outputDirectory) {
 
 			assert (formatter != null);
 
@@ -105,19 +102,7 @@ public class WriteOutputTask extends Task<TaskResult> {
 
 			FormatterUtils.createParentDirectories(absolutePath);
 
-			PrintWriter pw = null;
-
-			try {
-				pw = new PrintWriter(new FileOutputStream(absolutePath));
-				formatter.write(finalResult, pw);
-			} finally {
-				if (pw != null) {
-					try {
-						pw.close();
-					} catch (Exception consumed) {
-					}
-				}
-			}
+			formatter.write(finalResult, absoluteURI);
 
 			FormatterUtils.setOutputTimestamp(absolutePath, result.timestamp);
 

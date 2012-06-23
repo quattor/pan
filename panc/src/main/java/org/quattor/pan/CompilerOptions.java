@@ -101,11 +101,6 @@ public class CompilerOptions {
 	public final int activeThreadsPerQueue;
 
 	/**
-	 * Indicate whether the produced machine profile should be gzipped.
-	 */
-	public final boolean gzipOutput;
-
-	/**
 	 * Define the deprecation level for compilation: ON, OFF, or FATAL.
 	 */
 	public final DeprecationWarnings deprecationWarnings;
@@ -160,8 +155,6 @@ public class CompilerOptions {
 	 *            must exist and be absolute
 	 * @param nthread
 	 *            number of threads to use (<=0 uses default value)
-	 * @param gzipOutput
-	 *            gzip produced machine profiles
 	 * @param deprecationWarnings
 	 *            level for deprecation warnings (ON, OFF, or FATAL)
 	 * @param forceBuild
@@ -182,7 +175,7 @@ public class CompilerOptions {
 			List<Pattern> debugExcludePatterns, int iterationLimit,
 			int callDepthLimit, Set<Formatter> formatters,
 			File outputDirectory, File sessionDirectory,
-			List<File> includeDirectories, int nthread, boolean gzipOutput,
+			List<File> includeDirectories, int nthread,
 			DeprecationWarnings deprecationWarnings, boolean forceBuild,
 			File annotationDirectory, File annotationBaseDirectory,
 			String rootElement) throws SyntaxException {
@@ -227,7 +220,6 @@ public class CompilerOptions {
 		this.callDepthLimit = callDepthLimit;
 		this.outputDirectory = outputDirectory;
 		this.activeThreadsPerQueue = nthread;
-		this.gzipOutput = gzipOutput;
 		this.forceBuild = forceBuild;
 
 		this.deprecationWarnings = deprecationWarnings;
@@ -327,7 +319,6 @@ public class CompilerOptions {
 		File outputDirectory = null;
 		File sessionDirectory = null;
 		int nthread = 0;
-		boolean gzipOutput = false;
 		boolean forceBuild = false;
 		File annotationDirectory = null;
 		File annotationBaseDirectory = null;
@@ -337,9 +328,9 @@ public class CompilerOptions {
 			return new CompilerOptions(debugIncludePatterns,
 					debugExcludePatterns, iterationLimit, callDepthLimit,
 					formatters, outputDirectory, sessionDirectory,
-					includeDirectories, nthread, gzipOutput,
-					deprecationWarnings, forceBuild, annotationDirectory,
-					annotationBaseDirectory, null);
+					includeDirectories, nthread, deprecationWarnings,
+					forceBuild, annotationDirectory, annotationBaseDirectory,
+					null);
 
 		} catch (SyntaxException consumed) {
 			throw CompilerError.create(MSG_FILE_BUG_REPORT);
@@ -368,7 +359,6 @@ public class CompilerOptions {
 		File outputDirectory = null;
 		File sessionDirectory = null;
 		int nthread = 0;
-		boolean gzipOutput = false;
 		boolean forceBuild = false;
 		LinkedList<File> includeDirectories = new LinkedList<File>();
 
@@ -376,9 +366,9 @@ public class CompilerOptions {
 			return new CompilerOptions(debugIncludePatterns,
 					debugExcludePatterns, iterationLimit, callDepthLimit,
 					formatters, outputDirectory, sessionDirectory,
-					includeDirectories, nthread, gzipOutput,
-					DeprecationWarnings.OFF, forceBuild, annotationDirectory,
-					annotationBaseDirectory, null);
+					includeDirectories, nthread, DeprecationWarnings.OFF,
+					forceBuild, annotationDirectory, annotationBaseDirectory,
+					null);
 
 		} catch (SyntaxException consumed) {
 			throw CompilerError.create(MSG_FILE_BUG_REPORT);
@@ -537,10 +527,6 @@ public class CompilerOptions {
 
 		sb.append("call depth limit: ");
 		sb.append(callDepthLimit);
-		sb.append("\n");
-
-		sb.append("gzip output: ");
-		sb.append(gzipOutput);
 		sb.append("\n");
 
 		sb.append("output directory: ");

@@ -4,9 +4,13 @@
         [clojure.java.io :only [as-file]])
   (:require [org.quattor.pan.settings :as settings])
   (:import (org.quattor.pan.output TxtFormatter 
-                                   JsonFormatter 
+                                   JsonFormatter
+                                   JsonGzipFormatter
                                    DotFormatter 
-                                   PanFormatter 
+                                   PanFormatter
+                                   PanGzipFormatter
+                                   XmlFormatter
+                                   XmlGzipFormatter
                                    XmlDBFormatter
                                    DepFormatter)
            (org.quattor.pan CompilerOptions$DeprecationWarnings)))
@@ -26,30 +30,18 @@
          (case name
            "text" (conj v (TxtFormatter/getInstance))
            "json" (conj v (JsonFormatter/getInstance))
+           "json.gz" (conj v (JsonGzipFormatter/getInstance))
            "dot" (conj v (DotFormatter/getInstance))
            "pan" (conj v(PanFormatter/getInstance))
-           "pan.gz" (conj v (PanFormatter/getInstance))
-           "xml" (conj v(PanFormatter/getInstance))
-           "xml.gz" (conj v (PanFormatter/getInstance))
+           "pan.gz" (conj v (PanGzipFormatter/getInstance))
+           "xml" (conj v(XmlFormatter/getInstance))
+           "xml.gz" (conj v (XmlGzipFormatter/getInstance))
            "xmldb" (conj v (XmlDBFormatter/getInstance))
            "dep" (conj v (DepFormatter/getInstance))
            "none" v
            (throw (Exception. (str "unknown formatter: " name)))))
        #{}
        names)}))
-
-(defn str->formatter-options
-  "Returns map of formatters options from comma-separated list of formatter names."
-  [s]
-  (let [names (split s #"\s*,\s*")]
-    (reduce 
-      (fn [m name]
-        (case name
-          "pan.gz" (assoc m :gzipOutput true)
-          "xml.gz" (assoc m :gzipOutput true)
-          m))
-      {}
-      names)))
 
 (defmulti process
   "Process a command line option given the name and
@@ -107,9 +99,7 @@
 ;; FIXME: The formatters need to be accumulated into a single vector.
 (defmethod process :formats
   [[k v]]
-  (let [formatters (str->formatters v)
-        formatter-options (str->formatter-options v)]
-    (merge formatters formatter-options)))
+  (str->formatters v))
 
 (defmethod process :max-iteration
   [[k v]]

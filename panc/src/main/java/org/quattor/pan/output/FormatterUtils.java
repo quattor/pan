@@ -120,5 +120,4 @@ public class FormatterUtils {
 			// Should emit a warning to the user....
 		}
 	}
-
 }

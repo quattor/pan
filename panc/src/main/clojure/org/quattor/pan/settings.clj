@@ -1,7 +1,9 @@
 (ns org.quattor.pan.settings
   (:use clojure.tools.cli
         [clojure.java.io :only (as-file file)])
-  (:import org.quattor.pan.output.PanFormatter))
+  (:import (org.quattor.pan.output PanFormatter
+                                   DepFormatter)
+           (org.quattor.pan CompilerOptions$DeprecationWarnings)))
 
 (defn absolute-file
   "Returns an absolute File object based on the argument.
@@ -18,21 +20,18 @@
 (defn defaults []
   {:debugIncludePatterns []
    :debugExcludePatterns []
-   :xmlWriteEnabled false
-   :depWriteEnabled false
    :iterationLimit 10000
    :callDepthLimit 10
-   :formatter [(PanFormatter/getInstance)]
+   :formatter #{(PanFormatter/getInstance), (DepFormatter/getInstance)}
    :outputDirectory (absolute-file)
    :sessionDirectory nil
    :includeDirectories [(absolute-file)]
    :nthread 0
    :gzipOutput false
-   :deprecationLevel -1
+   :deprecationWarnings CompilerOptions$DeprecationWarnings/OFF
    :forceBuild false
    :annotationDirectory nil
    :annotationBaseDirectory nil
-   :failOnWarn false
    :rootElement nil})
 
 (def ^:dynamic *settings* (defaults))

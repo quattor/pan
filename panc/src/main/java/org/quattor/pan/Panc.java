@@ -27,11 +27,14 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.Vector;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import org.quattor.pan.exceptions.SyntaxException;
+import org.quattor.pan.output.DepFormatter;
 import org.quattor.pan.output.Formatter;
 import org.quattor.pan.output.FormatterUtils;
 
@@ -44,7 +47,7 @@ public class Panc {
 		OPTARG,
 		// option without argument
 		NOARG,
-		// path or argument begining with -
+		// path or argument beginning with -
 		DMINUS,
 		// argument of an option
 		ARG,
@@ -573,16 +576,23 @@ public class Panc {
 		}
 
 		try {
-			List<Formatter> formatters = new LinkedList<Formatter>();
+			Set<Formatter> formatters = new TreeSet<Formatter>();
 			formatters.add(formatter);
+
+			if (!xmlWriteEnabled) {
+				formatters.clear();
+			}
+
+			if (depWriteEnabled) {
+				formatters.add(DepFormatter.getInstance());
+			}
 
 			CompilerOptions.DeprecationWarnings deprecationWarnings = CompilerOptions
 					.getDeprecationWarnings(deprecation, failOnWarn);
 
 			CompilerOptions coptions = new CompilerOptions(
-					debugIncludePatterns, debugExcludePatterns,
-					xmlWriteEnabled, depWriteEnabled, iteration, callDepth,
-					formatters, outputDirectory, sessionDirectory,
+					debugIncludePatterns, debugExcludePatterns, iteration,
+					callDepth, formatters, outputDirectory, sessionDirectory,
 					includeDirectories, 0, gzip, deprecationWarnings, false,
 					annotationOutputDirectory, annotationBaseDirectory,
 					rootElement);

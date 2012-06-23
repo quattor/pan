@@ -68,18 +68,6 @@ public class CompilerOptions {
 	};
 
 	/**
-	 * Flag to activate the writing of machine profiles to disk. Typically these
-	 * are XML files, but any <code>Formatter</code> can be used.
-	 */
-	public final boolean xmlWriteEnabled;
-
-	/**
-	 * Indicates whether or not the dependency files for produced machine
-	 * profiles should be written.
-	 */
-	public final boolean depWriteEnabled;
-
-	/**
 	 * Force the build to be done even if no output files are to be written.
 	 */
 	public final boolean forceBuild;
@@ -99,7 +87,7 @@ public class CompilerOptions {
 	 * The <code>Formatter</code> that will be used to format the machine
 	 * profiles.
 	 */
-	public final List<Formatter> formatter;
+	public final List<Formatter> formatters;
 
 	/**
 	 * The directory that will contain the produced machine profiles and
@@ -155,17 +143,12 @@ public class CompilerOptions {
 	 *            patterns to use to turn on debugging for matching templates
 	 * @param debugExcludePatterns
 	 *            patterns to use to turn off debugging for matching templates
-	 * @param xmlWriteEnabled
-	 *            write machine configuration files (usually XML files)
-	 * @param depWriteEnabled
-	 *            write dependency information
 	 * @param iterationLimit
 	 *            maximum number of iterations (<=0 unlimited)
 	 * @param callDepthLimit
 	 *            maximum call depth (<=0 unlimited)
-	 * @param formatter
-	 *            format for machine configuration files (cannot be null if
-	 *            writeXmlEnabled is true)
+	 * @param formatters
+	 *            formats for machine configuration files
 	 * @param outputDirectory
 	 *            output directory for machine configuration and dependency
 	 *            files (cannot be null if either writeXmlEnable or
@@ -187,23 +170,22 @@ public class CompilerOptions {
 	 *            directory that will contain annotation output files
 	 * @param annotationBaseDirectory
 	 *            base directory of source files for annotation output
-	 * @param failOnWarn
-	 *            if set to true, all warnings will cause compilation to fail
 	 * @param rootElement
 	 *            string containing description of root element to use; if null
 	 *            or empty string, this defaults to an empty nlist
+	 * @param failOnWarn
+	 *            if set to true, all warnings will cause compilation to fail
 	 * @throws SyntaxException
 	 *             if the expression for the rootElement is invalid
 	 */
 	public CompilerOptions(List<Pattern> debugIncludePatterns,
-			List<Pattern> debugExcludePatterns, boolean xmlWriteEnabled,
-			boolean depWriteEnabled, int iterationLimit, int callDepthLimit,
-			List<Formatter> formatters, File outputDirectory,
-			File sessionDirectory, List<File> includeDirectories, int nthread,
-			boolean gzipOutput, DeprecationWarnings deprecationWarnings,
-			boolean forceBuild, File annotationDirectory,
-			File annotationBaseDirectory, String rootElement)
-			throws SyntaxException {
+			List<Pattern> debugExcludePatterns, int iterationLimit,
+			int callDepthLimit, Set<Formatter> formatters,
+			File outputDirectory, File sessionDirectory,
+			List<File> includeDirectories, int nthread, boolean gzipOutput,
+			DeprecationWarnings deprecationWarnings, boolean forceBuild,
+			File annotationDirectory, File annotationBaseDirectory,
+			String rootElement) throws SyntaxException {
 
 		// Check that the iteration and call depth limits are sensible. If
 		// negative or zero set these effectively to infinity.
@@ -235,20 +217,12 @@ public class CompilerOptions {
 
 		// If we want the XML or dependency files to be written, the output
 		// directory must be specified.
-		if ((outputDirectory == null) && (xmlWriteEnabled || depWriteEnabled)) {
+		if ((outputDirectory == null) && (formatters.size() > 0)) {
 			throw new IllegalArgumentException(
-					"outputDirectory must be specified if the XML or dependency files are to be written");
-		}
-
-		// Must have a formatter if the XML output is desired.
-		if (formatters == null && xmlWriteEnabled) {
-			throw new IllegalArgumentException(
-					"formatter must be specified if XML file is to be written");
+					"outputDirectory must be specified if output formats are specified");
 		}
 
 		// Everything's OK. Copy the values into this instance.
-		this.xmlWriteEnabled = xmlWriteEnabled;
-		this.depWriteEnabled = depWriteEnabled;
 		this.iterationLimit = iterationLimit;
 		this.callDepthLimit = callDepthLimit;
 		this.outputDirectory = outputDirectory;
@@ -263,9 +237,9 @@ public class CompilerOptions {
 		if (formatters != null) {
 			fmts.addAll(formatters);
 		}
-		this.formatter = Collections.unmodifiableList(fmts);
+		this.formatters = Collections.unmodifiableList(fmts);
 
-		for (Formatter formatter : this.formatter) {
+		for (Formatter formatter : this.formatters) {
 			if ("xmldb".equals(formatter.getFormatKey())) {
 				String msg = "WARNING: xmldb format is deprecated; use another formatter";
 				if (deprecationWarnings == DeprecationWarnings.FATAL) {
@@ -347,11 +321,9 @@ public class CompilerOptions {
 
 		List<Pattern> debugIncludePatterns = new LinkedList<Pattern>();
 		List<Pattern> debugExcludePatterns = new LinkedList<Pattern>();
-		boolean xmlWriteEnabled = false;
-		boolean depWriteEnabled = false;
 		int iterationLimit = 5000;
 		int callDepthLimit = 50;
-		List<Formatter> formatters = new LinkedList<Formatter>();
+		Set<Formatter> formatters = new TreeSet<Formatter>();
 		File outputDirectory = null;
 		File sessionDirectory = null;
 		int nthread = 0;
@@ -363,11 +335,11 @@ public class CompilerOptions {
 
 		try {
 			return new CompilerOptions(debugIncludePatterns,
-					debugExcludePatterns, xmlWriteEnabled, depWriteEnabled,
-					iterationLimit, callDepthLimit, formatters,
-					outputDirectory, sessionDirectory, includeDirectories,
-					nthread, gzipOutput, deprecationWarnings, forceBuild,
-					annotationDirectory, annotationBaseDirectory, null);
+					debugExcludePatterns, iterationLimit, callDepthLimit,
+					formatters, outputDirectory, sessionDirectory,
+					includeDirectories, nthread, gzipOutput,
+					deprecationWarnings, forceBuild, annotationDirectory,
+					annotationBaseDirectory, null);
 
 		} catch (SyntaxException consumed) {
 			throw CompilerError.create(MSG_FILE_BUG_REPORT);
@@ -390,11 +362,9 @@ public class CompilerOptions {
 
 		List<Pattern> debugIncludePatterns = new LinkedList<Pattern>();
 		List<Pattern> debugExcludePatterns = new LinkedList<Pattern>();
-		boolean xmlWriteEnabled = false;
-		boolean depWriteEnabled = false;
 		int iterationLimit = 5000;
 		int callDepthLimit = 50;
-		List<Formatter> formatters = new LinkedList<Formatter>();
+		Set<Formatter> formatters = new TreeSet<Formatter>();
 		File outputDirectory = null;
 		File sessionDirectory = null;
 		int nthread = 0;
@@ -404,11 +374,11 @@ public class CompilerOptions {
 
 		try {
 			return new CompilerOptions(debugIncludePatterns,
-					debugExcludePatterns, xmlWriteEnabled, depWriteEnabled,
-					iterationLimit, callDepthLimit, formatters,
-					outputDirectory, sessionDirectory, includeDirectories,
-					nthread, gzipOutput, DeprecationWarnings.OFF, forceBuild,
-					annotationDirectory, annotationBaseDirectory, null);
+					debugExcludePatterns, iterationLimit, callDepthLimit,
+					formatters, outputDirectory, sessionDirectory,
+					includeDirectories, nthread, gzipOutput,
+					DeprecationWarnings.OFF, forceBuild, annotationDirectory,
+					annotationBaseDirectory, null);
 
 		} catch (SyntaxException consumed) {
 			throw CompilerError.create(MSG_FILE_BUG_REPORT);
@@ -561,14 +531,6 @@ public class CompilerOptions {
 		}
 		sb.append("\n");
 
-		sb.append("XML write enabled: ");
-		sb.append(xmlWriteEnabled);
-		sb.append("\n");
-
-		sb.append("dependency write enabled: ");
-		sb.append(depWriteEnabled);
-		sb.append("\n");
-
 		sb.append("iteration limit: ");
 		sb.append(iterationLimit);
 		sb.append("\n");
@@ -585,9 +547,9 @@ public class CompilerOptions {
 		sb.append(outputDirectory);
 		sb.append("\n");
 
-		if (formatter != null) {
+		if (formatters != null) {
 			sb.append("formatter: ");
-			sb.append(formatter.getClass().toString());
+			sb.append(formatters.getClass().toString());
 			sb.append("\n");
 		} else {
 			sb.append("formatter: null\n");

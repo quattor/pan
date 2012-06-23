@@ -52,6 +52,7 @@ import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.output.DepFormatter;
 import org.quattor.pan.output.Formatter;
+import org.quattor.pan.output.FormatterComparator;
 import org.quattor.pan.output.PanFormatter;
 import org.xml.sax.InputSource;
 
@@ -61,11 +62,12 @@ public class JavaCompilerTest {
 			Formatter formatter) throws SyntaxException {
 		List<File> path = new LinkedList<File>();
 		path.add(dir);
-		List<Formatter> formatters = new LinkedList<Formatter>();
+		Set<Formatter> formatters = new TreeSet<Formatter>(
+				FormatterComparator.getInstance());
 		formatters.add(formatter);
 		formatters.add(DepFormatter.getInstance());
-		CompilerOptions options = new CompilerOptions(null, null, true, false,
-				100, 50, formatters, getTmpdir(), null, path, 0, false,
+		CompilerOptions options = new CompilerOptions(null, null, 100, 50,
+				formatters, getTmpdir(), null, path, 0, false,
 				CompilerOptions.DeprecationWarnings.ON, false, null, null, null);
 		List<File> tplfiles = new LinkedList<File>();
 		tplfiles.add(tplfile);
@@ -76,11 +78,12 @@ public class JavaCompilerTest {
 			Formatter formatter) throws SyntaxException {
 		List<File> path = new LinkedList<File>();
 		path.add(dir);
-		List<Formatter> formatters = new LinkedList<Formatter>();
+		Set<Formatter> formatters = new TreeSet<Formatter>(
+				FormatterComparator.getInstance());
 		formatters.add(formatter);
 		formatters.add(DepFormatter.getInstance());
-		CompilerOptions options = new CompilerOptions(null, null, true, false,
-				100, 50, formatters, getTmpdir(), null, path, 0, false,
+		CompilerOptions options = new CompilerOptions(null, null, 100, 50,
+				formatters, getTmpdir(), null, path, 0, false,
 				CompilerOptions.DeprecationWarnings.ON, false, null, null,
 				"nlist('root-element-test', 'OK')");
 		List<File> tplfiles = new LinkedList<File>();
@@ -93,11 +96,12 @@ public class JavaCompilerTest {
 		List<File> path = new LinkedList<File>();
 		path.add(dir);
 		Formatter formatter = PanFormatter.getInstance();
-		List<Formatter> formatters = new LinkedList<Formatter>();
+		Set<Formatter> formatters = new TreeSet<Formatter>(
+				FormatterComparator.getInstance());
 		formatters.add(formatter);
 		formatters.add(DepFormatter.getInstance());
-		CompilerOptions options = new CompilerOptions(null, null, true, true,
-				100, 50, formatters, getTmpdir(), null, path, 0, false,
+		CompilerOptions options = new CompilerOptions(null, null, 100, 50,
+				formatters, getTmpdir(), null, path, 0, false,
 				CompilerOptions.DeprecationWarnings.ON, false, null, null, null);
 		List<File> tplfiles = new LinkedList<File>();
 		tplfiles.add(tplfile);
@@ -111,11 +115,12 @@ public class JavaCompilerTest {
 		List<File> path = new LinkedList<File>();
 		path.add(getTmpdir());
 
-		List<Formatter> formatters = new LinkedList<Formatter>();
+		Set<Formatter> formatters = new TreeSet<Formatter>(
+				FormatterComparator.getInstance());
 		formatters.add(PanFormatter.getInstance());
 		formatters.add(DepFormatter.getInstance());
-		CompilerOptions options = new CompilerOptions(null, null, true, false,
-				100, 50, formatters, getTmpdir(), null, path, 0, false,
+		CompilerOptions options = new CompilerOptions(null, null, 100, 50,
+				formatters, getTmpdir(), null, path, 0, false,
 				CompilerOptions.DeprecationWarnings.ON, false, null, null, null);
 
 		List<String> objects = new LinkedList<String>();
@@ -155,12 +160,13 @@ public class JavaCompilerTest {
 		List<File> path = new LinkedList<File>();
 		path.add(tpldir);
 
-		List<Formatter> formatters = new LinkedList<Formatter>();
+		Set<Formatter> formatters = new TreeSet<Formatter>(
+				FormatterComparator.getInstance());
 		formatters.add(PanFormatter.getInstance());
 		formatters.add(DepFormatter.getInstance());
 
-		CompilerOptions options = new CompilerOptions(null, null, true, false,
-				100, 50, formatters, tmpdir, null, path, 0, false,
+		CompilerOptions options = new CompilerOptions(null, null, 100, 50,
+				formatters, tmpdir, null, path, 0, false,
 				CompilerOptions.DeprecationWarnings.ON, false, null, null, null);
 
 		// Create the list of input files.

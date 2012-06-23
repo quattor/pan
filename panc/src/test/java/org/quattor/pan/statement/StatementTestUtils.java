@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -74,11 +75,11 @@ public class StatementTestUtils {
 		List<File> files = new LinkedList<File>();
 		files.add(tplfile);
 
-		List<Formatter> formatters = new LinkedList<Formatter>();
+		Set<Formatter> formatters = new TreeSet<Formatter>();
 		formatters.add(PanFormatter.getInstance());
 
-		CompilerOptions options = new CompilerOptions(null, null, true, true,
-				1000, 50, formatters, tmpfile, null, paths, 0, false,
+		CompilerOptions options = new CompilerOptions(null, null, 1000, 50,
+				formatters, tmpfile, null, paths, 0, false,
 				CompilerOptions.DeprecationWarnings.OFF, false, null, null,
 				null);
 
@@ -119,11 +120,11 @@ public class StatementTestUtils {
 		List<File> files = new LinkedList<File>();
 		files.add(tplfile);
 
-		List<Formatter> formatters = new LinkedList<Formatter>();
+		Set<Formatter> formatters = new TreeSet<Formatter>();
 		formatters.add(PanFormatter.getInstance());
 
-		CompilerOptions options = new CompilerOptions(null, null, true, true,
-				1000, 50, formatters, tmpfile, null, paths, 0, false,
+		CompilerOptions options = new CompilerOptions(null, null, 1000, 50,
+				formatters, tmpfile, null, paths, 0, false,
 				CompilerOptions.DeprecationWarnings.OFF, false, null, null,
 				null);
 
@@ -172,11 +173,11 @@ public class StatementTestUtils {
 		List<File> files = new LinkedList<File>();
 		files.add(tplfile);
 
-		List<Formatter> formatters = new LinkedList<Formatter>();
+		Set<Formatter> formatters = new TreeSet<Formatter>();
 		formatters.add(PanFormatter.getInstance());
 
-		CompilerOptions options = new CompilerOptions(null, null, true, true,
-				1000, 50, formatters, tmpfile, null, paths, 0, false,
+		CompilerOptions options = new CompilerOptions(null, null, 1000, 50,
+				formatters, tmpfile, null, paths, 0, false,
 				CompilerOptions.DeprecationWarnings.OFF, false, null, null,
 				null);
 

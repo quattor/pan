@@ -108,7 +108,7 @@ public class CompileCache extends AbstractCache<CompileResult> {
 
 				String objectName = template.name;
 
-				for (Formatter formatter : options.formatter) {
+				for (Formatter formatter : options.formatters) {
 					File outputDirectory = options.outputDirectory;
 					task = new WriteOutputTask(formatter, options.gzipOutput,
 							compiler, objectName, outputDirectory);

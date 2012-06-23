@@ -7,7 +7,8 @@
                                    JsonFormatter 
                                    DotFormatter 
                                    PanFormatter 
-                                   XmlDBFormatter)
+                                   XmlDBFormatter
+                                   DepFormatter)
            (org.quattor.pan CompilerOptions$DeprecationWarnings)))
 
 (declare process)
@@ -31,10 +32,10 @@
            "xml" (conj v(PanFormatter/getInstance))
            "xml.gz" (conj v (PanFormatter/getInstance))
            "xmldb" (conj v (XmlDBFormatter/getInstance))
-           "dep" v
+           "dep" (conj v (DepFormatter/getInstance))
            "none" v
            (throw (Exception. (str "unknown formatter: " name)))))
-       []
+       #{}
        names)}))
 
 (defn str->formatter-options
@@ -44,17 +45,9 @@
     (reduce 
       (fn [m name]
         (case name
-          "text" (assoc m :xmlWriteEnabled true)
-          "json" (assoc m :xmlWriteEnabled true)
-          "dot" (assoc m :xmlWriteEnabled true)
-          "pan" (assoc m :xmlWriteEnabled true)
-          "pan.gz" (assoc m :xmlWriteEnabled true :gzipOutput true)
-          "xml" (assoc m :xmlWriteEnabled true)
-          "xml.gz" (assoc m :xmlWriteEnabled true :gzipOutput true)
-          "xmldb" (assoc m :xmlWriteEnabled true)
-          "dep" (assoc m :depWriteEnabled true)
-          "none" (assoc m :xmlWriteEnabled false)
-          (throw (Exception. (str "unknown formatter: " name)))))
+          "pan.gz" (assoc m :gzipOutput true)
+          "xml.gz" (assoc m :gzipOutput true)
+          m))
       {}
       names)))
 

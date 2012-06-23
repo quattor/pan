@@ -9,8 +9,6 @@
 (defn create-compiler-options []
   (let [ {:keys [debugIncludePatterns
                  debugExcludePatterns 
-                 xmlWriteEnabled 
-                 depWriteEnabled 
                  iterationLimit 
                  callDepthLimit 
                  formatter 
@@ -26,8 +24,6 @@
                  rootElement] } settings/*settings* ]
    (CompilerOptions. debugIncludePatterns 
                      debugExcludePatterns 
-                     xmlWriteEnabled 
-                     depWriteEnabled 
                      iterationLimit 
                      callDepthLimit 
                      formatter 
@@ -45,8 +41,6 @@
 (defn default-compiler-options []
   (let [ {:keys [debugIncludePatterns
                  debugExcludePatterns 
-                 xmlWriteEnabled 
-                 depWriteEnabled 
                  iterationLimit 
                  callDepthLimit 
                  formatter 
@@ -62,8 +56,6 @@
                  rootElement] } (settings/defaults) ]
    (CompilerOptions. debugIncludePatterns 
                      debugExcludePatterns 
-                     xmlWriteEnabled 
-                     depWriteEnabled 
                      iterationLimit 
                      callDepthLimit 
                      formatter 

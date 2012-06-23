@@ -39,6 +39,7 @@ import org.quattor.pan.CompilerLogging;
 import org.quattor.pan.CompilerOptions;
 import org.quattor.pan.CompilerResults;
 import org.quattor.pan.exceptions.SyntaxException;
+import org.quattor.pan.output.DepFormatter;
 import org.quattor.pan.output.Formatter;
 import org.quattor.pan.output.FormatterUtils;
 import org.quattor.pan.repository.SourceType;
@@ -119,8 +120,6 @@ public class PanCompilerTask extends Task {
 
 	private String rootElement = null;
 
-	private Set<Formatter> formatters = new TreeSet<Formatter>();
-
 	public PanCompilerTask() {
 		setFormatter("pan");
 	}
@@ -148,17 +147,26 @@ public class PanCompilerTask extends Task {
 		CompilerOptions.DeprecationWarnings deprecationWarnings = CompilerOptions
 				.getDeprecationWarnings(deprecationLevel, failOnWarn);
 
+		Set<Formatter> formatters = new TreeSet<Formatter>();
+		formatters.add(formatter);
+
+		if (!xmlWriteEnabled) {
+			formatters.clear();
+		}
+
+		if (depWriteEnabled) {
+			formatters.add(DepFormatter.getInstance());
+		}
+
 		// Collect the options for the compilation.
 		CompilerOptions options = null;
 		try {
-			List<Formatter> formatters = new LinkedList<Formatter>();
-			formatters.add(formatter);
 			options = new CompilerOptions(debugIncludePatterns,
-					debugExcludePatterns, xmlWriteEnabled, depWriteEnabled,
-					iterationLimit, callDepthLimit, formatters,
-					outputDirectory, sessionDirectory, includeDirectories,
-					nthread, gzipOutput, deprecationWarnings, forceBuild,
-					annotationDirectory, annotationBaseDirectory, rootElement);
+					debugExcludePatterns, iterationLimit, callDepthLimit,
+					formatters, outputDirectory, sessionDirectory,
+					includeDirectories, nthread, gzipOutput,
+					deprecationWarnings, forceBuild, annotationDirectory,
+					annotationBaseDirectory, rootElement);
 		} catch (SyntaxException e) {
 			throw new BuildException("invalid root element: " + e.getMessage());
 		}

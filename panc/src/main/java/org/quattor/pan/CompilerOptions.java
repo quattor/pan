@@ -179,9 +179,8 @@ public class CompilerOptions {
 	 *            number of threads to use (<=0 uses default value)
 	 * @param gzipOutput
 	 *            gzip produced machine profiles
-	 * @param deprecationLevel
-	 *            level for deprecation warnings (<0 off, =0 next release, >0
-	 *            future releases)
+	 * @param deprecationWarnings
+	 *            level for deprecation warnings (ON, OFF, or FATAL)
 	 * @param forceBuild
 	 *            force build even if no output files are generated if true
 	 * @param annotationDirectory
@@ -201,9 +200,10 @@ public class CompilerOptions {
 			boolean depWriteEnabled, int iterationLimit, int callDepthLimit,
 			List<Formatter> formatters, File outputDirectory,
 			File sessionDirectory, List<File> includeDirectories, int nthread,
-			boolean gzipOutput, int deprecationLevel, boolean forceBuild,
-			File annotationDirectory, File annotationBaseDirectory,
-			boolean failOnWarn, String rootElement) throws SyntaxException {
+			boolean gzipOutput, DeprecationWarnings deprecationWarnings,
+			boolean forceBuild, File annotationDirectory,
+			File annotationBaseDirectory, String rootElement)
+			throws SyntaxException {
 
 		// Check that the iteration and call depth limits are sensible. If
 		// negative or zero set these effectively to infinity.
@@ -256,8 +256,7 @@ public class CompilerOptions {
 		this.gzipOutput = gzipOutput;
 		this.forceBuild = forceBuild;
 
-		deprecationWarnings = getDeprecationWarnings(deprecationLevel,
-				failOnWarn);
+		this.deprecationWarnings = deprecationWarnings;
 
 		// Deal with the formatter(s).
 		List<Formatter> fmts = new LinkedList<Formatter>();
@@ -269,7 +268,7 @@ public class CompilerOptions {
 		for (Formatter formatter : this.formatter) {
 			if ("xmldb".equals(formatter.getFormatKey())) {
 				String msg = "WARNING: xmldb format is deprecated; use another formatter";
-				if (failOnWarn) {
+				if (deprecationWarnings == DeprecationWarnings.FATAL) {
 					throw new IllegalArgumentException(msg);
 				} else {
 					System.err.println(msg);
@@ -344,7 +343,7 @@ public class CompilerOptions {
 	 * @return
 	 */
 	public static CompilerOptions createCheckSyntaxOptions(
-			int deprecationLevel, boolean failOnWarn) {
+			DeprecationWarnings deprecationWarnings) {
 
 		List<Pattern> debugIncludePatterns = new LinkedList<Pattern>();
 		List<Pattern> debugExcludePatterns = new LinkedList<Pattern>();
@@ -367,9 +366,8 @@ public class CompilerOptions {
 					debugExcludePatterns, xmlWriteEnabled, depWriteEnabled,
 					iterationLimit, callDepthLimit, formatters,
 					outputDirectory, sessionDirectory, includeDirectories,
-					nthread, gzipOutput, deprecationLevel, forceBuild,
-					annotationDirectory, annotationBaseDirectory, failOnWarn,
-					null);
+					nthread, gzipOutput, deprecationWarnings, forceBuild,
+					annotationDirectory, annotationBaseDirectory, null);
 
 		} catch (SyntaxException consumed) {
 			throw CompilerError.create(MSG_FILE_BUG_REPORT);
@@ -402,8 +400,6 @@ public class CompilerOptions {
 		int nthread = 0;
 		boolean gzipOutput = false;
 		boolean forceBuild = false;
-		int deprecationLevel = -1;
-		boolean failOnWarn = false;
 		LinkedList<File> includeDirectories = new LinkedList<File>();
 
 		try {
@@ -411,9 +407,8 @@ public class CompilerOptions {
 					debugExcludePatterns, xmlWriteEnabled, depWriteEnabled,
 					iterationLimit, callDepthLimit, formatters,
 					outputDirectory, sessionDirectory, includeDirectories,
-					nthread, gzipOutput, deprecationLevel, forceBuild,
-					annotationDirectory, annotationBaseDirectory, failOnWarn,
-					null);
+					nthread, gzipOutput, DeprecationWarnings.OFF, forceBuild,
+					annotationDirectory, annotationBaseDirectory, null);
 
 		} catch (SyntaxException consumed) {
 			throw CompilerError.create(MSG_FILE_BUG_REPORT);

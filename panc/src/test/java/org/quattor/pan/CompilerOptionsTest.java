@@ -58,7 +58,8 @@ public class CompilerOptionsTest {
 		CompilerOptions options = new CompilerOptions(null, null,
 				xmlWriteEnabled, depWriteEnabled, iterationLimit,
 				callDepthLimit, formatters, outputDirectory, sessionDirectory,
-				includeDirectories, 0, false, 0, false, null, null, false, null);
+				includeDirectories, 0, false,
+				CompilerOptions.DeprecationWarnings.ON, false, null, null, null);
 
 		assertTrue(xmlWriteEnabled == options.xmlWriteEnabled);
 		assertTrue(depWriteEnabled == options.depWriteEnabled);
@@ -90,7 +91,8 @@ public class CompilerOptionsTest {
 		CompilerOptions options = new CompilerOptions(null, null,
 				xmlWriteEnabled, depWriteEnabled, iterationLimit,
 				callDepthLimit, formatters, outputDirectory, sessionDirectory,
-				includeDirectories, 0, false, 0, false, null, null, false, null);
+				includeDirectories, 0, false,
+				CompilerOptions.DeprecationWarnings.ON, false, null, null, null);
 
 		assertTrue(xmlWriteEnabled == options.xmlWriteEnabled);
 		assertTrue(depWriteEnabled == options.depWriteEnabled);
@@ -123,7 +125,8 @@ public class CompilerOptionsTest {
 		CompilerOptions options = new CompilerOptions(null, null,
 				xmlWriteEnabled, depWriteEnabled, iterationLimit,
 				callDepthLimit, formatters, outputDirectory, sessionDirectory,
-				includeDirectories, 0, false, 0, false, null, null, false, null);
+				includeDirectories, 0, false,
+				CompilerOptions.DeprecationWarnings.ON, false, null, null, null);
 
 		assertTrue(Integer.MAX_VALUE == options.iterationLimit);
 		assertTrue(Integer.MAX_VALUE == options.callDepthLimit);
@@ -148,8 +151,8 @@ public class CompilerOptionsTest {
 
 		new CompilerOptions(null, null, xmlWriteEnabled, depWriteEnabled,
 				iterationLimit, callDepthLimit, formatters, outputDirectory,
-				sessionDirectory, includeDirectories, 0, false, 0, false, null,
-				null, false, null);
+				sessionDirectory, includeDirectories, 0, false,
+				CompilerOptions.DeprecationWarnings.ON, false, null, null, null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -171,8 +174,8 @@ public class CompilerOptionsTest {
 
 		new CompilerOptions(null, null, xmlWriteEnabled, depWriteEnabled,
 				iterationLimit, callDepthLimit, formatters, outputDirectory,
-				sessionDirectory, includeDirectories, 0, false, 0, false, null,
-				null, false, null);
+				sessionDirectory, includeDirectories, 0, false,
+				CompilerOptions.DeprecationWarnings.ON, false, null, null, null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -193,8 +196,8 @@ public class CompilerOptionsTest {
 
 		new CompilerOptions(null, null, xmlWriteEnabled, depWriteEnabled,
 				iterationLimit, callDepthLimit, formatters, outputDirectory,
-				sessionDirectory, includeDirectories, 0, false, 0, false, null,
-				null, false, null);
+				sessionDirectory, includeDirectories, 0, false,
+				CompilerOptions.DeprecationWarnings.ON, false, null, null, null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -213,8 +216,8 @@ public class CompilerOptionsTest {
 
 		new CompilerOptions(null, null, xmlWriteEnabled, depWriteEnabled,
 				iterationLimit, callDepthLimit, formatters, outputDirectory,
-				sessionDirectory, includeDirectories, 0, false, 0, false, null,
-				null, false, null);
+				sessionDirectory, includeDirectories, 0, false,
+				CompilerOptions.DeprecationWarnings.ON, false, null, null, null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -236,8 +239,8 @@ public class CompilerOptionsTest {
 
 		new CompilerOptions(null, null, xmlWriteEnabled, depWriteEnabled,
 				iterationLimit, callDepthLimit, formatters, outputDirectory,
-				sessionDirectory, includeDirectories, 0, false, 0, false, null,
-				null, false, null);
+				sessionDirectory, includeDirectories, 0, false,
+				CompilerOptions.DeprecationWarnings.ON, false, null, null, null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -257,8 +260,8 @@ public class CompilerOptionsTest {
 
 		new CompilerOptions(null, null, xmlWriteEnabled, depWriteEnabled,
 				iterationLimit, callDepthLimit, formatters, outputDirectory,
-				sessionDirectory, includeDirectories, 0, false, 0, false, null,
-				null, false, null);
+				sessionDirectory, includeDirectories, 0, false,
+				CompilerOptions.DeprecationWarnings.ON, false, null, null, null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -279,8 +282,8 @@ public class CompilerOptionsTest {
 
 		new CompilerOptions(null, null, xmlWriteEnabled, depWriteEnabled,
 				iterationLimit, callDepthLimit, formatters, outputDirectory,
-				sessionDirectory, includeDirectories, 0, false, 0, false, null,
-				null, false, null);
+				sessionDirectory, includeDirectories, 0, false,
+				CompilerOptions.DeprecationWarnings.ON, false, null, null, null);
 	}
 
 	@Test

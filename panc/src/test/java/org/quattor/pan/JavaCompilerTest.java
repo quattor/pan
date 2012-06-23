@@ -65,8 +65,8 @@ public class JavaCompilerTest {
 		formatters.add(formatter);
 		formatters.add(DepFormatter.getInstance());
 		CompilerOptions options = new CompilerOptions(null, null, true, false,
-				100, 50, formatters, getTmpdir(), null, path, 0, false, 2,
-				false, null, null, false, null);
+				100, 50, formatters, getTmpdir(), null, path, 0, false,
+				CompilerOptions.DeprecationWarnings.ON, false, null, null, null);
 		List<File> tplfiles = new LinkedList<File>();
 		tplfiles.add(tplfile);
 		return new Compiler(options, new LinkedList<String>(), tplfiles);
@@ -80,8 +80,9 @@ public class JavaCompilerTest {
 		formatters.add(formatter);
 		formatters.add(DepFormatter.getInstance());
 		CompilerOptions options = new CompilerOptions(null, null, true, false,
-				100, 50, formatters, getTmpdir(), null, path, 0, false, 2,
-				false, null, null, false, "nlist('root-element-test', 'OK')");
+				100, 50, formatters, getTmpdir(), null, path, 0, false,
+				CompilerOptions.DeprecationWarnings.ON, false, null, null,
+				"nlist('root-element-test', 'OK')");
 		List<File> tplfiles = new LinkedList<File>();
 		tplfiles.add(tplfile);
 		return new Compiler(options, new LinkedList<String>(), tplfiles);
@@ -96,8 +97,8 @@ public class JavaCompilerTest {
 		formatters.add(formatter);
 		formatters.add(DepFormatter.getInstance());
 		CompilerOptions options = new CompilerOptions(null, null, true, true,
-				100, 50, formatters, getTmpdir(), null, path, 0, false, 2,
-				false, null, null, false, null);
+				100, 50, formatters, getTmpdir(), null, path, 0, false,
+				CompilerOptions.DeprecationWarnings.ON, false, null, null, null);
 		List<File> tplfiles = new LinkedList<File>();
 		tplfiles.add(tplfile);
 		return new Compiler(options, new LinkedList<String>(), tplfiles);
@@ -114,8 +115,8 @@ public class JavaCompilerTest {
 		formatters.add(PanFormatter.getInstance());
 		formatters.add(DepFormatter.getInstance());
 		CompilerOptions options = new CompilerOptions(null, null, true, false,
-				100, 50, formatters, getTmpdir(), null, path, 0, false, 2,
-				false, null, null, false, null);
+				100, 50, formatters, getTmpdir(), null, path, 0, false,
+				CompilerOptions.DeprecationWarnings.ON, false, null, null, null);
 
 		List<String> objects = new LinkedList<String>();
 		objects.add("non-existant/object/template");
@@ -159,8 +160,8 @@ public class JavaCompilerTest {
 		formatters.add(DepFormatter.getInstance());
 
 		CompilerOptions options = new CompilerOptions(null, null, true, false,
-				100, 50, formatters, tmpdir, null, path, 0, false, 2, false,
-				null, null, false, null);
+				100, 50, formatters, tmpdir, null, path, 0, false,
+				CompilerOptions.DeprecationWarnings.ON, false, null, null, null);
 
 		// Create the list of input files.
 		List<File> tplfiles = new LinkedList<File>();

@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 
 import org.apache.tools.ant.BuildException;
 import org.quattor.pan.CompilerOptions;
+import org.quattor.pan.CompilerOptions.DeprecationWarnings;
 import org.quattor.pan.output.DepFormatter;
 import org.quattor.pan.output.Formatter;
 import org.quattor.pan.parser.ASTTemplate;
@@ -36,7 +37,7 @@ public class DependencyChecker {
 	private final Set<Formatter> formatters;
 
 	private final CompilerOptions options = CompilerOptions
-			.createCheckSyntaxOptions(Integer.MAX_VALUE, false);
+			.createCheckSyntaxOptions(DeprecationWarnings.OFF);
 
 	private final URI outputDirectoryURI;
 

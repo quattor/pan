@@ -8,6 +8,7 @@
                                    DotFormatter 
                                    PanFormatter 
                                    XmlDBFormatter)
+           (org.quattor.pan CompilerOptions$DeprecationWarnings)
            (java.util.regex Pattern)))
 
 (deftest test-to-settings
@@ -80,13 +81,10 @@
 (deftest test-warnings
   (let [off (process [:warnings "off"])
         on (process [:warnings "on"])
-        fail (process [:warnings "fail"])]
-    (is (= -1 (:deprecationLevel off)))
-    (is (not (:failOnWarn off)))
-    (is (= 1 (:deprecationLevel on)))
-    (is (not (:failOnWarn on)))
-    (is (= 1 (:deprecationLevel fail)))
-    (is (:failOnWarn fail)))
+        fatal (process [:warnings "fatal"])]
+    (is (= CompilerOptions$DeprecationWarnings/OFF (:warnings off)))
+    (is (= CompilerOptions$DeprecationWarnings/ON (:warnings on)))
+    (is (= CompilerOptions$DeprecationWarnings/FATAL (:warnings fatal))))
   (is (thrown? Exception (process [:warnings "unknown"]))))
   
 (deftest test-verbose

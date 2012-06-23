@@ -575,13 +575,17 @@ public class Panc {
 		try {
 			List<Formatter> formatters = new LinkedList<Formatter>();
 			formatters.add(formatter);
+
+			CompilerOptions.DeprecationWarnings deprecationWarnings = CompilerOptions
+					.getDeprecationWarnings(deprecation, failOnWarn);
+
 			CompilerOptions coptions = new CompilerOptions(
 					debugIncludePatterns, debugExcludePatterns,
 					xmlWriteEnabled, depWriteEnabled, iteration, callDepth,
 					formatters, outputDirectory, sessionDirectory,
-					includeDirectories, 0, gzip, deprecation, false,
+					includeDirectories, 0, gzip, deprecationWarnings, false,
 					annotationOutputDirectory, annotationBaseDirectory,
-					failOnWarn, rootElement);
+					rootElement);
 
 			CompilerResults results = Compiler.run(coptions, objectOutput,
 					includeFiles);

@@ -145,6 +145,9 @@ public class PanCompilerTask extends Task {
 			addPaths(antpath);
 		}
 
+		CompilerOptions.DeprecationWarnings deprecationWarnings = CompilerOptions
+				.getDeprecationWarnings(deprecationLevel, failOnWarn);
+
 		// Collect the options for the compilation.
 		CompilerOptions options = null;
 		try {
@@ -154,9 +157,8 @@ public class PanCompilerTask extends Task {
 					debugExcludePatterns, xmlWriteEnabled, depWriteEnabled,
 					iterationLimit, callDepthLimit, formatters,
 					outputDirectory, sessionDirectory, includeDirectories,
-					nthread, gzipOutput, deprecationLevel, forceBuild,
-					annotationDirectory, annotationBaseDirectory, failOnWarn,
-					rootElement);
+					nthread, gzipOutput, deprecationWarnings, forceBuild,
+					annotationDirectory, annotationBaseDirectory, rootElement);
 		} catch (SyntaxException e) {
 			throw new BuildException("invalid root element: " + e.getMessage());
 		}

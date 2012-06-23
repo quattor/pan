@@ -7,7 +7,8 @@
                                    JsonFormatter 
                                    DotFormatter 
                                    PanFormatter 
-                                   XmlDBFormatter)))
+                                   XmlDBFormatter)
+           (org.quattor.pan CompilerOptions$DeprecationWarnings)))
 
 (declare process)
 
@@ -135,9 +136,9 @@
 
 (defmethod process :warnings
   [[k v]]
-  (let [switches {"off" {:deprecationLevel -1 :failOnWarn false}
-                  "on" {:deprecationLevel 1 :failOnWarn false}
-                  "fail" {:deprecationLevel 1 :failOnWarn true}}]
+  (let [switches {"off" {:warnings CompilerOptions$DeprecationWarnings/OFF}
+                  "on" {:warnings CompilerOptions$DeprecationWarnings/ON}
+                  "fatal" {:warnings CompilerOptions$DeprecationWarnings/FATAL}}]
     (if-let [switch (switches v)]
       switch
-      (throw (Exception. (str k " value must be off, on, or fail"))))))
+      (throw (Exception. (str k " value must be off, on, or fatal"))))))

@@ -51,8 +51,11 @@ public class PanCheckSyntaxTask extends Task {
 	@Override
 	public void execute() throws BuildException {
 
+		CompilerOptions.DeprecationWarnings deprecationWarnings = CompilerOptions
+				.getDeprecationWarnings(deprecationLevel, false);
+
 		CompilerOptions options = CompilerOptions
-				.createCheckSyntaxOptions(deprecationLevel, false);
+				.createCheckSyntaxOptions(deprecationWarnings);
 
 		CompilerResults results = Compiler.run(options, null, sourceFiles);
 

@@ -19,11 +19,10 @@
                  includeDirectories 
                  nthread 
                  gzipOutput 
-                 deprecationLevel 
+                 warnings 
                  forceBuild 
                  annotationDirectory 
                  annotationBaseDirectory 
-                 failOnWarn 
                  rootElement] } settings/*settings* ]
    (CompilerOptions. debugIncludePatterns 
                      debugExcludePatterns 
@@ -37,11 +36,10 @@
                      includeDirectories 
                      nthread 
                      gzipOutput
-                     deprecationLevel 
+                     warnings 
                      forceBuild 
                      annotationDirectory
                      annotationBaseDirectory
-                     failOnWarn 
                      rootElement)))
 
 (defn default-compiler-options []
@@ -57,11 +55,10 @@
                  includeDirectories 
                  nthread 
                  gzipOutput 
-                 deprecationLevel 
+                 warnings 
                  forceBuild 
                  annotationDirectory 
                  annotationBaseDirectory 
-                 failOnWarn 
                  rootElement] } (settings/defaults) ]
    (CompilerOptions. debugIncludePatterns 
                      debugExcludePatterns 
@@ -75,11 +72,10 @@
                      includeDirectories 
                      nthread 
                      gzipOutput
-                     deprecationLevel 
+                     warnings 
                      forceBuild 
                      annotationDirectory
                      annotationBaseDirectory
-                     failOnWarn 
                      rootElement)))
 
 (defn process-cli-args [args]

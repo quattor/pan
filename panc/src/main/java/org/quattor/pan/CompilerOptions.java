@@ -63,6 +63,10 @@ import org.quattor.pan.template.SourceRange;
  */
 public class CompilerOptions {
 
+	public enum DeprecationWarnings {
+		ON, OFF, FATAL
+	};
+
 	/**
 	 * Flag to activate the writing of machine profiles to disk. Typically these
 	 * are XML files, but any <code>Formatter</code> can be used.
@@ -114,16 +118,9 @@ public class CompilerOptions {
 	public final boolean gzipOutput;
 
 	/**
-	 * Define the deprecation level for compilation. Less than zero turns this
-	 * off, 0 gives warnings for things that will change in next release, and 1
-	 * gives warnings for other future changes.
+	 * Define the deprecation level for compilation: ON, OFF, or FATAL.
 	 */
-	public final int deprecationLevel;
-
-	/**
-	 * If set to true, then any warnings will cause the compilation to fail.
-	 */
-	public final boolean failOnWarn;
+	public final DeprecationWarnings deprecationWarnings;
 
 	public final SourceRepository sourceRepository;
 
@@ -257,9 +254,10 @@ public class CompilerOptions {
 		this.outputDirectory = outputDirectory;
 		this.activeThreadsPerQueue = nthread;
 		this.gzipOutput = gzipOutput;
-		this.deprecationLevel = deprecationLevel;
-		this.failOnWarn = failOnWarn;
 		this.forceBuild = forceBuild;
+
+		deprecationWarnings = getDeprecationWarnings(deprecationLevel,
+				failOnWarn);
 
 		// Deal with the formatter(s).
 		List<Formatter> fmts = new LinkedList<Formatter>();
@@ -320,6 +318,18 @@ public class CompilerOptions {
 		}
 
 		this.rootElement = createRootElement(rootElement);
+	}
+
+	// Utility method to turn old options into new deprecation flag.
+	public static DeprecationWarnings getDeprecationWarnings(
+			int deprecationLevel, boolean failOnWarn) {
+
+		if (deprecationLevel < 0) {
+			return DeprecationWarnings.OFF;
+		} else {
+			return failOnWarn ? DeprecationWarnings.FATAL
+					: DeprecationWarnings.ON;
+		}
 	}
 
 	/**

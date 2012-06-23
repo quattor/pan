@@ -32,6 +32,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.quattor.pan.CompilerLogging.LoggingType;
+import org.quattor.pan.CompilerOptions;
 import org.quattor.pan.dml.Operation;
 import org.quattor.pan.dml.data.BooleanProperty;
 import org.quattor.pan.dml.data.Element;
@@ -82,7 +83,7 @@ public class CompileTimeContext implements Context {
 
 	private IteratorMap iteratorMap;
 
-	public final int deprecationLevel;
+	public final CompilerOptions.DeprecationWarnings deprecationWarnings;
 
 	private static final Template emptyTemplate;
 
@@ -104,7 +105,7 @@ public class CompileTimeContext implements Context {
 
 		// Copy in a couple of options used for function evaluation. The
 		// compiler will be null for compile-time DML evaluations.
-		this.deprecationLevel = -1;
+		this.deprecationWarnings = CompilerOptions.DeprecationWarnings.OFF;
 
 		// Create the empty hashes.
 		templates = new Stack<SourceLocation>();
@@ -484,9 +485,7 @@ public class CompileTimeContext implements Context {
 		StringBuilder sb = new StringBuilder();
 		sb.append(">>> call stack trace \n");
 		sb.append(">>> ");
-		sb
-				.append((new SourceLocation(currentTemplate, sourceRange))
-						.toString());
+		sb.append((new SourceLocation(currentTemplate, sourceRange)).toString());
 		sb.append("\n");
 		for (int i = locations.length - 1; i >= 0; i--) {
 			sb.append(">>> ");
@@ -645,8 +644,8 @@ public class CompileTimeContext implements Context {
 			File objectFile = (objectTemplate != null) ? objectTemplate.source
 					: null;
 			ValidationException ve = ValidationException.create(
-					MSG_INVALID_VALIDATION_FUNCTION_RETURN_TYPE, result
-							.getTypeAsString());
+					MSG_INVALID_VALIDATION_FUNCTION_RETURN_TYPE,
+					result.getTypeAsString());
 			throw ve.setObjectTemplate(objectFile);
 		}
 	}
@@ -908,12 +907,8 @@ public class CompileTimeContext implements Context {
 		return null;
 	}
 
-	public int getDeprecationLevel() {
-		return deprecationLevel;
-	}
-
-	public boolean getFailOnWarn() {
-		return false;
+	public CompilerOptions.DeprecationWarnings getDeprecationWarnings() {
+		return deprecationWarnings;
 	}
 
 }

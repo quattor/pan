@@ -20,6 +20,7 @@
 
 package org.quattor.pan.dml.functions;
 
+import static org.quattor.pan.utils.MessageUtils.MSG_FATAL_DEPRECATION_MSG;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_FIRST_ARG_DEPRECATED;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_SECOND_ARG_DEPRECATED;
 import static org.quattor.pan.utils.MessageUtils.MSG_TWO_ARGS_REQ;
@@ -42,6 +43,7 @@ import org.quattor.pan.template.SourceRange;
  * @author loomis
  * 
  */
+// FIXME: This method should really only accept one argument now.
 final public class Deprecated extends BuiltInFunction {
 
 	private Deprecated(SourceRange sourceRange, Operation... operations)
@@ -114,14 +116,17 @@ final public class Deprecated extends BuiltInFunction {
 
 			}
 
-			if (level <= context.getDeprecationLevel()) {
+			switch (context.getDeprecationWarnings()) {
+			case ON:
 				System.err.println(msg.getValue());
-				value = msg;
+				break;
+			case FATAL:
+				throw EvaluationException.create(sourceRange, context,
+						MSG_FATAL_DEPRECATION_MSG, msg.getValue());
 			}
 
 		}
 
 		return value;
 	}
-
 }

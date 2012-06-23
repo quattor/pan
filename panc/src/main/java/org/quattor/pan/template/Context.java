@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
+import org.quattor.pan.CompilerOptions;
 import org.quattor.pan.dml.Operation;
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.HashResource;
@@ -460,7 +461,5 @@ public interface Context {
 
 	public List<String> getRelativeLoadpaths();
 
-	public int getDeprecationLevel();
-
-	public boolean getFailOnWarn();
+	public CompilerOptions.DeprecationWarnings getDeprecationWarnings();
 }

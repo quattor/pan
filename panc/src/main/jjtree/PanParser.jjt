@@ -31,12 +31,14 @@ PARSER_BEGIN(PanParser)
 
 package org.quattor.pan.parser;
 
+import org.quattor.pan.CompilerOptions;
+import org.quattor.pan.CompilerOptions.DeprecationWarnings;
 import org.quattor.pan.dml.data.*;
 
 public class PanParser { 
 
   java.io.File tplFile = null;
-  int deprecationLevel = 0;
+  DeprecationWarnings deprecationWarnings = CompilerOptions.DeprecationWarnings.ON;
   boolean debugSuppressed = true;
   org.quattor.pan.CompilerOptions compilerOptions = null;
   
@@ -74,8 +76,9 @@ public class PanParser {
    /**
     * Write deprecation message to standard output.
     */
-   public void deprecated(String message, Token token, int level) {
-     if ((compilerOptions != null) && (level <= compilerOptions.deprecationLevel)) {
+   public void deprecated(String message, Token token) {
+     if (compilerOptions != null) {
+
        StringBuilder msg = new StringBuilder("DEPRECATED ");
        if (token != null) {
          msg.append("[" + tplFile + ":" + token.beginLine + "." + token.beginColumn + "]");
@@ -84,13 +87,16 @@ public class PanParser {
        }
        msg.append("\n");
        msg.append(message);
-
-       if (compilerOptions.failOnWarn) {
+       
+       switch (compilerOptions.deprecationWarnings) {
+       case OFF:
+         break;
+       case ON:
+         System.err.println(msg.toString());
+       case FATAL:
          ParseException pe = new ParseException(msg.toString());
          pe.sourceRange = PanParserUtils.sourceRangeFromTokens(token, token);
          throw pe;
-       } else {
-         System.err.println(msg.toString());         
        }
      }
    };

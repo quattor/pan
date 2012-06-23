@@ -23,6 +23,8 @@ package org.quattor.ant;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -117,6 +119,8 @@ public class PanCompilerTask extends Task {
 
 	private String rootElement = null;
 
+	private Set<Formatter> formatters = new TreeSet<Formatter>();
+
 	public PanCompilerTask() {
 		setFormatter("pan");
 	}
@@ -176,10 +180,10 @@ public class PanCompilerTask extends Task {
 		if (outputDirectory != null && checkDependencies) {
 
 			DependencyChecker checker = new DependencyChecker(
-					includeDirectories, ignoreDependencyPattern);
+					includeDirectories, outputDirectory, formatters,
+					ignoreDependencyPattern);
 
-			outdatedFiles = checker.extractOutdatedFiles(objectFiles,
-					outputDirectory, gzipOutput);
+			outdatedFiles = checker.filterForOutdatedFiles(objectFiles);
 
 			if (debugVerbose) {
 				System.err.println("Outdated profiles: \n");

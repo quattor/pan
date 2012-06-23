@@ -45,6 +45,7 @@ import java.util.logging.Logger;
 
 import org.quattor.pan.Compiler;
 import org.quattor.pan.CompilerLogging.LoggingType;
+import org.quattor.pan.CompilerOptions;
 import org.quattor.pan.cache.BuildCache;
 import org.quattor.pan.cache.CompileCache;
 import org.quattor.pan.dml.Operation;
@@ -123,7 +124,7 @@ public class BuildContext implements Context {
 
 	private boolean checkObjectDependencies;
 
-	public final int deprecationLevel;
+	public final CompilerOptions.DeprecationWarnings deprecationWarnings;
 
 	private static final Template emptyTemplate;
 
@@ -181,9 +182,9 @@ public class BuildContext implements Context {
 		// Copy in a couple of options used for function evaluation. The
 		// compiler will be null for compile-time DML evaluations.
 		if (compiler != null) {
-			this.deprecationLevel = compiler.options.deprecationLevel;
+			this.deprecationWarnings = compiler.options.deprecationWarnings;
 		} else {
-			this.deprecationLevel = -1;
+			this.deprecationWarnings = CompilerOptions.DeprecationWarnings.OFF;
 		}
 
 		// Set the root to the rootElement compiler option.
@@ -1375,12 +1376,8 @@ public class BuildContext implements Context {
 		return relativeLoadpaths;
 	}
 
-	public int getDeprecationLevel() {
-		return deprecationLevel;
-	}
-
-	public boolean getFailOnWarn() {
-		return compiler.options.failOnWarn;
+	public CompilerOptions.DeprecationWarnings getDeprecationWarnings() {
+		return deprecationWarnings;
 	}
 
 }

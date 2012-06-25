@@ -27,6 +27,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.quattor.pan.exceptions.SystemException;
 
 public class FormatterUtilsTest {
 
@@ -48,7 +49,7 @@ public class FormatterUtilsTest {
 		FormatterUtils.createParentDirectories(f2);
 	}
 
-	@Test
+	@Test(expected = SystemException.class)
 	public void checkCannotCreateParents() {
 		String tmpFilePath = existingTempFile.getAbsolutePath();
 		String invalidPath = tmpFilePath + File.separator + "should-fail";

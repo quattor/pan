@@ -77,10 +77,15 @@ public class FormatterUtils {
 	 */
 	public static void createParentDirectories(File file) {
 		File parent = file.getParentFile();
-		if (!parent.exists() && !parent.mkdirs()) {
-			throw new SystemException(MessageUtils.format(
-					MSG_CANNOT_CREATE_OUTPUT_DIRECTORY,
-					parent.getAbsolutePath()), parent);
+		if (!parent.isDirectory()) {
+			// Test the creation separately as there appears to be a race
+			// condition that causes unit tests to sometimes fail.
+			boolean created = parent.mkdirs();
+			if (!created && !parent.isDirectory()) {
+				throw new SystemException(MessageUtils.format(
+						MSG_CANNOT_CREATE_OUTPUT_DIRECTORY,
+						parent.getAbsolutePath()), parent);
+			}
 		}
 
 	}

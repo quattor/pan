@@ -61,13 +61,13 @@
      :debug-include-patterns [#".*"]}
     {}))
 
-(defmethod process :debug-exclude-patterns
+(defmethod process :debug-ns-include
   [[k v]]
-  {(keyword k) (pattern-list v)})
+  {:debug-include-patterns [(re-pattern v)]})
 
-(defmethod process :debug-include-patterns
+(defmethod process :debug-ns-exclude
   [[k v]]
-  {(keyword k) (pattern-list v)})
+  {:debug-exclude-patterns [(re-pattern v)]})
 
 (defmethod process :include-path
   [[k v]]
@@ -80,14 +80,6 @@
                            "include path must contain only existing directories: " 
                            (join " " bad-dirs)))))))
 
-(defmethod process :session-dir
-  [[k v]]
-  (let [d (absolute-file v)
-        ok? (directory? d)]
-    (if ok?          
-      {(keyword k) d}
-      (throw (Exception. (str name " must be an existing directory"))))))
-
 (defmethod process :output-dir
   [[k v]]
   (let [d (absolute-file v)
@@ -96,7 +88,6 @@
       {(keyword k) d}
       (throw (Exception. (str name " must be an existing directory"))))))
 
-;; FIXME: The formatters need to be accumulated into a single vector.
 (defmethod process :formats
   [[k v]]
   (str->formatters v))

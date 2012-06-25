@@ -17,12 +17,14 @@
     (catch Exception e nil)))
 
 (defn positive-integer
+  "Ensure that the given value is a positive integer, otherwise thrown an
+   IllegalArgumentException."
   [name value]
   (if-let [i (to-integer value)]
     (if (pos? i)
       {name i}
-      (throw (Exception. (str "only postive values for " name "are allowed"))))
-    (throw (Exception. (str "invalid integer value (" value ") for " name)))))
+      (throw (IllegalArgumentException. (str "only postive values for " name "are allowed"))))
+    (throw (IllegalArgumentException. (str "invalid integer value (" value ") for " name)))))
 
 (defn split-on-commas
   "Returns list of non-blank and non-null strings,
@@ -51,12 +53,3 @@
   (if (instance? File file)
     (.isDirectory file)))
 
-(defn pattern-list
-  "Takes a list of regular expression patterns in a single
-   string separated by whitespace and returns a list of
-   regular expressions."
-  ([]
-    (pattern-list nil))
-  ([s]
-    (let [patterns-as-string (or s "")]
-      (map re-pattern (split-on-commas patterns-as-string)))))

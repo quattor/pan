@@ -35,36 +35,28 @@
   (is (thrown? Exception (process :formats "unknown"))))
 
 (deftest test-debug-exclude-patterns
-  (let [patterns [".*OK.*" ".*OK2.*"]
-        patterns-as-string (join " " patterns)
-        result (process [:debug-exclude-patterns patterns-as-string])
-        regex (:debug-exclude-patterns result)]
+  (let [pattern ".*OK.*"
+        result (process [:debug-ns-exclude pattern])
+        regex-list (:debug-exclude-patterns result)
+        regex (first regex-list)]
     (is (= 1 (count result)))
-    (is (= 2 (count regex)))
-    (is (every? (partial instance? Pattern) regex))
-    (let [[regex1 regex2] regex]
-      (is (re-matches regex1 "...OK..."))
-      (is (re-matches regex1 "xxxOKxxx"))
-      (is (not (re-matches regex1 "...BAD...")))
-      (is (re-matches regex2 "...OK2..."))
-      (is (re-matches regex2 "xxxOK2xxx"))
-      (is (not (re-matches regex2 "...BAD2..."))))))
+    (is (= 1 (count regex-list)))
+    (is (instance? Pattern regex))
+    (is (re-matches regex "...OK..."))
+    (is (re-matches regex "xxxOKxxx"))
+    (is (not (re-matches regex "...BAD...")))))
 
 (deftest test-debug-include-patterns
-  (let [patterns [".*OK.*" ".*OK2.*"]
-        patterns-as-string (join " " patterns)
-        result (process [:debug-include-patterns patterns-as-string])
-        regex (:debug-include-patterns result)]
+  (let [pattern ".*OK.*"
+        result (process [:debug-ns-include pattern])
+        regex-list (:debug-include-patterns result)
+        regex (first regex-list)]
     (is (= 1 (count result)))
-    (is (= 2 (count regex)))
-    (is (every? (partial instance? Pattern) regex))
-    (let [[regex1 regex2] regex]
-      (is (re-matches regex1 "...OK..."))
-      (is (re-matches regex1 "xxxOKxxx"))
-      (is (not (re-matches regex1 "...BAD...")))
-      (is (re-matches regex2 "...OK2..."))
-      (is (re-matches regex2 "xxxOK2xxx"))
-      (is (not (re-matches regex2 "...BAD2..."))))))
+    (is (= 1 (count regex-list)))
+    (is (instance? Pattern regex))
+    (is (re-matches regex "...OK..."))
+    (is (re-matches regex "xxxOKxxx"))
+    (is (not (re-matches regex "...BAD...")))))
 
 (deftest test-max-iteration
   (is (= 1 (:max-iteration (process [:max-iteration "1"]))))

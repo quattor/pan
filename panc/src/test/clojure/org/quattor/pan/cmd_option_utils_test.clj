@@ -43,16 +43,3 @@
   (is (directory? (absolute-file)))
   (is (not (directory? nil)))
   (is (not (directory? (absolute-file "/dummy/file/")))))
-
-(deftest test-pattern-list []
-  ;; identical patterns are not equal to each other so
-  ;; only count the return values, don't compare regexes
-  (is (= [] (pattern-list)))
-  (are [x y] (= x (count (pattern-list y)))
-       0 nil
-       1 "[abc]*,"
-       1 "[abc]*,"
-       1 " [abc]*,"
-       1 "[abc]* ,"
-       1 "[abc]* ,, "
-       2 "[abc]* ,, [def]+"))

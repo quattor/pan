@@ -73,7 +73,6 @@
        ["--debug-ns-exclude" "ns regex to exclude debugging"]
        ["--initial-data" "set root element (must be nlist)"]
        ["--include-path" "template lookup path"]
-       ["--session-dir" "session directory"]
        ["--output-dir" "output directory" ]
        ["--formats" "generated output formats" :default "pan,dep"]
        ["--java-opts" "options for JVM"]

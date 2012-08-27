@@ -13,6 +13,7 @@ import org.quattor.pan.CompilerOptions;
 import org.quattor.pan.CompilerResults;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.output.Formatter;
+import org.quattor.pan.output.FormatterComparator;
 import org.quattor.pan.output.FormatterUtils;
 
 /**
@@ -31,26 +32,40 @@ public class PanBuildMojo extends AbstractPanMojo {
 
 	/**
 	 * @description directory for generated profiles
-	 * @parameter expression="${panc.outputDirectory}"
+	 * @parameter expression="${panc.outputDir}"
 	 *            default-value="${basedir}/target"
 	 * @required
 	 */
-	private File outputDirectory;
+	private File outputDir;
 
 	/**
-	 * @description formatter to use
-	 * @parameter expression="${panc.formatterName}" default-value="pan"
+	 * @description maximum number of iterations
+	 * @parameter expression="${panc.maxIteration}" default-value=10000
 	 * @required
 	 */
-	private String formatterName = "pan";
+	private int maxIteration = 10000;
 
-	private Formatter formatter;
+	/**
+	 * @description maximum number of recursions
+	 * @parameter expression="${panc.maxRecursion}" default-value=10
+	 * @required
+	 */
+	private int maxRecursion = 10;
+
+	/**
+	 * @description list of formats for output files (comma-separated list)
+	 * @parameter expression="${panc.formats}" default-value="pan,dep"
+	 * @required
+	 */
+	private String formats = "pan,dep";
+
+	private Set<Formatter> formatters;
 
 	public void execute() throws MojoExecutionException {
 
 		setFormatter();
 
-		createOutputDirectory();
+		createoutputDir();
 
 		CompilerOptions options = createCompilerOptions();
 
@@ -68,19 +83,19 @@ public class PanBuildMojo extends AbstractPanMojo {
 
 	}
 
-	private void setFormatter() throws MojoExecutionException {
-		formatter = FormatterUtils.getFormatterInstance(formatterName);
+	private void setFormatters() throws MojoExecutionException {
+		formatters = new TreeSet<Formatter>(FormatterComparator.getInstance());
+		
 		if (formatter == null) {
 			throw new MojoExecutionException("unknown formatter: "
 					+ formatterName);
 		}
 	}
 
-	private void createOutputDirectory() throws MojoExecutionException {
-		if (!outputDirectory.isDirectory()) {
-			if (!outputDirectory.mkdirs()) {
-				throw new MojoExecutionException("error creating "
-						+ outputDirectory);
+	private void createoutputDir() throws MojoExecutionException {
+		if (!outputDir.isDirectory()) {
+			if (!outputDir.mkdirs()) {
+				throw new MojoExecutionException("error creating " + outputDir);
 			}
 		}
 	}
@@ -106,7 +121,7 @@ public class PanBuildMojo extends AbstractPanMojo {
 		try {
 			return new CompilerOptions(debugIncludePatterns,
 					debugExcludePatterns, iterationLimit, callDepthLimit,
-					formatters, outputDirectory, sessionDirectory,
+					formatters, outputDir, sessionDirectory,
 					includeDirectories, nthread,
 					CompilerOptions.DeprecationWarnings.OFF, forceBuild,
 					annotationDirectory, annotationBaseDirectory, null);

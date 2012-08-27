@@ -37,5 +37,12 @@ public abstract class AbstractPanMojo extends AbstractMojo {
      */
     protected boolean failOnWarn = false;
 
+    /**
+     * @description warnings flag ("on", "off", or "fatal")
+     * @parameter expression="${panc.warnings}" default-value="on"
+     * @required
+     */
+    protected String warnings = "on";
+
     abstract public void execute() throws MojoExecutionException;
 }

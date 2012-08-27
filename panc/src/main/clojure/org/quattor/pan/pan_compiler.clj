@@ -69,7 +69,7 @@
 (defn process-cli-args [args]
   (cli args
        ["--debug" "enable all debugging" :default false :flag true]
-       ["--debug-ns-include" "ns regex for debugging"]
+       ["--debug-ns-include" "ns regex to include debugging"]
        ["--debug-ns-exclude" "ns regex to exclude debugging"]
        ["--initial-data" "set root element (must be nlist)"]
        ["--include-path" "template lookup path"]

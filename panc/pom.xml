@@ -270,6 +270,12 @@
     </dependency>
 
     <dependency>
+      <groupId>reply</groupId>
+      <artifactId>reply</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
       <groupId>jline</groupId>
       <artifactId>jline</artifactId>
       <scope>provided</scope>

@@ -34,6 +34,16 @@
     (is (= #{(XmlDBFormatter/getInstance)} (:formatter xmldb))))
   (is (thrown? Exception (process :formats "unknown"))))
 
+(deftest test-nil-debug-patterns
+  (let [result (process [:debug-ns-exclude nil])
+        regex-list (:debug-exclude-patterns result)]
+    (is (= 1 (count result)))
+    (is (= 0 (count regex-list))))
+  (let [result (process [:debug-ns-include nil])
+        regex-list (:debug-include-patterns result)]
+    (is (= 1 (count result)))
+    (is (= 0 (count regex-list)))))
+
 (deftest test-debug-exclude-patterns
   (let [pattern ".*OK.*"
         result (process [:debug-ns-exclude pattern])

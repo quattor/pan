@@ -2,9 +2,16 @@
   (:gen-class)
   (:use [clojure.tools.cli :only [cli]]
         [clojure.java.io :only [file]]
+        [clojure.pprint :only [pprint]]
         [org.quattor.pan.cmd-option :only (to-settings)])
   (:require [org.quattor.pan.settings :as settings])
   (:import [org.quattor.pan CompilerOptions CompilerResults]))
+
+(def ^:const bug-report-msg
+  "**********
+An unexpected exception was thrown in the compiler.
+Please file a bug report with including the stack trace.
+**********")
 
 (defn create-compiler-options []
   (let [ {:keys [debugIncludePatterns
@@ -85,11 +92,12 @@
        ["-h" "--help" "print command help" :default false :flag true]))
 
 (defn banner-and-exit [banner]
-  (println (str "\npanc-new [options] [pan source files...]\n\n" banner))
+  (println (str "\npanc [options] [pan source files...]\n\n" banner))
   (System/exit 0))
 
-(defn compiler-error-and-exit [e]
-  (println (.getMessage e))
+(defn compiler-error-and-exit [t]
+  (println bug-report-msg)
+  (.printStackTrace t)
   (System/exit 1))
 
 (defn build-profiles [options pan-sources] 
@@ -111,6 +119,6 @@
           (if (:verbose options)
             (println (.formatStats results)))
           (System/exit rc))))
-    (catch Exception e
-      (compiler-error-and-exit e))))
+    (catch Throwable t
+      (compiler-error-and-exit t))))
   

@@ -1,9 +1,8 @@
 (ns org.quattor.pan.cmd-option
-  (:use [org.quattor.pan.cmd-option-utils]
-        [clojure.string :only [split blank? join]]
-        [clojure.java.io :only [as-file]])
-  (:require [org.quattor.pan.settings :as settings])
-  (:import (org.quattor.pan.output TxtFormatter 
+  (:require [clojure.string :as str]
+            [org.quattor.pan.settings :as settings]
+            [org.quattor.pan.cmd-option-utils :as utils])
+  (:import [org.quattor.pan.output TxtFormatter 
                                    JsonFormatter
                                    JsonGzipFormatter
                                    DotFormatter 
@@ -12,8 +11,9 @@
                                    XmlFormatter
                                    XmlGzipFormatter
                                    XmlDBFormatter
-                                   DepFormatter)
-           (org.quattor.pan CompilerOptions$DeprecationWarnings)))
+                                   DepFormatter]
+           [org.quattor.pan CompilerOptions$DeprecationWarnings]
+           [clojure.lang ExceptionInfo]))
 
 (declare process)
 
@@ -23,7 +23,7 @@
 (defn str->formatters
   "Returns map with vector of formatters from comma-separated list of formatter names."
   [s]
-  (let [names (split s #"\s*,\s*")]
+  (let [names (str/split s #"\s*,\s*")]
     {:formatter 
      (reduce
        (fn [v name]
@@ -39,7 +39,8 @@
            "xmldb" (conj v (XmlDBFormatter/getInstance))
            "dep" (conj v (DepFormatter/getInstance))
            "none" v
-           (throw (Exception. (str "unknown formatter: " name)))))
+           (let [msg (str "unknown formatter: " name)]
+             (throw (ex-info msg {:type :options :msg msg})))))
        #{}
        names)}))
 
@@ -73,22 +74,23 @@
 
 (defmethod process :include-path
   [[k v]]
-  (let [paths (split-on-commas v)
-        dirs (map absolute-file paths)
-        bad-dirs (filter (complement directory?) dirs)]
+  (let [paths (utils/split-path v)
+        dirs (map utils/absolute-file paths)
+        bad-dirs (filter (complement utils/directory?) dirs)]
     (if (= 0 (count bad-dirs))
       {(keyword k) dirs}
-      (throw (Exception. (str 
-                           "include path must contain only existing directories: " 
-                           (join " " bad-dirs)))))))
+      (let [msg (str "include path must contain only existing directories: " 
+                     (str/join " " bad-dirs))]
+        (throw (ex-info msg {:type :options :msg msg}))))))
 
 (defmethod process :output-dir
   [[k v]]
-  (let [d (absolute-file v)
-        ok? (directory? d)]
+  (let [d (utils/absolute-file v)
+        ok? (utils/directory? d)]
     (if ok?          
       {(keyword k) d}
-      (throw (Exception. (str name " must be an existing directory"))))))
+      (let [msg (str name " must be an existing directory")]
+        (throw (ex-info msg {:type :options :msg msg}))))))
 
 (defmethod process :formats
   [[k v]]
@@ -96,19 +98,19 @@
 
 (defmethod process :max-iteration
   [[k v]]
-  (positive-integer (keyword k) v))
+  (utils/positive-integer (keyword k) v))
 
 (defmethod process :max-recursion
   [[k v]]
-  (positive-integer (keyword k) v))
+  (utils/positive-integer (keyword k) v))
 
 (defmethod process :logging
   [[k v]]
-  {(keyword k) (split-on-commas v)})
+  {(keyword k) (utils/split-on-commas v)})
 
 (defmethod process :log-file
   [[k v]]
-  {(keyword k) (absolute-file v)})
+  {(keyword k) (utils/absolute-file v)})
 
 (defmethod process :warnings
   [[k v]]
@@ -117,4 +119,6 @@
                   "fatal" {:warnings CompilerOptions$DeprecationWarnings/FATAL}}]
     (if-let [switch (switches v)]
       switch
-      (throw (Exception. (str k " value must be off, on, or fatal"))))))
+      (let [msg (str k " value must be off, on, or fatal")]
+        (throw (ex-info msg {:type :options :msg msg}))))))
+

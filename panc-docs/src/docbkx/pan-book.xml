@@ -273,7 +273,7 @@
       accessible from the path.</para>
 
       <screen>$ export PANC_HOME=/panc/location
-$ export PATH=$PATH:$PANC_HOME/bin</screen>
+$ export PATH=$PANC_HOME/bin:$PATH</screen>
 
       <para>The above will work for Bourne shells; adjust the command for the
       shell that you use. Change the value of <varname>PANC_HOME</varname> to
@@ -284,14 +284,12 @@ $ export PATH=$PATH:$PANC_HOME/bin</screen>
       <title>Validating the Installation</title>
 
       <para>Once you have installed the compiler, make sure that it is working
-      correctly by using the commands:</para>
+      correctly by using the command:</para>
 
-      <screen>$ panc --version
-$ panc --help</screen>
+      <screen>$ panc --help</screen>
 
-      <para>The first command will return the version of the compiler; the
-      second will give a complete list of all of the available options. If
-      either command fails, review the installation instructions.</para>
+      <para>This gives a complete list of all of the available options. If the
+      command fails, review the installation instructions.</para>
     </section>
 
     <section>
@@ -324,10 +322,11 @@ $ cat hello_world.xml
       field in the pan template.</para>
 
       <para>The pan compiler can generate output in three additional formats:
-      json, text, and dot. The following shows the output for the json
-      format.</para>
+      json, text, and dot. The following shows the output for the json format
+      that was written to the <filename>hello_world.json</filename>
+      file.</para>
 
-      <screen>$ panc --xml-style=json hello_world.pan 
+      <screen>$ panc --formats json hello_world.pan 
 
 $ cat hello_world.json 
 {
@@ -335,29 +334,29 @@ $ cat hello_world.json
 } </screen>
 
       <warning>
-        <para>The alternate XML format "xmldb" is deprecated. This format is
-        not compatible with arbitrary nlist keys. Use the 'pan' XML format for
-        the JSON format instead. </para>
+        <para>The alternate XML format "xmldb" is
+        <emphasis>deprecated</emphasis>. This format is not compatible with
+        arbitrary nlist keys. Use the 'pan' XML format or the JSON format
+        instead.</para>
       </warning>
 
       <para>In this book, the most convenient representation is the text
       format. This provides a clean representation of the configuration tree
       in plain text.</para>
 
-      <screen>$ panc --xml-style=text hello_world.pan
+      <screen>$ panc --formats text hello_world.pan
 
 $ cat hello_world.txt
 +-profile
         $ message : (string) 'hello'</screen>
 
-      <para>Note that the output file is named
-      <filename>hello_world.txt</filename> and no longer
-      <filename>hello_world.xml</filename>. It provides the same information
-      as the XML formats, but is easier to read.</para>
+      <para>The output file is named <filename>hello_world.txt</filename>. It
+      provides the same information as the other formats, but is easier to
+      read.</para>
 
       <para>The last style is the "dot" format.</para>
 
-      <screen>$ panc --xml-style=dot hello_world.pan
+      <screen>$ panc --formats dot hello_world.pan
 
 $ cat hello_world.dot
 digraph "profile" {
@@ -501,7 +500,7 @@ edge [ color = black ]
 
       <para>These templates can be compiled with the following command:</para>
 
-      <screen>$ panc --xml-style=text *.pan</screen>
+      <screen>$ panc --formats text *.pan</screen>
 
       <para>which then produces the files
       <filename>server.example.org.txt</filename> and
@@ -593,7 +592,7 @@ include 'services/batch-worker';</programlisting>
       <para>The command to compile these object templates is slightly
       different:</para>
 
-      <screen>$ panc --xml-style=text profiles/*.pan</screen>
+      <screen>$ panc --formats text profiles/*.pan</screen>
 
       <para>The output files by default will be placed next to the object
       template, so in this case they will be in the

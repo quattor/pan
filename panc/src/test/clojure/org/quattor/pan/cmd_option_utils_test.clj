@@ -1,9 +1,11 @@
 (ns org.quattor.pan.cmd-option-utils-test
   (:use org.quattor.pan.cmd-option-utils
-        [clojure.test :only [deftest is are]]
-        [clojure.java.io :only [file]])
+        [clojure.test :only [deftest is are]])
+  (:require [clojure.string :as str]
+            [clojure.java.io :as io])
   (:import [java.util.regex Pattern]
-           [java.net URL]))
+           [java.net URL]
+           [java.io File]))
 
 (deftest test-to-integer []
   (is (= 0 (to-integer "0")))
@@ -28,16 +30,25 @@
          "a , b , c"
          " a , b, c , ")))
 
+(deftest test-split-path []
+  (let [correct ["a" "b" "c"]]
+    (is (= [] (split-path nil)))
+    (are [x] (= correct (split-path x))
+         (str/join File/pathSeparator ["a" "b" "c"])
+         (str/join File/pathSeparator ["a" "" "b" "" "c"])
+         (str/join File/pathSeparator ["" "a" "b" "c"])
+         (str/join File/pathSeparator ["a" "b" "c" ""]))))
+
 (deftest test-absolute-file []
   (let [user-dir (System/getProperty "user.dir")]
-    (is (= (file user-dir) (absolute-file)))
+    (is (= (io/file user-dir) (absolute-file)))
     (are [x y] (= x (absolute-file y))
-         (file user-dir) nil
-         (file user-dir) ""
-         (file "/my/file") "/my/file"
-         (file "/my/file") (URL. "file:///my/file")
-         (file user-dir "relative/file") "relative/file"
-         (file user-dir "relative/file") (URL. "file:relative/file"))))
+         (io/file user-dir) nil
+         (io/file user-dir) ""
+         (io/file "/my/file") "/my/file"
+         (io/file "/my/file") (URL. "file:///my/file")
+         (io/file user-dir "relative/file") "relative/file"
+         (io/file user-dir "relative/file") (URL. "file:relative/file"))))
 
 (deftest test-directory? []
   (is (directory? (absolute-file)))

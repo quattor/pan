@@ -1,16 +1,17 @@
 (ns org.quattor.pan.cmd-option-test
   (:use clojure.test
-        [clojure.string :only (join)]
-        [clojure.set :only (subset?)]
+        [clojure.string :only [join]]
+        [clojure.set :only [subset?]]
         org.quattor.pan.cmd-option)
-  (:import (org.quattor.pan.output TxtFormatter 
+  (:import [org.quattor.pan.output TxtFormatter 
                                    JsonFormatter 
                                    DotFormatter 
                                    PanFormatter 
                                    XmlDBFormatter
-                                   DepFormatter)
-           (org.quattor.pan CompilerOptions$DeprecationWarnings)
-           (java.util.regex Pattern)))
+                                   DepFormatter]
+           [org.quattor.pan CompilerOptions$DeprecationWarnings]
+           [java.util.regex Pattern]
+           [clojure.lang ExceptionInfo]))
 
 (deftest test-to-settings
   (is (subset? (set (seq {:verbose true :compress true}))
@@ -32,7 +33,7 @@
     (is (= #{(JsonFormatter/getInstance)} (:formatter json)))
     (is (= #{(DotFormatter/getInstance)} (:formatter dot)))
     (is (= #{(XmlDBFormatter/getInstance)} (:formatter xmldb))))
-  (is (thrown? Exception (process :formats "unknown"))))
+  (is (thrown? ExceptionInfo (process [:formats "unknown"]))))
 
 (deftest test-nil-debug-patterns
   (let [result (process [:debug-ns-exclude nil])
@@ -71,14 +72,14 @@
 (deftest test-max-iteration
   (is (= 1 (:max-iteration (process [:max-iteration "1"]))))
   (is (= 1000 (:max-iteration (process [:max-iteration "1000"]))))
-  (is (thrown? Exception (process [:max-iteration "-1"])))
-  (is (thrown? Exception (process [:max-iteration "a"]))))
+  (is (thrown? ExceptionInfo (process [:max-iteration "-1"])))
+  (is (thrown? ExceptionInfo (process [:max-iteration "a"]))))
 
 (deftest test-max-recursion
   (is (= 1 (:max-recursion (process [:max-recursion "1"]))))
   (is (= 1000 (:max-recursion (process [:max-recursion "1000"]))))
-  (is (thrown? Exception (process [:max-recursion "-1"])))
-  (is (thrown? Exception (process [:max-recursion "a"]))))
+  (is (thrown? ExceptionInfo (process [:max-recursion "-1"])))
+  (is (thrown? ExceptionInfo (process [:max-recursion "a"]))))
 
 (deftest test-warnings
   (let [off (process [:warnings "off"])
@@ -87,7 +88,7 @@
     (is (= CompilerOptions$DeprecationWarnings/OFF (:warnings off)))
     (is (= CompilerOptions$DeprecationWarnings/ON (:warnings on)))
     (is (= CompilerOptions$DeprecationWarnings/FATAL (:warnings fatal))))
-  (is (thrown? Exception (process [:warnings "unknown"]))))
+  (is (thrown? ExceptionInfo (process [:warnings "unknown"]))))
   
 (deftest test-verbose
   (are [x y] (= x (:verbose (process [:verbose y])))

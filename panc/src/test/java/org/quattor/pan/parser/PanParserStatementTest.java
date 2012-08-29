@@ -38,9 +38,8 @@ public class PanParserStatementTest {
 		parseStatement(";");
 
 		// Include statements.
-		// These statements are not deprecated.
-		// parseStatement("include alpha;");
-		// parseStatement("include alpha/beta;");
+		parseStatement("include 'alpha';");
+		parseStatement("include \"alpha\";");
 		parseStatement("include {'alpha'};");
 		parseStatement("include {null};");
 		parseStatement("include {undef};");
@@ -90,11 +89,6 @@ public class PanParserStatementTest {
 
 		// Function definition.
 		parseStatement("function x = {'result'};");
-	}
-
-	@Test(expected = ParseException.class)
-	public void illegalInclude1() {
-		parseStatement("include 'alpha';");
 	}
 
 	@Test(expected = ParseException.class)

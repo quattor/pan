@@ -60,6 +60,23 @@
     <title>ChangeLog</title>
 
     <section>
+      <title>Version 9.3</title>
+
+      <itemizedlist>
+        <listitem>
+          <para>The include syntax without required braces is now
+          allowed.</para>
+        </listitem>
+
+        <listitem>
+          <para>The panc command now uses a streamlined set of options that
+          are not compatible with the previous one. The previous one can be
+          invoked with the panc-old command.</para>
+        </listitem>
+      </itemizedlist>
+    </section>
+
+    <section>
       <title>Version 9.2</title>
 
       <itemizedlist>
@@ -70,7 +87,7 @@
 
         <listitem>
           <para>(SF RFE #3489504) Provide a maven build mojo. A rudimentary
-          implementation is available in the panc maven plugin. </para>
+          implementation is available in the panc maven plugin.</para>
         </listitem>
 
         <listitem>

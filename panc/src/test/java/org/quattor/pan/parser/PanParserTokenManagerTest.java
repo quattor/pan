@@ -259,22 +259,6 @@ public class PanParserTokenManagerTest {
 			assertEquals("check 'image' field for identifier (" + s + ")", s,
 					token.image);
 		}
-
-		// Check the same mode for 'include'.
-		for (int i = 0; i < values.length; i++) {
-			String s = values[i];
-			int kind = kinds[i];
-
-			ArrayList<Token> tokens = parseString("include " + s);
-			assertEquals("check number two tokens returned", 2, tokens.size());
-
-			Token token = tokens.get(1);
-			assertEquals("check 'kind' field for identifier (" + s + ")", kind,
-					token.kind);
-			assertEquals("check 'image' field for identifier (" + s + ")", s,
-					token.image);
-		}
-
 	}
 
 	@Test

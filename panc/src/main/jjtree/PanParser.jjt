@@ -373,7 +373,7 @@ TOKEN : /* Reserved words and operators. */
   | 
   <FOREACH: "foreach" >
   | 
-  <INCLUDE: "include" > : NAMESPACE
+  <INCLUDE: "include" >
   |
   <TEMPLATE: "template"> : NAMESPACE
   | 
@@ -567,7 +567,7 @@ void statement() #Statement :
   }
   |
   /* Static and DML include statements. */
-  b=<INCLUDE> dmlSequence() e=<SEMICOLON>
+  b=<INCLUDE> dml() e=<SEMICOLON>
   { 
     jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(b,e));
     jjtThis.setStatementType(ASTStatement.StatementType.INCLUDE);
@@ -732,7 +732,7 @@ void fieldSpec() #FieldSpec :
     jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(p,p));
   }
   |
-  <INCLUDE> t=<NS_IDENTIFIER>
+  <INCLUDE> t=<IDENTIFIER>
   {
     jjtThis.setInclude(t.image);
     jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(t,t));

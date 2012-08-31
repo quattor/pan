@@ -132,7 +132,7 @@ abstract public class PanTxtFormatter extends AbstractFormatter {
 			String name, String type, String value);
 
 	/**
-	 * Calculates the number of tabulations to write at the begining of a line
+	 * Calculates the number of tabulations to write at the beginning of a line
 	 * 
 	 * @param n
 	 *            number of tabulations
@@ -141,7 +141,7 @@ abstract public class PanTxtFormatter extends AbstractFormatter {
 		StringBuilder buf = new StringBuilder("");
 
 		for (int i = 1; i <= n; i++) {
-			buf.append("\t");
+			buf.append("  ");
 		}
 		String tab = buf.toString();
 		return tab;

@@ -22,8 +22,9 @@
     <para>The compiler can be invoked from the command line by using
     <command>panc</command>. This is a script that is installed with the pan
     compiler package that invokes a Java virtual machine and the compiler. The
-    script options have been designed to be as compatible with previous
-    versions of the <command>panc</command> command as possible.</para>
+    script options are not compatible with previous versions of this command;
+    use <command>panc-old</command> to use the older options. Note that the
+    <command>panc-old</command> command is deprecated.</para>
 
     <para>The full list of options can be obtained with the
     <option>--help</option> option or by looking on the relevant man

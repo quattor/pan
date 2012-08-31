@@ -69,9 +69,16 @@
         </listitem>
 
         <listitem>
-          <para>The panc command now uses a streamlined set of options that
-          are not compatible with the previous one. The previous one can be
-          invoked with the panc-old command.</para>
+          <para>The <command>panc</command> command no longer includes the
+          possibility to process annotations. This functionality is now in a
+          separate command <command>panc-annotations</command>.</para>
+        </listitem>
+
+        <listitem>
+          <para>The <command>panc</command> command now uses a streamlined set
+          of options that are not compatible with the previous one. The
+          previous one can be invoked with the <command>panc-old</command>
+          command.</para>
         </listitem>
       </itemizedlist>
     </section>

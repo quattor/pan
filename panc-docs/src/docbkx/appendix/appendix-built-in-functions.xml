@@ -15,8 +15,8 @@
   user-defined functions when possible. Because they are built into the
   compiler, the argument processing is different than that for user-defined
   functions. In particular, some arguments may be evaluated only when
-  necessary and <literal>null</literal> can be a valid function argument.
-  </para>
+  necessary and <literal>null</literal> can be a valid function
+  argument.</para>
 
   <refentry xml:id="append">
     <info>
@@ -27,7 +27,7 @@
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -139,7 +139,7 @@
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -190,7 +190,7 @@
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -238,7 +238,7 @@
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -287,7 +287,7 @@
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -354,7 +354,7 @@ structure template mount_cdrom;
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -402,7 +402,7 @@ structure template mount_cdrom;
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -460,7 +460,7 @@ structure template mount_cdrom;
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -511,7 +511,7 @@ structure template mount_cdrom;
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -563,7 +563,7 @@ structure template mount_cdrom;
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -620,7 +620,7 @@ function foo = {
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -673,7 +673,7 @@ function foo = {
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -756,7 +756,7 @@ r = exists(v+'');</programlisting>
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -804,7 +804,7 @@ r = exists(v+'');</programlisting>
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -888,7 +888,7 @@ ok = first(table, k, v);
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -943,7 +943,7 @@ ok = first(table, k, v);
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -998,7 +998,7 @@ ok = first(table, k, v);
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -1187,7 +1187,7 @@ ok = first(table, k, v);
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -1233,7 +1233,7 @@ ok = first(table, k, v);
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -1281,7 +1281,7 @@ ok = first(table, k, v);
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -1327,7 +1327,7 @@ ok = first(table, k, v);
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -1373,7 +1373,7 @@ ok = first(table, k, v);
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -1419,7 +1419,7 @@ ok = first(table, k, v);
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -1465,7 +1465,7 @@ ok = first(table, k, v);
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -1513,7 +1513,7 @@ ok = first(table, k, v);
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -1559,7 +1559,7 @@ ok = first(table, k, v);
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -1605,7 +1605,7 @@ ok = first(table, k, v);
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -1651,7 +1651,7 @@ ok = first(table, k, v);
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -1697,7 +1697,7 @@ ok = first(table, k, v);
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -1764,7 +1764,7 @@ ok = first(table, k, v);
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -1815,7 +1815,7 @@ ok = first(table, k, v);
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -1869,7 +1869,7 @@ ok = first(table, k, v);
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -1919,7 +1919,7 @@ type device_t = string with match(self, ’ˆ(disk|cd|net)$’);</programlisting
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -1981,7 +1981,7 @@ type ipv4 = string with {
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -2037,7 +2037,7 @@ type ipv4 = string with {
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -2095,7 +2095,7 @@ type ipv4 = string with {
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -2149,7 +2149,7 @@ type ipv4 = string with {
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -2197,7 +2197,7 @@ type ipv4 = string with {
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -2309,7 +2309,7 @@ type ipv4 = string with {
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -2364,7 +2364,7 @@ type ipv4 = string with {
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -2415,7 +2415,7 @@ type ipv4 = string with {
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -2504,7 +2504,7 @@ type ipv4 = string with {
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -2572,7 +2572,7 @@ type ipv4 = string with {
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -2641,7 +2641,7 @@ type ipv4 = string with {
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -2690,7 +2690,7 @@ type ipv4 = string with {
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -2750,7 +2750,7 @@ type ipv4 = string with {
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -2811,7 +2811,7 @@ type ipv4 = string with {
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -2858,7 +2858,7 @@ type ipv4 = string with {
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -2904,7 +2904,7 @@ type ipv4 = string with {
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -2951,7 +2951,7 @@ type ipv4 = string with {
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -2999,7 +2999,7 @@ type ipv4 = string with {
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>
@@ -3046,7 +3046,7 @@ type ipv4 = string with {
       <date><?eval ${buildTimestamp}?></date>
 
       <copyright>
-        <year>2011</year>
+        <year>2012</year>
 
         <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
       </copyright>

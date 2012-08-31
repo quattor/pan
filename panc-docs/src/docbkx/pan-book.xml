@@ -309,7 +309,7 @@ $ export PATH=$PANC_HOME/bin:$PATH</screen>
 $ cat hello_world.xml
 &lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;nlist format="pan" name="profile"&gt;
-&lt;string name="message"&gt;Hello World!&lt;/string&gt;
+    &lt;string name="message"&gt;Hello World!&lt;/string&gt;
 &lt;/nlist&gt;</screen>
 
       <para>The output should look similar to what is shown above. As you can
@@ -348,7 +348,7 @@ $ cat hello_world.json
 
 $ cat hello_world.txt
 +-profile
-        $ message : (string) 'hello'</screen>
+  $ message : (string) 'hello'</screen>
 
       <para>The output file is named <filename>hello_world.txt</filename>. It
       provides the same information as the other formats, but is easier to
@@ -710,7 +710,7 @@ type batch_worker<co xml:id="batch-types-batch_worker" /> = {
 
       <programlisting>template services/batch-server;
 
-include { 'services/batch-types' };
+include 'services/batch-types';
 
 bind '/batch/server' = batch_server;
 
@@ -725,7 +725,7 @@ bind '/batch/server' = batch_server;
 
       <programlisting>template services/batch-worker;
 
-include { 'services/batch-types' };
+include 'services/batch-types';
 
 bind '/batch/worker' = batch_worker;
 
@@ -814,7 +814,7 @@ type batch_worker = {
 
       <programlisting>template services/batch-server;
 
-include { 'services/batch-types' };
+include 'services/batch-types';
 
 bind '/batch/server' = batch_server;
 
@@ -823,7 +823,7 @@ bind '/batch/server' = batch_server;
 
       <programlisting>template services/batch-worker;
 
-include { 'services/batch-types' };
+include 'services/batch-types';
 
 bind '/batch/worker' = batch_worker;
 
@@ -1030,7 +1030,7 @@ type batch_worker = {
 
       <programlisting>template services/batch-server;
 
-include { 'services/batch-types' };
+include 'services/batch-types';
 
 bind '/batch/server' = batch_server;
 
@@ -3349,7 +3349,7 @@ type root = {
 
       <programlisting>object template nfsserver.example.org;
 
-include { 'common/schema' };
+include 'common/schema';
 
 bind '/' = root;
 
@@ -3464,7 +3464,7 @@ bind '/' = root;
 
       <programlisting>object template nfsserver.example.org;
 
-include { 'common/schema' };
+include 'common/schema';
 
 bind '/' = root;
 
@@ -3564,14 +3564,14 @@ bind '/pair' = KV_PAIR;
       using the directory hierarchy of the source files, <emphasis>not the
       namespace hierarchy</emphasis>. When processing the files, you must
       provide both the desired output directory (which must exist) using the
-      <option>--annotation-dir</option> option, as well as the root file
-      system directory for all of the processed files with the
-      <option>--annotation-base-dir</option> option. Using the following
-      command to process the file:</para>
+      <option>--output-dir</option> option, as well as the root file system
+      directory for all of the processed files with the
+      <option>--base-dir</option> option. Using the following command to
+      process the file:</para>
 
-      <programlisting>$ panc \
-  --annotation-dir=annotations \
-  --annotation-base-dir=. \
+      <programlisting>$ panc-annotations \
+  --output-dir=annotations \
+  --base-dir=. \
   annotations.pan</programlisting>
 
       <para>will produce the following output in the file

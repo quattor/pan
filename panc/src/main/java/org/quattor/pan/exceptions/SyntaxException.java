@@ -85,9 +85,9 @@ public class SyntaxException extends Exception {
 	@Override
 	public String getMessage() {
 		StringBuilder sb = new StringBuilder("syntax error [");
-		sb.append((file != null) ? file.toString() : "<unknown>");
+		sb.append((file != null) ? file.toString() : "?");
 		sb.append(":");
-		sb.append((sourceRange != null) ? sourceRange.toString() : "<unknown>");
+		sb.append((sourceRange != null) ? sourceRange.toString() : "?");
 		sb.append("]\n");
 		sb.append(super.getMessage());
 		sb.append("\n");

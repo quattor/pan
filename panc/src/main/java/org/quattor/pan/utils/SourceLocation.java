@@ -47,9 +47,9 @@ public class SourceLocation {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("["); //$NON-NLS-1$
-		sb.append(template != null ? template.source : "<unknown>"); //$NON-NLS-1$
+		sb.append(template != null ? template.source : "?"); //$NON-NLS-1$
 		sb.append(":"); //$NON-NLS-1$
-		sb.append(sourceRange != null ? sourceRange.toString() : "<unknown>"); //$NON-NLS-1$
+		sb.append(sourceRange != null ? sourceRange.toString() : "?"); //$NON-NLS-1$
 		sb.append("]"); //$NON-NLS-1$
 		return sb.toString();
 	}

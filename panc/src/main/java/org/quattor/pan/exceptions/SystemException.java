@@ -51,7 +51,7 @@ public class SystemException extends RuntimeException {
 	@Override
 	public String getMessage() {
 		String s = "system error [";
-		s += (file != null) ? file.toString() : "<unknown>";
+		s += (file != null) ? file.toString() : "?";
 		s += "]\n";
 		s += super.getMessage() + "\n";
 		return s;

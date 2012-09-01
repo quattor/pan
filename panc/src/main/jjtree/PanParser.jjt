@@ -83,7 +83,7 @@ public class PanParser {
        if (token != null) {
          msg.append("[" + tplFile + ":" + token.beginLine + "." + token.beginColumn + "]");
        } else {
-         msg.append("[" + tplFile + ":<unknown>]");
+         msg.append("[" + tplFile + ":?]");
        }
        msg.append("\n");
        msg.append(message);

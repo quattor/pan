@@ -47,14 +47,14 @@ public abstract class Type {
 		if (source != null) {
 			this.source = source;
 		} else {
-			this.source = "<unknown>";
+			this.source = "?";
 		}
 
 		// If the location isn't defined, give default value.
 		if (sourceRange != null) {
 			this.sourceRange = sourceRange.toString();
 		} else {
-			this.sourceRange = "<unknown>";
+			this.sourceRange = "?";
 		}
 	}
 
@@ -141,7 +141,7 @@ public abstract class Type {
 
 	/**
 	 * Return a string representation of the source containing this type. If the
-	 * source wasn't set at creation this returns the string "<unknown>".
+	 * source wasn't set at creation this returns the string "?".
 	 * 
 	 * @return String source containing this type
 	 */
@@ -151,7 +151,7 @@ public abstract class Type {
 
 	/**
 	 * Retrieve the SourceRange for this type definition. If the location was
-	 * not defined at creation this returns the string "<unknown>".
+	 * not defined at creation this returns the string "?".
 	 * 
 	 * @return String location of this type definition
 	 */

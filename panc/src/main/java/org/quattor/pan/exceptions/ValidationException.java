@@ -90,7 +90,7 @@ public class ValidationException extends RuntimeException {
 
 		StringBuilder sb = new StringBuilder("validation error [");
 		sb.append((objectTemplate != null) ? objectTemplate.toString()
-				: "<unknown>");
+				: "?");
 		sb.append("]\n");
 		sb.append(super.getMessage());
 		sb.append("\n");
@@ -148,8 +148,8 @@ public class ValidationException extends RuntimeException {
 
 	public ValidationException addTypeToStack(String name, FullType type) {
 
-		String source = "<unknown>";
-		String sourceRange = "<unknown>";
+		String source = "?";
+		String sourceRange = "?";
 
 		if (type != null) {
 			source = type.getSource();

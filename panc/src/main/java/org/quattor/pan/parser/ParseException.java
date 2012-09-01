@@ -124,10 +124,10 @@ public class ParseException extends RuntimeException {
 		if (!specialConstructor) {
 			StringBuilder msg = new StringBuilder();
 			msg.append("parse error [");
-			msg.append((file != null) ? file.toString() : "<unknown>");
+			msg.append((file != null) ? file.toString() : "?");
 			msg.append(":");
 			msg.append((sourceRange != null) ? sourceRange.toString()
-					: "<unknown>");
+					: "?");
 			msg.append("]\n");
 			msg.append(super.getMessage());
 			return msg.toString();
@@ -148,7 +148,7 @@ public class ParseException extends RuntimeException {
 			expected.append(eol).append("    ");
 		}
 		String retval = "parse error ";
-		retval += (file != null) ? "[" + file + ":" : "[<unknown>:";
+		retval += (file != null) ? "[" + file + ":" : "[?:";
 		if (sourceRange != null) {
 			retval += sourceRange.toString() + "]\n";
 		} else {

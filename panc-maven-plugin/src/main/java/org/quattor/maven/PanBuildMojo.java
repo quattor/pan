@@ -63,7 +63,7 @@ public class PanBuildMojo extends AbstractPanMojo {
 
 	public void execute() throws MojoExecutionException {
 
-		setFormatter();
+		setFormatters();
 
 		createoutputDir();
 
@@ -86,10 +86,7 @@ public class PanBuildMojo extends AbstractPanMojo {
 	private void setFormatters() throws MojoExecutionException {
 		formatters = new TreeSet<Formatter>(FormatterComparator.getInstance());
 		
-		if (formatter == null) {
-			throw new MojoExecutionException("unknown formatter: "
-					+ formatterName);
-		}
+		// TODO: Add method to transform formats to formatters.
 	}
 
 	private void createoutputDir() throws MojoExecutionException {
@@ -114,9 +111,6 @@ public class PanBuildMojo extends AbstractPanMojo {
 		File annotationBaseDirectory = null;
 		LinkedList<File> includeDirectories = new LinkedList<File>();
 		includeDirectories.add(sourceDirectory);
-
-		Set<Formatter> formatters = new TreeSet<Formatter>();
-		formatters.add(formatter);
 
 		try {
 			return new CompilerOptions(debugIncludePatterns,

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 panc_show_help=false
 panc_show_version=false

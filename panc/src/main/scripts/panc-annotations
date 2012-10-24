@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if [ -n "$JAVA_HOME" ] ; then
 	javaexe=$JAVA_HOME"/bin/java"

@@ -29,7 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
+import java.util.HashSet;
 
 import org.junit.Test;
 import org.quattor.pan.dml.data.Element;
@@ -54,7 +54,7 @@ public class CompilerOptionsTest {
 
 		Formatter formatter = PanFormatter.getInstance();
 
-		Set<Formatter> formatters = new TreeSet<Formatter>();
+		Set<Formatter> formatters = new HashSet<Formatter>();
 		formatters.add(formatter);
 
 		CompilerOptions options = new CompilerOptions(null, null,
@@ -81,7 +81,7 @@ public class CompilerOptionsTest {
 		List<File> includeDirectories = new LinkedList<File>();
 		includeDirectories.add(outputDirectory);
 
-		Set<Formatter> formatters = new TreeSet<Formatter>();
+		Set<Formatter> formatters = new HashSet<Formatter>();
 		formatters.add(formatter);
 
 		CompilerOptions options = new CompilerOptions(null, null,
@@ -109,7 +109,7 @@ public class CompilerOptionsTest {
 		includeDirectories.add(outputDirectory);
 		includeDirectories.add(sessionDirectory);
 
-		Set<Formatter> formatters = new TreeSet<Formatter>();
+		Set<Formatter> formatters = new HashSet<Formatter>();
 		formatters.add(formatter);
 
 		CompilerOptions options = new CompilerOptions(null, null,
@@ -133,7 +133,7 @@ public class CompilerOptionsTest {
 		includeDirectories.add(outputDirectory);
 		includeDirectories.add(sessionDirectory);
 
-		Set<Formatter> formatters = new TreeSet<Formatter>();
+		Set<Formatter> formatters = new HashSet<Formatter>();
 		formatters.add(formatter);
 
 		new CompilerOptions(null, null, iterationLimit, callDepthLimit,
@@ -154,7 +154,7 @@ public class CompilerOptionsTest {
 		includeDirectories.add(outputDirectory);
 		includeDirectories.add(sessionDirectory);
 
-		Set<Formatter> formatters = new TreeSet<Formatter>();
+		Set<Formatter> formatters = new HashSet<Formatter>();
 		formatters.add(formatter);
 
 		new CompilerOptions(null, null, iterationLimit, callDepthLimit,
@@ -174,7 +174,7 @@ public class CompilerOptionsTest {
 		List<File> includeDirectories = new LinkedList<File>();
 		includeDirectories.add(new File("/xxxyyy"));
 
-		Set<Formatter> formatters = new TreeSet<Formatter>();
+		Set<Formatter> formatters = new HashSet<Formatter>();
 		formatters.add(formatter);
 
 		new CompilerOptions(null, null, iterationLimit, callDepthLimit,
@@ -195,7 +195,7 @@ public class CompilerOptionsTest {
 		includeDirectories.add(outputDirectory);
 		includeDirectories.add(sessionDirectory);
 
-		Set<Formatter> formatters = new TreeSet<Formatter>();
+		Set<Formatter> formatters = new HashSet<Formatter>();
 		formatters.add(formatter);
 
 		new CompilerOptions(null, null, iterationLimit, callDepthLimit,
@@ -214,7 +214,7 @@ public class CompilerOptionsTest {
 		File sessionDirectory = new File(System.getProperty("user.dir"));
 		List<File> includeDirectories = new LinkedList<File>();
 
-		Set<Formatter> formatters = new TreeSet<Formatter>();
+		Set<Formatter> formatters = new HashSet<Formatter>();
 		formatters.add(formatter);
 
 		new CompilerOptions(null, null, iterationLimit, callDepthLimit,
@@ -234,7 +234,7 @@ public class CompilerOptionsTest {
 		List<File> includeDirectories = new LinkedList<File>();
 		includeDirectories.add(null);
 
-		Set<Formatter> formatters = new TreeSet<Formatter>();
+		Set<Formatter> formatters = new HashSet<Formatter>();
 		formatters.add(formatter);
 
 		new CompilerOptions(null, null, iterationLimit, callDepthLimit,

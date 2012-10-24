@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
+import java.util.HashSet;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -75,7 +75,7 @@ public class StatementTestUtils {
 		List<File> files = new LinkedList<File>();
 		files.add(tplfile);
 
-		Set<Formatter> formatters = new TreeSet<Formatter>();
+		Set<Formatter> formatters = new HashSet<Formatter>();
 		formatters.add(PanFormatter.getInstance());
 
 		CompilerOptions options = new CompilerOptions(null, null, 1000, 50,
@@ -119,7 +119,7 @@ public class StatementTestUtils {
 		List<File> files = new LinkedList<File>();
 		files.add(tplfile);
 
-		Set<Formatter> formatters = new TreeSet<Formatter>();
+		Set<Formatter> formatters = new HashSet<Formatter>();
 		formatters.add(PanFormatter.getInstance());
 
 		CompilerOptions options = new CompilerOptions(null, null, 1000, 50,
@@ -171,7 +171,7 @@ public class StatementTestUtils {
 		List<File> files = new LinkedList<File>();
 		files.add(tplfile);
 
-		Set<Formatter> formatters = new TreeSet<Formatter>();
+		Set<Formatter> formatters = new HashSet<Formatter>();
 		formatters.add(PanFormatter.getInstance());
 
 		CompilerOptions options = new CompilerOptions(null, null, 1000, 50,

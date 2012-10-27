@@ -21,10 +21,10 @@
 package org.quattor.ant;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -145,7 +145,7 @@ public class PanCompilerTask extends Task {
 		CompilerOptions.DeprecationWarnings deprecationWarnings = CompilerOptions
 				.getDeprecationWarnings(deprecationLevel, failOnWarn);
 
-		Set<Formatter> formatters = new TreeSet<Formatter>();
+		Set<Formatter> formatters = new HashSet<Formatter>();
 		formatters.add(formatter);
 
 		if (!xmlWriteEnabled) {

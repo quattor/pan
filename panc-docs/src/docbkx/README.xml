@@ -64,6 +64,41 @@
 
       <itemizedlist>
         <listitem>
+          <para>(SF RFE #3535682) Allow multiple output formats to be
+          generated from CLI.</para>
+        </listitem>
+
+        <listitem>
+          <para>(SF Bug #3535413) Check timestamps of all requested output
+          file formats.</para>
+        </listitem>
+
+        <listitem>
+          <para>(SF Bug #3529737) Non-object templates can be accessed via
+          value().</para>
+        </listitem>
+
+        <listitem>
+          <para>(SF Bug #3579769) Tests failed because of change in TreeSet
+          contract in Java 1.7.</para>
+        </listitem>
+
+        <listitem>
+          <para>(SF Bug #3579770) Shell scripts use bash syntax. Explicitly
+          use bash in she-bang lines.</para>
+        </listitem>
+
+        <listitem>
+          <para>(SF Bug #3581163) Invalid replacement string in replace()
+          raises uncaught exception.</para>
+        </listitem>
+
+        <listitem>
+          <para>(SF RFE #3489988) Allow negative values in range
+          expressions.</para>
+        </listitem>
+
+        <listitem>
           <para>The include syntax without required braces is now
           allowed.</para>
         </listitem>

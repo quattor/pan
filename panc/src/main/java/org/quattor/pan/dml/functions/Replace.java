@@ -104,7 +104,13 @@ final public class Replace extends BuiltInFunction {
 					getSourceRange(), context);
 		}
 
-		String result = regex.matcher(target).replaceAll(repl);
-		return StringProperty.getInstance(result);
+		try {
+			String result = regex.matcher(target).replaceAll(repl);
+			return StringProperty.getInstance(result);
+		} catch (IllegalArgumentException e) {
+			throw new EvaluationException(
+					"invalid replacement string; check '$' and '\\' characters",
+					getSourceRange(), context);
+		}
 	}
 }

@@ -24,7 +24,8 @@
     compiler package that invokes a Java virtual machine and the compiler. The
     script options are not compatible with previous versions of this command;
     use <command>panc-old</command> to use the older options. Note that the
-    <command>panc-old</command> command is deprecated.</para>
+    <command>panc-old</command> command is
+    <emphasis>deprecated</emphasis>.</para>
 
     <para>The full list of options can be obtained with the
     <option>--help</option> option or by looking on the relevant man
@@ -55,13 +56,17 @@
     also provided that can be used to generate a working skeleton that
     demonstrates the pan maven plugin.</para>
 
+    <para>Note that the options of the plugin have changed from the previous
+    version. The options mirror those of the <command>panc</command>
+    script.</para>
+
     <para>To generate a skeleton maven project from the archetype use the
     following command (use the latest version of the archetype):</para>
 
     <programlisting>$ mvn archetype:generate \
   -DarchetypeArtifactId=panc-maven-archetype \
   -DarchetypeGroupId=org.quattor.pan \
-  -DarchetypeVersion=9.2
+  -DarchetypeVersion=9.3
 
 ...
 
@@ -148,7 +153,7 @@ $ mvn clean install
     <para>Using an ant task to invoke the compiler allows the compiler to be
     easily integrated with other machine management tasks. To use the pan
     compiler within an ant build file, the pan compiler tasks must be defined.
-    This can be done with a tasks like:</para>
+    This can be done with a task definition element like:</para>
 
     <programlisting>&lt;target name="define.panc.task"&gt;
 
@@ -192,7 +197,10 @@ $ mvn clean install
     <para>where <literal>...options...</literal> is replaced with valid
     options for the pan compiler ant tasks.</para>
 
-    <para>The following table summarizes the ant task attributes, only the
+    <para>For compatibility, the ant task supports the attributes in the
+    following table; these correspond to the standard options of previous
+    versions of the ant task. All of these options are deprecated; The
+    following table summarizes the ant task attributes, only the
     <option>deprecationLevel</option>, <option>failOnWarn</option> and
     <option>verbose</option> options are permitted for the
     <command>panc-check-syntax</command> task.</para>

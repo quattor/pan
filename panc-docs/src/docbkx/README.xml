@@ -64,6 +64,15 @@
 
       <itemizedlist>
         <listitem>
+          <para>(SF RFE #) Remove support for XMLDB format.</para>
+        </listitem>
+
+        <listitem>
+          <para>(SF RFE #3581801) Change dependency file extension from
+          *.xml.dep to *.dep.</para>
+        </listitem>
+
+        <listitem>
           <para>(SF RFE #3535682) Allow multiple output formats to be
           generated from CLI.</para>
         </listitem>

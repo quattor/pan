@@ -30,7 +30,7 @@ public class DepFormatter extends AbstractFormatter {
 	private static final DepFormatter instance = new DepFormatter();
 
 	private DepFormatter() {
-		super("xml.dep", "dep");
+		super("dep", "dep");
 	}
 
 	public static DepFormatter getInstance() {

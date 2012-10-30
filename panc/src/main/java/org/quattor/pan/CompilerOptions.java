@@ -231,17 +231,6 @@ public class CompilerOptions {
 		}
 		this.formatters = Collections.unmodifiableList(fmts);
 
-		for (Formatter formatter : this.formatters) {
-			if ("xmldb".equals(formatter.getFormatKey())) {
-				String msg = "WARNING: xmldb format is deprecated; use another formatter";
-				if (deprecationWarnings == DeprecationWarnings.FATAL) {
-					throw new IllegalArgumentException(msg);
-				} else {
-					System.err.println(msg);
-				}
-			}
-		}
-
 		// Setup the debug patterns, ensuring that the debug pattern lists are
 		// not null.
 		if (debugIncludePatterns == null) {

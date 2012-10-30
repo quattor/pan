@@ -286,8 +286,7 @@ $ mvn clean install
             <entry>formatter</entry>
 
             <entry>The formatter to use for the output file. The accepted
-            values are: "pan", "json", "text", and "dot". The value "xmldb" is
-            accepted, but deprecated.</entry>
+            values are: "pan", "json", "text", and "dot".</entry>
 
             <entry>No. Default value: pan</entry>
           </row>

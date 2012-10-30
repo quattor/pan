@@ -10,7 +10,6 @@
                                    PanGzipFormatter
                                    XmlFormatter
                                    XmlGzipFormatter
-                                   XmlDBFormatter
                                    DepFormatter]
            [org.quattor.pan CompilerOptions$DeprecationWarnings]
            [clojure.lang ExceptionInfo]))
@@ -36,7 +35,6 @@
            "pan.gz" (conj v (PanGzipFormatter/getInstance))
            "xml" (conj v(XmlFormatter/getInstance))
            "xml.gz" (conj v (XmlGzipFormatter/getInstance))
-           "xmldb" (conj v (XmlDBFormatter/getInstance))
            "dep" (conj v (DepFormatter/getInstance))
            "none" v
            (let [msg (str "unknown formatter: " name)]

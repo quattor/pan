@@ -505,8 +505,8 @@ public class JavaCompilerTest {
 
 		// Create the name of the output XML file from the template name.
 		String fname = objtpl.getName();
-		fname = fname.substring(0, fname.length() - 4) + ".xml";
-		File xml = new File(getTmpdir(), fname);
+		fname = fname.substring(0, fname.length() - 4);
+		File xml = new File(getTmpdir(), fname + ".xml");
 
 		// Create the name of the dependency file.
 		File dep = new File(getTmpdir(), fname + ".dep");

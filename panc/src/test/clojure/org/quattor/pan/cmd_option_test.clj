@@ -7,7 +7,6 @@
                                    JsonFormatter 
                                    DotFormatter 
                                    PanFormatter 
-                                   XmlDBFormatter
                                    DepFormatter]
            [org.quattor.pan CompilerOptions$DeprecationWarnings]
            [java.util.regex Pattern]
@@ -26,13 +25,11 @@
   (let [pandep (process [:formats "pan,dep"])
         text (process [:formats "text"])
         json (process [:formats "json"])
-        dot (process [:formats "dot"])
-        xmldb (process [:formats "xmldb"])]
+        dot (process [:formats "dot"])]
     (is (= #{(PanFormatter/getInstance) (DepFormatter/getInstance)} (:formatter pandep)))
     (is (= #{(TxtFormatter/getInstance)} (:formatter text)))
     (is (= #{(JsonFormatter/getInstance)} (:formatter json)))
-    (is (= #{(DotFormatter/getInstance)} (:formatter dot)))
-    (is (= #{(XmlDBFormatter/getInstance)} (:formatter xmldb))))
+    (is (= #{(DotFormatter/getInstance)} (:formatter dot))))
   (is (thrown? ExceptionInfo (process [:formats "unknown"]))))
 
 (deftest test-nil-debug-patterns

@@ -17,7 +17,7 @@
 
 	<!-- pan compiler flags -->
 	<property name="pan.debug.flag" value="false" />
-	<property name="pan.xml.format" value="xmldb" />
+	<property name="pan.xml.format" value="pan" />
 	<property name="pan.xml.gzip" value="false" />
 
 	<target name="clean" description="clean up generated files">

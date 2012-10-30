@@ -24,7 +24,6 @@ public class FormatterUtils {
 		Formatter[] instances = new Formatter[] { DotFormatter.getInstance(),
 				PanFormatter.getInstance(), PanGzipFormatter.getInstance(),
 				XmlFormatter.getInstance(), XmlGzipFormatter.getInstance(),
-				TxtFormatter.getInstance(), XmlDBFormatter.getInstance(),
 				JsonFormatter.getInstance(), JsonGzipFormatter.getInstance() };
 
 		// Insert the values, letting the instances choose their key values.

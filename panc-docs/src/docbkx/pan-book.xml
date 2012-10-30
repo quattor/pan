@@ -333,13 +333,6 @@ $ cat hello_world.json
   "message": "Hello World!"
 } </screen>
 
-      <warning>
-        <para>The alternate XML format "xmldb" is
-        <emphasis>deprecated</emphasis>. This format is not compatible with
-        arbitrary nlist keys. Use the 'pan' XML format or the JSON format
-        instead.</para>
-      </warning>
-
       <para>In this book, the most convenient representation is the text
       format. This provides a clean representation of the configuration tree
       in plain text.</para>

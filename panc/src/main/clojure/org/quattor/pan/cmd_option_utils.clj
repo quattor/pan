@@ -1,12 +1,7 @@
 (ns org.quattor.pan.cmd-option-utils
   (:require [clojure.string :as str]
             [clojure.java.io :as io])
-  (:import java.io.File
-           [org.quattor.pan.output TxtFormatter 
-            JsonFormatter 
-            DotFormatter 
-            PanFormatter 
-            XmlDBFormatter]))
+  (:import java.io.File))
 
 (defn to-integer
   "Converts string to integer.  If the string is not a valid

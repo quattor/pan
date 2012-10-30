@@ -157,8 +157,7 @@
           <listitem>
             <para>A comma separated list of desired output formats. Allowed
             values are "pan", "dep", "json", "text", and "dot". The default is
-            value is "pan,dep". The value "xmldb" is accepted, but
-            deprecated.</para>
+            value is "pan,dep".</para>
           </listitem>
         </varlistentry>
 
@@ -350,8 +349,8 @@
       <para>The <command>panc-old</command> command will compile a collection
       of pan language templates into a set of machine configuration files.
       This version is provided for backward-compatibility, but is
-      <emphasis>deprecated and will disappear in a future release.</emphasis>
-      </para>
+      <emphasis>deprecated and will disappear in a future
+      release.</emphasis></para>
 
       <variablelist>
         <varlistentry>
@@ -530,8 +529,7 @@
             <para>Select the output style to use for the machine configuration
             files. This is usually an XML formatted file, but not always.
             Allowed values are "pan", "json", "text", and "dot". The default
-            is value is "pan". The value "xmldb" is accepted, but
-            deprecated.</para>
+            is value is "pan".</para>
           </listitem>
         </varlistentry>
 
@@ -540,7 +538,7 @@
 
           <listitem>
             <para>Output the dependency information if this option is used.
-            The dependency files will be named <filename>*.xml.dep</filename>,
+            The dependency files will be named <filename>*.dep</filename>,
             where the asterisk is replaced by the object template name.</para>
           </listitem>
         </varlistentry>

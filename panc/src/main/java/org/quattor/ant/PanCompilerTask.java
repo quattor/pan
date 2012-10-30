@@ -456,8 +456,7 @@ public class PanCompilerTask extends Task {
 
 	/**
 	 * Define which formatter will be used to write the machine profiles to
-	 * disk. Valid values are "pan", "json", "txt", or "dot". The "xmldb" value
-	 * is accepted, but deprecated.
+	 * disk. Valid values are "pan", "json", "txt", or "dot".
 	 * 
 	 * @param name
 	 *            name of formatter to use

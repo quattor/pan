@@ -87,7 +87,7 @@
         ok? (utils/directory? d)]
     (if ok?          
       {(keyword k) d}
-      (let [msg (str name " must be an existing directory")]
+      (let [msg (str v " must be an existing directory")]
         (throw (ex-info msg {:type :options :msg msg}))))))
 
 (defmethod process :formats

@@ -26,7 +26,7 @@ Please file a bug report with including the stack trace.
                  iterationLimit 
                  callDepthLimit 
                  formatter 
-                 outputDirectory 
+                 output-dir
                  sessionDirectory 
                  includeDirectories 
                  nthread 
@@ -40,7 +40,7 @@ Please file a bug report with including the stack trace.
                      iterationLimit 
                      callDepthLimit 
                      formatter 
-                     outputDirectory 
+                     output-dir 
                      sessionDirectory 
                      includeDirectories 
                      nthread 
@@ -56,7 +56,7 @@ Please file a bug report with including the stack trace.
                  iterationLimit 
                  callDepthLimit 
                  formatter 
-                 outputDirectory 
+                 output-dir 
                  sessionDirectory 
                  includeDirectories 
                  nthread 
@@ -70,7 +70,7 @@ Please file a bug report with including the stack trace.
                      iterationLimit 
                      callDepthLimit 
                      formatter 
-                     outputDirectory 
+                     output-dir 
                      sessionDirectory 
                      includeDirectories 
                      nthread 
@@ -117,6 +117,7 @@ Please file a bug report with including the stack trace.
 
 (defn build-profiles [options pan-sources] 
   (let [compiler-options (create-compiler-options)]
+    (pprint compiler-options)
     (org.quattor.pan.Compiler/run compiler-options nil pan-sources)))
 
 (defn -main [& args]
@@ -125,6 +126,7 @@ Please file a bug report with including the stack trace.
       (when (:help options)
         (banner-and-exit banner))
       (settings/with-settings (to-settings options)
+        (pprint settings/*settings*)
         (let [sources (map file files)
               results (build-profiles options sources)
               errors (.formatErrors results)

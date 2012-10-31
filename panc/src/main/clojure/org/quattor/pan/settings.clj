@@ -23,7 +23,7 @@
    :iterationLimit 10000
    :callDepthLimit 10
    :formatter #{(PanFormatter/getInstance), (DepFormatter/getInstance)}
-   :outputDirectory (absolute-file)
+   :output-dir (absolute-file)
    :sessionDirectory nil
    :includeDirectories [(absolute-file)]
    :nthread 0

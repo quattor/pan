@@ -16,44 +16,49 @@ import org.quattor.pan.exceptions.CompilerError;
 
 public class XmlUtils {
 
-	private XmlUtils() {
+    private XmlUtils() {
 
-	}
+    }
 
-	public static TransformerHandler getSaxTransformerHandler() {
+    public static TransformerHandler getSaxTransformerHandler() {
 
-		try {
+        try {
 
-			// Generate the transformer factory. Need to guarantee that we get a
-			// SAXTransformerFactory.
-			TransformerFactory factory = TransformerFactory.newInstance();
-			if (!factory.getFeature(SAXTransformerFactory.FEATURE)) {
-				throw CompilerError.create(MSG_MISSING_SAX_TRANSFORMER);
-			}
-			factory.setAttribute("indent-number", Integer.valueOf(4));
+            // Generate the transformer factory. Need to guarantee that we get a
+            // SAXTransformerFactory.
+            TransformerFactory factory = TransformerFactory.newInstance();
+            if (!factory.getFeature(SAXTransformerFactory.FEATURE)) {
+                throw CompilerError.create(MSG_MISSING_SAX_TRANSFORMER);
+            }
 
-			// Can safely cast the factory to a SAX-specific one. Get the
-			// handler to feed with SAX events.
-			SAXTransformerFactory saxfactory = (SAXTransformerFactory) factory;
+            // Only set the indentation if the returned TransformerFactory
+            // supports it.
+            if (factory.getFeature("indent-number")) {
+                factory.setAttribute("indent-number", Integer.valueOf(4));
+            }
 
-			TransformerHandler handler = saxfactory.newTransformerHandler();
+            // Can safely cast the factory to a SAX-specific one. Get the
+            // handler to feed with SAX events.
+            SAXTransformerFactory saxfactory = (SAXTransformerFactory) factory;
 
-			// Set parameters of the embedded transformer.
-			Transformer transformer = handler.getTransformer();
-			Properties properties = new Properties();
-			properties.setProperty(OutputKeys.INDENT, "yes");
-			properties.setProperty(OutputKeys.METHOD, "xml");
-			transformer.setOutputProperties(properties);
+            TransformerHandler handler = saxfactory.newTransformerHandler();
 
-			return handler;
+            // Set parameters of the embedded transformer.
+            Transformer transformer = handler.getTransformer();
+            Properties properties = new Properties();
+            properties.setProperty(OutputKeys.INDENT, "yes");
+            properties.setProperty(OutputKeys.METHOD, "xml");
+            transformer.setOutputProperties(properties);
 
-		} catch (TransformerConfigurationException tce) {
-			Error error = CompilerError
-					.create(MSG_UNEXPECTED_EXCEPTION_WHILE_WRITING_OUTPUT);
-			error.initCause(tce);
-			throw error;
-		}
+            return handler;
 
-	}
+        } catch (TransformerConfigurationException tce) {
+            Error error = CompilerError
+                    .create(MSG_UNEXPECTED_EXCEPTION_WHILE_WRITING_OUTPUT);
+            error.initCause(tce);
+            throw error;
+        }
+
+    }
 
 }

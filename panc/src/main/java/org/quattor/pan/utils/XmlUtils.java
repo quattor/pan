@@ -34,7 +34,10 @@ public class XmlUtils {
             // Only set the indentation if the returned TransformerFactory
             // supports it.
             if (factory.getFeature("indent-number")) {
-                factory.setAttribute("indent-number", Integer.valueOf(4));
+                try {
+                    factory.setAttribute("indent-number", Integer.valueOf(4));
+                } catch (Exception consumed) {
+                }
             }
 
             // Can safely cast the factory to a SAX-specific one. Get the

@@ -1,7 +1,7 @@
 (ns org.quattor.pan.parser.ast
-  (:use [org.quattor.pan.pan-compiler :only (default-compiler-options)]
-        [clojure.java.io :only (file as-file reader)])
-  (:require [org.quattor.pan.settings :as settings])
+  (:require [org.quattor.pan.pan-compiler :refer [default-compiler-options]]
+            [clojure.java.io :as io]
+            [org.quattor.pan.settings :as settings])
   (:import [org.quattor.pan.parser
             PanParser
             ASTTemplate
@@ -17,8 +17,8 @@
             Template$TemplateType]))
 
 (defn parse [pan-source]
-  (let [pan-source-file (as-file pan-source)]
-    (with-open [rdr (reader pan-source-file)]
+  (let [pan-source-file (io/as-file pan-source)]
+    (with-open [rdr (io/reader pan-source-file)]
       (let [parser (PanParser. rdr)
             options (default-compiler-options)]
         (.setFile parser pan-source-file)

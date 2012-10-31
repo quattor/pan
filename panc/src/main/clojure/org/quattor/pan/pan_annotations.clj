@@ -1,7 +1,7 @@
 (ns org.quattor.pan.pan-annotations
   (:gen-class)
-  (:use clojure.tools.cli
-        [clojure.string :only (blank?)])
+  (:require [clojure.tools.cli :refer :all]
+            [clojure.string :as str])
   (:import (java.io File)
            (org.quattor.pan CompilerOptions CompilerResults)))
 
@@ -23,7 +23,7 @@
     (list (create-absolute-file ""))))
 
 (defn parse-directory [dir]
-  (if (blank? dir)
+  (if (str/blank? dir)
     (current-directory)
     (create-absolute-file dir)))
 

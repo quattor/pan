@@ -1,6 +1,6 @@
 (ns org.quattor.pan.pan-compiler-test
-  (:use clojure.test
-        org.quattor.pan.pan-compiler)
+  (:require [clojure.test :refer :all]
+            [org.quattor.pan.pan-compiler :refer :all])
   (:import [org.quattor.pan CompilerOptions]))
 
 (deftest test-create-compiler-options

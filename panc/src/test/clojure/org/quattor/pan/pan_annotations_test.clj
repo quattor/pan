@@ -1,7 +1,7 @@
 (ns org.quattor.pan.pan-annotations-test
-  (:use clojure.test 
-        [clojure.string :only (join)]
-        org.quattor.pan.pan-annotations)
+  (:use [clojure.test :refer :all]
+        [clojure.string :as str]
+        [org.quattor.pan.pan-annotations :refer :all])
   (:import java.util.regex.Pattern
            java.io.File
            org.quattor.pan.CompilerOptions))
@@ -20,9 +20,9 @@
 
 (deftest split-path-works
   (let [sep File/pathSeparator]
-    (is (= ["a" "b" "c"] (split-path (join sep ["a" "b" "c"]))))
-    (is (= ["b" "c"] (split-path (join sep ["" "b" "c"]))))
-    (is (= ["a" "c"] (split-path (join sep ["a" "" "c"]))))
+    (is (= ["a" "b" "c"] (split-path (str/join sep ["a" "b" "c"]))))
+    (is (= ["b" "c"] (split-path (str/join sep ["" "b" "c"]))))
+    (is (= ["a" "c"] (split-path (str/join sep ["a" "" "c"]))))
     (is (= ["a"] (split-path "a")))
     (is (nil? (split-path "")))))
 

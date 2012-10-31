@@ -1,8 +1,8 @@
 (ns org.quattor.pan.cmd-option-test
-  (:use clojure.test
-        [clojure.string :only [join]]
-        [clojure.set :only [subset?]]
-        org.quattor.pan.cmd-option)
+  (:require [clojure.test :refer :all]
+            [clojure.string :refer [join]]
+            [clojure.set :refer [subset?]]
+            [org.quattor.pan.cmd-option :refer :all])
   (:import [org.quattor.pan.output TxtFormatter 
                                    JsonFormatter 
                                    DotFormatter 

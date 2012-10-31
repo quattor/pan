@@ -1,6 +1,6 @@
 (ns org.quattor.pan.settings
-  (:use clojure.tools.cli
-        [clojure.java.io :only (as-file file)])
+  (:require [clojure.tools.cli :refer :all]
+            [clojure.java.io :refer [as-file file]])
   (:import (org.quattor.pan.output PanFormatter
                                    DepFormatter)
            (org.quattor.pan CompilerOptions$DeprecationWarnings)))

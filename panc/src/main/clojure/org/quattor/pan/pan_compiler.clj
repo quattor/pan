@@ -1,10 +1,9 @@
 (ns org.quattor.pan.pan-compiler
   (:gen-class)
-  (:use [clojure.tools.cli :only [cli]]
-        [clojure.java.io :only [file]]
-        [clojure.pprint :only [pprint]]
-        [org.quattor.pan.cmd-option :only (to-settings)])
-  (:require [org.quattor.pan.settings :as settings])
+  (:require [clojure.tools.cli :refer [cli]]
+            [clojure.java.io :as io]
+            [org.quattor.pan.cmd-option :refer [to-settings]]
+            [org.quattor.pan.settings :as settings])
   (:import [org.quattor.pan CompilerOptions CompilerResults]
            [clojure.lang ExceptionInfo]))
 
@@ -117,7 +116,6 @@ Please file a bug report with including the stack trace.
 
 (defn build-profiles [options pan-sources] 
   (let [compiler-options (create-compiler-options)]
-    (pprint compiler-options)
     (org.quattor.pan.Compiler/run compiler-options nil pan-sources)))
 
 (defn -main [& args]
@@ -126,8 +124,7 @@ Please file a bug report with including the stack trace.
       (when (:help options)
         (banner-and-exit banner))
       (settings/with-settings (to-settings options)
-        (pprint settings/*settings*)
-        (let [sources (map file files)
+        (let [sources (map io/file files)
               results (build-profiles options sources)
               errors (.formatErrors results)
               rc (if errors 1 0)]

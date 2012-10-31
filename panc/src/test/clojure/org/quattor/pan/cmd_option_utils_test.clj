@@ -1,7 +1,7 @@
 (ns org.quattor.pan.cmd-option-utils-test
-  (:use org.quattor.pan.cmd-option-utils
-        [clojure.test :only [deftest is are]])
-  (:require [clojure.string :as str]
+  (:require [org.quattor.pan.cmd-option-utils :refer :all]
+            [clojure.test :refer [deftest is are]]
+            [clojure.string :as str]
             [clojure.java.io :as io])
   (:import [java.util.regex Pattern]
            [java.net URL]

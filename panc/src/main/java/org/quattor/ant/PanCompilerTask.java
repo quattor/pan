@@ -87,6 +87,8 @@ public class PanCompilerTask extends Task {
 	private int callDepthLimit = 50;
 
 	private Formatter formatter;
+	
+	private Set<Formatter> formatters;
 
 	private File outputDirectory = null;
 
@@ -145,7 +147,6 @@ public class PanCompilerTask extends Task {
 		CompilerOptions.DeprecationWarnings deprecationWarnings = CompilerOptions
 				.getDeprecationWarnings(deprecationLevel, failOnWarn);
 
-		Set<Formatter> formatters = new HashSet<Formatter>();
 		formatters.add(formatter);
 
 		if (!xmlWriteEnabled) {
@@ -466,6 +467,18 @@ public class PanCompilerTask extends Task {
 		if (formatter == null) {
 			throw new BuildException("unknown output formatter: " + name);
 		}
+		formatters = new HashSet<Formatter>();
+		formatters.add(formatter);
+	}
+
+	/**
+	 * Defines the formatters used to generate the output files.
+	 * 
+	 * @param fmts
+	 *            comma-separated list of formatters to use
+	 */
+	public void setFormatters(String fmts) {
+		formatters = CompilerOptions.getFormatters(fmts);
 	}
 
 	/**

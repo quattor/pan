@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.StringReader;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -41,7 +42,16 @@ import org.quattor.pan.exceptions.CompilerError;
 import org.quattor.pan.exceptions.ConfigurationException;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
+import org.quattor.pan.output.DepFormatter;
+import org.quattor.pan.output.DotFormatter;
 import org.quattor.pan.output.Formatter;
+import org.quattor.pan.output.JsonFormatter;
+import org.quattor.pan.output.JsonGzipFormatter;
+import org.quattor.pan.output.PanFormatter;
+import org.quattor.pan.output.PanGzipFormatter;
+import org.quattor.pan.output.TxtFormatter;
+import org.quattor.pan.output.XmlFormatter;
+import org.quattor.pan.output.XmlGzipFormatter;
 import org.quattor.pan.parser.ASTOperation;
 import org.quattor.pan.parser.PanParser;
 import org.quattor.pan.parser.PanParserAstUtils;
@@ -485,6 +495,41 @@ public class CompilerOptions {
 		// If we get here, then the template didn't match anything. By default,
 		// the debugging is turned off.
 		return false;
+	}
+
+	// FIXME: This code duplicates code that is also in clojure.  The clojure
+	// code should eventually be used for generating the list of formatters to
+	// be used for a compilation.
+	public static Set<Formatter> getFormatters(String s) {
+
+		HashSet<Formatter> formatters = new HashSet<Formatter>();
+
+		String[] names = s.trim().split("\\s*,\\s*");
+		for (String fname : names) {
+			if ("text".equals(fname)) {
+				formatters.add(TxtFormatter.getInstance());
+			} else if ("json".equals(fname)) {
+				formatters.add(JsonFormatter.getInstance());
+			} else if ("json.gz".equals(fname)) {
+				formatters.add(JsonGzipFormatter.getInstance());
+			} else if ("dot".equals(fname)) {
+				formatters.add(DotFormatter.getInstance());
+			} else if ("pan".equals(fname)) {
+				formatters.add(PanFormatter.getInstance());
+			} else if ("pan.gz".equals(fname)) {
+				formatters.add(PanGzipFormatter.getInstance());
+			} else if ("xml".equals(fname)) {
+				formatters.add(XmlFormatter.getInstance());
+			} else if ("xml.gz".equals(fname)) {
+				formatters.add(XmlGzipFormatter.getInstance());
+			} else if ("dep".equals(fname)) {
+				formatters.add(DepFormatter.getInstance());
+			} else if ("none".equals(fname)) {
+				// No-op
+			}
+		}
+
+		return formatters;
 	}
 
 	/**

@@ -17,20 +17,20 @@ import org.quattor.pan.CompilerResults;
  */
 public class PanCheckSyntaxMojo extends AbstractPanMojo {
 
-	public void execute() throws MojoExecutionException {
+    public void execute() throws MojoExecutionException {
 
-		CompilerOptions options = CompilerOptions
-				.createCheckSyntaxOptions(CompilerOptions.DeprecationWarnings.OFF);
+        CompilerOptions options = CompilerOptions
+                .createCheckSyntaxOptions(warnings);
 
-		Set<File> sources = PluginUtils.collectPanSources(sourceDirectory);
+        Set<File> sources = PluginUtils.collectPanSources(sourceDirectory);
 
-		CompilerResults results = Compiler.run(options, null, sources);
+        CompilerResults results = Compiler.run(options, null, sources);
 
-		boolean hadError = results.print(verbose);
+        boolean hadError = results.print(verbose);
 
-		if (hadError) {
-			throw new MojoExecutionException("pan language syntax check failed");
-		}
+        if (hadError) {
+            throw new MojoExecutionException("pan language syntax check failed");
+        }
 
-	}
+    }
 }

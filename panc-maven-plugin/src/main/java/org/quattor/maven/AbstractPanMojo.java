@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.quattor.pan.CompilerOptions;
 
 public abstract class AbstractPanMojo extends AbstractMojo {
 
@@ -23,26 +24,11 @@ public abstract class AbstractPanMojo extends AbstractMojo {
     protected boolean verbose = false;
 
     /**
-     * @description deprecation level (<0 is none, 0 is next release, >0 is
-     *              future releases)
-     * @parameter expression="${panc.deprecationLevel}" default-value=0
-     * @required
-     */
-    protected int deprecationLevel = 0;
-
-    /**
-     * @description treat warnings as errors
-     * @parameter expression="${panc.failOnWarn}" default-value=false
-     * @required
-     */
-    protected boolean failOnWarn = false;
-
-    /**
      * @description warnings flag ("on", "off", or "fatal")
      * @parameter expression="${panc.warnings}" default-value="on"
      * @required
      */
-    protected String warnings = "on";
+    protected CompilerOptions.DeprecationWarnings warnings = CompilerOptions.DeprecationWarnings.ON;
 
     abstract public void execute() throws MojoExecutionException;
 }

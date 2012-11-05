@@ -43,7 +43,9 @@
 
     <programlisting>java -Xmx1024M org.quattor.pan.Compiler [options...]</programlisting>
 
-    <para>The same can be done for other options.</para>
+    <para>The same can be done for other options. The options are the same as
+    for the <command>panc</command> command, except that the java options
+    parameter is not supported.</para>
   </section>
 
   <section>
@@ -56,9 +58,11 @@
     also provided that can be used to generate a working skeleton that
     demonstrates the pan maven plugin.</para>
 
-    <para>Note that the options of the plugin have changed from the previous
-    version. The options mirror those of the <command>panc</command>
-    script.</para>
+    <warning>
+      <para>The options of the plugin have changed from the previous version.
+      They mirror those of the <command>panc</command> script. Details for the
+      options are given below.</para>
+    </warning>
 
     <para>To generate a skeleton maven project from the archetype use the
     following command (use the latest version of the archetype):</para>
@@ -145,6 +149,176 @@ $ mvn clean install
     help via the maven help system:</para>
 
     <programlisting>$ mvn help:describe -Dplugin=panc -Ddetail=true</programlisting>
+
+    <para>The following tables show the available parameters for the PanBuild
+    and PanCheckSyntax mojos. </para>
+
+    <table>
+      <title>PanBuild Mojo Parameters</title>
+
+      <tgroup cols="3">
+        <tbody>
+          <row>
+            <entry>sourceDirectory</entry>
+
+            <entry>Location of pan language sources.</entry>
+
+            <entry>No. Default value: '${basedir}/src/main/pan'</entry>
+          </row>
+
+          <row>
+            <entry>profiles</entry>
+
+            <entry>Name of the profiles subdirectory inside of the
+            sourceDirectory. Used to find the object profiles to
+            build.</entry>
+
+            <entry>No. Default value: 'profiles'</entry>
+          </row>
+
+          <row>
+            <entry>verbose</entry>
+
+            <entry>Whether to include a summary of the compilation, including
+            number of profiles compiled and overall memory
+            utilization.</entry>
+
+            <entry>No. Default value: false</entry>
+          </row>
+
+          <row>
+            <entry>warnings</entry>
+
+            <entry>Sets whether warnings are printed and whether they are
+            treated as fatal errors. Allowed values are 'on', 'off', and
+            'fatal'.</entry>
+
+            <entry>No. Default value: 'on'</entry>
+          </row>
+
+          <row>
+            <entry>debugNsInclude</entry>
+
+            <entry>Pattern to apply to template namespace to determine whether
+            to activate debugging output.</entry>
+
+            <entry>No. Default value: '^$'</entry>
+          </row>
+
+          <row>
+            <entry>debugNsExclude</entry>
+
+            <entry>Pattern to apply to template namespace to determine whether
+            to exclude debugging output.</entry>
+
+            <entry>No. Default value: '.+'</entry>
+          </row>
+
+          <row>
+            <entry>initialData</entry>
+
+            <entry>A compile-time expression that evaluates to an nlist. This
+            nlist is used as the root nlist for all compiled object templates.
+            A convenient mechanism for injecting build numbers and other
+            metadata into the profiles.</entry>
+
+            <entry>No. Default value: null (empty nlist)</entry>
+          </row>
+
+          <row>
+            <entry>outputDir</entry>
+
+            <entry>The directory that will contain the output of the
+            compilation.</entry>
+
+            <entry>Yes.</entry>
+          </row>
+
+          <row>
+            <entry>formats</entry>
+
+            <entry>A comma-separated list of output formats to use. The
+            accepted values are: "pan", "pan.gz", "xml", "xml.gz", "json",
+            "json.gz", "txt", "dep" and "dot".</entry>
+
+            <entry>No. Default value: 'pan,dep'</entry>
+          </row>
+
+          <row>
+            <entry>maxIteration</entry>
+
+            <entry>Set the maximum number of iterations. This is a failsafe to
+            avoid infinite loops.</entry>
+
+            <entry>No. Default value: 5000</entry>
+          </row>
+
+          <row>
+            <entry>maxRecursion</entry>
+
+            <entry>Maximum number of recursive calls.</entry>
+
+            <entry>No. Default value: 5000</entry>
+          </row>
+
+          <row>
+            <entry>logging</entry>
+
+            <entry>Enable different types of logging. The possible values are:
+            "all", "none", "include", "call", "task", and "memory". Multiple
+            values may be included as a comma-separated list. The value "none"
+            will override any other setting.</entry>
+
+            <entry>No.</entry>
+          </row>
+
+          <row>
+            <entry>logFile</entry>
+
+            <entry>The name of the file to use for logging information. This
+            value must be defined in order to enable logging.</entry>
+
+            <entry>Yes, if logging attribute is used.</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+
+    <table>
+      <title>PanCheckSyntax Mojo Parameters</title>
+
+      <tgroup cols="3">
+        <tbody>
+          <row>
+            <entry>sourceDirectory</entry>
+
+            <entry>Location of pan language sources.</entry>
+
+            <entry>No. Default value: '${basedir}/src/main/pan'</entry>
+          </row>
+
+          <row>
+            <entry>verbose</entry>
+
+            <entry>Whether to include a summary of the compilation, including
+            number of profiles compiled and overall memory
+            utilization.</entry>
+
+            <entry>No. Default value: false</entry>
+          </row>
+
+          <row>
+            <entry>warnings</entry>
+
+            <entry>Sets whether warnings are printed and whether they are
+            treated as fatal errors. Allowed values are 'on', 'off', and
+            'fatal'.</entry>
+
+            <entry>No. Default value: 'on'</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
   </section>
 
   <section>

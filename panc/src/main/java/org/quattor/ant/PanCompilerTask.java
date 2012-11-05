@@ -98,17 +98,15 @@ public class PanCompilerTask extends Task {
 
     final protected static String debugIndent = "    ";
 
-    private String loggingFlags = "none";
+    private String logging = "none";
 
-    private File logfile = null;
+    private File logFile = null;
 
     private int batchSize = 0;
 
-    // NEW STYLE ATTRIBUTES BELOW
+    private int maxIteration = 10000;
 
-    private int maxIteration = 5000;
-
-    private int maxRecursion = 50;
+    private int maxRecursion = 10;
 
     private File outputDir = null;
 
@@ -203,8 +201,8 @@ public class PanCompilerTask extends Task {
 
         // Activate loggers if specified. If the logging is activated but there
         // is no log file, no output will be generated.
-        CompilerLogging.activateLoggers(loggingFlags);
-        CompilerLogging.setLogFile(logfile);
+        CompilerLogging.activateLoggers(logging);
+        CompilerLogging.setLogFile(logFile);
 
         // Batch the files to process, if requested.
         List<List<File>> batches = batchOutdatedFiles(outdatedFiles);
@@ -467,17 +465,17 @@ public class PanCompilerTask extends Task {
      *            a comma-separated list of logging types to enable
      */
     public void setLogging(String loggingFlags) {
-        this.loggingFlags = loggingFlags;
+        this.logging = loggingFlags;
     }
 
     /**
      * Set the log file to use for logging.
      * 
-     * @param logfile
+     * @param logFile
      *            file to use for logging
      */
-    public void setLogfile(File logfile) {
-        this.logfile = logfile;
+    public void setLogfile(File logFile) {
+        this.logFile = logFile;
     }
 
     /**

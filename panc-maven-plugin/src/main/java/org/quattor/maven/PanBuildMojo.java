@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.quattor.pan.Compiler;
+import org.quattor.pan.CompilerLogging;
 import org.quattor.pan.CompilerOptions;
 import org.quattor.pan.CompilerResults;
 import org.quattor.pan.exceptions.SyntaxException;
@@ -28,41 +29,6 @@ public class PanBuildMojo extends AbstractPanMojo {
     private String profiles = "profiles";
 
     /**
-     * @description directory for generated profiles
-     * @parameter expression="${panc.outputDir}"
-     *            default-value="${basedir}/target"
-     * @required
-     */
-    private File outputDir;
-
-    /**
-     * @description maximum number of iterations
-     * @parameter expression="${panc.maxIteration}" default-value=10000
-     * @required
-     */
-    private int maxIteration = 10000;
-
-    /**
-     * @description initial data for configuration
-     * @parameter expression="${panc.initialData}"
-     */
-    private String initialData = null;
-
-    /**
-     * @description maximum number of recursions
-     * @parameter expression="${panc.maxRecursion}" default-value=10
-     * @required
-     */
-    private int maxRecursion = 10;
-
-    /**
-     * @description list of formats for output files (comma-separated list)
-     * @parameter expression="${panc.formats}" default-value="pan,dep"
-     * @required
-     */
-    private String formats = "pan,dep";
-
-    /**
      * @description pattern to include templates for debugging
      * @parameter expression="${panc.debugNsInclude}"
      */
@@ -74,6 +40,53 @@ public class PanBuildMojo extends AbstractPanMojo {
      */
     private String debugNsExclude = null;
 
+    /**
+     * @description initial data for configuration
+     * @parameter expression="${panc.initialData}"
+     */
+    private String initialData = null;
+
+    /**
+     * @description directory for generated profiles
+     * @parameter expression="${panc.outputDir}"
+     *            default-value="${basedir}/target"
+     * @required
+     */
+    private File outputDir;
+
+    /**
+     * @description list of formats for output files (comma-separated list)
+     * @parameter expression="${panc.formats}" default-value="pan,dep"
+     * @required
+     */
+    private String formats = "pan,dep";
+
+    /**
+     * @description maximum number of iterations
+     * @parameter expression="${panc.maxIteration}" default-value=10000
+     * @required
+     */
+    private int maxIteration = 10000;
+
+    /**
+     * @description maximum number of recursions
+     * @parameter expression="${panc.maxRecursion}" default-value=10
+     * @required
+     */
+    private int maxRecursion = 10;
+
+    /**
+     * @description logging types
+     * @parameter expression="${panc.logging}" default-value="none"
+     */
+    private String logging = "none";
+
+    /**
+     * @description log file
+     * @parameter expression="${panc.logFile}"
+     */
+    private File logFile = null;
+
     private Set<Formatter> formatters;
 
     public void execute() throws MojoExecutionException {
@@ -83,6 +96,11 @@ public class PanBuildMojo extends AbstractPanMojo {
         createoutputDir();
 
         CompilerOptions options = createCompilerOptions();
+
+        // Activate loggers if specified. If the logging is activated but there
+        // is no log file, no output will be generated.
+        CompilerLogging.activateLoggers(logging);
+        CompilerLogging.setLogFile(logFile);
 
         File profileDirectory = new File(sourceDirectory, profiles);
 

@@ -9,23 +9,26 @@ import org.quattor.pan.CompilerOptions;
 public abstract class AbstractPanMojo extends AbstractMojo {
 
     /**
-     * @description root directory of pan sources
-     * @parameter expression="${panc.sourceDirectory}"
+     * root directory of pan sources
+     * 
+     * @parameter property="panc.sourceDirectory"
      *            default-value="${basedir}/src/main/pan"
      * @required
      */
     protected File sourceDirectory;
 
     /**
-     * @description print compilation summary
-     * @parameter expression="${panc.verbose}" default-value=false
+     * print compilation summary
+     * 
+     * @parameter property="panc.verbose" default-value=false
      * @required
      */
     protected boolean verbose = false;
 
     /**
-     * @description warnings flag ("on", "off", or "fatal")
-     * @parameter expression="${panc.warnings}" default-value="on"
+     * warnings flag ("ON", "OFF", or "FATAL")
+     * 
+     * @parameter property="panc.warnings" default-value="ON"
      * @required
      */
     protected CompilerOptions.DeprecationWarnings warnings = CompilerOptions.DeprecationWarnings.ON;

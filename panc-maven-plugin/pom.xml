@@ -4,7 +4,7 @@
 
   <artifactId>panc-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <name>maven-panc-plugin</name>
+  <name>panc-maven-plugin</name>
   <description>Maven Plugin for Pan Compiler</description>
 
   <parent>

@@ -15,75 +15,85 @@ import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.output.Formatter;
 
 /**
- * @description perform a full build of pan language templates
+ * perform a full build of pan language templates
+ * 
  * @goal pan-build
  * @phase compile
  */
 public class PanBuildMojo extends AbstractPanMojo {
 
     /**
-     * @description subdirectory with object templates
-     * @parameter expression="${panc.profiles}" default-value="profiles"
+     * subdirectory with object templates
+     * 
+     * @parameter property="panc.profiles" default-value="profiles"
      * @required
      */
     private String profiles = "profiles";
 
     /**
-     * @description pattern to include templates for debugging
-     * @parameter expression="${panc.debugNsInclude}"
+     * pattern to include templates for debugging
+     * 
+     * @parameter property="panc.debugNsInclude" default-value=".+"
      */
-    private String debugNsInclude = null;
+    private String debugNsInclude = ".+";
 
     /**
-     * @description pattern to exclude templates for debugging
-     * @parameter expression="${panc.debugNsExclude}"
+     * pattern to exclude templates for debugging
+     * 
+     * @parameter property="panc.debugNsExclude" default-value="^$"
      */
-    private String debugNsExclude = null;
+    private String debugNsExclude = "^$";
 
     /**
-     * @description initial data for configuration
-     * @parameter expression="${panc.initialData}"
+     * initial data for configuration
+     * 
+     * @parameter property="panc.initialData"
      */
     private String initialData = null;
 
     /**
-     * @description directory for generated profiles
-     * @parameter expression="${panc.outputDir}"
-     *            default-value="${basedir}/target"
+     * directory for generated profiles
+     * 
+     * @parameter property="panc.outputDir" default-value="${basedir}/target"
      * @required
      */
     private File outputDir;
 
     /**
-     * @description list of formats for output files (comma-separated list)
-     * @parameter expression="${panc.formats}" default-value="pan,dep"
+     * list of formats for output files (comma-separated list)
+     * 
+     * @parameter property="panc.formats" default-value="pan,dep"
      * @required
      */
     private String formats = "pan,dep";
 
     /**
-     * @description maximum number of iterations
-     * @parameter expression="${panc.maxIteration}" default-value=10000
+     * maximum number of iterations
+     * 
+     * @parameter property="panc.maxIteration" default-value=10000
      * @required
      */
     private int maxIteration = 10000;
 
     /**
-     * @description maximum number of recursions
-     * @parameter expression="${panc.maxRecursion}" default-value=10
+     * maximum number of recursions
+     * 
+     * @parameter property="panc.maxRecursion" default-value=50
      * @required
      */
-    private int maxRecursion = 10;
+    private int maxRecursion = 50;
 
     /**
-     * @description logging types
-     * @parameter expression="${panc.logging}" default-value="none"
+     * logging types
+     * 
+     * @parameter property="panc.logging" default-value="none"
      */
     private String logging = "none";
 
     /**
-     * @description log file
-     * @parameter expression="${panc.logFile}"
+     * log file
+     * 
+     * @parameter property="panc.logFile"
      */
     private File logFile = null;
 

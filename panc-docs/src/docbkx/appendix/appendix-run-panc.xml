@@ -9,22 +9,48 @@
           xmlns:db="http://docbook.org/ns/docbook">
   <title>Running the Compiler</title>
 
-  <para>The performance of the compiler can degrade markedly if there is not
-  sufficient memory to do a particular compile and build. Moreover, the
-  default memory allocation and vary wildly depending on how and when the
-  compiler is invoked. Similarly, there are other options that may improve the
-  performance of the compiler. For instance, it is usually advisable to use
-  the <option>-server</option> option.</para>
+  <para>To facilitate the use of the pan configuration language compiler in
+  different contexts, several mechanisms for running the compiler are
+  supported, ranging from direct invocation from the command line to use
+  within build frameworks like ant and maven.</para>
+
+  <para>The performance of the compiler can vary significantly depending on
+  how the compiler is invoked and on what options are used. Some general
+  points to keep in mind are:</para>
+
+  <itemizedlist>
+    <listitem>
+      <para>For large builds, try to start the underlying Java Virtual Machine
+      (JVM) only once. That is, avoid the command line interface and instead
+      use one of the build framework integrations.</para>
+    </listitem>
+
+    <listitem>
+      <para>The pan compiler can be memory-intensive to medium to large-scale
+      builds. Use the verbose output to see the allocated and used heap space.
+      Increase the allocated memory for the JVM if the used memory exceeds
+      about 80% of the total.</para>
+    </listitem>
+
+    <listitem>
+      <para>Other JVM optimizations and options can improve performance. Check
+      out what options are available with your Java implementation and
+      experiment with those options.</para>
+    </listitem>
+  </itemizedlist>
+
+  <para>The following sections provide details on the supported mechanisms for
+  invoking the pan configuration language compiler. </para>
 
   <section>
     <title>Command Line</title>
 
     <para>The compiler can be invoked from the command line by using
-    <command>panc</command>. This is a script that is installed with the pan
-    compiler package that invokes a Java virtual machine and the compiler. The
-    script options are not compatible with previous versions of this command;
-    use <command>panc-old</command> to use the older options. Note that the
-    <command>panc-old</command> command is
+    <command>panc</command>. This is a script, which works in Unix-like
+    environments, that starts a Java Virtual Machine and invokes the compiler.
+    The script options are not compatible with previous versions of this
+    command; use <command>panc-old</command> to use the older options. Note
+    that the <command>panc-old</command> command is
     <emphasis>deprecated</emphasis>.</para>
 
     <para>The full list of options can be obtained with the
@@ -51,12 +77,12 @@
   <section>
     <title>Maven</title>
 
-    <para>The pan compiler release now contains a simple maven plug-in that
-    will perform a pan syntax check and build a simple set of files. The
-    plug-in is available from the central maven repository. To use this, you
-    will need to configure maven for that repository. A maven archetype is
-    also provided that can be used to generate a working skeleton that
-    demonstrates the pan maven plugin.</para>
+    <para>The pan compiler release contains a simple maven plug-in that will
+    perform a pan syntax check and build a simple set of files. The plug-in is
+    available from the central maven repository. To use this, you will need to
+    configure maven for that repository. A maven archetype is also provided
+    that can be used to generate a working skeleton that demonstrates the pan
+    maven plugin.</para>
 
     <warning>
       <para>The options of the plugin have changed from the previous version.
@@ -151,7 +177,7 @@ $ mvn clean install
     <programlisting>$ mvn help:describe -Dplugin=panc -Ddetail=true</programlisting>
 
     <para>The following tables show the available parameters for the PanBuild
-    and PanCheckSyntax mojos. </para>
+    and PanCheckSyntax mojos.</para>
 
     <table>
       <title>PanBuild Mojo Parameters</title>
@@ -250,7 +276,7 @@ $ mvn clean install
             <entry>Set the maximum number of iterations. This is a failsafe to
             avoid infinite loops.</entry>
 
-            <entry>No. Default value: 5000</entry>
+            <entry>No. Default value: 10000</entry>
           </row>
 
           <row>
@@ -258,7 +284,7 @@ $ mvn clean install
 
             <entry>Maximum number of recursive calls.</entry>
 
-            <entry>No. Default value: 5000</entry>
+            <entry>No. Default value: 50</entry>
           </row>
 
           <row>
@@ -455,7 +481,7 @@ $ mvn clean install
             <entry>Set the maximum number of iterations. This is a failsafe to
             avoid infinite loops.</entry>
 
-            <entry>No. Default value: 5000</entry>
+            <entry>No. Default value: 10000</entry>
           </row>
 
           <row>
@@ -463,7 +489,7 @@ $ mvn clean install
 
             <entry>Maximum number of recursive calls.</entry>
 
-            <entry>No. Default value: 5000</entry>
+            <entry>No. Default value: 50</entry>
           </row>
 
           <row>
@@ -561,7 +587,7 @@ $ mvn clean install
             <entry>Maximum number of recursive calls. <emphasis>Deprecated:
             Use <option>maxRecursion</option> instead.</emphasis></entry>
 
-            <entry>No. Default value: 5000</entry>
+            <entry>No. Default value: 50</entry>
           </row>
 
           <row>
@@ -633,7 +659,7 @@ $ mvn clean install
             avoid infinite loops. <emphasis>Deprecated: Use
             <option>maxIteration</option> instead.</emphasis></entry>
 
-            <entry>No. Default value: 5000</entry>
+            <entry>No. Default value: 10000</entry>
           </row>
 
           <row>

@@ -37,7 +37,7 @@
           <execution>
             <id>check-syntax</id>
             <goals>
-              <goal>pan-check-syntax</goal>
+              <goal>check-syntax</goal>
             </goals>
           </execution>
 
@@ -47,8 +47,7 @@
               <goal>pan-build</goal>
             </goals>
             <configuration>
-              <formatterName>pan</formatterName>
-              <!-- <formatterName>json</formatterName> -->
+              <formats>pan,json,json.gz,dep</formats>
             </configuration>
           </execution>
 

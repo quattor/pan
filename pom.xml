@@ -43,9 +43,9 @@
   </organization>
 
   <scm>
-    <connection>scm:git:git://quattor.git.sourceforge.net/gitroot/quattor/quattor/pan</connection>
-    <developerConnection>scm:git:ssh://quattor.git.sourceforge.net/gitroot/quattor/pan</developerConnection>
-    <url>http://quattor.git.sourceforge.net/git/gitweb.cgi?p=quattor/pan;a=summary</url>
+    <connection>scm:git:ssh://git@github.com/quattor/pan.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/quattor/pan.git</developerConnection>
+    <url>https://github.com/quattor/pan</url>
   </scm>
 
   <issueManagement>

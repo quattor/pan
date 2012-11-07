@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.TreeSet;
+import java.util.HashSet;
 import java.util.regex.Pattern;
 
 import org.apache.tools.ant.BuildException;
@@ -291,7 +291,7 @@ public class DependencyChecker {
 
 		boolean mustIncludeDepFormatter = true;
 
-		Set<Formatter> f = new TreeSet<Formatter>();
+		Set<Formatter> f = new HashSet<Formatter>();
 		f.addAll(formatters);
 
 		for (Formatter formatter : formatters) {

@@ -21,7 +21,7 @@
   {:debugIncludePatterns []
    :debugExcludePatterns []
    :iterationLimit 10000
-   :callDepthLimit 10
+   :callDepthLimit 50
    :formatter #{(PanFormatter/getInstance), (DepFormatter/getInstance)}
    :output-dir (absolute-file)
    :sessionDirectory nil

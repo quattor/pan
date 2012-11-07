@@ -73,513 +73,513 @@ import org.quattor.pan.template.SourceRange;
  */
 public class CompilerOptions {
 
-	public enum DeprecationWarnings {
-		ON, OFF, FATAL
-	};
-
-	/**
-	 * Force the build to be done even if no output files are to be written.
-	 */
-	public final boolean forceBuild;
-
-	/**
-	 * The iteration limit during the compilation to avoid infinite loops.
-	 */
-	public final int iterationLimit;
-
-	/**
-	 * The call depth limit which is used to prevent infinite recursion in the
-	 * compiler.
-	 */
-	public final int callDepthLimit;
-
-	/**
-	 * The <code>Formatter</code> that will be used to format the machine
-	 * profiles.
-	 */
-	public final List<Formatter> formatters;
-
-	/**
-	 * The directory that will contain the produced machine profiles and
-	 * dependency files (if any).
-	 */
-	public final File outputDirectory;
-
-	/**
-	 * The number of active threads per task queue to allow.
-	 */
-	public final int activeThreadsPerQueue;
-
-	/**
-	 * Define the deprecation level for compilation: ON, OFF, or FATAL.
-	 */
-	public final DeprecationWarnings deprecationWarnings;
-
-	public final SourceRepository sourceRepository;
-
-	/**
-	 * Patterns that are matched against a template name to determine if debug()
-	 * calls are turned on or off. Template names matching one of the patterns
-	 * in the include set will have the debugging turned on UNLESS it matches a
-	 * pattern in the exclude set.
-	 */
-	private final List<Pattern> debugIncludePatterns;
-	private final List<Pattern> debugExcludePatterns;
-
-	/**
-	 * Directory that will contain the annotation output files.
-	 */
-	public final File annotationDirectory;
-
-	/**
-	 * Base directory of source files for generation of annotation output files.
-	 * These files will be generated at locations relative to the base directory
-	 * in the specified output directory.
-	 */
-	public final File annotationBaseDirectory;
-
-	public final HashResource rootElement;
-
-	/**
-	 * Construct a CompilerOptions instance to drive a Compiler run. Instances
-	 * of this class are immutable.
-	 * 
-	 * @param debugIncludePatterns
-	 *            patterns to use to turn on debugging for matching templates
-	 * @param debugExcludePatterns
-	 *            patterns to use to turn off debugging for matching templates
-	 * @param iterationLimit
-	 *            maximum number of iterations (<=0 unlimited)
-	 * @param callDepthLimit
-	 *            maximum call depth (<=0 unlimited)
-	 * @param formatters
-	 *            formats for machine configuration files
-	 * @param outputDirectory
-	 *            output directory for machine configuration and dependency
-	 *            files (cannot be null if either writeXmlEnable or
-	 *            writeDepEnabled is true)
-	 * @param sessionDirectory
-	 *            session directory
-	 * @param includeDirectories
-	 *            list of directories to check for template files; directories
-	 *            must exist and be absolute
-	 * @param nthread
-	 *            number of threads to use (<=0 uses default value)
-	 * @param deprecationWarnings
-	 *            level for deprecation warnings (ON, OFF, or FATAL)
-	 * @param forceBuild
-	 *            force build even if no output files are generated if true
-	 * @param annotationDirectory
-	 *            directory that will contain annotation output files
-	 * @param annotationBaseDirectory
-	 *            base directory of source files for annotation output
-	 * @param rootElement
-	 *            string containing description of root element to use; if null
-	 *            or empty string, this defaults to an empty nlist
-	 * @param failOnWarn
-	 *            if set to true, all warnings will cause compilation to fail
-	 * @throws SyntaxException
-	 *             if the expression for the rootElement is invalid
-	 */
-	public CompilerOptions(List<Pattern> debugIncludePatterns,
-			List<Pattern> debugExcludePatterns, int iterationLimit,
-			int callDepthLimit, Set<Formatter> formatters,
-			File outputDirectory, File sessionDirectory,
-			List<File> includeDirectories, int nthread,
-			DeprecationWarnings deprecationWarnings, boolean forceBuild,
-			File annotationDirectory, File annotationBaseDirectory,
-			String rootElement) throws SyntaxException {
-
-		// Check that the iteration and call depth limits are sensible. If
-		// negative or zero set these effectively to infinity.
-		if (iterationLimit <= 0) {
-			iterationLimit = Integer.MAX_VALUE;
-		}
-		if (callDepthLimit <= 0) {
-			callDepthLimit = Integer.MAX_VALUE;
-		}
-
-		// Check that the output and session directories are sensible if they
-		// aren't null.
-		if (outputDirectory != null) {
-			checkDirectory(outputDirectory, "output");
-		}
-		if (sessionDirectory != null) {
-			checkDirectory(sessionDirectory, "session");
-		}
-
-		// Check all of the include directories.
-		for (File d : includeDirectories) {
-			if (d != null) {
-				checkDirectory(d, "include");
-			} else {
-				throw new IllegalArgumentException(
-						"include directory may not be null");
-			}
-		}
-
-		// If we want the XML or dependency files to be written, the output
-		// directory must be specified.
-		if ((outputDirectory == null) && (formatters.size() > 0)) {
-			throw new IllegalArgumentException(
-					"outputDirectory must be specified if output formats are specified");
-		}
-
-		// Everything's OK. Copy the values into this instance.
-		this.iterationLimit = iterationLimit;
-		this.callDepthLimit = callDepthLimit;
-		this.outputDirectory = outputDirectory;
-		this.activeThreadsPerQueue = nthread;
-		this.forceBuild = forceBuild;
-
-		this.deprecationWarnings = deprecationWarnings;
-
-		// Deal with the formatter(s).
-		List<Formatter> fmts = new LinkedList<Formatter>();
-		if (formatters != null) {
-			fmts.addAll(formatters);
-		}
-		this.formatters = Collections.unmodifiableList(fmts);
-
-		// Setup the debug patterns, ensuring that the debug pattern lists are
-		// not null.
-		if (debugIncludePatterns == null) {
-			this.debugIncludePatterns = new LinkedList<Pattern>();
-		} else {
-			this.debugIncludePatterns = debugIncludePatterns;
-		}
-		if (debugExcludePatterns == null) {
-			this.debugExcludePatterns = new LinkedList<Pattern>();
-		} else {
-			this.debugExcludePatterns = debugExcludePatterns;
-		}
-
-		ParameterList parameters = new ParameterList();
-		if (sessionDirectory != null) {
-			parameters.append("sessionDirectory", sessionDirectory.toString());
-		}
-		for (File f : includeDirectories) {
-			parameters.append("includeDirectory", f.toString());
-		}
-
-		SourceRepository value = null;
-		try {
-			value = SourceRepositoryFactory.create(parameters);
-		} catch (ConfigurationException ce) {
-			throw new RuntimeException(ce.getMessage());
-			// TODO: Add correct behavior.
-		}
-		sourceRepository = value;
-
-		this.annotationDirectory = annotationDirectory;
-		if (annotationDirectory != null) {
-			checkDirectory(annotationDirectory, "annotation");
-		}
-
-		this.annotationBaseDirectory = annotationBaseDirectory;
-		if (annotationBaseDirectory != null) {
-			checkDirectory(annotationBaseDirectory, "annotation base");
-		}
-
-		this.rootElement = createRootElement(rootElement);
-	}
-
-	// Utility method to turn old options into new deprecation flag.
-	public static DeprecationWarnings getDeprecationWarnings(
-			int deprecationLevel, boolean failOnWarn) {
-
-		if (deprecationLevel < 0) {
-			return DeprecationWarnings.OFF;
-		} else {
-			return failOnWarn ? DeprecationWarnings.FATAL
-					: DeprecationWarnings.ON;
-		}
-	}
-
-	/**
-	 * Create a CompilerOptions object that is appropriate for just doing a
-	 * syntax check.
-	 * 
-	 * @param deprecationLevel
-	 *            set the deprecation level, the higher the level the fewer
-	 *            deprecation warnings are produced; 0 produces all warnings
-	 * @param failOnWarn
-	 *            if set to true, all warnings will cause compilation to fail
-	 * @return
-	 */
-	public static CompilerOptions createCheckSyntaxOptions(
-			DeprecationWarnings deprecationWarnings) {
-
-		List<Pattern> debugIncludePatterns = new LinkedList<Pattern>();
-		List<Pattern> debugExcludePatterns = new LinkedList<Pattern>();
-		int iterationLimit = 5000;
-		int callDepthLimit = 50;
-		Set<Formatter> formatters = new TreeSet<Formatter>();
-		File outputDirectory = null;
-		File sessionDirectory = null;
-		int nthread = 0;
-		boolean forceBuild = false;
-		File annotationDirectory = null;
-		File annotationBaseDirectory = null;
-		LinkedList<File> includeDirectories = new LinkedList<File>();
-
-		try {
-			return new CompilerOptions(debugIncludePatterns,
-					debugExcludePatterns, iterationLimit, callDepthLimit,
-					formatters, outputDirectory, sessionDirectory,
-					includeDirectories, nthread, deprecationWarnings,
-					forceBuild, annotationDirectory, annotationBaseDirectory,
-					null);
-
-		} catch (SyntaxException consumed) {
-			throw CompilerError.create(MSG_FILE_BUG_REPORT);
-		}
-	}
-
-	/**
-	 * Create a CompilerOptions object that is appropriate for just doing a
-	 * syntax check.
-	 * 
-	 * @param deprecationLevel
-	 *            set the deprecation level, the higher the level the fewer
-	 *            deprecation warnings are produced; 0 produces all warnings
-	 * @param failOnWarn
-	 *            if set to true, all warnings will cause compilation to fail
-	 * @return
-	 */
-	public static CompilerOptions createAnnotationOptions(
-			File annotationDirectory, File annotationBaseDirectory) {
-
-		List<Pattern> debugIncludePatterns = new LinkedList<Pattern>();
-		List<Pattern> debugExcludePatterns = new LinkedList<Pattern>();
-		int iterationLimit = 5000;
-		int callDepthLimit = 50;
-		Set<Formatter> formatters = new TreeSet<Formatter>();
-		File outputDirectory = null;
-		File sessionDirectory = null;
-		int nthread = 0;
-		boolean forceBuild = false;
-		LinkedList<File> includeDirectories = new LinkedList<File>();
-
-		try {
-			return new CompilerOptions(debugIncludePatterns,
-					debugExcludePatterns, iterationLimit, callDepthLimit,
-					formatters, outputDirectory, sessionDirectory,
-					includeDirectories, nthread, DeprecationWarnings.OFF,
-					forceBuild, annotationDirectory, annotationBaseDirectory,
-					null);
-
-		} catch (SyntaxException consumed) {
-			throw CompilerError.create(MSG_FILE_BUG_REPORT);
-		}
-	}
-
-	public static HashResource createRootElement(String rootElement)
-			throws SyntaxException {
-
-		if (rootElement == null || "".equals(rootElement.trim())) {
-
-			return new HashResource();
-
-		} else {
-
-			try {
-
-				PanParser parser = new PanParser(new StringReader(rootElement));
-				ASTOperation ast = parser.dml();
-				Operation dml = PanParserAstUtils.astToDml(ast);
-				return (HashResource) dml.execute(new CompileTimeContext());
-
-			} catch (SyntaxException e) {
-				throw SyntaxException.create(null,
-						MSG_INVALID_SYNTAX_ROOT_ELEMENT, e.getMessage());
-			} catch (ClassCastException e) {
-				throw SyntaxException.create(null,
-						MSG_INVALID_TYPE_FOR_ROOT_ELEMENT);
-			}
-
-		}
-	}
-
-	/**
-	 * A private utility function to verify that the directory is really a
-	 * directory, exists, and absolute.
-	 * 
-	 * @param dirs
-	 *            directory to check
-	 * @param dtype
-	 *            name to use in case of errors
-	 */
-	private void checkDirectory(File d, String dtype) {
-
-		if (!d.isAbsolute()) {
-			throw new IllegalArgumentException(dtype
-					+ " directory must be an absolute path");
-		}
-		if (!d.exists()) {
-			throw new IllegalArgumentException(dtype
-					+ " directory does not exist");
-		}
-		if (!d.isDirectory()) {
-			throw new IllegalArgumentException(dtype
-					+ " directory value is not a directory");
-		}
-
-	}
-
-	/**
-	 * Resolve a list of object template names and template Files to a set of
-	 * files based on this instance's include directories and session directory.
-	 * 
-	 * @param objectNames
-	 *            object template names to lookup
-	 * @param tplFiles
-	 *            template Files to process
-	 * 
-	 * @return unmodifiable set of the resolved file names
-	 */
-	public Set<File> resolveFileList(List<String> objectNames,
-			Collection<File> tplFiles) {
-
-		// First just copy the named templates.
-		Set<File> filesToProcess = new TreeSet<File>();
-		if (tplFiles != null) {
-			filesToProcess.addAll(tplFiles);
-		}
-
-		// Now loop over all of the object template names, lookup the files, and
-		// add them to the set of files to process.
-		if (objectNames != null) {
-			for (String oname : objectNames) {
-				SourceFile source = sourceRepository.retrievePanSource(oname);
-				if (!source.isAbsent()) {
-					filesToProcess.add(source.getPath());
-				} else {
-					throw EvaluationException.create((SourceRange) null,
-							(Context) null, MSG_CANNOT_LOCATE_OBJECT_TEMPLATE,
-							oname);
-				}
-			}
-		}
-
-		return Collections.unmodifiableSet(filesToProcess);
-	}
-
-	/**
-	 * A utility function that checks a given template name against the list of
-	 * debug include and exclude patterns.
-	 * 
-	 * @param tplName
-	 *            name of the template to check
-	 * 
-	 * @return flag indicating whether debugging should be activated or not
-	 */
-	public boolean checkDebugEnabled(String tplName) {
-
-		// Check first the exclude patterns. Any matching pattern in the exclude
-		// list means that the debugging is disabled for the given template.
-		for (Pattern p : debugExcludePatterns) {
-			if (p.matcher(tplName).matches()) {
-				return false;
-			}
-		}
-
-		// Now check the include patterns. Any matching pattern here means that
-		// the debugging for this template is enabled.
-		for (Pattern p : debugIncludePatterns) {
-			if (p.matcher(tplName).matches()) {
-				return true;
-			}
-		}
-
-		// If we get here, then the template didn't match anything. By default,
-		// the debugging is turned off.
-		return false;
-	}
-
-	// FIXME: This code duplicates code that is also in clojure.  The clojure
-	// code should eventually be used for generating the list of formatters to
-	// be used for a compilation.
-	public static Set<Formatter> getFormatters(String s) {
-
-		HashSet<Formatter> formatters = new HashSet<Formatter>();
-
-		String[] names = s.trim().split("\\s*,\\s*");
-		for (String fname : names) {
-			if ("text".equals(fname)) {
-				formatters.add(TxtFormatter.getInstance());
-			} else if ("json".equals(fname)) {
-				formatters.add(JsonFormatter.getInstance());
-			} else if ("json.gz".equals(fname)) {
-				formatters.add(JsonGzipFormatter.getInstance());
-			} else if ("dot".equals(fname)) {
-				formatters.add(DotFormatter.getInstance());
-			} else if ("pan".equals(fname)) {
-				formatters.add(PanFormatter.getInstance());
-			} else if ("pan.gz".equals(fname)) {
-				formatters.add(PanGzipFormatter.getInstance());
-			} else if ("xml".equals(fname)) {
-				formatters.add(XmlFormatter.getInstance());
-			} else if ("xml.gz".equals(fname)) {
-				formatters.add(XmlGzipFormatter.getInstance());
-			} else if ("dep".equals(fname)) {
-				formatters.add(DepFormatter.getInstance());
-			} else if ("none".equals(fname)) {
-				// No-op
-			}
-		}
-
-		return formatters;
-	}
-
-	/**
-	 * A verbose representation of all of the options in this instance.
-	 * 
-	 * @return String representation of options
-	 */
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-
-		sb.append("debug include patterns: ");
-		for (Pattern p : debugIncludePatterns) {
-			sb.append(p.toString());
-			sb.append("\n");
-		}
-		sb.append("\n");
-
-		sb.append("debug exclude patterns: ");
-		for (Pattern p : debugExcludePatterns) {
-			sb.append(p.toString());
-			sb.append("\n");
-		}
-		sb.append("\n");
-
-		sb.append("iteration limit: ");
-		sb.append(iterationLimit);
-		sb.append("\n");
-
-		sb.append("call depth limit: ");
-		sb.append(callDepthLimit);
-		sb.append("\n");
-
-		sb.append("output directory: ");
-		sb.append(outputDirectory);
-		sb.append("\n");
-
-		if (formatters != null) {
-			sb.append("formatter: ");
-			sb.append(formatters.getClass().toString());
-			sb.append("\n");
-		} else {
-			sb.append("formatter: null\n");
-		}
-
-		sb.append("source repository: ");
-		sb.append(sourceRepository.toString());
-		sb.append("\n");
-
-		return sb.toString();
-	}
+    public enum DeprecationWarnings {
+        ON, OFF, FATAL
+    };
+
+    /**
+     * Force the build to be done even if no output files are to be written.
+     */
+    public final boolean forceBuild;
+
+    /**
+     * The iteration limit during the compilation to avoid infinite loops.
+     */
+    public final int iterationLimit;
+
+    /**
+     * The call depth limit which is used to prevent infinite recursion in the
+     * compiler.
+     */
+    public final int callDepthLimit;
+
+    /**
+     * The <code>Formatter</code> that will be used to format the machine
+     * profiles.
+     */
+    public final List<Formatter> formatters;
+
+    /**
+     * The directory that will contain the produced machine profiles and
+     * dependency files (if any).
+     */
+    public final File outputDirectory;
+
+    /**
+     * The number of active threads per task queue to allow.
+     */
+    public final int activeThreadsPerQueue;
+
+    /**
+     * Define the deprecation level for compilation: ON, OFF, or FATAL.
+     */
+    public final DeprecationWarnings deprecationWarnings;
+
+    public final SourceRepository sourceRepository;
+
+    /**
+     * Patterns that are matched against a template name to determine if debug()
+     * calls are turned on or off. Template names matching one of the patterns
+     * in the include set will have the debugging turned on UNLESS it matches a
+     * pattern in the exclude set.
+     */
+    private final List<Pattern> debugIncludePatterns;
+    private final List<Pattern> debugExcludePatterns;
+
+    /**
+     * Directory that will contain the annotation output files.
+     */
+    public final File annotationDirectory;
+
+    /**
+     * Base directory of source files for generation of annotation output files.
+     * These files will be generated at locations relative to the base directory
+     * in the specified output directory.
+     */
+    public final File annotationBaseDirectory;
+
+    public final HashResource rootElement;
+
+    /**
+     * Construct a CompilerOptions instance to drive a Compiler run. Instances
+     * of this class are immutable.
+     * 
+     * @param debugIncludePatterns
+     *            patterns to use to turn on debugging for matching templates
+     * @param debugExcludePatterns
+     *            patterns to use to turn off debugging for matching templates
+     * @param iterationLimit
+     *            maximum number of iterations (<=0 unlimited)
+     * @param callDepthLimit
+     *            maximum call depth (<=0 unlimited)
+     * @param formatters
+     *            formats for machine configuration files
+     * @param outputDirectory
+     *            output directory for machine configuration and dependency
+     *            files (cannot be null if either writeXmlEnable or
+     *            writeDepEnabled is true)
+     * @param sessionDirectory
+     *            session directory
+     * @param includeDirectories
+     *            list of directories to check for template files; directories
+     *            must exist and be absolute
+     * @param nthread
+     *            number of threads to use (<=0 uses default value)
+     * @param deprecationWarnings
+     *            level for deprecation warnings (ON, OFF, or FATAL)
+     * @param forceBuild
+     *            force build even if no output files are generated if true
+     * @param annotationDirectory
+     *            directory that will contain annotation output files
+     * @param annotationBaseDirectory
+     *            base directory of source files for annotation output
+     * @param rootElement
+     *            string containing description of root element to use; if null
+     *            or empty string, this defaults to an empty nlist
+     * @param failOnWarn
+     *            if set to true, all warnings will cause compilation to fail
+     * @throws SyntaxException
+     *             if the expression for the rootElement is invalid
+     */
+    public CompilerOptions(List<Pattern> debugIncludePatterns,
+            List<Pattern> debugExcludePatterns, int iterationLimit,
+            int callDepthLimit, Set<Formatter> formatters,
+            File outputDirectory, File sessionDirectory,
+            List<File> includeDirectories, int nthread,
+            DeprecationWarnings deprecationWarnings, boolean forceBuild,
+            File annotationDirectory, File annotationBaseDirectory,
+            String rootElement) throws SyntaxException {
+
+        // Check that the iteration and call depth limits are sensible. If
+        // negative or zero set these effectively to infinity.
+        if (iterationLimit <= 0) {
+            iterationLimit = Integer.MAX_VALUE;
+        }
+        if (callDepthLimit <= 0) {
+            callDepthLimit = Integer.MAX_VALUE;
+        }
+
+        // Check that the output and session directories are sensible if they
+        // aren't null.
+        if (outputDirectory != null) {
+            checkDirectory(outputDirectory, "output");
+        }
+        if (sessionDirectory != null) {
+            checkDirectory(sessionDirectory, "session");
+        }
+
+        // Check all of the include directories.
+        for (File d : includeDirectories) {
+            if (d != null) {
+                checkDirectory(d, "include");
+            } else {
+                throw new IllegalArgumentException(
+                        "include directory may not be null");
+            }
+        }
+
+        // If we want the XML or dependency files to be written, the output
+        // directory must be specified.
+        if ((outputDirectory == null) && (formatters.size() > 0)) {
+            throw new IllegalArgumentException(
+                    "outputDirectory must be specified if output formats are specified");
+        }
+
+        // Everything's OK. Copy the values into this instance.
+        this.iterationLimit = iterationLimit;
+        this.callDepthLimit = callDepthLimit;
+        this.outputDirectory = outputDirectory;
+        this.activeThreadsPerQueue = nthread;
+        this.forceBuild = forceBuild;
+
+        this.deprecationWarnings = deprecationWarnings;
+
+        // Deal with the formatter(s).
+        List<Formatter> fmts = new LinkedList<Formatter>();
+        if (formatters != null) {
+            fmts.addAll(formatters);
+        }
+        this.formatters = Collections.unmodifiableList(fmts);
+
+        // Setup the debug patterns, ensuring that the debug pattern lists are
+        // not null.
+        if (debugIncludePatterns == null) {
+            this.debugIncludePatterns = new LinkedList<Pattern>();
+        } else {
+            this.debugIncludePatterns = debugIncludePatterns;
+        }
+        if (debugExcludePatterns == null) {
+            this.debugExcludePatterns = new LinkedList<Pattern>();
+        } else {
+            this.debugExcludePatterns = debugExcludePatterns;
+        }
+
+        ParameterList parameters = new ParameterList();
+        if (sessionDirectory != null) {
+            parameters.append("sessionDirectory", sessionDirectory.toString());
+        }
+        for (File f : includeDirectories) {
+            parameters.append("includeDirectory", f.toString());
+        }
+
+        SourceRepository value = null;
+        try {
+            value = SourceRepositoryFactory.create(parameters);
+        } catch (ConfigurationException ce) {
+            throw new RuntimeException(ce.getMessage());
+            // TODO: Add correct behavior.
+        }
+        sourceRepository = value;
+
+        this.annotationDirectory = annotationDirectory;
+        if (annotationDirectory != null) {
+            checkDirectory(annotationDirectory, "annotation");
+        }
+
+        this.annotationBaseDirectory = annotationBaseDirectory;
+        if (annotationBaseDirectory != null) {
+            checkDirectory(annotationBaseDirectory, "annotation base");
+        }
+
+        this.rootElement = createRootElement(rootElement);
+    }
+
+    // Utility method to turn old options into new deprecation flag.
+    public static DeprecationWarnings getDeprecationWarnings(
+            int deprecationLevel, boolean failOnWarn) {
+
+        if (deprecationLevel < 0) {
+            return DeprecationWarnings.OFF;
+        } else {
+            return failOnWarn ? DeprecationWarnings.FATAL
+                    : DeprecationWarnings.ON;
+        }
+    }
+
+    /**
+     * Create a CompilerOptions object that is appropriate for just doing a
+     * syntax check.
+     * 
+     * @param deprecationLevel
+     *            set the deprecation level, the higher the level the fewer
+     *            deprecation warnings are produced; 0 produces all warnings
+     * @param failOnWarn
+     *            if set to true, all warnings will cause compilation to fail
+     * @return
+     */
+    public static CompilerOptions createCheckSyntaxOptions(
+            DeprecationWarnings deprecationWarnings) {
+
+        List<Pattern> debugIncludePatterns = new LinkedList<Pattern>();
+        List<Pattern> debugExcludePatterns = new LinkedList<Pattern>();
+        int iterationLimit = 5000;
+        int callDepthLimit = 50;
+        Set<Formatter> formatters = new HashSet<Formatter>();
+        File outputDirectory = null;
+        File sessionDirectory = null;
+        int nthread = 0;
+        boolean forceBuild = false;
+        File annotationDirectory = null;
+        File annotationBaseDirectory = null;
+        LinkedList<File> includeDirectories = new LinkedList<File>();
+
+        try {
+            return new CompilerOptions(debugIncludePatterns,
+                    debugExcludePatterns, iterationLimit, callDepthLimit,
+                    formatters, outputDirectory, sessionDirectory,
+                    includeDirectories, nthread, deprecationWarnings,
+                    forceBuild, annotationDirectory, annotationBaseDirectory,
+                    null);
+
+        } catch (SyntaxException consumed) {
+            throw CompilerError.create(MSG_FILE_BUG_REPORT);
+        }
+    }
+
+    /**
+     * Create a CompilerOptions object that is appropriate for just doing a
+     * syntax check.
+     * 
+     * @param deprecationLevel
+     *            set the deprecation level, the higher the level the fewer
+     *            deprecation warnings are produced; 0 produces all warnings
+     * @param failOnWarn
+     *            if set to true, all warnings will cause compilation to fail
+     * @return
+     */
+    public static CompilerOptions createAnnotationOptions(
+            File annotationDirectory, File annotationBaseDirectory) {
+
+        List<Pattern> debugIncludePatterns = new LinkedList<Pattern>();
+        List<Pattern> debugExcludePatterns = new LinkedList<Pattern>();
+        int iterationLimit = 5000;
+        int callDepthLimit = 50;
+        Set<Formatter> formatters = new HashSet<Formatter>();
+        File outputDirectory = null;
+        File sessionDirectory = null;
+        int nthread = 0;
+        boolean forceBuild = false;
+        LinkedList<File> includeDirectories = new LinkedList<File>();
+
+        try {
+            return new CompilerOptions(debugIncludePatterns,
+                    debugExcludePatterns, iterationLimit, callDepthLimit,
+                    formatters, outputDirectory, sessionDirectory,
+                    includeDirectories, nthread, DeprecationWarnings.OFF,
+                    forceBuild, annotationDirectory, annotationBaseDirectory,
+                    null);
+
+        } catch (SyntaxException consumed) {
+            throw CompilerError.create(MSG_FILE_BUG_REPORT);
+        }
+    }
+
+    public static HashResource createRootElement(String rootElement)
+            throws SyntaxException {
+
+        if (rootElement == null || "".equals(rootElement.trim())) {
+
+            return new HashResource();
+
+        } else {
+
+            try {
+
+                PanParser parser = new PanParser(new StringReader(rootElement));
+                ASTOperation ast = parser.dml();
+                Operation dml = PanParserAstUtils.astToDml(ast);
+                return (HashResource) dml.execute(new CompileTimeContext());
+
+            } catch (SyntaxException e) {
+                throw SyntaxException.create(null,
+                        MSG_INVALID_SYNTAX_ROOT_ELEMENT, e.getMessage());
+            } catch (ClassCastException e) {
+                throw SyntaxException.create(null,
+                        MSG_INVALID_TYPE_FOR_ROOT_ELEMENT);
+            }
+
+        }
+    }
+
+    /**
+     * A private utility function to verify that the directory is really a
+     * directory, exists, and absolute.
+     * 
+     * @param dirs
+     *            directory to check
+     * @param dtype
+     *            name to use in case of errors
+     */
+    private void checkDirectory(File d, String dtype) {
+
+        if (!d.isAbsolute()) {
+            throw new IllegalArgumentException(dtype
+                    + " directory must be an absolute path");
+        }
+        if (!d.exists()) {
+            throw new IllegalArgumentException(dtype
+                    + " directory does not exist");
+        }
+        if (!d.isDirectory()) {
+            throw new IllegalArgumentException(dtype
+                    + " directory value is not a directory");
+        }
+
+    }
+
+    /**
+     * Resolve a list of object template names and template Files to a set of
+     * files based on this instance's include directories and session directory.
+     * 
+     * @param objectNames
+     *            object template names to lookup
+     * @param tplFiles
+     *            template Files to process
+     * 
+     * @return unmodifiable set of the resolved file names
+     */
+    public Set<File> resolveFileList(List<String> objectNames,
+            Collection<File> tplFiles) {
+
+        // First just copy the named templates.
+        Set<File> filesToProcess = new TreeSet<File>();
+        if (tplFiles != null) {
+            filesToProcess.addAll(tplFiles);
+        }
+
+        // Now loop over all of the object template names, lookup the files, and
+        // add them to the set of files to process.
+        if (objectNames != null) {
+            for (String oname : objectNames) {
+                SourceFile source = sourceRepository.retrievePanSource(oname);
+                if (!source.isAbsent()) {
+                    filesToProcess.add(source.getPath());
+                } else {
+                    throw EvaluationException.create((SourceRange) null,
+                            (Context) null, MSG_CANNOT_LOCATE_OBJECT_TEMPLATE,
+                            oname);
+                }
+            }
+        }
+
+        return Collections.unmodifiableSet(filesToProcess);
+    }
+
+    /**
+     * A utility function that checks a given template name against the list of
+     * debug include and exclude patterns.
+     * 
+     * @param tplName
+     *            name of the template to check
+     * 
+     * @return flag indicating whether debugging should be activated or not
+     */
+    public boolean checkDebugEnabled(String tplName) {
+
+        // Check first the exclude patterns. Any matching pattern in the exclude
+        // list means that the debugging is disabled for the given template.
+        for (Pattern p : debugExcludePatterns) {
+            if (p.matcher(tplName).matches()) {
+                return false;
+            }
+        }
+
+        // Now check the include patterns. Any matching pattern here means that
+        // the debugging for this template is enabled.
+        for (Pattern p : debugIncludePatterns) {
+            if (p.matcher(tplName).matches()) {
+                return true;
+            }
+        }
+
+        // If we get here, then the template didn't match anything. By default,
+        // the debugging is turned off.
+        return false;
+    }
+
+    // FIXME: This code duplicates code that is also in clojure. The clojure
+    // code should eventually be used for generating the list of formatters to
+    // be used for a compilation.
+    public static Set<Formatter> getFormatters(String s) {
+
+        HashSet<Formatter> formatters = new HashSet<Formatter>();
+
+        String[] names = s.trim().split("\\s*,\\s*");
+        for (String fname : names) {
+            if ("text".equals(fname)) {
+                formatters.add(TxtFormatter.getInstance());
+            } else if ("json".equals(fname)) {
+                formatters.add(JsonFormatter.getInstance());
+            } else if ("json.gz".equals(fname)) {
+                formatters.add(JsonGzipFormatter.getInstance());
+            } else if ("dot".equals(fname)) {
+                formatters.add(DotFormatter.getInstance());
+            } else if ("pan".equals(fname)) {
+                formatters.add(PanFormatter.getInstance());
+            } else if ("pan.gz".equals(fname)) {
+                formatters.add(PanGzipFormatter.getInstance());
+            } else if ("xml".equals(fname)) {
+                formatters.add(XmlFormatter.getInstance());
+            } else if ("xml.gz".equals(fname)) {
+                formatters.add(XmlGzipFormatter.getInstance());
+            } else if ("dep".equals(fname)) {
+                formatters.add(DepFormatter.getInstance());
+            } else if ("none".equals(fname)) {
+                // No-op
+            }
+        }
+
+        return formatters;
+    }
+
+    /**
+     * A verbose representation of all of the options in this instance.
+     * 
+     * @return String representation of options
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("debug include patterns: ");
+        for (Pattern p : debugIncludePatterns) {
+            sb.append(p.toString());
+            sb.append("\n");
+        }
+        sb.append("\n");
+
+        sb.append("debug exclude patterns: ");
+        for (Pattern p : debugExcludePatterns) {
+            sb.append(p.toString());
+            sb.append("\n");
+        }
+        sb.append("\n");
+
+        sb.append("iteration limit: ");
+        sb.append(iterationLimit);
+        sb.append("\n");
+
+        sb.append("call depth limit: ");
+        sb.append(callDepthLimit);
+        sb.append("\n");
+
+        sb.append("output directory: ");
+        sb.append(outputDirectory);
+        sb.append("\n");
+
+        if (formatters != null) {
+            sb.append("formatter: ");
+            sb.append(formatters.getClass().toString());
+            sb.append("\n");
+        } else {
+            sb.append("formatter: null\n");
+        }
+
+        sb.append("source repository: ");
+        sb.append(sourceRepository.toString());
+        sb.append("\n");
+
+        return sb.toString();
+    }
 
 }

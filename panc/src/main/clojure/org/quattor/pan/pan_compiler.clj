@@ -91,7 +91,7 @@ Please file a bug report with including the stack trace.
          ["--formats" "generated output formats" :default "pan,dep"]
          ["--java-opts" "options for JVM"]
          ["--max-iteration" "set max. no. of iterations" :default 10000]
-         ["--max-recursion" "set max. depth of recursion" :default 10]
+         ["--max-recursion" "set max. depth of recursion" :default 50]
          ["--logging" "set logging types"]
          ["--log-file" "specify log file"]
          ["--warnings" "off, on, fatal" :default "on" ]

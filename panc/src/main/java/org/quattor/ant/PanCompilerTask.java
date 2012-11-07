@@ -106,7 +106,7 @@ public class PanCompilerTask extends Task {
 
     private int maxIteration = 10000;
 
-    private int maxRecursion = 10;
+    private int maxRecursion = 50;
 
     private File outputDir = null;
 

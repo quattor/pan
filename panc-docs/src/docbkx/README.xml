@@ -60,9 +60,14 @@
     <title>ChangeLog</title>
 
     <section>
-      <title>Version 9.3</title>
+      <title>Version 9.3-RC1</title>
 
       <itemizedlist>
+        <listitem>
+          <para>(SF Bug #3582159) Uncaught exception when creating XML
+          transformation</para>
+        </listitem>
+
         <listitem>
           <para>(SF RFE #3581805) Remove support for XMLDB format.</para>
         </listitem>

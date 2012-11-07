@@ -85,7 +85,7 @@
     maven plugin.</para>
 
     <warning>
-      <para>The options of the plugin have changed from the previous version.
+      <para>The options of the plug-in have changed from the previous version.
       They mirror those of the <command>panc</command> script. Details for the
       options are given below.</para>
     </warning>
@@ -171,7 +171,7 @@ $ mvn clean install
 &lt;/nlist&gt;</programlisting>
 
     <para>The <filename>pom.xml</filename> file in the skeleton provides a
-    good example on how to run the plugin. You can also obtain more detailed
+    good example on how to run the plug-in. You can also obtain more detailed
     help via the maven help system:</para>
 
     <programlisting>$ mvn help:describe -Dplugin=panc -Ddetail=true</programlisting>

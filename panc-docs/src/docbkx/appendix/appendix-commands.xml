@@ -156,8 +156,8 @@
 
           <listitem>
             <para>A comma separated list of desired output formats. Allowed
-            values are "pan", "dep", "json", "text", and "dot". The default is
-            value is "pan,dep".</para>
+            values are "pan", "pan.gz", "xml", "xml.gz", "json", "json.gz",
+            "txt", "dep" and "dot". The default is value is "pan,dep".</para>
           </listitem>
         </varlistentry>
 

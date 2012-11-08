@@ -60,6 +60,17 @@
     <title>ChangeLog</title>
 
     <section>
+      <title>Version 9.3-RC2</title>
+
+      <itemizedlist>
+        <listitem>
+          <para>(SF Bug #3585346) Misleading deprecation message for debug
+          element</para>
+        </listitem>
+      </itemizedlist>
+    </section>
+
+    <section>
       <title>Version 9.3-RC1</title>
 
       <itemizedlist>

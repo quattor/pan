@@ -1,6 +1,5 @@
 /*
- Copyright (c) 2006 Charles A. Loomis, Jr, Cedric Duprilot, and
- Centre National de la Recherche Scientifique (CNRS).
+ Copyright (c) 2006-2012 Centre National de la Recherche Scientifique (CNRS).
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -13,9 +12,6 @@
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
-
- $HeadURL: https://svn.lal.in2p3.fr/LCG/QWG/panc/trunk/src/org/quattor/ant/PanCompilerTask.java $
- $Id: PanCompilerTask.java 4004 2008-12-01 14:18:54Z loomis $
  */
 
 package org.quattor.ant;

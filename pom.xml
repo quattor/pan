@@ -5,7 +5,7 @@
 
   <groupId>org.quattor.pan</groupId>
   <artifactId>pan</artifactId>
-  <version>9.3-SNAPSHOT</version>
+  <version>9.3-RC2-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>pan</name>
@@ -43,9 +43,10 @@
   </organization>
 
   <scm>
-    <connection>scm:git:git://quattor.git.sourceforge.net/gitroot/quattor/quattor/pan</connection>
-    <developerConnection>scm:git:ssh://quattor.git.sourceforge.net/gitroot/quattor/pan</developerConnection>
-    <url>http://quattor.git.sourceforge.net/git/gitweb.cgi?p=quattor/pan;a=summary</url>
+    <connection>scm:git:ssh://git@github.com/quattor/pan.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/quattor/pan.git</developerConnection>
+    <url>https://github.com/quattor/pan</url>
+    <tag>HEAD</tag>
   </scm>
 
   <issueManagement>
@@ -172,13 +173,13 @@
       <dependency>
         <groupId>org.quattor.pan</groupId>
         <artifactId>panc-docs</artifactId>
-        <version>9.3-SNAPSHOT</version>
+        <version>9.3-RC2-SNAPSHOT</version>
       </dependency>
       
       <dependency>
         <groupId>org.quattor.pan</groupId>
         <artifactId>panc</artifactId>
-        <version>9.3-SNAPSHOT</version>
+        <version>9.3-RC2-SNAPSHOT</version>
       </dependency>
 
       <dependency>

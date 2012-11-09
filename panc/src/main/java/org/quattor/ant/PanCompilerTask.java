@@ -33,7 +33,6 @@ import org.apache.tools.ant.types.Path;
 import org.quattor.pan.Compiler;
 import org.quattor.pan.CompilerLogging;
 import org.quattor.pan.CompilerOptions;
-import org.quattor.pan.CompilerOptions.DeprecationWarnings;
 import org.quattor.pan.CompilerResults;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.output.DepFormatter;
@@ -481,7 +480,12 @@ public class PanCompilerTask extends Task {
      * @param warnings
      */
     public void setWarnings(String warnings) {
-        deprecationWarnings = DeprecationWarnings.valueOf(warnings);
+        try {
+            deprecationWarnings = CompilerOptions.DeprecationWarnings
+                    .fromString(warnings);
+        } catch (IllegalArgumentException e) {
+            throw new BuildException("invalid value for warnings: " + warnings);
+        }
     }
 
     /**

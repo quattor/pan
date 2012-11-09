@@ -20,7 +20,7 @@ public class PanCheckSyntaxMojo extends AbstractPanMojo {
     public void execute() throws MojoExecutionException {
 
         CompilerOptions options = CompilerOptions
-                .createCheckSyntaxOptions(warnings);
+                .createCheckSyntaxOptions(warningsFromString(warnings));
 
         Set<File> sources = PluginUtils.collectPanSources(sourceDirectory);
 

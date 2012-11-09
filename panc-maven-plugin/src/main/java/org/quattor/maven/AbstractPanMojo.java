@@ -28,10 +28,19 @@ public abstract class AbstractPanMojo extends AbstractMojo {
     /**
      * warnings flag ("ON", "OFF", or "FATAL")
      * 
-     * @parameter property="panc.warnings" default-value="ON"
+     * @parameter property="panc.warnings" default-value="on"
      * @required
      */
-    protected CompilerOptions.DeprecationWarnings warnings = CompilerOptions.DeprecationWarnings.ON;
+    protected String warnings = "on";
 
     abstract public void execute() throws MojoExecutionException;
+
+    protected CompilerOptions.DeprecationWarnings warningsFromString(String s)
+            throws MojoExecutionException {
+        try {
+            return CompilerOptions.DeprecationWarnings.fromString(s);
+        } catch (IllegalArgumentException e) {
+            throw new MojoExecutionException("invalid value for warnings: " + s);
+        }
+    }
 }

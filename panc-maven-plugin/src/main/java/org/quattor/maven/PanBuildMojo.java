@@ -155,7 +155,8 @@ public class PanBuildMojo extends AbstractPanMojo {
             return new CompilerOptions(debugIncludePatterns,
                     debugExcludePatterns, maxIteration, maxRecursion,
                     formatters, outputDir, null, includeDirectories, nthread,
-                    warnings, false, null, null, initialData);
+                    warningsFromString(warnings), false, null, null,
+                    initialData);
 
         } catch (SyntaxException e) {
             throw new MojoExecutionException(

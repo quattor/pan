@@ -64,6 +64,11 @@
 
       <itemizedlist>
         <listitem>
+          <para>(SF Bug #3585672) Permit both lower and upper case strings for
+          warnings flag in ant and maven tasks.</para>
+        </listitem>
+
+        <listitem>
           <para>(SF Bug #3585346) Misleading deprecation message for debug
           element</para>
         </listitem>

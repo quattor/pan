@@ -74,7 +74,11 @@ import org.quattor.pan.template.SourceRange;
 public class CompilerOptions {
 
     public enum DeprecationWarnings {
-        ON, OFF, FATAL
+        ON, OFF, FATAL;
+
+        public static DeprecationWarnings fromString(String s) {
+            return DeprecationWarnings.valueOf(s.toUpperCase());
+        }
     };
 
     /**

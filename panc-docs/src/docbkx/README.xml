@@ -60,6 +60,12 @@
     <title>ChangeLog</title>
 
     <section>
+      <title>Version 9.3</title>
+
+      <para>No additional changes besides those in RC1 and RC2.</para>
+    </section>
+
+    <section>
       <title>Version 9.3-RC2</title>
 
       <itemizedlist>

@@ -26,7 +26,6 @@ Please file a bug report with including the stack trace.
                  max-recursion 
                  formatter 
                  output-dir
-                 sessionDirectory 
                  includeDirectories 
                  warnings 
                  annotationDirectory 
@@ -38,7 +37,6 @@ Please file a bug report with including the stack trace.
                      max-recursion 
                      formatter 
                      output-dir 
-                     sessionDirectory 
                      includeDirectories 
                      warnings 
                      annotationDirectory
@@ -52,7 +50,6 @@ Please file a bug report with including the stack trace.
                  max-recursion 
                  formatter 
                  output-dir 
-                 sessionDirectory 
                  includeDirectories 
                  warnings 
                  annotationDirectory 
@@ -64,7 +61,6 @@ Please file a bug report with including the stack trace.
                      max-recursion 
                      formatter 
                      output-dir 
-                     sessionDirectory 
                      includeDirectories 
                      warnings 
                      annotationDirectory

@@ -5,12 +5,12 @@ import java.util.List;
 
 import org.quattor.pan.utils.FileUtils;
 
-public class FileSystemSourceRepositoryWithoutSessionDir extends
+public class FileSystemSourceRepositoryImpl extends
         FileSystemSourceRepository {
 
     private final List<File> includeDirectories;
 
-    public FileSystemSourceRepositoryWithoutSessionDir(
+    public FileSystemSourceRepositoryImpl(
             List<File> includeDirectories) {
         this.includeDirectories = validateAndCopyIncludeDirectories(includeDirectories);
     }

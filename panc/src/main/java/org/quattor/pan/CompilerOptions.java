@@ -152,8 +152,6 @@ public class CompilerOptions {
      *            output directory for machine configuration and dependency
      *            files (cannot be null if either writeXmlEnable or
      *            writeDepEnabled is true)
-     * @param sessionDirectory
-     *            session directory
      * @param includeDirectories
      *            list of directories to check for template files; directories
      *            must exist and be absolute
@@ -173,8 +171,7 @@ public class CompilerOptions {
      */
     public CompilerOptions(Pattern debugNsInclude, Pattern debugNsExclude,
             int maxIteration, int maxRecursion, Set<Formatter> formatters,
-            File outputDirectory, File sessionDirectory,
-            List<File> includeDirectories,
+            File outputDirectory, List<File> includeDirectories,
             DeprecationWarnings deprecationWarnings, File annotationDirectory,
             File annotationBaseDirectory, String rootElement)
             throws SyntaxException {
@@ -188,13 +185,9 @@ public class CompilerOptions {
             maxRecursion = Integer.MAX_VALUE;
         }
 
-        // Check that the output and session directories are sensible if they
-        // aren't null.
+        // Check that the output directory is sensible if not null.
         if (outputDirectory != null) {
             checkDirectory(outputDirectory, "output");
-        }
-        if (sessionDirectory != null) {
-            checkDirectory(sessionDirectory, "session");
         }
 
         // Check all of the include directories.
@@ -234,9 +227,6 @@ public class CompilerOptions {
         this.debugNsExclude = debugNsExclude;
 
         ParameterList parameters = new ParameterList();
-        if (sessionDirectory != null) {
-            parameters.append("sessionDirectory", sessionDirectory.toString());
-        }
         for (File f : includeDirectories) {
             parameters.append("includeDirectory", f.toString());
         }
@@ -295,7 +285,6 @@ public class CompilerOptions {
         int maxRecursion = 50;
         Set<Formatter> formatters = new HashSet<Formatter>();
         File outputDirectory = null;
-        File sessionDirectory = null;
         File annotationDirectory = null;
         File annotationBaseDirectory = null;
         LinkedList<File> includeDirectories = new LinkedList<File>();
@@ -303,7 +292,7 @@ public class CompilerOptions {
         try {
             return new CompilerOptions(debugNsInclude, debugNsExclude,
                     maxIteration, maxRecursion, formatters, outputDirectory,
-                    sessionDirectory, includeDirectories, deprecationWarnings,
+                    includeDirectories, deprecationWarnings,
                     annotationDirectory, annotationBaseDirectory, null);
 
         } catch (SyntaxException consumed) {
@@ -331,15 +320,13 @@ public class CompilerOptions {
         int maxRecursion = 50;
         Set<Formatter> formatters = new HashSet<Formatter>();
         File outputDirectory = null;
-        File sessionDirectory = null;
         LinkedList<File> includeDirectories = new LinkedList<File>();
 
         try {
             return new CompilerOptions(debugNsInclude, debugNsExclude,
                     maxIteration, maxRecursion, formatters, outputDirectory,
-                    sessionDirectory, includeDirectories,
-                    DeprecationWarnings.OFF, annotationDirectory,
-                    annotationBaseDirectory, null);
+                    includeDirectories, DeprecationWarnings.OFF,
+                    annotationDirectory, annotationBaseDirectory, null);
 
         } catch (SyntaxException consumed) {
             throw CompilerError.create(MSG_FILE_BUG_REPORT);
@@ -401,7 +388,7 @@ public class CompilerOptions {
 
     /**
      * Resolve a list of object template names and template Files to a set of
-     * files based on this instance's include directories and session directory.
+     * files based on this instance's include directories.
      * 
      * @param objectNames
      *            object template names to lookup

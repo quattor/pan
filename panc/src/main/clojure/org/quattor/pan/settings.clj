@@ -24,7 +24,6 @@
    :max-recursion 50
    :formatter #{(PanFormatter/getInstance), (DepFormatter/getInstance)}
    :output-dir (absolute-file)
-   :sessionDirectory nil
    :includeDirectories [(absolute-file)]
    :gzipOutput false
    :deprecationWarnings CompilerOptions$DeprecationWarnings/OFF

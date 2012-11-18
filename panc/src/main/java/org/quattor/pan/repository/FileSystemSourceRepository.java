@@ -49,24 +49,16 @@ abstract public class FileSystemSourceRepository implements SourceRepository {
             parameters = new ParameterList();
         }
 
-        File sessionDirectory = null;
         List<File> includeDirectories = new ArrayList<File>();
         for (Parameter parameter : parameters) {
             String name = parameter.getKey();
-            if ("sessionDirectory".equals(name)) {
-                sessionDirectory = new File(parameter.getValue());
-            } else if ("includeDirectory".equals(name)) {
+            if ("includeDirectory".equals(name)) {
                 includeDirectories.add(new File(parameter.getValue()));
             }
         }
 
-        if (sessionDirectory == null) {
-            return new FileSystemSourceRepositoryWithoutSessionDir(
-                    includeDirectories);
-        } else {
-            return new FileSystemSourceRepositoryWithSessionDir(
-                    sessionDirectory, includeDirectories);
-        }
+        return new FileSystemSourceRepositoryImpl(
+                includeDirectories);
     }
 
     abstract public File lookupSource(String name);
@@ -117,8 +109,8 @@ abstract public class FileSystemSourceRepository implements SourceRepository {
             for (File d : includeDirectories) {
                 if (!d.isAbsolute()) {
                     throw EvaluationException
-                            .create(MSG_NON_ABSOLUTE_PATH_IN_INCLUDE_DIRS, d
-                                    .toString());
+                            .create(MSG_NON_ABSOLUTE_PATH_IN_INCLUDE_DIRS,
+                                    d.toString());
                 }
                 if (!d.isDirectory()) {
                     throw EvaluationException.create(

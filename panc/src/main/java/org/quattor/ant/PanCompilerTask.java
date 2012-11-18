@@ -147,8 +147,8 @@ public class PanCompilerTask extends Task {
         CompilerOptions options = null;
         try {
             options = new CompilerOptions(debugNsInclude, debugNsExclude,
-                    maxIteration, maxRecursion, formatters, outputDir, null,
-                    includeDirectories, deprecationWarnings, null, null, initialData);
+                    maxIteration, maxRecursion, formatters, outputDir, includeDirectories,
+                    deprecationWarnings, null, null, initialData);
         } catch (SyntaxException e) {
             throw new BuildException("invalid root element: " + e.getMessage());
         }

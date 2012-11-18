@@ -25,11 +25,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashSet;
 
 import org.junit.Test;
 import org.quattor.pan.dml.data.Element;
@@ -41,237 +41,199 @@ import org.quattor.pan.output.PanFormatter;
 
 public class CompilerOptionsTest {
 
-	@Test
-	public void testConstructorAndGetters1() throws SyntaxException {
+    @Test
+    public void testConstructorAndGetters1() throws SyntaxException {
 
-		int iterationLimit = 1001;
-		int callDepthLimit = 101;
-		File outputDirectory = new File(System.getProperty("user.dir"));
-		File sessionDirectory = new File(System.getProperty("user.dir"));
-		List<File> includeDirectories = new LinkedList<File>();
-		includeDirectories.add(outputDirectory);
-		includeDirectories.add(sessionDirectory);
+        int iterationLimit = 1001;
+        int callDepthLimit = 101;
+        File outputDirectory = new File(System.getProperty("user.dir"));
+        List<File> includeDirectories = new LinkedList<File>();
+        includeDirectories.add(outputDirectory);
 
-		Formatter formatter = PanFormatter.getInstance();
+        Formatter formatter = PanFormatter.getInstance();
 
-		Set<Formatter> formatters = new HashSet<Formatter>();
-		formatters.add(formatter);
+        Set<Formatter> formatters = new HashSet<Formatter>();
+        formatters.add(formatter);
 
-		CompilerOptions options = new CompilerOptions(null, null,
-				iterationLimit, callDepthLimit, formatters, outputDirectory,
-				sessionDirectory, includeDirectories, CompilerOptions.DeprecationWarnings.ON, null,
-				null, null);
+        CompilerOptions options = new CompilerOptions(null, null,
+                iterationLimit, callDepthLimit, formatters, outputDirectory,
+                includeDirectories, CompilerOptions.DeprecationWarnings.ON,
+                null, null, null);
 
-		assertTrue(iterationLimit == options.maxIteration);
-		assertTrue(callDepthLimit == options.maxRecursion);
+        assertTrue(iterationLimit == options.maxIteration);
+        assertTrue(callDepthLimit == options.maxRecursion);
 
-		assertTrue(options.formatters.contains(formatter));
+        assertTrue(options.formatters.contains(formatter));
 
-		assertTrue(outputDirectory.equals(options.outputDirectory));
-	}
+        assertTrue(outputDirectory.equals(options.outputDirectory));
+    }
 
-	@Test
-	public void testConstructorAndGetters2() throws SyntaxException {
+    @Test
+    public void testConstructorAndGetters2() throws SyntaxException {
 
-		int iterationLimit = 2002;
-		int callDepthLimit = 202;
-		Formatter formatter = DepFormatter.getInstance();
-		File outputDirectory = new File(System.getProperty("user.dir"));
-		File sessionDirectory = null;
-		List<File> includeDirectories = new LinkedList<File>();
-		includeDirectories.add(outputDirectory);
+        int iterationLimit = 2002;
+        int callDepthLimit = 202;
+        Formatter formatter = DepFormatter.getInstance();
+        File outputDirectory = new File(System.getProperty("user.dir"));
+        List<File> includeDirectories = new LinkedList<File>();
+        includeDirectories.add(outputDirectory);
 
-		Set<Formatter> formatters = new HashSet<Formatter>();
-		formatters.add(formatter);
+        Set<Formatter> formatters = new HashSet<Formatter>();
+        formatters.add(formatter);
 
-		CompilerOptions options = new CompilerOptions(null, null,
-				iterationLimit, callDepthLimit, formatters, outputDirectory,
-				sessionDirectory, includeDirectories, CompilerOptions.DeprecationWarnings.ON, null,
-				null, null);
+        CompilerOptions options = new CompilerOptions(null, null,
+                iterationLimit, callDepthLimit, formatters, outputDirectory,
+                includeDirectories, CompilerOptions.DeprecationWarnings.ON,
+                null, null, null);
 
-		assertTrue(iterationLimit == options.maxIteration);
-		assertTrue(callDepthLimit == options.maxRecursion);
+        assertTrue(iterationLimit == options.maxIteration);
+        assertTrue(callDepthLimit == options.maxRecursion);
 
-		assertTrue(options.formatters.contains(formatter));
+        assertTrue(options.formatters.contains(formatter));
 
-		assertTrue(outputDirectory.equals(options.outputDirectory));
-	}
+        assertTrue(outputDirectory.equals(options.outputDirectory));
+    }
 
-	@Test
-	public void checkUnlimitedValues() throws SyntaxException {
+    @Test
+    public void checkUnlimitedValues() throws SyntaxException {
 
-		int iterationLimit = -1;
-		int callDepthLimit = 0;
-		Formatter formatter = PanFormatter.getInstance();
-		File outputDirectory = new File(System.getProperty("user.dir"));
-		File sessionDirectory = new File(System.getProperty("user.dir"));
-		List<File> includeDirectories = new LinkedList<File>();
-		includeDirectories.add(outputDirectory);
-		includeDirectories.add(sessionDirectory);
+        int iterationLimit = -1;
+        int callDepthLimit = 0;
+        Formatter formatter = PanFormatter.getInstance();
+        File outputDirectory = new File(System.getProperty("user.dir"));
+        List<File> includeDirectories = new LinkedList<File>();
+        includeDirectories.add(outputDirectory);
 
-		Set<Formatter> formatters = new HashSet<Formatter>();
-		formatters.add(formatter);
+        Set<Formatter> formatters = new HashSet<Formatter>();
+        formatters.add(formatter);
 
-		CompilerOptions options = new CompilerOptions(null, null,
-				iterationLimit, callDepthLimit, formatters, outputDirectory,
-				sessionDirectory, includeDirectories, CompilerOptions.DeprecationWarnings.ON, null,
-				null, null);
+        CompilerOptions options = new CompilerOptions(null, null,
+                iterationLimit, callDepthLimit, formatters, outputDirectory,
+                includeDirectories, CompilerOptions.DeprecationWarnings.ON,
+                null, null, null);
 
-		assertTrue(Integer.MAX_VALUE == options.maxIteration);
-		assertTrue(Integer.MAX_VALUE == options.maxRecursion);
-	}
+        assertTrue(Integer.MAX_VALUE == options.maxIteration);
+        assertTrue(Integer.MAX_VALUE == options.maxRecursion);
+    }
 
-	@Test(expected = IllegalArgumentException.class)
-	public void checkBadOutputDirectory() throws SyntaxException {
+    @Test(expected = IllegalArgumentException.class)
+    public void checkBadOutputDirectory() throws SyntaxException {
 
-		int iterationLimit = -1;
-		int callDepthLimit = 0;
-		Formatter formatter = PanFormatter.getInstance();
-		File outputDirectory = new File("/xxxyyy");
-		File sessionDirectory = new File(System.getProperty("user.dir"));
-		List<File> includeDirectories = new LinkedList<File>();
-		includeDirectories.add(outputDirectory);
-		includeDirectories.add(sessionDirectory);
+        int iterationLimit = -1;
+        int callDepthLimit = 0;
+        Formatter formatter = PanFormatter.getInstance();
+        File outputDirectory = new File("/xxxyyy");
+        List<File> includeDirectories = new LinkedList<File>();
+        includeDirectories.add(outputDirectory);
 
-		Set<Formatter> formatters = new HashSet<Formatter>();
-		formatters.add(formatter);
+        Set<Formatter> formatters = new HashSet<Formatter>();
+        formatters.add(formatter);
 
-		new CompilerOptions(null, null, iterationLimit, callDepthLimit,
-				formatters, outputDirectory, sessionDirectory,
-				includeDirectories, CompilerOptions.DeprecationWarnings.ON, null,
-				null, null);
-	}
+        new CompilerOptions(null, null, iterationLimit, callDepthLimit,
+                formatters, outputDirectory, includeDirectories,
+                CompilerOptions.DeprecationWarnings.ON, null, null, null);
+    }
 
-	@Test(expected = IllegalArgumentException.class)
-	public void checkBadSessionDirectory() throws SyntaxException {
+    @Test(expected = IllegalArgumentException.class)
+    public void checkIncludeDirectory() throws SyntaxException {
 
-		int iterationLimit = -1;
-		int callDepthLimit = 0;
-		Formatter formatter = PanFormatter.getInstance();
-		File outputDirectory = new File(System.getProperty("user.dir"));
-		File sessionDirectory = new File("/xxxyyy");
-		List<File> includeDirectories = new LinkedList<File>();
-		includeDirectories.add(outputDirectory);
-		includeDirectories.add(sessionDirectory);
+        int iterationLimit = -1;
+        int callDepthLimit = 0;
+        Formatter formatter = PanFormatter.getInstance();
+        File outputDirectory = new File(System.getProperty("user.dir"));
+        List<File> includeDirectories = new LinkedList<File>();
+        includeDirectories.add(new File("/xxxyyy"));
 
-		Set<Formatter> formatters = new HashSet<Formatter>();
-		formatters.add(formatter);
+        Set<Formatter> formatters = new HashSet<Formatter>();
+        formatters.add(formatter);
 
-		new CompilerOptions(null, null, iterationLimit, callDepthLimit,
-				formatters, outputDirectory, sessionDirectory,
-				includeDirectories, CompilerOptions.DeprecationWarnings.ON, null,
-				null, null);
-	}
+        new CompilerOptions(null, null, iterationLimit, callDepthLimit,
+                formatters, outputDirectory, includeDirectories,
+                CompilerOptions.DeprecationWarnings.ON, null, null, null);
+    }
 
-	@Test(expected = IllegalArgumentException.class)
-	public void checkIncludeDirectory() throws SyntaxException {
+    @Test(expected = IllegalArgumentException.class)
+    public void checkMissingOutputDirectory1() throws SyntaxException {
 
-		int iterationLimit = -1;
-		int callDepthLimit = 0;
-		Formatter formatter = PanFormatter.getInstance();
-		File outputDirectory = new File(System.getProperty("user.dir"));
-		File sessionDirectory = new File(System.getProperty("user.dir"));
-		List<File> includeDirectories = new LinkedList<File>();
-		includeDirectories.add(new File("/xxxyyy"));
+        int iterationLimit = -1;
+        int callDepthLimit = 0;
+        Formatter formatter = null;
+        File outputDirectory = null;
+        List<File> includeDirectories = new LinkedList<File>();
+        includeDirectories.add(outputDirectory);
 
-		Set<Formatter> formatters = new HashSet<Formatter>();
-		formatters.add(formatter);
+        Set<Formatter> formatters = new HashSet<Formatter>();
+        formatters.add(formatter);
 
-		new CompilerOptions(null, null, iterationLimit, callDepthLimit,
-				formatters, outputDirectory, sessionDirectory,
-				includeDirectories, CompilerOptions.DeprecationWarnings.ON, null,
-				null, null);
-	}
+        new CompilerOptions(null, null, iterationLimit, callDepthLimit,
+                formatters, outputDirectory, includeDirectories,
+                CompilerOptions.DeprecationWarnings.ON, null, null, null);
+    }
 
-	@Test(expected = IllegalArgumentException.class)
-	public void checkMissingOutputDirectory1() throws SyntaxException {
+    @Test(expected = IllegalArgumentException.class)
+    public void checkMissingOutputDirectory2() throws SyntaxException {
 
-		int iterationLimit = -1;
-		int callDepthLimit = 0;
-		Formatter formatter = null;
-		File outputDirectory = null;
-		File sessionDirectory = new File(System.getProperty("user.dir"));
-		List<File> includeDirectories = new LinkedList<File>();
-		includeDirectories.add(outputDirectory);
-		includeDirectories.add(sessionDirectory);
+        int iterationLimit = -1;
+        int callDepthLimit = 0;
+        Formatter formatter = DepFormatter.getInstance();
+        File outputDirectory = null;
+        List<File> includeDirectories = new LinkedList<File>();
 
-		Set<Formatter> formatters = new HashSet<Formatter>();
-		formatters.add(formatter);
+        Set<Formatter> formatters = new HashSet<Formatter>();
+        formatters.add(formatter);
 
-		new CompilerOptions(null, null, iterationLimit, callDepthLimit,
-				formatters, outputDirectory, sessionDirectory,
-				includeDirectories, CompilerOptions.DeprecationWarnings.ON, null,
-				null, null);
-	}
+        new CompilerOptions(null, null, iterationLimit, callDepthLimit,
+                formatters, outputDirectory, includeDirectories,
+                CompilerOptions.DeprecationWarnings.ON, null, null, null);
+    }
 
-	@Test(expected = IllegalArgumentException.class)
-	public void checkMissingOutputDirectory2() throws SyntaxException {
+    @Test(expected = IllegalArgumentException.class)
+    public void checkNullIncludeDirectory() throws SyntaxException {
 
-		int iterationLimit = -1;
-		int callDepthLimit = 0;
-		Formatter formatter = DepFormatter.getInstance();
-		File outputDirectory = null;
-		File sessionDirectory = new File(System.getProperty("user.dir"));
-		List<File> includeDirectories = new LinkedList<File>();
+        int iterationLimit = -1;
+        int callDepthLimit = 0;
+        Formatter formatter = DepFormatter.getInstance();
+        File outputDirectory = null;
+        List<File> includeDirectories = new LinkedList<File>();
+        includeDirectories.add(null);
 
-		Set<Formatter> formatters = new HashSet<Formatter>();
-		formatters.add(formatter);
+        Set<Formatter> formatters = new HashSet<Formatter>();
+        formatters.add(formatter);
 
-		new CompilerOptions(null, null, iterationLimit, callDepthLimit,
-				formatters, outputDirectory, sessionDirectory,
-				includeDirectories, CompilerOptions.DeprecationWarnings.ON, null,
-				null, null);
-	}
+        new CompilerOptions(null, null, iterationLimit, callDepthLimit,
+                formatters, outputDirectory, includeDirectories,
+                CompilerOptions.DeprecationWarnings.ON, null, null, null);
+    }
 
-	@Test(expected = IllegalArgumentException.class)
-	public void checkNullIncludeDirectory() throws SyntaxException {
+    @Test
+    public void checkNullAndEmptyInputForRootElement() throws SyntaxException {
+        String[] inputs = new String[] { null, "", " ", "\t" };
+        for (String input : inputs) {
+            Element rootElement = CompilerOptions.createRootElement(input);
+            assertTrue(rootElement.isNlist());
+            HashResource hash = (HashResource) rootElement;
+            assertTrue(hash.size() == 0);
+        }
+    }
 
-		int iterationLimit = -1;
-		int callDepthLimit = 0;
-		Formatter formatter = DepFormatter.getInstance();
-		File outputDirectory = null;
-		File sessionDirectory = new File(System.getProperty("user.dir"));
-		List<File> includeDirectories = new LinkedList<File>();
-		includeDirectories.add(null);
+    @Test
+    public void checkCorrectRootElement() throws SyntaxException {
+        Map<String, Integer> inputs = new HashMap<String, Integer>();
+        inputs.put("nlist()", 0);
+        inputs.put("nlist('a', 1)", 1);
+        inputs.put("nlist('a', nlist('b', 1))", 1);
+        inputs.put("nlist('a', 1, 'b', 2)", 2);
+        inputs.put("nlist('a', nlist(), 'b', nlist('c', 2))", 2);
+        for (Map.Entry<String, Integer> entry : inputs.entrySet()) {
+            String dml = entry.getKey();
+            int value = entry.getValue();
 
-		Set<Formatter> formatters = new HashSet<Formatter>();
-		formatters.add(formatter);
+            Element rootElement = CompilerOptions.createRootElement(dml);
+            assertTrue(rootElement.isNlist());
 
-		new CompilerOptions(null, null, iterationLimit, callDepthLimit,
-				formatters, outputDirectory, sessionDirectory,
-				includeDirectories, CompilerOptions.DeprecationWarnings.ON, null,
-				null, null);
-	}
-
-	@Test
-	public void checkNullAndEmptyInputForRootElement() throws SyntaxException {
-		String[] inputs = new String[] { null, "", " ", "\t" };
-		for (String input : inputs) {
-			Element rootElement = CompilerOptions.createRootElement(input);
-			assertTrue(rootElement.isNlist());
-			HashResource hash = (HashResource) rootElement;
-			assertTrue(hash.size() == 0);
-		}
-	}
-
-	@Test
-	public void checkCorrectRootElement() throws SyntaxException {
-		Map<String, Integer> inputs = new HashMap<String, Integer>();
-		inputs.put("nlist()", 0);
-		inputs.put("nlist('a', 1)", 1);
-		inputs.put("nlist('a', nlist('b', 1))", 1);
-		inputs.put("nlist('a', 1, 'b', 2)", 2);
-		inputs.put("nlist('a', nlist(), 'b', nlist('c', 2))", 2);
-		for (Map.Entry<String, Integer> entry : inputs.entrySet()) {
-			String dml = entry.getKey();
-			int value = entry.getValue();
-
-			Element rootElement = CompilerOptions.createRootElement(dml);
-			assertTrue(rootElement.isNlist());
-
-			HashResource hash = (HashResource) rootElement;
-			assertEquals(value, hash.size());
-		}
-	}
+            HashResource hash = (HashResource) rootElement;
+            assertEquals(value, hash.size());
+        }
+    }
 
 }

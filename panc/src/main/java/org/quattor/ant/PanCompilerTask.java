@@ -38,7 +38,6 @@ import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.output.DepFormatter;
 import org.quattor.pan.output.Formatter;
 import org.quattor.pan.output.FormatterUtils;
-import org.quattor.pan.output.PanFormatter;
 import org.quattor.pan.repository.SourceType;
 
 /**
@@ -79,7 +78,9 @@ public class PanCompilerTask extends Task {
 
     private Boolean depWriteEnabled = null;
 
-    private Formatter formatter;
+    private Boolean gzipOutput = null;
+
+    private String formatterName = null;
 
     private boolean checkDependencies = true;
 
@@ -225,19 +226,34 @@ public class PanCompilerTask extends Task {
     // internal parameters correctly.
     private void setOldStyleOutputFormats() {
         if (xmlWriteEnabled != null || depWriteEnabled != null
-                || formatter != null) {
+                || formatterName != null || gzipOutput != null) {
 
-            if (xmlWriteEnabled) {
-                if (formatter != null) {
-                    formatters.add(formatter);
-                } else {
-                    formatters.add(PanFormatter.getInstance());
+            formatters = new HashSet<Formatter>();
+
+            String gz = (gzipOutput == null || !gzipOutput) ? "" : ".gz";
+
+            if (xmlWriteEnabled == null || xmlWriteEnabled) {
+                if (formatterName == null) {
+                    formatterName = "pan";
                 }
             } else {
-                formatters.clear();
+                formatterName = null;
             }
 
-            if (depWriteEnabled) {
+            if (formatterName != null) {
+
+                String fname = formatterName + gz;
+                Formatter formatter = FormatterUtils
+                        .getFormatterInstance(fname);
+                if (formatter == null) {
+                    throw new BuildException("unknown output formatter: "
+                            + fname);
+                }
+
+                formatters.add(formatter);
+            }
+
+            if (depWriteEnabled == null || depWriteEnabled) {
                 formatters.add(DepFormatter.getInstance());
             }
         }
@@ -665,12 +681,7 @@ public class PanCompilerTask extends Task {
      */
     public void setFormatter(String name) {
         log("parameter 'formatter' is deprecated; use 'formats' option instead");
-        formatter = FormatterUtils.getFormatterInstance(name);
-        if (formatter == null) {
-            throw new BuildException("unknown output formatter: " + name);
-        }
-        formatters = new HashSet<Formatter>();
-        formatters.add(formatter);
+        formatterName = name;
     }
 
     /**
@@ -730,6 +741,7 @@ public class PanCompilerTask extends Task {
      */
     public void setGzipOutput(boolean gzipOutput) {
         log("parameter 'gzipOutput' is deprecated; use 'formats' option instead");
+        this.gzipOutput = gzipOutput;
     }
 
     /**

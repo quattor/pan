@@ -18,18 +18,16 @@
       (.getAbsoluteFile (as-file x)))))
 
 (defn defaults []
-  {:debugIncludePatterns []
-   :debugExcludePatterns []
-   :iterationLimit 10000
-   :callDepthLimit 50
+  {:debug-ns-include nil
+   :debug-ns-exclude nil
+   :max-iteration 10000
+   :max-recursion 50
    :formatter #{(PanFormatter/getInstance), (DepFormatter/getInstance)}
    :output-dir (absolute-file)
    :sessionDirectory nil
    :includeDirectories [(absolute-file)]
-   :nthread 0
    :gzipOutput false
    :deprecationWarnings CompilerOptions$DeprecationWarnings/OFF
-   :forceBuild false
    :annotationDirectory nil
    :annotationBaseDirectory nil
    :rootElement nil})

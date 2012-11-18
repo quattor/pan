@@ -394,12 +394,8 @@ $ mvn clean install
     <para>where <replaceable>...options...</replaceable> is replaced with
     valid options for the pan compiler ant tasks.</para>
 
-    <para>The ant task supports the attributes in the following table. Those
-    attributes marked as deprecated are there for compatibility with previous
-    releases of the ant task. The deprecated options will be removed in the
-    next release of the compiler. Only the <option>warnings</option> and
-    <option>verbose</option> attributes (as well as the deprecated attributes
-    <option>failOnWarn</option> and <option>deprecationLevel</option>) are
+    <para>The ant task supports the attributes in the following table. Only
+    the <option>warnings</option> and <option>verbose</option> attributes are
     permitted for the <command>panc-check-syntax</command> task.</para>
 
     <table>
@@ -560,165 +556,12 @@ $ mvn clean install
           </row>
 
           <row>
-            <entry>nthread</entry>
-
-            <entry>Number of threads to use while compiling. Use 0 to set the
-            number of threads to the number of CPUs/cores on the
-            machine.</entry>
-
-            <entry>No. Default value: 0</entry>
-          </row>
-
-          <row>
             <entry>batchSize</entry>
 
             <entry>If set to a positive integer, the outdated templates will
             be processed in batches of batchSize.</entry>
 
             <entry>No. Default value: 0</entry>
-          </row>
-
-          <row>
-            <entry>callDepthLimit</entry>
-
-            <entry>Maximum number of recursive calls. <emphasis>Deprecated:
-            Use <option>maxRecursion</option> instead.</emphasis></entry>
-
-            <entry>No. Default value: 50</entry>
-          </row>
-
-          <row>
-            <entry>deprecationLevel</entry>
-
-            <entry>Set deprecation level. A negative number turns off
-            deprecation warnings. 0 prints warnings for deprecated features
-            for next release, 1 for second release, etc. <emphasis>Deprecated:
-            use <option>warnings</option> instead.</emphasis></entry>
-
-            <entry>No. Default value: 0</entry>
-          </row>
-
-          <row>
-            <entry>failOnWarn</entry>
-
-            <entry>If set to true, then warnings will be treated like errors
-            and abort the compilation. <emphasis>Deprecated: Use
-            <option>warnings</option> instead.</emphasis></entry>
-
-            <entry>No. Default value: false</entry>
-          </row>
-
-          <row>
-            <entry>depWriteEnabled</entry>
-
-            <entry>Whether or not to write dependency file.
-            <emphasis>Deprecated: Use <option>formats</option> option
-            instead.</emphasis></entry>
-
-            <entry>No. Default value: false</entry>
-          </row>
-
-          <row>
-            <entry>forceBuild</entry>
-
-            <entry>Force the build of all given object templates.
-            <emphasis>Deprecated: This option no longer has any
-            effect.</emphasis></entry>
-
-            <entry>No. Default value: false</entry>
-          </row>
-
-          <row>
-            <entry>formatter</entry>
-
-            <entry>The formatter to use for the output file. The accepted
-            values are: "pan", "json", "text", and "dot".
-            <emphasis>Deprecated: Use <option>formats</option>
-            instead.</emphasis></entry>
-
-            <entry>No. Default value: pan</entry>
-          </row>
-
-          <row>
-            <entry>gzipOutput</entry>
-
-            <entry>Whether or not to gzip the (XML) output file.
-            <emphasis>Deprecated: Use <option>formats</option> option with
-            gzip formatter.</emphasis></entry>
-
-            <entry>No. Default value: no</entry>
-          </row>
-
-          <row>
-            <entry>iterationLimit</entry>
-
-            <entry>Set the maximum number of iterations. This is a failsafe to
-            avoid infinite loops. <emphasis>Deprecated: Use
-            <option>maxIteration</option> instead.</emphasis></entry>
-
-            <entry>No. Default value: 10000</entry>
-          </row>
-
-          <row>
-            <entry>outputDirectory</entry>
-
-            <entry>The directory that will contain the output of the
-            compilation. <emphasis>Deprecated: Use <option>outputDir</option>
-            option instead.</emphasis></entry>
-
-            <entry>Yes.</entry>
-          </row>
-
-          <row>
-            <entry>sessionDirectory</entry>
-
-            <entry>Set the session directory for the build.
-            <emphasis>Deprecated: This option no longer has any
-            effect.</emphasis></entry>
-
-            <entry>No.</entry>
-          </row>
-
-          <row>
-            <entry>xmlWriteEnabled</entry>
-
-            <entry>Whether or not to write the output files from the
-            compilation. <emphasis>Deprecated: Use <option>formats</option>
-            option instead.</emphasis></entry>
-
-            <entry>No. Default value: true</entry>
-          </row>
-
-          <row>
-            <entry>rootElement</entry>
-
-            <entry>A compile-time expression that evaluates to an nlist. This
-            nlist is used as the root nlist for all compiled object templates.
-            A convenient mechanism for injecting build numbers and other
-            metadata into the profiles. <emphasis>Deprecated: Use
-            <option>initialData</option> instead.</emphasis></entry>
-
-            <entry>No. Default value: null (empty nlist)</entry>
-          </row>
-
-          <row>
-            <entry>annotationDirectory</entry>
-
-            <entry>Directory which will hold files containing annotation
-            information. <emphasis>Deprecated: Use separate annotation
-            task.</emphasis></entry>
-
-            <entry>No.</entry>
-          </row>
-
-          <row>
-            <entry>annotationBaseDirectory</entry>
-
-            <entry>Base directory for finding files for annotation processing.
-            <emphasis>Deprecated: Use separate annotation
-            task.</emphasis></entry>
-
-            <entry>No.</entry>
           </row>
         </tbody>
       </tgroup>
@@ -731,42 +574,6 @@ $ mvn clean install
       elements. The <command>panc</command> task supports all of these; the
       <command>panc-check-syntax</command> task only supports the
       <literal>fileset</literal> nested element.</para>
-
-      <section>
-        <title>Debug Element</title>
-
-        <warning>
-          <para>The debug element is deprecated. The options
-          <option>debugNsInclude</option> and <option>debugNsExclude</option>
-          should be used instead.</para>
-        </warning>
-
-        <para>The debug element is used to enable debugging output from the
-        <function>debug</function> and <function>traceback</function>
-        functions. The element takes the <literal>include</literal> and
-        <literal>exclude</literal> attributes, both of which are optional. The
-        <literal>debug</literal> element may appear multiple times within the
-        task with the final list of <literal>include</literal> and
-        <literal>exclude</literal> patterns being the union of all of those
-        specified in the elements. The values for the attributes are regular
-        expressions. For example,</para>
-
-        <programlisting>&lt;debug include="xen/.*" exclude=".*unwanted.*" /&gt;</programlisting>
-
-        <para>will cause <function>debug</function> and
-        <function>traceback</function> functions in the xen namespace to emit
-        messages as long as the template name does not contain the string
-        "unwanted". A special case is,</para>
-
-        <programlisting>&lt;debug&gt;</programlisting>
-
-        <para>that behaves exactly like:</para>
-
-        <programlisting>&lt;debug include=".*" exclude="^$" /&gt;</programlisting>
-
-        <para>That is, it will turn on debugging in all templates, unless
-        excluded via another <literal>debug</literal> element.</para>
-      </section>
 
       <section>
         <title>Fileset</title>

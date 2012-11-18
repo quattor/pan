@@ -12,7 +12,7 @@
     (catch Exception e nil)))
 
 (defn positive-integer
-  "Ensure that the given value is a positive integer, otherwise thrown an
+  "Ensure that the given value is a positive integer, otherwise throw an
    IllegalArgumentException."
   [name value]
   (if-let [i (to-integer value)]

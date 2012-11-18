@@ -56,19 +56,17 @@
 (defmethod process :debug
   [[k v]]
   (if v
-    {:debug-exclude-patterns []
-     :debug-include-patterns [#".*"]}
+    {:debug-ns-exclude nil
+     :debug-ns-include #".*"}
     {}))
 
 (defmethod process :debug-ns-include
   [[k v]]
-  (let [patterns (if v [(re-pattern v)] [])]
-    {:debug-include-patterns patterns}))
+  {:debug-ns-include (when-not (nil? v) (re-pattern v))})
 
 (defmethod process :debug-ns-exclude
   [[k v]]
-  (let [patterns (if v [(re-pattern v)] [])]
-    {:debug-exclude-patterns patterns}))
+  {:debug-ns-exclude (when-not (nil? v) (re-pattern v))})
 
 (defmethod process :include-path
   [[k v]]

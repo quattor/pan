@@ -82,20 +82,15 @@ public class CompilerOptions {
     };
 
     /**
-     * Force the build to be done even if no output files are to be written.
-     */
-    public final boolean forceBuild;
-
-    /**
      * The iteration limit during the compilation to avoid infinite loops.
      */
-    public final int iterationLimit;
+    public final int maxIteration;
 
     /**
      * The call depth limit which is used to prevent infinite recursion in the
      * compiler.
      */
-    public final int callDepthLimit;
+    public final int maxRecursion;
 
     /**
      * The <code>Formatter</code> that will be used to format the machine
@@ -110,11 +105,6 @@ public class CompilerOptions {
     public final File outputDirectory;
 
     /**
-     * The number of active threads per task queue to allow.
-     */
-    public final int activeThreadsPerQueue;
-
-    /**
      * Define the deprecation level for compilation: ON, OFF, or FATAL.
      */
     public final DeprecationWarnings deprecationWarnings;
@@ -127,8 +117,8 @@ public class CompilerOptions {
      * in the include set will have the debugging turned on UNLESS it matches a
      * pattern in the exclude set.
      */
-    private final List<Pattern> debugIncludePatterns;
-    private final List<Pattern> debugExcludePatterns;
+    private final Pattern debugNsInclude;
+    private final Pattern debugNsExclude;
 
     /**
      * Directory that will contain the annotation output files.
@@ -148,13 +138,13 @@ public class CompilerOptions {
      * Construct a CompilerOptions instance to drive a Compiler run. Instances
      * of this class are immutable.
      * 
-     * @param debugIncludePatterns
+     * @param debugNsInclude
      *            patterns to use to turn on debugging for matching templates
-     * @param debugExcludePatterns
+     * @param debugNsExclude
      *            patterns to use to turn off debugging for matching templates
-     * @param iterationLimit
+     * @param maxIteration
      *            maximum number of iterations (<=0 unlimited)
-     * @param callDepthLimit
+     * @param maxRecursion
      *            maximum call depth (<=0 unlimited)
      * @param formatters
      *            formats for machine configuration files
@@ -167,12 +157,8 @@ public class CompilerOptions {
      * @param includeDirectories
      *            list of directories to check for template files; directories
      *            must exist and be absolute
-     * @param nthread
-     *            number of threads to use (<=0 uses default value)
      * @param deprecationWarnings
      *            level for deprecation warnings (ON, OFF, or FATAL)
-     * @param forceBuild
-     *            force build even if no output files are generated if true
      * @param annotationDirectory
      *            directory that will contain annotation output files
      * @param annotationBaseDirectory
@@ -185,22 +171,21 @@ public class CompilerOptions {
      * @throws SyntaxException
      *             if the expression for the rootElement is invalid
      */
-    public CompilerOptions(List<Pattern> debugIncludePatterns,
-            List<Pattern> debugExcludePatterns, int iterationLimit,
-            int callDepthLimit, Set<Formatter> formatters,
+    public CompilerOptions(Pattern debugNsInclude, Pattern debugNsExclude,
+            int maxIteration, int maxRecursion, Set<Formatter> formatters,
             File outputDirectory, File sessionDirectory,
-            List<File> includeDirectories, int nthread,
-            DeprecationWarnings deprecationWarnings, boolean forceBuild,
-            File annotationDirectory, File annotationBaseDirectory,
-            String rootElement) throws SyntaxException {
+            List<File> includeDirectories,
+            DeprecationWarnings deprecationWarnings, File annotationDirectory,
+            File annotationBaseDirectory, String rootElement)
+            throws SyntaxException {
 
         // Check that the iteration and call depth limits are sensible. If
         // negative or zero set these effectively to infinity.
-        if (iterationLimit <= 0) {
-            iterationLimit = Integer.MAX_VALUE;
+        if (maxIteration <= 0) {
+            maxIteration = Integer.MAX_VALUE;
         }
-        if (callDepthLimit <= 0) {
-            callDepthLimit = Integer.MAX_VALUE;
+        if (maxRecursion <= 0) {
+            maxRecursion = Integer.MAX_VALUE;
         }
 
         // Check that the output and session directories are sensible if they
@@ -230,11 +215,9 @@ public class CompilerOptions {
         }
 
         // Everything's OK. Copy the values into this instance.
-        this.iterationLimit = iterationLimit;
-        this.callDepthLimit = callDepthLimit;
+        this.maxIteration = maxIteration;
+        this.maxRecursion = maxRecursion;
         this.outputDirectory = outputDirectory;
-        this.activeThreadsPerQueue = nthread;
-        this.forceBuild = forceBuild;
 
         this.deprecationWarnings = deprecationWarnings;
 
@@ -247,16 +230,8 @@ public class CompilerOptions {
 
         // Setup the debug patterns, ensuring that the debug pattern lists are
         // not null.
-        if (debugIncludePatterns == null) {
-            this.debugIncludePatterns = new LinkedList<Pattern>();
-        } else {
-            this.debugIncludePatterns = debugIncludePatterns;
-        }
-        if (debugExcludePatterns == null) {
-            this.debugExcludePatterns = new LinkedList<Pattern>();
-        } else {
-            this.debugExcludePatterns = debugExcludePatterns;
-        }
+        this.debugNsInclude = debugNsInclude;
+        this.debugNsExclude = debugNsExclude;
 
         ParameterList parameters = new ParameterList();
         if (sessionDirectory != null) {
@@ -314,26 +289,22 @@ public class CompilerOptions {
     public static CompilerOptions createCheckSyntaxOptions(
             DeprecationWarnings deprecationWarnings) {
 
-        List<Pattern> debugIncludePatterns = new LinkedList<Pattern>();
-        List<Pattern> debugExcludePatterns = new LinkedList<Pattern>();
-        int iterationLimit = 5000;
-        int callDepthLimit = 50;
+        Pattern debugNsInclude = null;
+        Pattern debugNsExclude = null;
+        int maxIteration = 5000;
+        int maxRecursion = 50;
         Set<Formatter> formatters = new HashSet<Formatter>();
         File outputDirectory = null;
         File sessionDirectory = null;
-        int nthread = 0;
-        boolean forceBuild = false;
         File annotationDirectory = null;
         File annotationBaseDirectory = null;
         LinkedList<File> includeDirectories = new LinkedList<File>();
 
         try {
-            return new CompilerOptions(debugIncludePatterns,
-                    debugExcludePatterns, iterationLimit, callDepthLimit,
-                    formatters, outputDirectory, sessionDirectory,
-                    includeDirectories, nthread, deprecationWarnings,
-                    forceBuild, annotationDirectory, annotationBaseDirectory,
-                    null);
+            return new CompilerOptions(debugNsInclude, debugNsExclude,
+                    maxIteration, maxRecursion, formatters, outputDirectory,
+                    sessionDirectory, includeDirectories, deprecationWarnings,
+                    annotationDirectory, annotationBaseDirectory, null);
 
         } catch (SyntaxException consumed) {
             throw CompilerError.create(MSG_FILE_BUG_REPORT);
@@ -354,24 +325,21 @@ public class CompilerOptions {
     public static CompilerOptions createAnnotationOptions(
             File annotationDirectory, File annotationBaseDirectory) {
 
-        List<Pattern> debugIncludePatterns = new LinkedList<Pattern>();
-        List<Pattern> debugExcludePatterns = new LinkedList<Pattern>();
-        int iterationLimit = 5000;
-        int callDepthLimit = 50;
+        Pattern debugNsInclude = null;
+        Pattern debugNsExclude = null;
+        int maxIteration = 5000;
+        int maxRecursion = 50;
         Set<Formatter> formatters = new HashSet<Formatter>();
         File outputDirectory = null;
         File sessionDirectory = null;
-        int nthread = 0;
-        boolean forceBuild = false;
         LinkedList<File> includeDirectories = new LinkedList<File>();
 
         try {
-            return new CompilerOptions(debugIncludePatterns,
-                    debugExcludePatterns, iterationLimit, callDepthLimit,
-                    formatters, outputDirectory, sessionDirectory,
-                    includeDirectories, nthread, DeprecationWarnings.OFF,
-                    forceBuild, annotationDirectory, annotationBaseDirectory,
-                    null);
+            return new CompilerOptions(debugNsInclude, debugNsExclude,
+                    maxIteration, maxRecursion, formatters, outputDirectory,
+                    sessionDirectory, includeDirectories,
+                    DeprecationWarnings.OFF, annotationDirectory,
+                    annotationBaseDirectory, null);
 
         } catch (SyntaxException consumed) {
             throw CompilerError.create(MSG_FILE_BUG_REPORT);
@@ -482,18 +450,14 @@ public class CompilerOptions {
 
         // Check first the exclude patterns. Any matching pattern in the exclude
         // list means that the debugging is disabled for the given template.
-        for (Pattern p : debugExcludePatterns) {
-            if (p.matcher(tplName).matches()) {
-                return false;
-            }
+        if (debugNsExclude != null && debugNsExclude.matcher(tplName).matches()) {
+            return false;
         }
 
         // Now check the include patterns. Any matching pattern here means that
         // the debugging for this template is enabled.
-        for (Pattern p : debugIncludePatterns) {
-            if (p.matcher(tplName).matches()) {
-                return true;
-            }
+        if (debugNsInclude != null && debugNsInclude.matcher(tplName).matches()) {
+            return true;
         }
 
         // If we get here, then the template didn't match anything. By default,
@@ -545,26 +509,22 @@ public class CompilerOptions {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("debug include patterns: ");
-        for (Pattern p : debugIncludePatterns) {
-            sb.append(p.toString());
-            sb.append("\n");
-        }
+        sb.append("debug include pattern: ");
+        sb.append(debugNsInclude.toString());
+        sb.append("\n");
         sb.append("\n");
 
-        sb.append("debug exclude patterns: ");
-        for (Pattern p : debugExcludePatterns) {
-            sb.append(p.toString());
-            sb.append("\n");
-        }
+        sb.append("debug exclude pattern: ");
+        sb.append(debugNsExclude.toString());
+        sb.append("\n");
         sb.append("\n");
 
-        sb.append("iteration limit: ");
-        sb.append(iterationLimit);
+        sb.append("max. iteration: ");
+        sb.append(maxIteration);
         sb.append("\n");
 
-        sb.append("call depth limit: ");
-        sb.append(callDepthLimit);
+        sb.append("max. recursion: ");
+        sb.append(maxRecursion);
         sb.append("\n");
 
         sb.append("output directory: ");

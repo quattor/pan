@@ -63,14 +63,14 @@ public class PanCompilerTask extends Task {
     /* The list of directories to include in search path. */
     private LinkedList<File> includeDirectories = new LinkedList<File>();
 
+    private Pattern debugNsInclude = null;
+
+    private Pattern debugNsExclude = null;
+
     private boolean debugTask = false;
 
     /* Produce very verbose output */
     private boolean debugVerbose = false;
-
-    private List<Pattern> debugIncludePatterns = new LinkedList<Pattern>();
-
-    private List<Pattern> debugExcludePatterns = new LinkedList<Pattern>();
 
     private Pattern ignoreDependencyPattern = null;
 
@@ -83,8 +83,6 @@ public class PanCompilerTask extends Task {
     private String formatterName = null;
 
     private boolean checkDependencies = true;
-
-    private int nthread = 0;
 
     private boolean verbose = false;
 
@@ -148,10 +146,9 @@ public class PanCompilerTask extends Task {
         // Collect the options for the compilation.
         CompilerOptions options = null;
         try {
-            options = new CompilerOptions(debugIncludePatterns,
-                    debugExcludePatterns, maxIteration, maxRecursion,
-                    formatters, outputDir, null, includeDirectories, nthread,
-                    deprecationWarnings, false, null, null, initialData);
+            options = new CompilerOptions(debugNsInclude, debugNsExclude,
+                    maxIteration, maxRecursion, formatters, outputDir, null,
+                    includeDirectories, deprecationWarnings, null, null, initialData);
         } catch (SyntaxException e) {
             throw new BuildException("invalid root element: " + e.getMessage());
         }
@@ -371,21 +368,6 @@ public class PanCompilerTask extends Task {
     }
 
     /**
-     * Setting this flag will cause the compiler to turn on debugging for all
-     * namespaces. This parameter should not be mixed with the options for
-     * setting the debug namespaces explicitly.
-     * 
-     * @param debug
-     *            flag to turn on/off debugging for all namespaces
-     */
-    public void setDebug(int debug) {
-        debugIncludePatterns.clear();
-        debugExcludePatterns.clear();
-        debugIncludePatterns.add(Pattern.compile(".+"));
-        debugExcludePatterns.add(Pattern.compile("^$"));
-    }
-
-    /**
      * Setting this flag will print debugging information from the task itself.
      * This is primarily useful if one wants to debug a build using the command
      * line interface.
@@ -404,7 +386,7 @@ public class PanCompilerTask extends Task {
      * @param pattern
      */
     public void setDebugNsInclude(String pattern) {
-        debugIncludePatterns.add(Pattern.compile(pattern));
+        debugNsInclude = Pattern.compile(pattern);
     }
 
     /**
@@ -413,7 +395,7 @@ public class PanCompilerTask extends Task {
      * @param pattern
      */
     public void setDebugNsExclude(String pattern) {
-        debugExcludePatterns.add(Pattern.compile(pattern));
+        debugNsExclude = Pattern.compile(pattern);
     }
 
     /**
@@ -577,225 +559,6 @@ public class PanCompilerTask extends Task {
         }
 
         return batches;
-    }
-
-    /**
-     * Sets the maximum number of recursions. Alias for setMaxRecursion.
-     * 
-     * @param callDepthLimit
-     * @deprecated
-     */
-    public void setCallDepthLimit(int callDepthLimit) {
-        log("parameter 'callDepthLimit' is deprecated; used 'maxRecursion' instead");
-        this.maxRecursion = callDepthLimit;
-    }
-
-    /**
-     * Deprecated alias for setMaxIteration.
-     * 
-     * @param iterationLimit
-     *            maximum number of permitted iterations
-     * @deprecated
-     */
-    public void setIterationLimit(int iterationLimit) {
-        log("parameter 'iterationLimit' is deprecated; used 'maxIteration' instead");
-        this.maxIteration = iterationLimit;
-    }
-
-    /**
-     * Add the include and exclude patterns for selectively enabling/disabling
-     * the debugging functions (debug() and traceback()). An embedded element
-     * without any attributes is treated as turning on all debugging. That is,
-     * it is the same as:
-     * 
-     * <debug include=".+" exclude="^$" />
-     * 
-     * @param debugPatterns
-     *            configured instance with desired debug patterns
-     * @deprecated
-     */
-    public void addConfiguredDebug(DebugPatterns debugPatterns) {
-        log("'debug' element is deprecated; use 'debugNsInclude' and 'debugNsExclude' attributes instead");
-        debugIncludePatterns.add(debugPatterns.getInclude());
-        debugExcludePatterns.add(debugPatterns.getExclude());
-    }
-
-    /**
-     * Deprecated alias for setOutputDir.
-     * 
-     * @param outputDirectory
-     *            directory for produced files
-     * @deprecated
-     */
-    public void setOutputDirectory(File outputDirectory) {
-        log("parameter 'outputDirectory' is deprecated; use 'outputDir' instead");
-        this.outputDir = outputDirectory;
-    }
-
-    /**
-     * Session directories are no longer supported. This method does nothing.
-     * 
-     * @param sessionDirectory
-     *            session directory to use for the build
-     * @deprecated
-     */
-    public void setSessionDirectory(File sessionDirectory) {
-        log("parameter 'sessionDirectory' is deprecated; this functionality has been removed");
-    }
-
-    /**
-     * Setting this flag will cause the pan compiler to write machine templates
-     * to disk. The machine profiles are usually in an XML format; however, any
-     * defined formatter can be used.
-     * 
-     * Deprecated: Use formats option instead.
-     * 
-     * @param xmlWriteEnabled
-     * @deprecated
-     */
-    public void setXmlWriteEnabled(boolean xmlWriteEnabled) {
-        log("parameter 'xmlWriteEnabled' is deprecated; use 'formats' option instead");
-        this.xmlWriteEnabled = xmlWriteEnabled;
-    }
-
-    /**
-     * Setting this flag will cause the compiler to write dependency files for
-     * the processed object templates.
-     * 
-     * @param depWriteEnabled
-     *            flag to generate dependency files
-     * @deprecated
-     */
-    public void setDepWriteEnabled(boolean depWriteEnabled) {
-        log("parameter 'depWriteEnabled' is deprecated; use 'formats' option instead");
-        this.depWriteEnabled = depWriteEnabled;
-    }
-
-    /**
-     * Sets the formatter to use. This is deprecated; use the setFormatters
-     * method instead.
-     * 
-     * @param name
-     *            name of formatter to use
-     * @deprecated
-     */
-    public void setFormatter(String name) {
-        log("parameter 'formatter' is deprecated; use 'formats' option instead");
-        formatterName = name;
-    }
-
-    /**
-     * Set the directory in which the produced annotation files should be saved.
-     * 
-     * @param annotationDirectory
-     * @deprecated
-     */
-    public void setAnnotationDirectory(File annotationDirectory) {
-        log("parameter 'annotationDirectory' is deprecated; use separate annotation task");
-    }
-
-    /**
-     * Set the directory base directory to use for relative paths for annotation
-     * output files.
-     * 
-     * @param annotationBaseDirectory
-     * @deprecated
-     */
-    public void setAnnotationBaseDirectory(File annotationBaseDirectory) {
-        log("parameter 'annotationBaseDirectory' is deprecated; use separate annotation task");
-    }
-
-    /**
-     * Return the number of threads used to compile the profiles. Actually this
-     * is the number of threads to allow in each of three task queues.
-     * 
-     * @return number of threads in each task queue
-     * @deprecated
-     */
-    public int getNthread() {
-        log("function getNthread is deprecated");
-        return nthread;
-    }
-
-    /**
-     * Set the number of threads to use in each of three separate task queues. A
-     * non-positive number will use the default value, which is the number of
-     * CPUs (or cores) available on the system.
-     * 
-     * @param nthread
-     *            number of threads per task queue
-     * @deprecated
-     */
-    public void setNthread(int nthread) {
-        log("parameter 'nthread' is deprecated; remove from your build");
-        this.nthread = nthread;
-    }
-
-    /**
-     * This flag is no longer used. Use instead the names of gzip-enabled
-     * formatters.
-     * 
-     * @param gzipOutput
-     *            flag indicating whether to gzip output
-     * @deprecated
-     */
-    public void setGzipOutput(boolean gzipOutput) {
-        log("parameter 'gzipOutput' is deprecated; use 'formats' option instead");
-        this.gzipOutput = gzipOutput;
-    }
-
-    /**
-     * Level at which deprecation warnings are issued. If less than zero, then
-     * none are printed. If zero, warnings are issued for things that will
-     * change in next release. If greater than zero, then other future changes
-     * will be flagged.
-     * 
-     * Deprecated: Use warnings option instead.
-     * 
-     * @param deprecationLevel
-     *            level at which to give deprecation warnings
-     * @deprecated
-     */
-    public void setDeprecationLevel(int deprecationLevel) {
-        log("parameter 'deprecationLevel' is deprecated; used 'warnings' instead");
-        this.deprecationLevel = deprecationLevel;
-    }
-
-    /**
-     * Flag to indicate whether or not warnings should be treated as errors.
-     * 
-     * Deprecated: Use warnings option instead.
-     * 
-     * @param failOnWarn
-     *            setting the value true will cause compilations to fail on
-     *            warnings
-     * @deprecated
-     */
-    public void setFailOnWarn(boolean failOnWarn) {
-        log("parameter 'fileOnWarn' is deprecated; used 'warnings' instead");
-        this.failOnWarn = failOnWarn;
-    }
-
-    /**
-     * This option no longer has any effect. Remove references to this parameter
-     * from your build files.
-     * 
-     * @param forceBuild
-     * @deprecated
-     */
-    public void setForceBuild(boolean forceBuild) {
-        log("parameter 'forceBuild' is deprecated and has no effect; remove from your build");
-    }
-
-    /**
-     * Deprecated alias for setInitialData.
-     * 
-     * @param rootElement
-     * @deprecated
-     */
-    public void setRootElement(String rootElement) {
-        log("parameter 'rootElement' is deprecated; use 'initialData' instead");
-        this.initialData = rootElement;
     }
 
 }

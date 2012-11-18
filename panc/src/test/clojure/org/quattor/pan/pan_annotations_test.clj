@@ -1,7 +1,7 @@
 (ns org.quattor.pan.pan-annotations-test
-  (:use [clojure.test :refer :all]
-        [clojure.string :as str]
-        [org.quattor.pan.pan-annotations :refer :all])
+  (:require [clojure.test :refer :all]
+            [clojure.string :as str]
+            [org.quattor.pan.pan-annotations :refer :all])
   (:import java.util.regex.Pattern
            java.io.File
            org.quattor.pan.CompilerOptions))

@@ -20,61 +20,53 @@ Please file a bug report with including the stack trace.
     (str type " ERROR: " msg)))
 
 (defn create-compiler-options []
-  (let [ {:keys [debugIncludePatterns
-                 debugExcludePatterns 
-                 iterationLimit 
-                 callDepthLimit 
+  (let [ {:keys [debug-ns-include
+                 debug-ns-exclude 
+                 max-iteration 
+                 max-recursion 
                  formatter 
                  output-dir
                  sessionDirectory 
                  includeDirectories 
-                 nthread 
                  warnings 
-                 forceBuild 
                  annotationDirectory 
                  annotationBaseDirectory 
                  rootElement] } settings/*settings* ]
-   (CompilerOptions. debugIncludePatterns 
-                     debugExcludePatterns 
-                     iterationLimit 
-                     callDepthLimit 
+   (CompilerOptions. debug-ns-include 
+                     debug-ns-exclude 
+                     max-iteration 
+                     max-recursion 
                      formatter 
                      output-dir 
                      sessionDirectory 
                      includeDirectories 
-                     nthread 
                      warnings 
-                     forceBuild 
                      annotationDirectory
                      annotationBaseDirectory
                      rootElement)))
 
 (defn default-compiler-options []
-  (let [ {:keys [debugIncludePatterns
-                 debugExcludePatterns 
-                 iterationLimit 
-                 callDepthLimit 
+  (let [ {:keys [debug-ns-include
+                 debug-ns-exclude 
+                 max-iteration 
+                 max-recursion 
                  formatter 
                  output-dir 
                  sessionDirectory 
                  includeDirectories 
-                 nthread 
                  warnings 
-                 forceBuild 
                  annotationDirectory 
                  annotationBaseDirectory 
                  rootElement] } (settings/defaults) ]
-   (CompilerOptions. debugIncludePatterns 
-                     debugExcludePatterns 
-                     iterationLimit 
-                     callDepthLimit 
+   (CompilerOptions. debug-ns-include 
+                     debug-ns-exclude 
+                     max-iteration 
+                     max-recursion 
                      formatter 
                      output-dir 
                      sessionDirectory 
                      includeDirectories 
-                     nthread 
                      warnings 
-                     forceBuild 
                      annotationDirectory
                      annotationBaseDirectory
                      rootElement)))

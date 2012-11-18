@@ -34,21 +34,17 @@
 
 (deftest test-nil-debug-patterns
   (let [result (process [:debug-ns-exclude nil])
-        regex-list (:debug-exclude-patterns result)]
-    (is (= 1 (count result)))
-    (is (= 0 (count regex-list))))
+        regex (:debug-ns-exclude result)]
+    (is (nil? regex)))
   (let [result (process [:debug-ns-include nil])
-        regex-list (:debug-include-patterns result)]
-    (is (= 1 (count result)))
-    (is (= 0 (count regex-list)))))
+        regex (:debug-ns-include result)]
+    (is (nil? regex))))
 
 (deftest test-debug-exclude-patterns
   (let [pattern ".*OK.*"
         result (process [:debug-ns-exclude pattern])
-        regex-list (:debug-exclude-patterns result)
-        regex (first regex-list)]
+        regex (:debug-ns-exclude result)]
     (is (= 1 (count result)))
-    (is (= 1 (count regex-list)))
     (is (instance? Pattern regex))
     (is (re-matches regex "...OK..."))
     (is (re-matches regex "xxxOKxxx"))
@@ -57,10 +53,8 @@
 (deftest test-debug-include-patterns
   (let [pattern ".*OK.*"
         result (process [:debug-ns-include pattern])
-        regex-list (:debug-include-patterns result)
-        regex (first regex-list)]
+        regex (:debug-ns-include result)]
     (is (= 1 (count result)))
-    (is (= 1 (count regex-list)))
     (is (instance? Pattern regex))
     (is (re-matches regex "...OK..."))
     (is (re-matches regex "xxxOKxxx"))

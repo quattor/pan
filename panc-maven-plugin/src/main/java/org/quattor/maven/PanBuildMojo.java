@@ -2,9 +2,7 @@ package org.quattor.maven;
 
 import java.io.File;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.quattor.pan.Compiler;
@@ -141,22 +139,14 @@ public class PanBuildMojo extends AbstractPanMojo {
     private CompilerOptions createCompilerOptions()
             throws MojoExecutionException {
 
-        List<Pattern> debugIncludePatterns = new LinkedList<Pattern>();
-        debugIncludePatterns.add(Pattern.compile(debugNsInclude));
-
-        List<Pattern> debugExcludePatterns = new LinkedList<Pattern>();
-        debugExcludePatterns.add(Pattern.compile(debugNsExclude));
-
-        int nthread = 0;
         LinkedList<File> includeDirectories = new LinkedList<File>();
         includeDirectories.add(sourceDirectory);
 
         try {
-            return new CompilerOptions(debugIncludePatterns,
-                    debugExcludePatterns, maxIteration, maxRecursion,
-                    formatters, outputDir, null, includeDirectories, nthread,
-                    warningsFromString(warnings), false, null, null,
-                    initialData);
+            return new CompilerOptions(debugNsInclude, debugNsExclude,
+                    maxIteration, maxRecursion, formatters, outputDir, null,
+                    includeDirectories, warningsFromString(warnings), null,
+                    null, initialData);
 
         } catch (SyntaxException e) {
             throw new MojoExecutionException(

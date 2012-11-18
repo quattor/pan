@@ -1300,11 +1300,11 @@ public class BuildContext implements Context {
 	}
 
 	public int getCallLimit() {
-		return (compiler != null) ? compiler.options.callDepthLimit : 50;
+		return (compiler != null) ? compiler.options.maxRecursion : 50;
 	}
 
 	public int getIterationLimit() {
-		return (compiler != null) ? compiler.options.iterationLimit : 1000;
+		return (compiler != null) ? compiler.options.maxIteration : 1000;
 	}
 
 	public boolean isFinal(Path p) {

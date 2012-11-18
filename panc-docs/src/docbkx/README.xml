@@ -64,6 +64,11 @@
 
       <itemizedlist>
         <listitem>
+          <para>(GitHub Issue #5) Remove deprecated options from panc ant
+          task</para>
+        </listitem>
+
+        <listitem>
           <para>(GitHub Issue #4) Remove panc-old script</para>
         </listitem>
       </itemizedlist>

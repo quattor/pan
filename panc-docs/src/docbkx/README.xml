@@ -60,6 +60,22 @@
     <title>ChangeLog</title>
 
     <section>
+      <title>Version 9.4</title>
+
+      <itemizedlist>
+        <listitem>
+          <para>(GitHub Issue #2) Remove deprecation level attribute in favor
+          of warnings attribute in pan-syntax-check mojo</para>
+        </listitem>
+
+        <listitem>
+          <para>(GitHub Issue #26) Restore backward compatibility for gzip
+          output flag</para>
+        </listitem>
+      </itemizedlist>
+    </section>
+
+    <section>
       <title>Version 9.3</title>
 
       <para>No additional changes besides those in RC1 and RC2.</para>

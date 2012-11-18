@@ -25,6 +25,7 @@ import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.FileSet;
 import org.quattor.pan.Compiler;
 import org.quattor.pan.CompilerOptions;
+import org.quattor.pan.CompilerOptions.DeprecationWarnings;
 import org.quattor.pan.CompilerResults;
 import org.quattor.pan.repository.SourceType;
 
@@ -38,88 +39,87 @@ import org.quattor.pan.repository.SourceType;
  */
 public class PanCheckSyntaxTask extends Task {
 
-	private LinkedList<File> sourceFiles = new LinkedList<File>();
+    private LinkedList<File> sourceFiles = new LinkedList<File>();
 
-	private boolean verbose = false;
+    private boolean verbose = false;
 
-	private int deprecationLevel = 0;
+    private CompilerOptions.DeprecationWarnings deprecationWarnings = DeprecationWarnings.ON;
 
-	@Override
-	public void execute() throws BuildException {
+    @Override
+    public void execute() throws BuildException {
 
-		CompilerOptions.DeprecationWarnings deprecationWarnings = CompilerOptions
-				.getDeprecationWarnings(deprecationLevel, false);
+        CompilerOptions options = CompilerOptions
+                .createCheckSyntaxOptions(deprecationWarnings);
 
-		CompilerOptions options = CompilerOptions
-				.createCheckSyntaxOptions(deprecationWarnings);
+        CompilerResults results = Compiler.run(options, null, sourceFiles);
 
-		CompilerResults results = Compiler.run(options, null, sourceFiles);
+        boolean hadError = results.print(verbose);
 
-		boolean hadError = results.print(verbose);
+        if (hadError) {
+            throw new BuildException("Compilation failed; see messages.");
+        }
+    }
 
-		if (hadError) {
-			throw new BuildException("Compilation failed; see messages.");
-		}
-	}
+    /**
+     * Support nested fileset elements. This is called by ant only after all of
+     * the children of the fileset have been processed. Collect all of the
+     * selected files from the fileset.
+     * 
+     * @param fileset
+     *            a configured FileSet
+     */
+    public void addConfiguredFileSet(FileSet fileset) {
+        addFiles(fileset);
+    }
 
-	/**
-	 * Support nested fileset elements. This is called by ant only after all of
-	 * the children of the fileset have been processed. Collect all of the
-	 * selected files from the fileset.
-	 * 
-	 * @param fileset
-	 *            a configured FileSet
-	 */
-	public void addConfiguredFileSet(FileSet fileset) {
-		addFiles(fileset);
-	}
+    /**
+     * Utility method that adds all of the files in a fileset to the list of
+     * files to be processed. Duplicate files appear only once in the final
+     * list. Files not ending with a valid source file extension are ignored.
+     * 
+     * @param fs
+     *            FileSet from which to get the file names
+     */
+    private void addFiles(FileSet fs) {
 
-	/**
-	 * Utility method that adds all of the files in a fileset to the list of
-	 * files to be processed. Duplicate files appear only once in the final
-	 * list. Files not ending with a valid source file extension are ignored.
-	 * 
-	 * @param fs
-	 *            FileSet from which to get the file names
-	 */
-	private void addFiles(FileSet fs) {
+        // Get the files included in the fileset.
+        DirectoryScanner ds = fs.getDirectoryScanner(getProject());
 
-		// Get the files included in the fileset.
-		DirectoryScanner ds = fs.getDirectoryScanner(getProject());
+        // The base directory for all files.
+        File basedir = ds.getBasedir();
 
-		// The base directory for all files.
-		File basedir = ds.getBasedir();
+        // Loop over each file creating a File object.
+        for (String f : ds.getIncludedFiles()) {
+            if (SourceType.hasSourceFileExtension(f)) {
+                sourceFiles.add(new File(basedir, f));
+            }
+        }
+    }
 
-		// Loop over each file creating a File object.
-		for (String f : ds.getIncludedFiles()) {
-			if (SourceType.hasSourceFileExtension(f)) {
-				sourceFiles.add(new File(basedir, f));
-			}
-		}
-	}
+    /**
+     * Flag to indicate that extra information should be written to the standard
+     * output. This gives the total number of files which will be processed and
+     * statistics coming from the compilation.
+     * 
+     * @param verbose
+     */
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
+    }
 
-	/**
-	 * Flag to indicate that extra information should be written to the standard
-	 * output. This gives the total number of files which will be processed and
-	 * statistics coming from the compilation.
-	 * 
-	 * @param verbose
-	 */
-	public void setVerbose(boolean verbose) {
-		this.verbose = verbose;
-	}
-
-	/**
-	 * Level at which deprecation warnings are issued. If less than zero, then
-	 * none are printed. If zero, warnings are issued for things that will
-	 * change in next release. If greater than zero, then other future changes
-	 * will be flagged.
-	 * 
-	 * @param deprecationLevel
-	 *            level at which to give deprecation warnings
-	 */
-	public void setDeprecationLevel(int deprecationLevel) {
-		this.deprecationLevel = deprecationLevel;
-	}
+    /**
+     * Determines whether deprecation warnings are emitted and if so, whether to
+     * treat them as fatal errors.
+     * 
+     * @param warnings
+     */
+    public void setWarnings(String warnings) {
+        try {
+            deprecationWarnings = CompilerOptions.DeprecationWarnings
+                    .fromString(warnings);
+        } catch (IllegalArgumentException e) {
+            throw new BuildException("invalid value for warnings: " + warnings);
+        }
+    }
 
 }

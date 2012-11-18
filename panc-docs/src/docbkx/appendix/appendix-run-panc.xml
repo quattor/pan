@@ -40,18 +40,15 @@
   </itemizedlist>
 
   <para>The following sections provide details on the supported mechanisms for
-  invoking the pan configuration language compiler. </para>
+  invoking the pan configuration language compiler.</para>
 
   <section>
     <title>Command Line</title>
 
     <para>The compiler can be invoked from the command line by using
     <command>panc</command>. This is a script, which works in Unix-like
-    environments, that starts a Java Virtual Machine and invokes the compiler.
-    The script options are not compatible with previous versions of this
-    command; use <command>panc-old</command> to use the older options. Note
-    that the <command>panc-old</command> command is
-    <emphasis>deprecated</emphasis>.</para>
+    environments, that starts a Java Virtual Machine and invokes the
+    compiler.</para>
 
     <para>The full list of options can be obtained with the
     <option>--help</option> option or by looking on the relevant man

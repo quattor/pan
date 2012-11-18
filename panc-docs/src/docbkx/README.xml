@@ -60,6 +60,16 @@
     <title>ChangeLog</title>
 
     <section>
+      <title>Version 10.0</title>
+
+      <itemizedlist>
+        <listitem>
+          <para>(GitHub Issue #4) Remove panc-old script</para>
+        </listitem>
+      </itemizedlist>
+    </section>
+
+    <section>
       <title>Version 9.4</title>
 
       <itemizedlist>

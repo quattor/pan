@@ -11,7 +11,7 @@
 (defn split-path [path]
   (re-seq (path-splitter-re) path))
 
-(defn create-absolute-file [name]
+(defn create-absolute-file [^String name]
   (.getAbsoluteFile (File. name)))
 
 (defn current-directory []
@@ -27,12 +27,13 @@
     (current-directory)
     (create-absolute-file dir)))
 
-(defn get-compiler-options [{base-dir :base-dir output-dir :output-dir}]
-    (CompilerOptions/createAnnotationOptions output-dir base-dir))
+(defn get-compiler-options
+  [{base-dir :base-dir output-dir :output-dir}]
+  (CompilerOptions/createAnnotationOptions output-dir base-dir))
 
 (defn generate-annotations [options files]
   (let [compiler-options (get-compiler-options options)
-        pan-sources (map #(File. %) files)]
+        pan-sources (map #(File. ^String %) files)]
     (org.quattor.pan.Compiler/run compiler-options nil pan-sources)))
 
 (defn -main [& args]
@@ -48,7 +49,7 @@
     (when (:help options)
       (println banner)
       (System/exit 0))
-    (let [results (generate-annotations options files)]
+    (let [^CompilerResults results (generate-annotations options files)]
       (if-let [errors (.formatErrors results)]
         (println errors)
         "")

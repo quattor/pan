@@ -6,7 +6,7 @@
 (defn to-integer
   "Converts string to integer.  If the string is not a valid
    integer, then the method returns nil."
-  [s]
+  [^String s]
   (try
     (Integer/valueOf s)
     (catch Exception e nil)))
@@ -56,5 +56,5 @@
   "Returns true if the given file exists and is a directory."
   [file]
   (if (instance? File file)
-    (.isDirectory file)))
+    (.isDirectory ^File file)))
 

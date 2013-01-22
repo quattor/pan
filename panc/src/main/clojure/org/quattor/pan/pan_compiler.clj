@@ -93,7 +93,7 @@ Please file a bug report with including the stack trace.
   (println (str "\npanc [options] [pan source files...]\n\n" banner))
   (System/exit 0))
 
-(defn compiler-error-and-exit [t]
+(defn compiler-error-and-exit [^Throwable t]
   (println bug-report-msg)
   (.printStackTrace t)
   (System/exit 1))
@@ -113,7 +113,7 @@ Please file a bug report with including the stack trace.
         (banner-and-exit banner))
       (settings/with-settings (to-settings options)
         (let [sources (map io/file files)
-              results (build-profiles options sources)
+              ^CompilerResults results (build-profiles options sources)
               errors (.formatErrors results)
               rc (if errors 1 0)]
           (if errors

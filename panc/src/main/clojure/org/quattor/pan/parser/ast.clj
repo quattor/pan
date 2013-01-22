@@ -3,6 +3,7 @@
             [clojure.java.io :as io]
             [org.quattor.pan.settings :as settings])
   (:import [org.quattor.pan.parser
+            SimpleNode
             PanParser
             ASTTemplate
             ASTStatement
@@ -27,26 +28,26 @@
 
 (declare convert)
 
-(defn convert-children [ast]
+(defn convert-children [^SimpleNode ast]
   (for [i (range (.jjtGetNumChildren ast))]
     (let [child (.jjtGetChild ast i)]
       (convert child))))
   
 (defmulti convert
-  (fn [ast] [(class ast) (.getSubtype ast)]))
+  (fn [^SimpleNode ast] [(class ast) (.getSubtype ast)]))
 
 (defmethod convert :default
-  [ast]
+  [^SimpleNode ast]
   (cons (str (class ast) (.toString ast "")) (convert-children ast)))
 
 (defmethod convert [ASTTemplate Template$TemplateType/OBJECT]
-  [ast]
+  [^ASTTemplate ast]
   (concat 
     (list `template (.getIdentifier ast))
     (convert-children ast)))
 
 (defmethod convert [ASTStatement ASTStatement$StatementType/ASSIGN]
-  [ast]
+  [^ASTStatement ast]
   (list 
     (.getStatementType ast)
     (.getIdentifier ast)
@@ -55,11 +56,11 @@
     (convert-children ast)))
 
 (defmethod convert [ASTOperation ASTOperation$OperationType/LITERAL]
-  [ast]
+  [^ASTOperation ast]
   (.toString (.getOperation ast)))
 
 (defmethod convert [ASTOperation ASTOperation$OperationType/DML]
-  [ast]
+  [^ASTOperation ast]
   (let [result (convert-children ast)
         n (count result)]
     (if (== n 1)
@@ -67,12 +68,12 @@
       result)))
 
 (defmethod convert [ASTOperation ASTOperation$OperationType/PLUS]
-  [ast]
+  [^ASTOperation ast]
   (let [type (.getOperationType ast)]
     (cons type (convert-children ast))))
 
 (defmethod convert [ASTOperation ASTOperation$OperationType/MINUS]
-  [ast]
+  [^ASTOperation ast]
   (let [type (.getOperationType ast)]
     (cons type (convert-children ast))))
 

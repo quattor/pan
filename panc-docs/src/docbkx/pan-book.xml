@@ -28,7 +28,7 @@
     <date><?eval ${buildTimestamp}?></date>
 
     <copyright>
-      <year>2012</year>
+      <year>2013</year>
 
       <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
     </copyright>

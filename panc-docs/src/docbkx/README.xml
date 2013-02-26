@@ -21,7 +21,8 @@
 
     <abstract>
       <para>This document describes important changes in the pan configuration
-      language compiler between the v9 series and previous releases.</para>
+      language compiler between the v10 and v9 series and previous
+      releases.</para>
     </abstract>
 
     <productnumber><?eval ${project.version}?></productnumber>
@@ -50,9 +51,9 @@
       <title>Deprecated Features</title>
 
       <para>All of the deprecated features in the v8 series of the compilers
-      has been removed from the v9 series. Ensure that your configuration
-      compiles with the deprecation warnings activated with the v8 compiler
-      before migrating to the v9 series.</para>
+      has been removed from the v9 and v10 series. Ensure that your
+      configuration compiles with the deprecation warnings activated with the
+      v8 compiler before migrating to the v9 or v10 series.</para>
     </section>
   </section>
 
@@ -64,6 +65,11 @@
 
       <itemizedlist>
         <listitem>
+          <para>(GitHub Issue #27) Remove session directory
+          functionality</para>
+        </listitem>
+
+        <listitem>
           <para>(GitHub Issue #5) Remove deprecated options from panc ant
           task</para>
         </listitem>
@@ -71,13 +77,7 @@
         <listitem>
           <para>(GitHub Issue #4) Remove panc-old script</para>
         </listitem>
-      </itemizedlist>
-    </section>
 
-    <section>
-      <title>Version 9.4</title>
-
-      <itemizedlist>
         <listitem>
           <para>(GitHub Issue #2) Remove deprecation level attribute in favor
           of warnings attribute in pan-syntax-check mojo</para>

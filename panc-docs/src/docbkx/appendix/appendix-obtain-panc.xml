@@ -15,7 +15,7 @@
     <para>Binary packages for all releases are available from SourceForge in a
     variety of formats:</para>
 
-    <programlisting>http://sourceforge.net/projects/quattor/files/</programlisting>
+    <programlisting>http://sourceforge.net/projects/quattor/files/panc/</programlisting>
 
     <para>The same location also contains documentation for the compiler. This
     document is also bundled in the distribution files.</para>
@@ -24,16 +24,15 @@
   <section>
     <title>Source</title>
 
-    <para>The source for the pan compiler is managed through a git repository.
-    The software can be checked out with the following command:</para>
+    <para>The source for the pan compiler is managed through a git repository
+    on GitHub. The software can be checked out with the following
+    command:</para>
 
-    <programlisting>git clone git://quattor.git.sourceforge.net/gitroot/quattor/quattor/pan</programlisting>
+    <programlisting>git clone git://github.com/quattor/pan.git</programlisting>
 
     <para>This provides a <emphasis>read-only</emphasis> copy of the pan
-    repository. If you need write access to the repository, consult the
-    SourceForge documentation to find how to checkout a hosted git repository
-    with write access. You will need to be a member of the Quattor SourceForge
-    project.</para>
+    repository. Patches to the compiler can be provided via GitHub pull
+    requests. </para>
 
     <para>The master branch is the main development branch. Although an effort
     is made to ensure that this code functions correctly, there may be times
@@ -82,8 +81,8 @@ git tag -l
       subdirectory.</para>
 
       <note>
-        <para>Current builds of the compiler are done with Maven 2.2.1. The
-        builds have not yet been tested with the Maven 3 releases. </para>
+        <para>Current builds of the compiler are done with Maven 3; the build
+        should work for any Maven version 2.2.1 or later.</para>
       </note>
     </section>
   </section>

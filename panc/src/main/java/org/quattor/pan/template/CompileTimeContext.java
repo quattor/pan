@@ -251,6 +251,10 @@ public class CompileTimeContext implements Context {
 		setGlobalVariable("LOADPATH", new ListResource(), false);
 	}
 
+	public String getObjectName() {
+		return (objectTemplate != null) ? objectTemplate.name : "unknown";
+	}
+
 	/**
 	 * Return the function definition associated with the given name or null if
 	 * it doesn't exist. It will always return null if the argument is null.

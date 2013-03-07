@@ -133,6 +133,11 @@ public interface Context {
 	 * Set the name of the object template. Define the necessary variables.
 	 */
 	public void setObjectAndLoadpath();
+	
+	/**
+	 * Get the name of the object template.
+	 */
+	public String getObjectName();
 
 	/**
 	 * Return the function definition associated with the given name or null if

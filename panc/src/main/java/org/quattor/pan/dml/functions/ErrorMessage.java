@@ -73,14 +73,15 @@ final public class ErrorMessage extends BuiltInFunction {
 
 		try {
 			StringProperty sp = (StringProperty) result;
-			throw new EvaluationException("user-initiated error: "
-					+ sp.getValue(), getSourceRange(), objectFile, context
-					.getTraceback(getSourceRange()));
+			String msg = String.format("[%s] user-initiated error: %s",
+					context.getObjectName(), sp.getValue());
+			throw new EvaluationException(msg, getSourceRange(), objectFile,
+					context.getTraceback(getSourceRange()));
 		} catch (ClassCastException cce) {
 			throw new EvaluationException(
 					"user-initiated error thrown with non-string argument",
-					getSourceRange(), objectFile, context
-							.getTraceback(getSourceRange()));
+					getSourceRange(), objectFile,
+					context.getTraceback(getSourceRange()));
 		}
 	}
 

@@ -1,6 +1,5 @@
 /*
- Copyright (c) 2006 Charles A. Loomis, Jr, Cedric Duprilot, and
- Centre National de la Recherche Scientifique (CNRS).
+ Copyright (c) 2013 Centre National de la Recherche Scientifique (CNRS).
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -79,7 +78,9 @@ final public class Debug extends BuiltInFunction {
 		Element result = ops[0].execute(context);
 		try {
 			StringProperty sp = (StringProperty) result;
-			System.err.println(sp.getValue());
+			String objectName = context.getObjectName();
+			String msg = String.format("[%s] %s", objectName, sp.getValue());
+			System.err.println(msg);
 		} catch (ClassCastException cce) {
 			throw EvaluationException.create(sourceRange, context,
 					MSG_ONE_STRING_ARG_REQ, name);

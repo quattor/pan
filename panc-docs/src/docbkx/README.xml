@@ -61,6 +61,20 @@
     <title>ChangeLog</title>
 
     <section>
+      <title>Version 10.1</title>
+
+      <itemizedlist>
+        <listitem>
+          <para>(GitHub Issue #24) add OBJECT to debug and error output</para>
+        </listitem>
+
+        <listitem>
+          <para>(GitHub Issue #31) panc command line fails</para>
+        </listitem>
+      </itemizedlist>
+    </section>
+
+    <section>
       <title>Version 10.0</title>
 
       <itemizedlist>

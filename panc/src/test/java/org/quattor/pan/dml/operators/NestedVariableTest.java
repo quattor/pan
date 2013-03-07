@@ -48,10 +48,10 @@ public class NestedVariableTest extends AbstractOperationTestUtils {
 		long va = 1L;
 		String vb = "ok";
 
-		HashResource nlist = new HashResource();
-		nlist.put(TermFactory.create("a"), LongProperty.getInstance(va));
-		nlist.put(TermFactory.create("b"), StringProperty.getInstance(vb));
-		context.setLocalVariable("x", nlist);
+		HashResource dict = new HashResource();
+		dict.put(TermFactory.create("a"), LongProperty.getInstance(va));
+		dict.put(TermFactory.create("b"), StringProperty.getInstance(vb));
+		context.setLocalVariable("x", dict);
 
 		// Execute the operations.
 		Operation op = new NestedVariable(null, "x", false, StringProperty

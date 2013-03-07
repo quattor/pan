@@ -99,10 +99,10 @@ public class CompileTimeContextTest {
 
 		Context context = new CompileTimeContext();
 
-		// Create a nlist to check.
-		HashResource nlist = new HashResource();
-		nlist.put(TermFactory.create("a"), LongProperty.getInstance(1L));
-		context.setLocalVariable("x", nlist);
+		// Create a dict to check.
+		HashResource dict = new HashResource();
+		dict.put(TermFactory.create("a"), LongProperty.getInstance(1L));
+		context.setLocalVariable("x", dict);
 
 		// Check that replacing a value with an incorrect type causes an error.
 		Term[] terms = { TermFactory.create("a") };
@@ -124,10 +124,10 @@ public class CompileTimeContextTest {
 
 		Context context = new CompileTimeContext();
 
-		// Create a nlist to check.
-		HashResource nlist = new HashResource();
-		nlist.put(TermFactory.create("a"), LongProperty.getInstance(1L));
-		context.setLocalVariable("x", nlist);
+		// Create a dict to check.
+		HashResource dict = new HashResource();
+		dict.put(TermFactory.create("a"), LongProperty.getInstance(1L));
+		context.setLocalVariable("x", dict);
 
 		// Check that replacing a value with an incorrect type causes an error.
 		Term[] terms = { TermFactory.create("a") };

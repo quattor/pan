@@ -61,8 +61,8 @@ public class SimpleVariableTest extends AbstractOperationTestUtils {
 
 		Context context = new CompileTimeContext();
 
-		HashResource nlist = new HashResource();
-		context.setLocalVariable("x", nlist);
+		HashResource dict = new HashResource();
+		context.setLocalVariable("x", dict);
 
 		// Execute the operations.
 		Operation op = new SimpleVariable(null, "x", false);

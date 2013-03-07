@@ -77,9 +77,9 @@ public class LengthTest extends BuiltInFunctionTestUtils {
 		assertTrue(length == 2);
 
 		// Check long value.
-		HashResource nlist = new HashResource();
-		nlist.put(TermFactory.create("a"), LongProperty.getInstance(1L));
-		r1 = runDml(Length.getInstance(null, nlist));
+		HashResource dict = new HashResource();
+		dict.put(TermFactory.create("a"), LongProperty.getInstance(1L));
+		r1 = runDml(Length.getInstance(null, dict));
 
 		// Check result.
 		assertTrue(r1 instanceof LongProperty);

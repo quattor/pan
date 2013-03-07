@@ -44,29 +44,29 @@ public class MergeTest extends BuiltInFunctionTestUtils {
 	@Test
 	public void checkHashMerge() throws SyntaxException, InvalidTermException {
 
-		HashResource nlist1 = new HashResource();
-		nlist1.put(TermFactory.create("a"), StringProperty.getInstance("0"));
-		nlist1.put(TermFactory.create("b"), StringProperty.getInstance("1"));
-		nlist1.put(TermFactory.create("c"), StringProperty.getInstance("2"));
+		HashResource dict1 = new HashResource();
+		dict1.put(TermFactory.create("a"), StringProperty.getInstance("0"));
+		dict1.put(TermFactory.create("b"), StringProperty.getInstance("1"));
+		dict1.put(TermFactory.create("c"), StringProperty.getInstance("2"));
 
-		HashResource nlist2 = new HashResource();
-		nlist2.put(TermFactory.create("d"), StringProperty.getInstance("0"));
-		nlist2.put(TermFactory.create("e"), StringProperty.getInstance("1"));
-		nlist2.put(TermFactory.create("f"), StringProperty.getInstance("2"));
+		HashResource dict2 = new HashResource();
+		dict2.put(TermFactory.create("d"), StringProperty.getInstance("0"));
+		dict2.put(TermFactory.create("e"), StringProperty.getInstance("1"));
+		dict2.put(TermFactory.create("f"), StringProperty.getInstance("2"));
 
 		// The actual keys should be the following.
 		String[] trueKeys = new String[] { "a", "b", "c", "d", "e", "f" };
 
-		Element r1 = runDml(Merge.getInstance(null, nlist1, nlist2));
+		Element r1 = runDml(Merge.getInstance(null, dict1, dict2));
 
 		// Must be a hash.
 		assertTrue(r1 instanceof HashResource);
-		HashResource nlistResult = (HashResource) r1;
+		HashResource dictResult = (HashResource) r1;
 
 		// Loop over all of the keys and make sure we get the correct ones.
 		for (String key : trueKeys) {
 			Term term = TermFactory.create(key);
-			assertTrue(nlistResult.get(term) != null);
+			assertTrue(dictResult.get(term) != null);
 		}
 	}
 
@@ -106,15 +106,15 @@ public class MergeTest extends BuiltInFunctionTestUtils {
 	@Test(expected = EvaluationException.class)
 	public void checkCollision() throws SyntaxException, InvalidTermException {
 
-		HashResource nlist1 = new HashResource();
-		nlist1.put(TermFactory.create("a"), StringProperty.getInstance("0"));
-		nlist1.put(TermFactory.create("b"), StringProperty.getInstance("1"));
+		HashResource dict1 = new HashResource();
+		dict1.put(TermFactory.create("a"), StringProperty.getInstance("0"));
+		dict1.put(TermFactory.create("b"), StringProperty.getInstance("1"));
 
-		HashResource nlist2 = new HashResource();
-		nlist2.put(TermFactory.create("b"), StringProperty.getInstance("0"));
-		nlist2.put(TermFactory.create("c"), StringProperty.getInstance("1"));
+		HashResource dict2 = new HashResource();
+		dict2.put(TermFactory.create("b"), StringProperty.getInstance("0"));
+		dict2.put(TermFactory.create("c"), StringProperty.getInstance("1"));
 
-		runDml(Merge.getInstance(null, nlist1, nlist2));
+		runDml(Merge.getInstance(null, dict1, dict2));
 	}
 
 	@Test(expected = EvaluationException.class)

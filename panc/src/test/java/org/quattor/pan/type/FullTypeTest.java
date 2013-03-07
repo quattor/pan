@@ -102,6 +102,7 @@ public class FullTypeTest {
 		validateBuiltInType("double", DoubleProperty.getInstance(1.0));
 		validateBuiltInType("element", StringProperty.getInstance("dummy"));
 		validateBuiltInType("nlist", new HashResource());
+		validateBuiltInType("dict", new HashResource());
 		validateBuiltInType("list", new ListResource());
 		validateBuiltInType("long", LongProperty.getInstance(10));
 		validateBuiltInType("number", LongProperty.getInstance(10));
@@ -130,14 +131,14 @@ public class FullTypeTest {
 	public void testValidBuiltInTypesWithRange() throws SyntaxException,
 			ValidationException, InvalidTermException {
 
-		HashResource nlist = new HashResource();
-		nlist.put(TermFactory.create("a"), DoubleProperty.getInstance(1.0));
+		HashResource dict = new HashResource();
+		dict.put(TermFactory.create("a"), DoubleProperty.getInstance(1.0));
 
 		ListResource list = new ListResource();
 		list.put(TermFactory.create(0), DoubleProperty.getInstance(1.0));
 
 		validateBuiltInTypeWithRange("double", DoubleProperty.getInstance(1.0));
-		validateBuiltInTypeWithRange("nlist", nlist);
+		validateBuiltInTypeWithRange("nlist", dict);
 		validateBuiltInTypeWithRange("list", list);
 		validateBuiltInTypeWithRange("long", LongProperty.getInstance(3));
 		validateBuiltInTypeWithRange("string", StringProperty

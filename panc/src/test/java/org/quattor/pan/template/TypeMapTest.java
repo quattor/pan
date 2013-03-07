@@ -46,6 +46,7 @@ public class TypeMapTest {
 		assertTrue(map.get("double") != null);
 		assertTrue(map.get("element") != null);
 		assertTrue(map.get("nlist") != null);
+		assertTrue(map.get("dict") != null);
 		assertTrue(map.get("list") != null);
 		assertTrue(map.get("long") != null);
 		assertTrue(map.get("number") != null);

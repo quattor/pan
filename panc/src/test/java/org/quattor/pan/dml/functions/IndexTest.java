@@ -123,44 +123,44 @@ public class IndexTest extends BuiltInFunctionTestUtils {
 	public void findPropertyInHash() throws SyntaxException,
 			InvalidTermException {
 
-		HashResource nlist = new HashResource();
-		nlist.put(TermFactory.create("a"), StringProperty.getInstance("Foo"));
-		nlist.put(TermFactory.create("b"), StringProperty.getInstance("FOO"));
-		nlist.put(TermFactory.create("c"), StringProperty.getInstance("foo"));
-		nlist.put(TermFactory.create("d"), StringProperty.getInstance("bar"));
+		HashResource dict = new HashResource();
+		dict.put(TermFactory.create("a"), StringProperty.getInstance("Foo"));
+		dict.put(TermFactory.create("b"), StringProperty.getInstance("FOO"));
+		dict.put(TermFactory.create("c"), StringProperty.getInstance("foo"));
+		dict.put(TermFactory.create("d"), StringProperty.getInstance("bar"));
 
 		Property property = StringProperty.getInstance("foo");
 		LongProperty start = LongProperty.getInstance(2L);
 
-		Element r1 = runDml(Index.getInstance(null, property, nlist));
+		Element r1 = runDml(Index.getInstance(null, property, dict));
 
 		assertTrue(r1 instanceof StringProperty);
 		String s1 = ((StringProperty) r1).getValue();
 		assertTrue("c".equals(s1));
 
-		r1 = runDml(Index.getInstance(null, property, nlist, start));
+		r1 = runDml(Index.getInstance(null, property, dict, start));
 
 		assertTrue(r1 instanceof StringProperty);
 		s1 = ((StringProperty) r1).getValue();
 		assertTrue("".equals(s1));
 
-		nlist = new HashResource();
-		nlist.put(TermFactory.create("a"), LongProperty.getInstance(3L));
-		nlist.put(TermFactory.create("b"), LongProperty.getInstance(1L));
-		nlist.put(TermFactory.create("c"), LongProperty.getInstance(4L));
-		nlist.put(TermFactory.create("d"), LongProperty.getInstance(1L));
-		nlist.put(TermFactory.create("e"), LongProperty.getInstance(6L));
+		dict = new HashResource();
+		dict.put(TermFactory.create("a"), LongProperty.getInstance(3L));
+		dict.put(TermFactory.create("b"), LongProperty.getInstance(1L));
+		dict.put(TermFactory.create("c"), LongProperty.getInstance(4L));
+		dict.put(TermFactory.create("d"), LongProperty.getInstance(1L));
+		dict.put(TermFactory.create("e"), LongProperty.getInstance(6L));
 
 		property = LongProperty.getInstance(1L);
 		start = LongProperty.getInstance(1L);
 
-		r1 = runDml(Index.getInstance(null, property, nlist));
+		r1 = runDml(Index.getInstance(null, property, dict));
 
 		assertTrue(r1 instanceof StringProperty);
 		s1 = ((StringProperty) r1).getValue();
 		assertTrue("b".equals(s1));
 
-		r1 = runDml(Index.getInstance(null, property, nlist, start));
+		r1 = runDml(Index.getInstance(null, property, dict, start));
 
 		assertTrue(r1 instanceof StringProperty);
 		s1 = ((StringProperty) r1).getValue();

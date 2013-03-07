@@ -88,8 +88,8 @@ public class AssignTest extends AbstractOperationTestUtils {
 		// Check that the variable is set.
 		r1 = context.getLocalVariable("x");
 		assertTrue(r1 instanceof HashResource);
-		HashResource nlist = (HashResource) r1;
-		Element r2 = nlist.get(TermFactory.create(vb));
+		HashResource dict = (HashResource) r1;
+		Element r2 = dict.get(TermFactory.create(vb));
 		assert (r2 instanceof LongProperty);
 		LongProperty s2 = (LongProperty) r2;
 		sresult = s2.getValue().longValue();

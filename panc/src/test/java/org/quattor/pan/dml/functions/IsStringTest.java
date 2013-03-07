@@ -65,7 +65,7 @@ public class IsStringTest extends BuiltInFunctionTestUtils {
 		boolean sresult = s1.getValue().booleanValue();
 		assertFalse(sresult);
 
-		// Check nlist resource.
+		// Check dict resource.
 		r1 = runDml(IsString.getInstance(null, new HashResource()));
 
 		// Check result.

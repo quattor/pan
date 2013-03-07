@@ -38,14 +38,14 @@ public class KeyTest extends BuiltInFunctionTestUtils {
 	private static final HashResource hashInstance;
 
 	static {
-		HashResource nlist = new HashResource();
+		HashResource dict = new HashResource();
 		try {
-			nlist.put(TermFactory.create("a"), StringProperty.getInstance("0"));
-			nlist.put(TermFactory.create("b"), StringProperty.getInstance("1"));
+			dict.put(TermFactory.create("a"), StringProperty.getInstance("0"));
+			dict.put(TermFactory.create("b"), StringProperty.getInstance("1"));
 		} catch (InvalidTermException consumed) {
 		}
 
-		hashInstance = nlist;
+		hashInstance = dict;
 	}
 
 	@Test

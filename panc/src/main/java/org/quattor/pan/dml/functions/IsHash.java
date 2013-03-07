@@ -26,7 +26,7 @@ import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.template.SourceRange;
 
 /**
- * Wrapper that creates an is_nlist function call from the IsOfType class.
+ * Wrapper that creates an is_dict function call from the IsOfType class.
  * 
  * @author loomis
  * 
@@ -39,7 +39,7 @@ final public class IsHash {
 	public static Operation getInstance(SourceRange sourceRange,
 			Operation... operations) throws SyntaxException {
 
-		return IsOfType.getInstance(sourceRange, HashResource.class, "is_nlist",
+		return IsOfType.getInstance(sourceRange, HashResource.class, "is_dict",
 				operations);
 	}
 }

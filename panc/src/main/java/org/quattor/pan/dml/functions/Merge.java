@@ -37,7 +37,7 @@ import org.quattor.pan.utils.Term;
 import org.quattor.pan.utils.TermFactory;
 
 /**
- * Combine the contents of two resources. If the resources are nlists, they may
+ * Combine the contents of two resources. If the resources are dicts, they may
  * not have any keys in common.
  * 
  * @author loomis
@@ -69,24 +69,24 @@ final public class Merge extends BuiltInFunction {
 		Element[] args = calculateArgs(context);
 		assert (args.length > 0);
 
-		// The result can either be a nlist or list as defined below.
+		// The result can either be a dict or list as defined below.
 		Element result = null;
 
-		// List can either be all lists or all nlists.
+		// List can either be all lists or all dicts.
 		if (args[0] instanceof HashResource) {
 
 			try {
 
 				// Create the result.
-				HashResource nlistResult = new HashResource();
-				result = nlistResult;
+				HashResource dictResult = new HashResource();
+				result = dictResult;
 
-				// Copy the first nlist as the basis.
+				// Copy the first dict as the basis.
 				for (Element element : args) {
-					HashResource nlist = (HashResource) element;
-					for (Term term : nlist.keySet()) {
+					HashResource dict = (HashResource) element;
+					for (Term term : dict.keySet()) {
 						try {
-							if (nlistResult.put(term, nlist.get(term)) != null) {
+							if (dictResult.put(term, dict.get(term)) != null) {
 								throw new EvaluationException(
 										"two (or more) children have the same name in merge(): "
 												+ term, getSourceRange(),
@@ -103,7 +103,7 @@ final public class Merge extends BuiltInFunction {
 
 			} catch (ClassCastException cce) {
 				throw new EvaluationException(
-						"merge() arguments must be all lists or nlists",
+						"merge() arguments must be all lists or dicts",
 						getSourceRange(), context);
 			}
 
@@ -136,13 +136,13 @@ final public class Merge extends BuiltInFunction {
 
 			} catch (ClassCastException cce) {
 				throw new EvaluationException(
-						"merge() arguments must be all lists or nlists",
+						"merge() arguments must be all lists or dicts",
 						getSourceRange(), context);
 			}
 
 		} else {
 			throw new EvaluationException(
-					"merge() arguments must be all lists or nlists",
+					"merge() arguments must be all lists or dicts",
 					getSourceRange(), context);
 		}
 

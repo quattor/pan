@@ -39,8 +39,8 @@ import org.quattor.pan.utils.Term;
 import org.quattor.pan.utils.TermFactory;
 
 /**
- * Represents an nlist or hash that associates a string value (key) to another
- * element. The key must be a string the is a valid term in a pan path.
+ * Represents an dict (nlist or hash) that associates a string value (key) to
+ * another element. The key must be a string the is a valid term in a pan path.
  * 
  * @author loomis
  * 
@@ -142,8 +142,8 @@ public class HashResource extends Resource {
 	@Override
 	public void checkRange(Range range) throws ValidationException {
 		if (!range.isInRange(map.size())) {
-			throw ValidationException.create(MSG_HASH_SIZE_OUTSIDE_RANGE, map
-					.size(), range.toString());
+			throw ValidationException.create(MSG_HASH_SIZE_OUTSIDE_RANGE,
+					map.size(), range.toString());
 		}
 	}
 
@@ -156,8 +156,8 @@ public class HashResource extends Resource {
 				&& !(newValue instanceof HashResource)) {
 
 			throw new EvaluationException(MessageUtils.format(
-					MSG_INVALID_REPLACEMENT, this.getTypeAsString(), newValue
-							.getTypeAsString()));
+					MSG_INVALID_REPLACEMENT, this.getTypeAsString(),
+					newValue.getTypeAsString()));
 
 		}
 
@@ -170,6 +170,8 @@ public class HashResource extends Resource {
 
 	@Override
 	public String getTypeAsString() {
+		// This must remain as "nlist" until we decide to change the 
+		// name of the resource in downstream clients. 
 		return "nlist";
 	}
 
@@ -253,13 +255,14 @@ public class HashResource extends Resource {
 						.getInstance(iterator.next());
 				Element value = backingHash.get(key.getValue());
 				if (value == null) {
-					throw new EvaluationException(MessageUtils
-							.format(MSG_CONCURRENT_MODIFICATION), null);
+					throw new EvaluationException(
+							MessageUtils.format(MSG_CONCURRENT_MODIFICATION),
+							null);
 				}
 				entry = new HashResourceEntry(key, value);
 			} catch (NoSuchElementException nsee) {
-				throw new EvaluationException(MessageUtils
-						.format(MSG_CONCURRENT_MODIFICATION), null);
+				throw new EvaluationException(
+						MessageUtils.format(MSG_CONCURRENT_MODIFICATION), null);
 			}
 			return entry;
 		}

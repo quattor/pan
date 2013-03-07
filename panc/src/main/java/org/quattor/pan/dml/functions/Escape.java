@@ -32,7 +32,7 @@ import org.quattor.pan.template.SourceRange;
 import org.quattor.pan.utils.EscapeUtils;
 
 /**
- * Escape an arbitrary string so that it can be used as a key for an nlist.
+ * Escape an arbitrary string so that it can be used as a key for a dict.
  * 
  * @author loomis
  * 

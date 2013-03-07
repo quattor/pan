@@ -163,7 +163,7 @@ public class CompilerOptions {
      *            base directory of source files for annotation output
      * @param rootElement
      *            string containing description of root element to use; if null
-     *            or empty string, this defaults to an empty nlist
+     *            or empty string, this defaults to an empty dict
      * @param failOnWarn
      *            if set to true, all warnings will cause compilation to fail
      * @throws SyntaxException

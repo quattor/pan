@@ -5,7 +5,7 @@ import org.quattor.pan.exceptions.EvaluationException;
 /**
  * This class regroups methods used to escape and unescape string. The escape
  * method permits any string (well those containing only ASCII characters) to be
- * converted a valid nlist key. The unescape method will invert the conversion.
+ * converted a valid dict key. The unescape method will invert the conversion.
  * 
  * @author loomis
  * 

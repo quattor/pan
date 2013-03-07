@@ -44,7 +44,7 @@ import org.quattor.pan.utils.MessageUtils;
 import org.quattor.pan.utils.TermFactory;
 
 /**
- * Creates an nlist from the named structure template. Additional pairs of
+ * Creates an dict from the named structure template. Additional pairs of
  * arguments may also be given that will override any entries with the same keys
  * from the structure template.
  * 

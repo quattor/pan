@@ -170,24 +170,24 @@ public class RecordType extends BaseType {
 
 		assert (self != null);
 
-		HashResource nlist = null;
+		HashResource dict = null;
 
 		try {
 
-			// This value is used to keep the current value of the nlist. If
+			// This value is used to keep the current value of the dict. If
 			// this
 			// ends up being replaced, then the modified value needs to be
 			// returned to the caller. Check this at the end of the method.
-			nlist = (HashResource) self;
+			dict = (HashResource) self;
 
 			// Loop over all of the includes.
 			for (String s : includes) {
 				FullType type = context.getFullType(s);
 				try {
 					HashResource replacement = (HashResource) type.setDefaults(
-							context, nlist);
+							context, dict);
 					if (replacement != null) {
-						nlist = replacement;
+						dict = replacement;
 					}
 				} catch (NullPointerException npe) {
 					throw CompilerError.create(MSG_NONEXISTANT_REFERENCED_TYPE,
@@ -203,17 +203,17 @@ public class RecordType extends BaseType {
 				FullType fullType = reqTypes[i];
 
 				try {
-					Element child = nlist.get(term);
+					Element child = dict.get(term);
 					if (child != null && !(child instanceof Undef)) {
 
 						// No need to set the default for the current element.
 						// May need to do it for subtypes though.
 						Element newValue = fullType.setDefaults(context, child);
 						if (newValue != null) {
-							if (nlist.isProtected()) {
-								nlist = (HashResource) nlist.writableCopy();
+							if (dict.isProtected()) {
+								dict = (HashResource) dict.writableCopy();
 							}
-							nlist.put(term, newValue);
+							dict.put(term, newValue);
 						}
 
 					} else {
@@ -225,18 +225,18 @@ public class RecordType extends BaseType {
 						// If there was one, set it and run the setDefaults
 						// method on it.
 						if (defaultValue != null) {
-							if (nlist.isProtected()) {
-								nlist = (HashResource) nlist.writableCopy();
+							if (dict.isProtected()) {
+								dict = (HashResource) dict.writableCopy();
 							}
-							nlist.put(term, defaultValue);
+							dict.put(term, defaultValue);
 
 							Element newValue = fullType.setDefaults(context,
 									defaultValue);
 							if (newValue != null) {
-								if (nlist.isProtected()) {
-									nlist = (HashResource) nlist.writableCopy();
+								if (dict.isProtected()) {
+									dict = (HashResource) dict.writableCopy();
 								}
-								nlist.put(term, newValue);
+								dict.put(term, newValue);
 							}
 						}
 
@@ -261,7 +261,7 @@ public class RecordType extends BaseType {
 					// Only if an optional child exists, try to set the
 					// defaults. A non-existing, optional child should not be
 					// created.
-					Element child = nlist.get(term);
+					Element child = dict.get(term);
 					if (child != null) {
 
 						// If the child has an 'undef' value, then replace it
@@ -270,10 +270,10 @@ public class RecordType extends BaseType {
 							Element defaultValue = fullType
 									.findDefault(context);
 							if (defaultValue != null) {
-								if (nlist.isProtected()) {
-									nlist = (HashResource) nlist.writableCopy();
+								if (dict.isProtected()) {
+									dict = (HashResource) dict.writableCopy();
 								}
-								nlist.put(term, defaultValue);
+								dict.put(term, defaultValue);
 								child = defaultValue;
 							}
 						}
@@ -282,10 +282,10 @@ public class RecordType extends BaseType {
 						// resource.)
 						Element newValue = fullType.setDefaults(context, child);
 						if (newValue != null) {
-							if (nlist.isProtected()) {
-								nlist = (HashResource) nlist.writableCopy();
+							if (dict.isProtected()) {
+								dict = (HashResource) dict.writableCopy();
 							}
-							nlist.put(term, newValue);
+							dict.put(term, newValue);
 						}
 					}
 				} catch (InvalidTermException ite) {
@@ -300,7 +300,7 @@ public class RecordType extends BaseType {
 			// Ignore. Exception will be dealt with during the validation stage.
 		}
 
-		return (self == nlist) ? null : nlist;
+		return (self == dict) ? null : dict;
 	}
 
 	/**
@@ -362,11 +362,11 @@ public class RecordType extends BaseType {
 
 			try {
 
-				HashResource nlist = (HashResource) self;
+				HashResource dict = (HashResource) self;
 
 				// Copy all of the field names into a list.
 				List<Term> undefinedFields = new LinkedList<Term>();
-				for (Term term : nlist.keySet()) {
+				for (Term term : dict.keySet()) {
 					undefinedFields.add(term);
 				}
 
@@ -388,7 +388,7 @@ public class RecordType extends BaseType {
 				}
 
 			} catch (ClassCastException cce) {
-				throw ValidationException.create(MSG_MISMATCHED_TYPES, "nlist",
+				throw ValidationException.create(MSG_MISMATCHED_TYPES, "dict",
 						self.getTypeAsString());
 			}
 		}
@@ -405,12 +405,12 @@ public class RecordType extends BaseType {
 
 		try {
 
-			HashResource nlist = (HashResource) self;
+			HashResource dict = (HashResource) self;
 
 			// If this type has an associated range, then check that the number
 			// of entries is within that range.
 			if (range != null) {
-				nlist.checkRange(range);
+				dict.checkRange(range);
 			}
 
 			// Loop over all of the included types, validating each one. Use the
@@ -453,7 +453,7 @@ public class RecordType extends BaseType {
 				try {
 					// Validate each field. Throw an exception if field doesn't
 					// exist.
-					Element child = nlist.get(term);
+					Element child = dict.get(term);
 					if (child != null) {
 						try {
 							fullType.validate(context, child);
@@ -482,7 +482,7 @@ public class RecordType extends BaseType {
 				try {
 
 					// Validate each existing optional field.
-					Element child = nlist.get(term);
+					Element child = dict.get(term);
 					if (child != null) {
 						try {
 							fullType.validate(context, child);
@@ -499,7 +499,7 @@ public class RecordType extends BaseType {
 			}
 
 		} catch (ClassCastException cce) {
-			throw ValidationException.create(MSG_MISMATCHED_TYPES, "nlist",
+			throw ValidationException.create(MSG_MISMATCHED_TYPES, "dict",
 					self.getTypeAsString());
 		}
 	}

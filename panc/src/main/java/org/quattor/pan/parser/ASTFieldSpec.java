@@ -59,12 +59,11 @@ public class ASTFieldSpec extends SimpleNode {
 
 	public Term getKey() throws SyntaxException {
 
-		// This method checks that the path is a valid nlist key before
-		// returning
-		// the value. This check is done here because SyntaxException is not a
-		// RuntimeException and the JavaCC generated parser can't handle it
-		// correctly. The higher-level code that calls this method can correctly
-		// handle the exception.
+		// This method checks that the path is a valid dict key before
+		// returning the value. This check is done here because SyntaxException
+		// is not a RuntimeException and the JavaCC generated parser can't
+		// handle it correctly. The higher-level code that calls this method can
+		// correctly handle the exception.
 
 		// Verify that the path has the correct form.
 		Term t = null;

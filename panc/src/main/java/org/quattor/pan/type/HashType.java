@@ -35,7 +35,7 @@ import org.quattor.pan.utils.Range;
 import org.quattor.pan.utils.Term;
 
 /**
- * Implements the nlist type for the pan language.
+ * Implements the dict type for the pan language.
  * 
  * @author loomis
  * 
@@ -82,19 +82,19 @@ public class HashType extends CompositeType {
 
 		try {
 
-			HashResource nlist = (HashResource) self;
+			HashResource dict = (HashResource) self;
 
 			// Loop over all of the children and apply the base type validation.
-			for (Term t : nlist.keySet()) {
-				Element child = nlist.get(t);
+			for (Term t : dict.keySet()) {
+				Element child = dict.get(t);
 				Element newValue = baseType.setDefaults(context, child);
 
 				// If there is a replacement value, then add it to the current
-				// nlist. Make sure that the current nlist is not a protected
+				// dict. Make sure that the current dict is not a protected
 				// resource.
 				if (newValue != null) {
 					if (replacement == null) {
-						replacement = (HashResource) nlist.writableCopy();
+						replacement = (HashResource) dict.writableCopy();
 					}
 					replacement.put(t, newValue);
 				}
@@ -105,7 +105,7 @@ public class HashType extends CompositeType {
 			// validation phase.
 		} catch (InvalidTermException ite) {
 			// This exception should never be encountered because the terms are
-			// extracted directly from the existing nlist.
+			// extracted directly from the existing dict.
 			throw CompilerError.create(MSG_INVALID_KEY_OR_INDEX);
 		}
 
@@ -118,28 +118,28 @@ public class HashType extends CompositeType {
 
 		try {
 
-			HashResource nlist = (HashResource) self;
+			HashResource dict = (HashResource) self;
 
 			if (range != null) {
-				nlist.checkRange(range);
+				dict.checkRange(range);
 			}
 
 			// Loop over all of the children and apply the base type validation.
-			for (Term t : nlist.keySet()) {
+			for (Term t : dict.keySet()) {
 				try {
-					Element child = nlist.get(t);
+					Element child = dict.get(t);
 					baseType.validate(context, child);
 				} catch (ValidationException ve) {
 					throw ve.addTerm(t);
 				} catch (InvalidTermException ite) {
 					// This exception should never be encountered because the
-					// terms are extracted directly from the existing nlist.
+					// terms are extracted directly from the existing dict.
 					throw CompilerError.create(MSG_INVALID_KEY_OR_INDEX);
 				}
 			}
 
 		} catch (ClassCastException cce) {
-			throw ValidationException.create(MSG_MISMATCHED_TYPES, "nlist",
+			throw ValidationException.create(MSG_MISMATCHED_TYPES, "dict",
 					self.getTypeAsString());
 		}
 

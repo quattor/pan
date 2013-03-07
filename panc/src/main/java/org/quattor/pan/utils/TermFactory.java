@@ -51,7 +51,7 @@ public class TermFactory {
 	private static final Pattern isIndexPattern = Pattern.compile("^\\d.*$"); //$NON-NLS-1$
 
 	/**
-	 * This regular expression identifies valid nlist keys.
+	 * This regular expression identifies valid dict keys.
 	 */
 	private static final Pattern isKeyPattern = Pattern
 			.compile("^[a-zA-Z_][\\w\\+\\-\\.]*$"); //$NON-NLS-1$

@@ -36,7 +36,7 @@ import org.quattor.pan.template.SourceRange;
 
 /**
  * Returns the key associated with the entry given by the index. Note that
- * nlists are ordered lexically by their keys.
+ * dicts are ordered lexically by their keys.
  * 
  * @author loomis
  * 
@@ -67,13 +67,13 @@ final public class Key extends BuiltInFunction {
 		assert (args.length == 2);
 
 		// Ensure that the arguments are of the correct type.
-		HashResource nlist = null;
+		HashResource dict = null;
 		int index = 0;
 		try {
-			nlist = (HashResource) args[0];
+			dict = (HashResource) args[0];
 		} catch (ClassCastException cce) {
 			throw new EvaluationException(
-					"first argument to key() must be a hash/nlist",
+					"first argument to key() must be a dict",
 					getSourceRange(), context);
 		}
 		try {
@@ -83,7 +83,7 @@ final public class Key extends BuiltInFunction {
 						+ Integer.MAX_VALUE + "): " + tindex, getSourceRange(),
 						context);
 			}
-			if ((tindex < 0) || (tindex > (nlist.size() - 1))) {
+			if ((tindex < 0) || (tindex > (dict.size() - 1))) {
 				throw new EvaluationException("index out of bounds in key(): "
 						+ tindex, getSourceRange(), context);
 			}
@@ -94,8 +94,8 @@ final public class Key extends BuiltInFunction {
 					getSourceRange(), context);
 		}
 
-		StringProperty[] keys = (StringProperty[]) nlist.keySet().toArray(
-				new StringProperty[nlist.size()]);
+		StringProperty[] keys = (StringProperty[]) dict.keySet().toArray(
+				new StringProperty[dict.size()]);
 		Arrays.sort(keys);
 
 		return keys[index];

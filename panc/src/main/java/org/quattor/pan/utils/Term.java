@@ -60,7 +60,7 @@ public interface Term extends Comparable<Term> {
 	public String getKey() throws InvalidTermException;
 
 	/**
-	 * Term objects may be used in nlists. Consequently, implementations should
+	 * Term objects may be used in dicts. Consequently, implementations should
 	 * provide a highly-efficient hashCode method.
 	 * 
 	 * @return hash code for this Term

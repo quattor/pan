@@ -41,8 +41,8 @@ import org.quattor.pan.utils.Term;
 import org.quattor.pan.utils.TermFactory;
 
 /**
- * Creates an nlist from the function's arguments. There must be an even number
- * of arguments. This function is available as <code>nlist</code> in the pan
+ * Creates a dict from the function's arguments. There must be an even number
+ * of arguments. This function is available as <code>dict</code> in the pan
  * language.
  * 
  * @author loomis
@@ -52,7 +52,7 @@ final public class Hash extends BuiltInFunction {
 
 	private Hash(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
-		super("nlist", sourceRange, operations);
+		super("dict", sourceRange, operations);
 	}
 
 	public static Operation getInstance(SourceRange sourceRange,

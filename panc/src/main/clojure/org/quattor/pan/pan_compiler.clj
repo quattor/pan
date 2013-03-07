@@ -73,7 +73,7 @@ Please file a bug report with including the stack trace.
          ["--debug" "enable all debugging" :default false :flag true]
          ["--debug-ns-include" "ns regex to include debugging"]
          ["--debug-ns-exclude" "ns regex to exclude debugging"]
-         ["--initial-data" "set root element (must be nlist)"]
+         ["--initial-data" "set root element (must be a dict)"]
          ["--include-path" "template lookup path"]
          ["--output-dir" "output directory" ]
          ["--formats" "generated output formats" :default "pan,dep"]

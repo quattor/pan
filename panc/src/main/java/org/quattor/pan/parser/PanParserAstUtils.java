@@ -185,6 +185,9 @@ public class PanParserAstUtils {
             fc.put("nlist", (Hash.class).getDeclaredMethod("getInstance",
                     SourceRange.class, Operation[].class));
 
+            fc.put("dict", (Hash.class).getDeclaredMethod("getInstance",
+                    SourceRange.class, Operation[].class));
+
             fc.put("list", (org.quattor.pan.dml.functions.List.class)
                     .getDeclaredMethod("getInstance", SourceRange.class,
                             Operation[].class));
@@ -202,6 +205,9 @@ public class PanParserAstUtils {
                     SourceRange.class, Operation[].class));
 
             fc.put("is_nlist", (IsHash.class).getDeclaredMethod("getInstance",
+                    SourceRange.class, Operation[].class));
+
+            fc.put("is_dict", (IsHash.class).getDeclaredMethod("getInstance",
                     SourceRange.class, Operation[].class));
 
             fc.put("is_list", (IsList.class).getDeclaredMethod("getInstance",

@@ -399,7 +399,7 @@ public class PanCompilerTask extends Task {
     }
 
     /**
-     * Provides an nlist() with a data structure that will be used to initialize
+     * Provides a dict() with a data structure that will be used to initialize
      * all generated profiles.
      * 
      * @param initialData

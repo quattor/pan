@@ -88,7 +88,7 @@ public class ListType extends CompositeType {
 				Element newValue = baseType.setDefaults(context, child);
 
 				// If there is a replacement value, then add it to the current
-				// nlist. Make sure that the current nlist is not a protected
+				// dict. Make sure that the current dict is not a protected
 				// resource.
 				if (newValue != null) {
 					if (replacement == null) {

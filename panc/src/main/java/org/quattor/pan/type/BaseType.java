@@ -60,9 +60,9 @@ public abstract class BaseType extends Type {
 				Element.class)));
 		types.put("nlist", new FullType(new ConcretePrimitiveType("nlist",
 				HashResource.class)));
-		// Remove this unnecessary alias for the nlist type.
-		// types.put("hash", new FullType(new ConcretePrimitiveType("hash",
-		// HashResource.class)));
+		// Alias for the nlist type.
+		types.put("dict", new FullType(new ConcretePrimitiveType("dict",
+		HashResource.class)));
 		types.put("list", new FullType(new ConcretePrimitiveType("list",
 				ListResource.class)));
 		types.put("long", new FullType(new ConcretePrimitiveType("long",

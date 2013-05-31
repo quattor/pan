@@ -66,6 +66,7 @@
 	      <filemode>755</filemode>
 	      <username>root</username>
 	      <groupname>root</groupname>
+              <directoryIncluded>false</directoryIncluded>
 	      <sources>
 		<source>
 		  <location>target/contents/lib</location>
@@ -78,6 +79,7 @@
 	      <filemode>755</filemode>
 	      <username>root</username>
 	      <groupname>root</groupname>
+              <directoryIncluded>false</directoryIncluded>
 	      <sources>
 		<source>
 		  <location>target/contents/bin</location>

@@ -426,6 +426,8 @@ public class MessageUtils {
 	public final static String MSG_INVALID_TYPE_FOR_ROOT_ELEMENT = "MSG_INVALID_TYPE_FOR_ROOT_ELEMENT";
 
 	public final static String MSG_FATAL_DEPRECATION_MSG = "MSG_FATAL_DEPRECATION_MSG";
+	
+	public final static String MSG_INVALID_FUNCTION_NAME = "MSG_INVALID_FUNCTION_NAME";
 
 	// Name of the resource bundle to use for compiler messages.
 	private final static String bundleName = "org.quattor.pan.Messages";

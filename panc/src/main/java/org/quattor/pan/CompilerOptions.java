@@ -346,7 +346,7 @@ public class CompilerOptions {
 
                 PanParser parser = new PanParser(new StringReader(rootElement));
                 ASTOperation ast = parser.dml();
-                Operation dml = PanParserAstUtils.astToDml(ast);
+                Operation dml = PanParserAstUtils.astToDml(ast, true);
                 return (HashResource) dml.execute(new CompileTimeContext());
 
             } catch (SyntaxException e) {

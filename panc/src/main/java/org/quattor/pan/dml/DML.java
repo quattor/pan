@@ -65,7 +65,28 @@ public class DML extends AbstractOperation {
 	public static Operation getInstance(SourceRange sourceRange,
 			Operation... operations) {
 
-		Operation result = null;
+		DML dml = getUnoptimizedInstance(sourceRange, operations);
+		if (dml.ops.length == 1) {
+			return dml.ops[0];
+		} else {
+			return dml;
+		}
+
+	}
+
+	/**
+	 * Factory method to create a new DML block, although this may return
+	 * another Operation because of optimization.
+	 * 
+	 * @param sourceRange
+	 *            location of this block in the source file
+	 * @param operations
+	 *            the operations that make up this block
+	 * 
+	 * @return optimized Operation representing DML block
+	 */
+	public static DML getUnoptimizedInstance(SourceRange sourceRange,
+			Operation... operations) {
 
 		// Build a duplicate list to "flatten" the DML block.
 		List<Operation> list = new LinkedList<Operation>();
@@ -82,16 +103,8 @@ public class DML extends AbstractOperation {
 			}
 		}
 
-		// If the DML block contains only a single operation, then just return
-		// that operation. Otherwise create a new DML block and return that.
-		if (list.size() == 1) {
-			result = list.get(0);
-		} else {
-			Operation[] dmlOps = list.toArray(new Operation[list.size()]);
-			result = new DML(sourceRange, dmlOps);
-		}
-
-		return result;
+		Operation[] dmlOps = list.toArray(new Operation[list.size()]);
+		return new DML(sourceRange, dmlOps);
 	}
 
 	/**

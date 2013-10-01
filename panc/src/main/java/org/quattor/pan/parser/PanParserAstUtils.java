@@ -40,6 +40,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.quattor.pan.dml.AbstractOperation;
 import org.quattor.pan.dml.DML;
 import org.quattor.pan.dml.Operation;
 import org.quattor.pan.dml.data.Element;
@@ -436,7 +437,7 @@ public class PanParserAstUtils {
 		if (child instanceof ASTFullTypeSpec) {
 			fullType = astToFullType(source, (ASTFullTypeSpec) child);
 		} else if (child instanceof ASTOperation) {
-			Operation dml = astToDml((ASTOperation) child);
+			Operation dml = astToDml((ASTOperation) child, true);
 			AliasType elementType = new AliasType(null, child.getSourceRange(),
 					"element", null);
 			fullType = new FullType(source, child.getSourceRange(),
@@ -488,7 +489,7 @@ public class PanParserAstUtils {
 
 			// This is a normal assignment statement.
 			ASTOperation child = (ASTOperation) ast.jjtGetChild(0);
-			Operation dml = astToDml(child);
+			Operation dml = astToDml(child, true);
 			statement = AssignmentStatement.createAssignmentStatement(
 					ast.getSourceRange(), path, dml, ast.getConditionalFlag(),
 					!ast.getFinalFlag());
@@ -510,7 +511,7 @@ public class PanParserAstUtils {
 
 		// Create the assignment statement.
 		ASTOperation child = (ASTOperation) ast.jjtGetChild(0);
-		Operation dml = astToDml(child);
+		Operation dml = astToDml(child, true);
 		return VariableStatement.getInstance(ast.getSourceRange(), vname, dml,
 				ast.getConditionalFlag(), !ast.getFinalFlag());
 	}
@@ -545,7 +546,7 @@ public class PanParserAstUtils {
 
 		// Create the assignment statement.
 		ASTOperation child = (ASTOperation) ast.jjtGetChild(0);
-		Operation dml = astToDml(child);
+		Operation dml = astToDml(child, true);
 		return new FunctionStatement(ast.getSourceRange(), fname, dml);
 	}
 
@@ -561,7 +562,7 @@ public class PanParserAstUtils {
 		assert (ast.jjtGetNumChildren() == 1);
 
 		ASTOperation child = (ASTOperation) ast.jjtGetChild(0);
-		Operation dml = astToDml(child);
+		Operation dml = astToDml(child, true);
 
 		return IncludeStatement.newIncludeStatement(ast.getSourceRange(), dml);
 
@@ -596,7 +597,7 @@ public class PanParserAstUtils {
 	static private FullType astToFullType(String source, ASTFullTypeSpec ast)
 			throws SyntaxException {
 		Operation withDml = null;
-		Operation defaultDml = null;
+		Element defaultValue = null;
 
 		// Sanity checks.
 		assert (ast.getId() == PanParserTreeConstants.JJTFULLTYPESPEC);
@@ -624,7 +625,11 @@ public class PanParserAstUtils {
 				assert (op.jjtGetChild(0) instanceof ASTOperation);
 				ASTOperation dml = (ASTOperation) op.jjtGetChild(0);
 				assert (dml.getOperationType() == OperationType.DML);
-				defaultDml = astToDml(dml);
+
+				// Do not optimize DML. This guarantees that the returned value
+				// is actually a DML object with the SourceRange information.
+				DML defaultDml = (DML) astToDml(dml, false);
+				defaultValue = runDefaultDml(defaultDml);
 				sourceRange = SourceRange.combineSourceRanges(sourceRange,
 						dml.getSourceRange());
 				break;
@@ -633,7 +638,7 @@ public class PanParserAstUtils {
 				assert (op.jjtGetChild(0) instanceof ASTOperation);
 				ASTOperation with = (ASTOperation) op.jjtGetChild(0);
 				assert (with.getOperationType() == OperationType.DML);
-				withDml = astToDml(with);
+				withDml = astToDml(with, false);
 				sourceRange = SourceRange.combineSourceRanges(sourceRange,
 						with.getSourceRange());
 				break;
@@ -643,7 +648,7 @@ public class PanParserAstUtils {
 		}
 
 		return new FullType(source, ast.getSourceRange(), baseType,
-				runDefaultDml(defaultDml), withDml);
+				defaultValue, withDml);
 	}
 
 	static private Operation astToOperation(SimpleNode node)
@@ -656,7 +661,7 @@ public class PanParserAstUtils {
 			ASTOperation onode = (ASTOperation) node;
 			switch (onode.getOperationType()) {
 			case DML:
-				op = astToDml(onode);
+				op = astToDml(onode, true);
 				break;
 			case PLUS:
 				op = UnaryPlus.newOperation(onode.getSourceRange(),
@@ -800,7 +805,8 @@ public class PanParserAstUtils {
 		return op;
 	}
 
-	static public Operation astToDml(ASTOperation node) throws SyntaxException {
+	static public Operation astToDml(ASTOperation node, boolean optimized)
+			throws SyntaxException {
 
 		// Verify that this really is a DML block.
 		assert (node.getOperationType() == OperationType.DML);
@@ -828,7 +834,11 @@ public class PanParserAstUtils {
 			}
 		}
 
-		return DML.getInstance(sourceRange, operations);
+		if (optimized) {
+			return DML.getInstance(sourceRange, operations);
+		} else {
+			return DML.getUnoptimizedInstance(sourceRange, operations);
+		}
 	}
 
 	static private Operation astToIfElse(ASTOperation node)
@@ -837,13 +847,14 @@ public class PanParserAstUtils {
 		int count = node.jjtGetNumChildren();
 		assert (count >= 2);
 
-		Operation condition = astToDml((ASTOperation) node.jjtGetChild(0));
+		Operation condition = astToDml((ASTOperation) node.jjtGetChild(0), true);
 
-		Operation trueClause = astToDml((ASTOperation) node.jjtGetChild(1));
+		Operation trueClause = astToDml((ASTOperation) node.jjtGetChild(1),
+				true);
 
 		Operation falseClause = Undef.VALUE;
 		if (count == 3) {
-			falseClause = astToDml((ASTOperation) node.jjtGetChild(2));
+			falseClause = astToDml((ASTOperation) node.jjtGetChild(2), true);
 		}
 
 		return IfElse.newOperation(node.getSourceRange(), condition,
@@ -858,7 +869,7 @@ public class PanParserAstUtils {
 		int count = node.jjtGetNumChildren();
 		Operation[] ops = new Operation[count];
 		for (int i = 0; i < count; i++) {
-			ops[i] = (astToDml((ASTOperation) node.jjtGetChild(i)));
+			ops[i] = (astToDml((ASTOperation) node.jjtGetChild(i), true));
 			ops[i].checkRestrictedContext();
 		}
 
@@ -923,7 +934,7 @@ public class PanParserAstUtils {
 		// Convert each of the children to a DML block and ensure that all of
 		// the contained operations can appear in a restricted context.
 		for (int i = 0; i < count; i++) {
-			ops[i] = astToDml((ASTOperation) node.jjtGetChild(i));
+			ops[i] = astToDml((ASTOperation) node.jjtGetChild(i), true);
 			ops[i].checkRestrictedContext();
 		}
 
@@ -964,7 +975,7 @@ public class PanParserAstUtils {
 		// Convert each child index and ensure all operations are valid in a
 		// restricted context.
 		for (int i = 0; i < count; i++) {
-			ops[i] = (astToDml((ASTOperation) node.jjtGetChild(i)));
+			ops[i] = (astToDml((ASTOperation) node.jjtGetChild(i), true));
 			ops[i].checkRestrictedContext();
 		}
 
@@ -1072,14 +1083,20 @@ public class PanParserAstUtils {
 		Context context = new CompileTimeContext();
 
 		Element value = null;
+		
+		// IF this is an AbstractOperation, pull out the source location.
+		SourceRange sourceRange = null;
+		if (dml instanceof AbstractOperation) {
+			AbstractOperation op = (AbstractOperation) dml;
+			sourceRange = op.getSourceRange();
+		}
 
 		// Execute the DML block. The block must evaluate to an Element. Any
 		// error is fatal for the compilation.
 		try {
 			value = context.executeDmlBlock(dml);
 		} catch (EvaluationException ee) {
-			// FIXME: Need to include source information here.
-			SyntaxException se = SyntaxException.create(null,
+			SyntaxException se = SyntaxException.create(sourceRange,
 					MSG_DEF_VALUE_NOT_CONSTANT);
 			se.initCause(ee);
 			throw se;
@@ -1088,11 +1105,9 @@ public class PanParserAstUtils {
 		// The default value cannot be either undef or null. Throw a syntax
 		// error if that is the case.
 		if (value instanceof Undef) {
-			// FIXME: Need to include source information here.
-			throw SyntaxException.create(null, MSG_DEF_VALUE_CANNOT_BE_UNDEF);
+			throw SyntaxException.create(sourceRange, MSG_DEF_VALUE_CANNOT_BE_UNDEF);
 		} else if (value instanceof Null) {
-			// FIXME: Need to include source information here.
-			throw SyntaxException.create(null, MSG_DEF_VALUE_CANNOT_BE_UNDEF);
+			throw SyntaxException.create(sourceRange, MSG_DEF_VALUE_CANNOT_BE_UNDEF);
 		}
 
 		// Looks Ok; return the value.

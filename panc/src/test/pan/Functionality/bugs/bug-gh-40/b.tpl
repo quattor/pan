@@ -1,0 +1,3 @@
+template b;
+include 'c';
+

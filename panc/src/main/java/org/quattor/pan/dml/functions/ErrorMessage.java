@@ -22,8 +22,8 @@ package org.quattor.pan.dml.functions;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_ONE_STRING_ARG_REQ;
 import static org.quattor.pan.utils.MessageUtils.MSG_RESTRICTED_CONTEXT;
-
-import java.io.File;
+import static org.quattor.pan.utils.MessageUtils.MSG_USER_INITIATED_ERROR;
+import static org.quattor.pan.utils.MessageUtils.MSG_USER_INITIATED_ERROR_WITHOUT_STRING;
 
 import org.quattor.pan.dml.Operation;
 import org.quattor.pan.dml.data.Element;
@@ -68,20 +68,14 @@ final public class ErrorMessage extends BuiltInFunction {
 
 		Element result = ops[0].execute(context);
 
-		File objectFile = (context.getObjectTemplate() != null) ? context
-				.getObjectTemplate().source : null;
-
 		try {
 			StringProperty sp = (StringProperty) result;
-			String msg = String.format("[%s] user-initiated error: %s",
-					context.getObjectName(), sp.getValue());
-			throw new EvaluationException(msg, getSourceRange(), objectFile,
-					context.getTraceback(getSourceRange()));
+			throw EvaluationException.create(getSourceRange(), context,
+					MSG_USER_INITIATED_ERROR, context.getObjectName(),
+					sp.getValue());
 		} catch (ClassCastException cce) {
-			throw new EvaluationException(
-					"user-initiated error thrown with non-string argument",
-					getSourceRange(), objectFile,
-					context.getTraceback(getSourceRange()));
+			throw EvaluationException.create(getSourceRange(),
+					MSG_USER_INITIATED_ERROR_WITHOUT_STRING);
 		}
 	}
 

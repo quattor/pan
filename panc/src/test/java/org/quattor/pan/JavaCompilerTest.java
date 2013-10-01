@@ -54,6 +54,7 @@ import org.quattor.pan.output.DepFormatter;
 import org.quattor.pan.output.Formatter;
 import org.quattor.pan.output.FormatterComparator;
 import org.quattor.pan.output.PanFormatter;
+import org.quattor.pan.utils.TestUtils;
 import org.xml.sax.InputSource;
 
 public class JavaCompilerTest {
@@ -67,8 +68,8 @@ public class JavaCompilerTest {
 		formatters.add(formatter);
 		formatters.add(DepFormatter.getInstance());
 		CompilerOptions options = new CompilerOptions(null, null, 100, 50,
-				formatters, getTmpdir(), path, CompilerOptions.DeprecationWarnings.ON, null, null,
-				null);
+				formatters, getTmpdir(), path,
+				CompilerOptions.DeprecationWarnings.ON, null, null, null);
 		List<File> tplfiles = new LinkedList<File>();
 		tplfiles.add(tplfile);
 		return new Compiler(options, new LinkedList<String>(), tplfiles);
@@ -83,7 +84,8 @@ public class JavaCompilerTest {
 		formatters.add(formatter);
 		formatters.add(DepFormatter.getInstance());
 		CompilerOptions options = new CompilerOptions(null, null, 100, 50,
-				formatters, getTmpdir(), path, CompilerOptions.DeprecationWarnings.ON, null, null,
+				formatters, getTmpdir(), path,
+				CompilerOptions.DeprecationWarnings.ON, null, null,
 				"nlist('root-element-test', 'OK')");
 		List<File> tplfiles = new LinkedList<File>();
 		tplfiles.add(tplfile);
@@ -100,8 +102,8 @@ public class JavaCompilerTest {
 		formatters.add(formatter);
 		formatters.add(DepFormatter.getInstance());
 		CompilerOptions options = new CompilerOptions(null, null, 100, 50,
-				formatters, getTmpdir(), path, CompilerOptions.DeprecationWarnings.ON, null, null,
-				null);
+				formatters, getTmpdir(), path,
+				CompilerOptions.DeprecationWarnings.ON, null, null, null);
 		List<File> tplfiles = new LinkedList<File>();
 		tplfiles.add(tplfile);
 		return new Compiler(options, new LinkedList<String>(), tplfiles);
@@ -119,8 +121,8 @@ public class JavaCompilerTest {
 		formatters.add(PanFormatter.getInstance());
 		formatters.add(DepFormatter.getInstance());
 		CompilerOptions options = new CompilerOptions(null, null, 100, 50,
-				formatters, getTmpdir(), path, CompilerOptions.DeprecationWarnings.ON, null, null,
-				null);
+				formatters, getTmpdir(), path,
+				CompilerOptions.DeprecationWarnings.ON, null, null, null);
 
 		List<String> objects = new LinkedList<String>();
 		objects.add("non-existant/object/template");
@@ -165,8 +167,8 @@ public class JavaCompilerTest {
 		formatters.add(DepFormatter.getInstance());
 
 		CompilerOptions options = new CompilerOptions(null, null, 100, 50,
-				formatters, tmpdir, path, CompilerOptions.DeprecationWarnings.ON, null, null,
-				null);
+				formatters, tmpdir, path,
+				CompilerOptions.DeprecationWarnings.ON, null, null, null);
 
 		// Create the list of input files.
 		List<File> tplfiles = new LinkedList<File>();
@@ -347,35 +349,27 @@ public class JavaCompilerTest {
 				formatter);
 		Set<Throwable> exceptions = compiler.process().getErrors();
 
-		if (expectation instanceof Class<?>) {
+		if (expectation instanceof TestUtils.ExceptionChecker) {
 
 			// Cast to an exception class.
-			Class<?> exceptionClass = (Class<?>) expectation;
+			TestUtils.ExceptionChecker checker = (TestUtils.ExceptionChecker) expectation;
 
 			// An exception was expected. Ensure that the output XML file does
 			// not exist.
 			if (xml.exists()) {
-				return "expected " + exceptionClass.getSimpleName() + " but "
+				return "expected " + checker.getExceptionName() + " but "
 						+ xml.getName() + " exists";
 			}
 
 			// Check that there is at least one exception.
 			if (exceptions.size() == 0) {
-				return ("expected " + exceptionClass.getSimpleName() + " but no exception was thrown");
+				return ("expected " + checker.getExceptionName() + " but no exception was thrown");
 			}
 
 			// There shouldn't be more than one exception, but check
 			// them all if there is. The type should be the exception that was
 			// indicated in the file.
-			for (Throwable t : exceptions) {
-				try {
-					exceptionClass.cast(t);
-				} catch (ClassCastException cce) {
-					t.printStackTrace();
-					return ("expected " + exceptionClass.getSimpleName()
-							+ " but got " + t.getClass().getSimpleName());
-				}
-			}
+			return checker.check(exceptions);
 
 		} else if (expectation instanceof XPathExpression) {
 

@@ -308,7 +308,7 @@
     <refsynopsisdiv>
       <funcsynopsis>
         <funcprototype>
-          <funcdef>nlist <function>create</function></funcdef>
+          <funcdef>dict <function>create</function></funcdef>
 
           <paramdef>string <parameter>tpl_name</parameter></paramdef>
 
@@ -320,13 +320,13 @@
     <refsection>
       <title>Description</title>
 
-      <para>The <function>create</function> function will return an nlist from
+      <para>The <function>create</function> function will return an dict from
       the named structure template. The optional additional arguments are key,
-      value pairs that will be added to the returned nlist, perhaps
-      overwriting values from the structure template. The keys must be strings
-      that contain valid nlist keys (see Path Literals Section). The values
-      can be any element. Null values will delete the given key from the
-      resulting nlist.</para>
+      value pairs that will be added to the returned dict, perhaps overwriting
+      values from the structure template. The keys must be strings that
+      contain valid dict keys (see Path Literals Section). The values can be
+      any element. Null values will delete the given key from the resulting
+      dict.</para>
 
       <programlisting># description of CD mount entry with the device undefined
 # (in file 'mount_cdrom.pan')
@@ -638,7 +638,7 @@ function foo = {
     <refnamediv>
       <refname>panc:escape</refname>
 
-      <refpurpose>escape non-alphanumeric characters to allow use as nlist
+      <refpurpose>escape non-alphanumeric characters to allow use as dict
       key</refpurpose>
     </refnamediv>
 
@@ -656,7 +656,7 @@ function foo = {
       <title>Description</title>
 
       <para>This function escapes non-alphanumeric characters in the argument
-      so that it can be used inside paths, for instance as an nlist key.
+      so that it can be used inside paths, for instance as an dict key.
       Non-alphanumeric characters are replaced by an underscore followed by
       the hex value of the character. If the string begins with a digit, the
       initial digit is also escaped. If the argument is the empty string, the
@@ -854,7 +854,7 @@ r = exists(v+'');</programlisting>
       <varname>key</varname> or <varname>value</varname> may be
       <literal>undef</literal>, in which case no assignment is made. For a
       list resource <varname>key</varname> is the child's numeric index; for
-      an nlist resource, the string value of the key itself. An example of
+      an dict resource, the string value of the key itself. An example of
       using <function>first</function> with a list:</para>
 
       <programlisting># compute the sum of the elements inside numlist 
@@ -868,10 +868,10 @@ while (ok) {
 # value of sum will be 15</programlisting>
 
       <para>An example of using <function>first</function> with an
-      nlist:</para>
+      dict:</para>
 
       <programlisting># put the list of all the keys of table inside keys 
-table = nlist("a", 1, "b", 2, "c", 3); 
+table = dict("a", 1, "b", 2, "c", 3); 
 keys = list(); 
 ok = first(table, k, v); 
   while (ok) { 
@@ -1047,7 +1047,7 @@ ok = first(table, k, v);
 
           <paramdef>property <parameter>sub</parameter></paramdef>
 
-          <paramdef>nlist <parameter>arg</parameter></paramdef>
+          <paramdef>dict <parameter>arg</parameter></paramdef>
 
           <paramdef choice="opt">long <parameter>start</parameter></paramdef>
         </funcprototype>
@@ -1055,7 +1055,7 @@ ok = first(table, k, v);
         <funcprototype>
           <funcdef>long <function>index</function></funcdef>
 
-          <paramdef>nlist <parameter>sub</parameter></paramdef>
+          <paramdef>dict <parameter>sub</parameter></paramdef>
 
           <paramdef>list <parameter>arg</parameter></paramdef>
 
@@ -1065,9 +1065,9 @@ ok = first(table, k, v);
         <funcprototype>
           <funcdef>string <function>index</function></funcdef>
 
-          <paramdef>nlist <parameter>sub</parameter></paramdef>
+          <paramdef>dict <parameter>sub</parameter></paramdef>
 
-          <paramdef>nlist <parameter>arg</parameter></paramdef>
+          <paramdef>dict <parameter>arg</parameter></paramdef>
 
           <paramdef choice="opt">long <parameter>start</parameter></paramdef>
         </funcprototype>
@@ -1109,7 +1109,7 @@ ok = first(table, k, v);
       <varname>arg</varname>’s children are not of the same type.</para>
 
       <programlisting># simple color table
-'/table' = nlist('red', 0xf00, 'green', 0x0f0, 'blue', 0x00f); 
+'/table' = dict('red', 0xf00, 'green', 0x0f0, 'blue', 0x00f); 
 
 # result will be the string 'green'
 '/name1' = index(0x0f0, value('/table')); 
@@ -1117,64 +1117,64 @@ ok = first(table, k, v);
 # result will be the empty string
 '/name2' = index(0x0f0, value('/table'), 1);</programlisting>
 
-      <para>The fourth form searches for the given nlist inside the given list
-      of nlists and returns its position or <literal>-1</literal> if not
-      found. The comparison is done by comparing all the children of
+      <para>The fourth form searches for the given dict inside the given list
+      of dicts and returns its position or <literal>-1</literal> if not found.
+      The comparison is done by comparing all the children of
       <varname>sub</varname>, these children must all be properties. If the
       third argument is given, starts initially from that position. It is an
       error if <varname>sub</varname> and <varname>arg</varname>’s children
       are not of the same type or if their common children don’t have the same
       type.</para>
 
-      <programlisting># search a record in a list of records (result = 1, the second nlist)
+      <programlisting># search a record in a list of records (result = 1, the second dict)
 '/ll1' = index(
-              nlist('key', 'foo'),
+              dict('key', 'foo'),
               list(
-                   nlist('key', 'bar', 'val', 101),
-                   nlist('key', 'foo')
+                   dict('key', 'bar', 'val', 101),
+                   dict('key', 'foo')
                   )
              );
 
-# search a record in a list of records starting at index (result = 1, the second nlist)
+# search a record in a list of records starting at index (result = 1, the second dict)
 '/ll2' = index(
-              nlist('key', 'foo'),
+              dict('key', 'foo'),
               list(
-                   nlist('key', 'bar', 'val', 101),
-                   nlist('key', 'foo'),
-                   nlist('key', 'bar', 'val', 101),
-                   nlist('key', 'foo'),
-                   nlist('key', 'bar', 'val', 101),
-                   nlist('key', 'foo')
+                   dict('key', 'bar', 'val', 101),
+                   dict('key', 'foo'),
+                   dict('key', 'bar', 'val', 101),
+                   dict('key', 'foo'),
+                   dict('key', 'bar', 'val', 101),
+                   dict('key', 'foo')
                   ),
               1
              );</programlisting>
 
-      <para>The last form searches for the given nlist inside the given nlist
-      of nlists and returns its name or the empty string if not found. If the
+      <para>The last form searches for the given dict inside the given dict of
+      dicts and returns its name or the empty string if not found. If the
       third argument is given, the function skips that many matching children.
       It is an error if <varname>sub</varname> and <varname>arg</varname>’s
       children are not of the same type or if their common children don’t have
       the same type.</para>
 
-      <programlisting># search for matching nlist (result = 'b')
+      <programlisting># search for matching dict (result = 'b')
 '/nn1' = index(
-              nlist('key', 'foo'),
-              nlist(
-                   'a', nlist('key', 'bar', 'val', 101),
-                   'b', nlist('key', 'foo')
+              dict('key', 'foo'),
+              dict(
+                   'a', dict('key', 'bar', 'val', 101),
+                   'b', dict('key', 'foo')
                   )
              );
 
 # skip first match and return index of second match (result='d')
 '/nn2' = index(
-              nlist('key', 'foo'),
-              nlist(
-                   'a', nlist('key', 'bar', 'val', 101),
-                   'b', nlist('key', 'foo'),
-                   'c', nlist('key', 'bar', 'val', 101),
-                   'd', nlist('key', 'foo'),
-                   'e', nlist('key', 'bar', 'val', 101),
-                   'f', nlist('key', 'foo')
+              dict('key', 'foo'),
+              dict(
+                   'a', dict('key', 'bar', 'val', 101),
+                   'b', dict('key', 'foo'),
+                   'c', dict('key', 'bar', 'val', 101),
+                   'd', dict('key', 'foo'),
+                   'e', dict('key', 'bar', 'val', 101),
+                   'f', dict('key', 'foo')
                   ),
               1
              );</programlisting>
@@ -1429,21 +1429,21 @@ ok = first(table, k, v);
     </info>
 
     <refmeta>
-      <refentrytitle>is_nlist</refentrytitle>
+      <refentrytitle>is_dict</refentrytitle>
 
       <manvolnum>3</manvolnum>
     </refmeta>
 
     <refnamediv>
-      <refname>panc:is_nlist</refname>
+      <refname>panc:is_dict</refname>
 
-      <refpurpose>checks to see if the argument is an nlist</refpurpose>
+      <refpurpose>checks to see if the argument is an dict</refpurpose>
     </refnamediv>
 
     <refsynopsisdiv>
       <funcsynopsis>
         <funcprototype>
-          <funcdef>boolean <function>is_nlist</function></funcdef>
+          <funcdef>boolean <function>is_dict</function></funcdef>
 
           <paramdef>element <parameter>arg</parameter></paramdef>
         </funcprototype>
@@ -1453,8 +1453,8 @@ ok = first(table, k, v);
     <refsection>
       <title>Description</title>
 
-      <para>The <function>is_nlist</function> function will return
-      <literal>true</literal> if the argument is an nlist; it will return
+      <para>The <function>is_dict</function> function will return
+      <literal>true</literal> if the argument is an dict; it will return
       <literal>false</literal> otherwise.</para>
     </refsection>
   </refentry>
@@ -1723,7 +1723,7 @@ ok = first(table, k, v);
         <funcprototype>
           <funcdef>string <function>key</function></funcdef>
 
-          <paramdef>nlist <parameter>resource</parameter></paramdef>
+          <paramdef>dict <parameter>resource</parameter></paramdef>
 
           <paramdef>long <parameter>index</parameter></paramdef>
         </funcprototype>
@@ -1734,11 +1734,11 @@ ok = first(table, k, v);
       <title>Description</title>
 
       <para>This function returns the name of the child identified by its
-      index, this can be used to iterate through all the children of an nlist.
+      index, this can be used to iterate through all the children of an dict.
       The index corresponds to the key's position in the list of all keys,
       sorted in lexical order. The first index is 0.</para>
 
-      <programlisting>'/table' = nlist('red', 0xf00, 'green', 0x0f0, 'blue', 0x00f); 
+      <programlisting>'/table' = dict('red', 0xf00, 'green', 0x0f0, 'blue', 0x00f); 
 
 '/keys' = { 
 
@@ -2021,8 +2021,8 @@ type ipv4 = string with {
 
       <para>This function returns the resource which combines the resources
       given as arguments, all of which must be of the same type: either all
-      lists or all nlists. If more than one nlist has a child of the same
-      name, an error occurs.</para>
+      lists or all dicts. If more than one dict has a child of the same name,
+      an error occurs.</para>
 
       <programlisting># /z will contain the list 'a', 'b', 'c', 'd', 'e'
 '/x' = list('a', 'b', 'c'); 
@@ -2047,21 +2047,21 @@ type ipv4 = string with {
     </info>
 
     <refmeta>
-      <refentrytitle>nlist</refentrytitle>
+      <refentrytitle>dict</refentrytitle>
 
       <manvolnum>3</manvolnum>
     </refmeta>
 
     <refnamediv>
-      <refname>panc:nlist</refname>
+      <refname>panc:dict</refname>
 
-      <refpurpose>create an nlist from the arguments</refpurpose>
+      <refpurpose>create an dict from the arguments</refpurpose>
     </refnamediv>
 
     <refsynopsisdiv>
       <funcsynopsis>
         <funcprototype>
-          <funcdef>nlist <function>nlist</function></funcdef>
+          <funcdef>dict <function>dict</function></funcdef>
 
           <paramdef>string <parameter>key</parameter></paramdef>
 
@@ -2075,13 +2075,13 @@ type ipv4 = string with {
     <refsection>
       <title>Description</title>
 
-      <para>The <function>nlist</function> function returns a new nlist
+      <para>The <function>dict</function> function returns a new dict
       consisting of the passed arguments; the arguments must be key value
       pairs. All of the keys must be strings and have values that are legal
       path terms (see Path Literals Section).</para>
 
-      <programlisting># resulting nlist associates name with long value
-'/result' = nlist(
+      <programlisting># resulting dict associates name with long value
+'/result' = dict(
   'one', 1,
   'two', 2,
   'three', 3,
@@ -2894,7 +2894,7 @@ type ipv4 = string with {
 
       <para>This function will convert the argument into a string. The
       function will create a reasonable human-readable representation of all
-      data types, including lists and nlists.</para>
+      data types, including lists and dicts.</para>
     </refsection>
   </refentry>
 

@@ -240,12 +240,12 @@ $ mvn clean install
           <row>
             <entry>initialData</entry>
 
-            <entry>A compile-time expression that evaluates to an nlist. This
-            nlist is used as the root nlist for all compiled object templates.
-            A convenient mechanism for injecting build numbers and other
+            <entry>A compile-time expression that evaluates to an dict. This
+            dict is used as the root dict for all compiled object templates. A
+            convenient mechanism for injecting build numbers and other
             metadata into the profiles.</entry>
 
-            <entry>No. Default value: null (empty nlist)</entry>
+            <entry>No. Default value: null (empty dict)</entry>
           </row>
 
           <row>
@@ -424,12 +424,12 @@ $ mvn clean install
           <row>
             <entry>initialData</entry>
 
-            <entry>A compile-time expression that evaluates to an nlist. This
-            nlist is used as the root nlist for all compiled object templates.
-            A convenient mechanism for injecting build numbers and other
+            <entry>A compile-time expression that evaluates to an dict. This
+            dict is used as the root dict for all compiled object templates. A
+            convenient mechanism for injecting build numbers and other
             metadata into the profiles.</entry>
 
-            <entry>No. Default value: null (empty nlist)</entry>
+            <entry>No. Default value: null (empty dict)</entry>
           </row>
 
           <row>

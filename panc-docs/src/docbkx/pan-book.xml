@@ -637,7 +637,7 @@ type batch_worker<co xml:id="batch-types-batch_worker" /> = {
 
       <calloutlist>
         <callout arearefs="batch-types-batch_worker">
-          <para>The <type>batch_worker</type> type defines a record (nlist or
+          <para>The <type>batch_worker</type> type defines a record (dict or
           hash with named children) for the worker configuration. The
           'enabled' flag is defined to be a boolean value. The 'server' is
           defined to be a string. For a real configuration, the server would
@@ -647,9 +647,9 @@ type batch_worker<co xml:id="batch-types-batch_worker" /> = {
 
         <callout arearefs="batch-types-batch_server">
           <para>The <type>batch_server</type> type also defines a record with
-          nodes and queues children. These are both defined to be nlists where
+          nodes and queues children. These are both defined to be dicts where
           the keys are the worker host name or the queue name, respectively.
-          The notation <literal>mytype{}</literal> defines an nlist.</para>
+          The notation <literal>mytype{}</literal> defines an dict.</para>
         </callout>
 
         <callout arearefs="batch-types-batch_queue" conformance="">
@@ -764,7 +764,7 @@ type batch_queue = {
 
 type batch_server = {
   'nodes' : batch_node{}
-  'queues' : batch_queue{} = nlist('default', nlist()) <co
+  'queues' : batch_queue{} = dict('default', dict()) <co
           xml:id="batch-types-default-queues" />
 };
 
@@ -790,7 +790,7 @@ type batch_worker = {
         </callout>
 
         <callout arearefs="batch-types-default-queues">
-          <para>If no queues are specified, then provide an nlist containing
+          <para>If no queues are specified, then provide an dict containing
           only a queue definition for the 'default' queue. Note that the
           actual queue parameters are provided by the type definition
           <type>batch_queue</type>.</para>
@@ -861,7 +861,7 @@ function valid_batch_queue_list<co xml:id="function-valid_batch_queue_list" /> =
   true;
 };
 
-function valid_batch_node_nlist<co xml:id="function-valid_batch_node_nlist" /> = {
+function valid_batch_node_dict<co xml:id="function-valid_batch_node_nlist" /> = {
   foreach (hostname; properties; ARGV[0]) {
     path = 'profiles/' + hostname + ':/batch/worker';
     if (!path_exists(path)) {
@@ -913,9 +913,9 @@ type batch_queue = {
 };
 
 type batch_server = {
-  'nodes' : batch_node{} with valid_batch_node_nlist(SELF)<co
+  'nodes' : batch_node{} with valid_batch_node_dict(SELF)<co
           xml:id="validate-batch_node" />
-  'queues' : batch_queue{} = nlist('default', nlist())
+  'queues' : batch_queue{} = dict('default', dict())
 };
 
 type batch_worker = {
@@ -933,9 +933,9 @@ type batch_worker = {
         </callout>
 
         <callout arearefs="function-valid_batch_node_nlist">
-          <para>The argument to this function is the nlist of worker nodes.
-          The function loops over the worker node entries and constructs a
-          path using the worker node name. For example for the worker node
+          <para>The argument to this function is the dict of worker nodes. The
+          function loops over the worker node entries and constructs a path
+          using the worker node name. For example for the worker node
           'worker01.example.org', it will construct the path
           'worker01.example.org:/batch/worker'. This is an
           <emphasis>external</emphasis> path that references another machine
@@ -989,8 +989,8 @@ type batch_worker = {
         </callout>
 
         <callout arearefs="validate-batch_node">
-          <para>Run the <function>valid_batch_node_nlist</function> function
-          for the server's node nlist.</para>
+          <para>Run the <function>valid_batch_node_dict</function> function
+          for the server's node dict.</para>
         </callout>
 
         <callout arearefs="validate-valid_server">
@@ -1160,7 +1160,7 @@ prefix '/batch/server/nodes';
           assignment statements that operate on relative paths. The
           <command>include</command> statements may only reference other
           structure templates. Structure templates are an alternative for
-          creating nlists and are used via the <function>create</function>
+          creating dicts and are used via the <function>create</function>
           function.</para>
         </section>
       </section>
@@ -1401,11 +1401,11 @@ prefix '/batch/server/nodes';
       special constructs and have additional validity constraints associated
       with them. All of these atomic types are known as "properties".</para>
 
-      <para>The language contains two types of collections: list and nlist.
-      The 'list' is an ordered list of elements, which uses the index (an
-      integer) as the key. The named list (nlist) associates a string key with
-      a value; these are also known as hashes or associative lists. These
-      collections are known as "resources".</para>
+      <para>The language contains two types of collections: list and dict. The
+      'list' is an ordered list of elements, which uses the index (an integer)
+      as the key. The named list (dict) associates a string key with a value;
+      these are also known as hashes or associative lists. These collections
+      are known as "resources".</para>
 
       <para>The complete type hierarchy is shown in <xref
       linkend="fig-types" />, including the two special types
@@ -1646,25 +1646,25 @@ EOT</programlisting>
       <title>Resources</title>
 
       <para>There are two types of <emphasis>resources</emphasis> supported by
-      pan: list and nlist. A list is an ordered list of elements with the
+      pan: list and dict. A list is an ordered list of elements with the
       indexing starting at zero. In the above example, there are two lists
       <literal>/hardware/disks/ide</literal> and
       <literal>/hardware/nic</literal>. The order of a list is significant and
       maintained in the serialized representation of the configuration. An
-      nlist (named list) associates a name with an element; these are also
-      known as hashes or associative arrays. One nlist in the above example is
+      dict (named list) associates a name with an element; these are also
+      known as hashes or associative arrays. One dict in the above example is
       <literal>/hardware/cpu</literal>, which has <literal>arch</literal>,
       <literal>cores</literal>, <literal>model</literal>,
       <literal>number</literal>, and <literal>speed</literal> as children.
-      Note that the order of an nlist is <emphasis>not</emphasis> significant
+      Note that the order of an dict is <emphasis>not</emphasis> significant
       and that the order specified in the template file is
       <emphasis>not</emphasis> preserved in the serialized version of the
       configuration. Although the algorithm for ordering the children of an
-      nlist in the serialized file is not specified, the pan compiler
+      dict in the serialized file is not specified, the pan compiler
       guarantees a <emphasis>consistent</emphasis> ordering of the same
       children from one compilation to the next.</para>
 
-      <para>Within a given path, lists and nlists can be distinguished by the
+      <para>Within a given path, lists and dicts can be distinguished by the
       names of their children. Lists always have children whose names are
       valid long literals. In the following example,
       <filename>/mylist</filename> is a list with three children:</para>
@@ -1676,7 +1676,7 @@ EOT</programlisting>
 '/mylist/0x2' = 'hexadecimal index';</programlisting>
 
       <para>The indices can be specified in decimal, octal, or hexadecimal.
-      The names of children in an nlist must begin with a letter or
+      The names of children in an dict must begin with a letter or
       underscore.</para>
     </section>
 
@@ -1733,13 +1733,13 @@ EOT</programlisting>
       to work. They can contain properties and resources and you can easily
       access resource children using square brackets:</para>
 
-      <programlisting># populate /table which is an nlist 
+      <programlisting># populate /table which is an dict 
 ’/table/red’ = ’rouge’; 
 ’/table/green’ = ’vert’; 
 
 ’/test’ = { 
   x = list(’a’, ’b’, ’c’); # x is a list 
-  y = value(’/table’);     # y is a nlist 
+  y = value(’/table’);     # y is a dict 
   z = x[1] + y[’red’];     # z is a string ('arouge')
   length(z);               # this will be 6 
 };</programlisting>
@@ -2085,8 +2085,7 @@ EOT</programlisting>
       conditional branches, the <literal>while</literal> statement allows
       looping over a DML block, the <literal>for</literal> statement allows
       the same, and the <literal>foreach</literal> statement allows iteration
-      over an entire resource (<type>list</type> or
-      <type>nlist</type>).</para>
+      over an entire resource (<type>list</type> or <type>dict</type>).</para>
 
       <caution>
         <para>These statements, like all DML statements, return a value. Be
@@ -2161,23 +2160,23 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
         <title>Iteration (<literal>foreach</literal> statement)</title>
 
         <para>The <command>foreach</command> statement allows iteration over
-        all of the elements of a list or nlist. The syntax is:</para>
+        all of the elements of a list or dict. The syntax is:</para>
 
         <programlisting>foreach (key; value; resource) body-dml;</programlisting>
 
         <para>This will cause the <replaceable>body-dml</replaceable> to be
-        executed once for each element in resource (a list or nlist). The
-        local variables <varname>key</varname> and <varname>value</varname>
-        (you can choose these names) will be set at each iteration to the key
-        and value of the element. For a list, the <varname>key</varname> is
-        the element's index. The iteration will always occur in the natural
-        order of the resource: ordinal order for lists and lexical order of
-        the keys for nlists.</para>
+        executed once for each element in resource (a list or dict). The local
+        variables <varname>key</varname> and <varname>value</varname> (you can
+        choose these names) will be set at each iteration to the key and value
+        of the element. For a list, the <varname>key</varname> is the
+        element's index. The iteration will always occur in the natural order
+        of the resource: ordinal order for lists and lexical order of the keys
+        for dicts.</para>
 
         <para>The value returned will be that of the last iteration of the
         <replaceable>body-dml</replaceable>. If the
         <replaceable>body-dml</replaceable> is never executed (for an empty
-        list or nlist), <literal>undef</literal> will be returned.</para>
+        list or dict), <literal>undef</literal> will be returned.</para>
 
         <para>The <command>foreach</command> statement is not subject to the
         compiler's iteration limit. By definition, the resource has a finite
@@ -2377,7 +2376,7 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
               <entry><xref linkend="escape" /></entry>
 
               <entry>Escape characters within the string to ensure string is a
-              valid nlist key (path term).</entry>
+              valid dict key (path term).</entry>
             </row>
 
             <row>
@@ -2408,8 +2407,7 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
             <row>
               <entry><xref linkend="create" /></entry>
 
-              <entry>Create an nlist from the named structure
-              template.</entry>
+              <entry>Create an dict from the named structure template.</entry>
             </row>
 
             <row>
@@ -2422,14 +2420,14 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
             <row>
               <entry><xref linkend="nlist" /></entry>
 
-              <entry>Create an nlist from the given key/value pairs given as
+              <entry>Create an dict from the given key/value pairs given as
               arguments.</entry>
             </row>
 
             <row>
               <entry><xref linkend="key" /></entry>
 
-              <entry>Find the n'th key in an nlist.</entry>
+              <entry>Find the n'th key in an dict.</entry>
             </row>
 
             <row>
@@ -2534,7 +2532,7 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
             <row>
               <entry><xref linkend="is_nlist" /></entry>
 
-              <entry>Check if the argument is an nlist. If the argument is a
+              <entry>Check if the argument is an dict. If the argument is a
               simple variable reference and the referenced variable does not
               exist, the function will return false rather than raising an
               error.</entry>
@@ -2570,7 +2568,7 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
             <row>
               <entry><xref linkend="is_resource" /></entry>
 
-              <entry>Check if the argument is a list or nlist. If the argument
+              <entry>Check if the argument is a list or dict. If the argument
               is a simple variable reference and the referenced variable does
               not exist, the function will return false rather than raising an
               error.</entry>
@@ -2636,7 +2634,7 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
 
               <entry>Convert the argument to a string. The function will
               return a string representation for any argument, including list
-              and nlist.</entry>
+              and dict.</entry>
             </row>
           </tbody>
         </tgroup>
@@ -2906,14 +2904,14 @@ type small_even = long(-16..16) with SELF % 2 == 0;</programlisting>
 
       <programlisting>type long_list = long[10];
 type matrix = long[3][4];
-type double_nlist = double{};
-type small_even_nlist = small_even{};</programlisting>
+type double_dict = double{};
+type small_even_dict = small_even{};</programlisting>
 
       <para>Here all of the elements of the collection have the same type. The
       last example shows that previously-defined, user types can be used as
       easily as the built-in primitive types.</para>
 
-      <para>A record is an nlist that explicitly names and types its children.
+      <para>A record is an dict that explicitly names and types its children.
       A record is by far, the most frequently encountered type definition. For
       example, the type definition:</para>
 
@@ -2924,10 +2922,10 @@ type small_even_nlist = small_even{};</programlisting>
   'fpu' ? boolean
 };</programlisting>
 
-      <para>defines an nlist with four children named 'vendor', 'model', etc.
+      <para>defines an dict with four children named 'vendor', 'model', etc.
       The first three fields use a colon (":") in the definition and are
       consequently required fields; the last uses a question mark ("?") and is
-      optional. As defined, no other children may appear in nlists of this
+      optional. As defined, no other children may appear in dicts of this
       type. However, one can make the record extensible with:</para>
 
       <programlisting>type cpu = extensible {
@@ -2938,11 +2936,11 @@ type small_even_nlist = small_even{};</programlisting>
 };</programlisting>
 
       <para>This will check the types of 'vendor', 'model', etc., but will
-      also allow children of the nlist with different unlisted names to
-      appear. This provides some limited subclassing support. Each of the
-      types for the children can be a full type specification and may contain
-      default values and/or validation blocks. One can also attach default
-      values or validation blocks to the record as a whole.</para>
+      also allow children of the dict with different unlisted names to appear.
+      This provides some limited subclassing support. Each of the types for
+      the children can be a full type specification and may contain default
+      values and/or validation blocks. One can also attach default values or
+      validation blocks to the record as a whole.</para>
     </section>
 
     <section>
@@ -3121,7 +3119,7 @@ type component = extensible {
       One can usually avoid this by applying the validation to a common
       parent. In this case, we can add the validation to the parent.</para>
 
-      <programlisting>function valid_component_nlist = {
+      <programlisting>function valid_component_dict = {
 
   # Loop over each component.
   foreach (name; component; SELF) {
@@ -3149,7 +3147,7 @@ type component = extensible {
   post ? string[]
 };
 
-type component_nlist = component{} with valid_component_nlist(SELF);</programlisting>
+type component_dict = component{} with valid_component_dict(SELF);</programlisting>
 
       <para>This will accomplish the same validation, but will be independent
       of the location in the tree. It is, however, significantly more
@@ -3412,7 +3410,7 @@ bind '/' = root;
       much of the hardware configuration for those machines is the same.
       Another mechanism that can be exploited to reuse configuration
       parameters is a <literal>structure</literal> template. Such a template
-      defines an nlist that is initially independent of the configuration tree
+      defines an dict that is initially independent of the configuration tree
       itself. For our scenario, let us assume that the four machines have
       identical RAM, CPU, and disk configurations; the NIC and location
       information is different for each machine. The following template pulls
@@ -3726,10 +3724,10 @@ bind '/pair' = KV_PAIR;
       setting the root element that is used to start the build of all
       profiles. Use the <option>rootElement</option> attribute for ant and the
       <option>--root-element</option> option for the command line. The value
-      must be a DML expression that evaluates to an nlist. For example, this
+      must be a DML expression that evaluates to an dict. For example, this
       expression</para>
 
-      <programlisting>nlist('build-metadata', nlist('number', 1, 'date', '2012-01-01'))</programlisting>
+      <programlisting>dict('build-metadata', dict('number', 1, 'date', '2012-01-01'))</programlisting>
 
       <para>would result in having the paths
       <filename>/build-metadata/number</filename>,
@@ -3760,7 +3758,7 @@ bind '/pair' = KV_PAIR;
       <para>Whenever possible, use the most specific path and assign a
       property to that path. The code:</para>
 
-      <programlisting>'/path' = nlist('a', 1, 'b', 2);</programlisting>
+      <programlisting>'/path' = dict('a', 1, 'b', 2);</programlisting>
 
       <para>and the block:</para>
 
@@ -3777,7 +3775,7 @@ bind '/pair' = KV_PAIR;
       <para>In previous versions of the compiler, it was necessary to use a
       DML block when part of a path needed to be escaped:</para>
 
-      <programlisting>'/path' = nlist(escape('a/b'), 1);</programlisting>
+      <programlisting>'/path' = dict(escape('a/b'), 1);</programlisting>
 
       <para>Newer versions of the compiler provide a literal path syntax in
       which escaped portions can be written explicitly:</para>

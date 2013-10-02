@@ -433,6 +433,14 @@ public class MessageUtils {
 
 	public final static String MSG_USER_INITIATED_ERROR = "MSG_USER_INITIATED_ERROR";
 
+	public final static String MSG_ARG_NOT_PROPERTY = "MSG_ARG_NOT_PROPERTY";
+
+	public final static String MSG_INVALID_RADIX = "MSG_INVALID_RADIX";
+
+	public final static String MSG_INVALID_RADIX_TYPE = "MSG_INVALID_RADIX_TYPE";
+
+	public final static String MSG_INVALID_STRING_FOR_LONG = "MSG_INVALID_STRING_FOR_LONG";
+
 	// Name of the resource bundle to use for compiler messages.
 	private final static String bundleName = "org.quattor.pan.Messages";
 

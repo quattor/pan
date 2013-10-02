@@ -2626,7 +2626,8 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
               to <literal>0</literal> and <literal>1</literal> for
               <literal>false</literal> and <literal>true</literal>,
               respectively. Double values are rounded to the nearest long
-              value. Long values are unchanged.</entry>
+              value. Long values are unchanged. An optional second argument
+              can be provided that defines the radix to use.</entry>
             </row>
 
             <row>

@@ -42,8 +42,8 @@ public class ToLongTest extends BuiltInFunctionTestUtils {
 	@Test
 	public void convertString() throws SyntaxException {
 
-		Element r1 = runDml(ToLong.getInstance(null, StringProperty
-				.getInstance("0")));
+		Element r1 = runDml(ToLong.getInstance(null,
+				StringProperty.getInstance("0")));
 
 		// Check result.
 		assertTrue(r1 instanceof LongProperty);
@@ -74,10 +74,47 @@ public class ToLongTest extends BuiltInFunctionTestUtils {
 	}
 
 	@Test
+	public void convertStringRadix() throws SyntaxException {
+
+		Element r1 = runDml(ToLong.getInstance(null,
+				StringProperty.getInstance("0"), LongProperty.getInstance(10)));
+
+		// Check result.
+		assertTrue(r1 instanceof LongProperty);
+		long s1 = ((LongProperty) r1).getValue().longValue();
+		assertTrue(0L == s1);
+
+		r1 = runDml(ToLong.getInstance(null, StringProperty.getInstance("1"),
+				LongProperty.getInstance(10)));
+
+		// Check result.
+		assertTrue(r1 instanceof LongProperty);
+		s1 = ((LongProperty) r1).getValue().longValue();
+		assertTrue(1L == s1);
+
+		r1 = runDml(ToLong.getInstance(null,
+				StringProperty.getInstance("ff"),
+				LongProperty.getInstance(16)));
+
+		// Check result.
+		assertTrue(r1 instanceof LongProperty);
+		s1 = ((LongProperty) r1).getValue().longValue();
+		assertTrue(255L == s1);
+
+		r1 = runDml(ToLong.getInstance(null, StringProperty.getInstance("011"),
+				LongProperty.getInstance(8)));
+
+		// Check result.
+		assertTrue(r1 instanceof LongProperty);
+		s1 = ((LongProperty) r1).getValue().longValue();
+		assertTrue(9L == s1);
+	}
+
+	@Test
 	public void convertLong() throws SyntaxException {
 
-		Element r1 = runDml(ToLong.getInstance(null, LongProperty
-				.getInstance(0L)));
+		Element r1 = runDml(ToLong.getInstance(null,
+				LongProperty.getInstance(0L)));
 
 		// Check result.
 		assertTrue(r1 instanceof LongProperty);
@@ -93,10 +130,30 @@ public class ToLongTest extends BuiltInFunctionTestUtils {
 	}
 
 	@Test
+	public void convertLongRadix() throws SyntaxException {
+
+		Element r1 = runDml(ToLong.getInstance(null,
+				LongProperty.getInstance(0L)));
+
+		// Check result.
+		assertTrue(r1 instanceof LongProperty);
+		long s1 = ((LongProperty) r1).getValue().longValue();
+		assertTrue(0L == s1);
+
+		r1 = runDml(ToLong.getInstance(null, LongProperty.getInstance(1L),
+				LongProperty.getInstance(10)));
+
+		// Check result.
+		assertTrue(r1 instanceof LongProperty);
+		s1 = ((LongProperty) r1).getValue().longValue();
+		assertTrue(1L == s1);
+	}
+
+	@Test
 	public void convertDouble() throws SyntaxException {
 
-		Element r1 = runDml(ToLong.getInstance(null, DoubleProperty
-				.getInstance(0.1)));
+		Element r1 = runDml(ToLong.getInstance(null,
+				DoubleProperty.getInstance(0.1)));
 
 		// Check result.
 		assertTrue(r1 instanceof LongProperty);
@@ -112,10 +169,30 @@ public class ToLongTest extends BuiltInFunctionTestUtils {
 	}
 
 	@Test
+	public void convertDoubleRadix() throws SyntaxException {
+
+		Element r1 = runDml(ToLong.getInstance(null,
+				DoubleProperty.getInstance(0.1)));
+
+		// Check result.
+		assertTrue(r1 instanceof LongProperty);
+		long s1 = ((LongProperty) r1).getValue().longValue();
+		assertTrue(0L == s1);
+
+		r1 = runDml(ToLong.getInstance(null, DoubleProperty.getInstance(0.6),
+				LongProperty.getInstance(10)));
+
+		// Check result.
+		assertTrue(r1 instanceof LongProperty);
+		s1 = ((LongProperty) r1).getValue().longValue();
+		assertTrue(1L == s1);
+	}
+
+	@Test
 	public void convertBooleans() throws SyntaxException {
 
-		Element r1 = runDml(ToLong.getInstance(null, BooleanProperty
-				.getInstance(false)));
+		Element r1 = runDml(ToLong.getInstance(null,
+				BooleanProperty.getInstance(false)));
 
 		// Check result.
 		assertTrue(r1 instanceof LongProperty);
@@ -123,6 +200,26 @@ public class ToLongTest extends BuiltInFunctionTestUtils {
 		assertTrue(0L == s1);
 
 		r1 = runDml(ToLong.getInstance(null, BooleanProperty.getInstance(true)));
+
+		// Check result.
+		assertTrue(r1 instanceof LongProperty);
+		s1 = ((LongProperty) r1).getValue().longValue();
+		assertTrue(1L == s1);
+	}
+
+	@Test
+	public void convertBooleansRadix() throws SyntaxException {
+
+		Element r1 = runDml(ToLong.getInstance(null,
+				BooleanProperty.getInstance(false)));
+
+		// Check result.
+		assertTrue(r1 instanceof LongProperty);
+		long s1 = ((LongProperty) r1).getValue().longValue();
+		assertTrue(0L == s1);
+
+		r1 = runDml(ToLong.getInstance(null, BooleanProperty.getInstance(true),
+				LongProperty.getInstance(10)));
 
 		// Check result.
 		assertTrue(r1 instanceof LongProperty);
@@ -146,6 +243,24 @@ public class ToLongTest extends BuiltInFunctionTestUtils {
 	}
 
 	@Test(expected = EvaluationException.class)
+	public void radixTooSmall() throws SyntaxException {
+		runDml(ToLong.getInstance(null, StringProperty.getInstance("10"),
+				LongProperty.getInstance(-1)));
+	}
+
+	@Test(expected = EvaluationException.class)
+	public void radixTooLarge() throws SyntaxException {
+		runDml(ToLong.getInstance(null, StringProperty.getInstance("10"),
+				LongProperty.getInstance(Character.MAX_RADIX + 1)));
+	}
+
+	@Test(expected = EvaluationException.class)
+	public void radixWrongType() throws SyntaxException {
+		runDml(ToLong.getInstance(null, StringProperty.getInstance("10"),
+				StringProperty.getInstance("BAD")));
+	}
+
+	@Test(expected = EvaluationException.class)
 	public void illegalArguments() throws SyntaxException {
 		runDml(ToLong.getInstance(null, new ListResource()));
 	}
@@ -158,6 +273,7 @@ public class ToLongTest extends BuiltInFunctionTestUtils {
 	@Test(expected = SyntaxException.class)
 	public void tooManyArguments() throws SyntaxException {
 		ToLong.getInstance(null, StringProperty.getInstance("OK"),
+				StringProperty.getInstance("OK"),
 				StringProperty.getInstance("OK"));
 	}
 

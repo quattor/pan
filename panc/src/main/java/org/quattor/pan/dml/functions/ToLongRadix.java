@@ -1,6 +1,5 @@
 /*
- Copyright (c) 2006 Charles A. Loomis, Jr, Cedric Duprilot, and
- Centre National de la Recherche Scientifique (CNRS).
+ Copyright (c) 2013 Centre National de la Recherche Scientifique (CNRS).
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -13,16 +12,15 @@
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
-
- $HeadURL: https://svn.lal.in2p3.fr/LCG/QWG/panc/trunk/src/org/quattor/pan/dml/functions/ToLong.java $
- $Id: ToLong.java 3552 2008-08-03 09:55:58Z loomis $
  */
 
 package org.quattor.pan.dml.functions;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_ARG_NOT_PROPERTY;
+import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_RADIX;
+import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_RADIX_TYPE;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_STRING_FOR_LONG;
-import static org.quattor.pan.utils.MessageUtils.MSG_ONE_OR_TWO_ARGS_REQ;
+import static org.quattor.pan.utils.MessageUtils.MSG_TWO_ARGS_REQ;
 import static org.quattor.pan.utils.MessageUtils.MSG_UNKNOWN_PROPERTY_TYPE;
 
 import org.quattor.pan.dml.Operation;
@@ -39,14 +37,14 @@ import org.quattor.pan.template.Context;
 import org.quattor.pan.template.SourceRange;
 
 /**
- * Convert the function's argument to a long value.
+ * Convert the function's argument to a long value using the given radix.
  * 
  * @author loomis
  * 
  */
-final public class ToLong extends BuiltInFunction {
+final public class ToLongRadix extends BuiltInFunction {
 
-	private ToLong(SourceRange sourceRange, Operation... operations)
+	private ToLongRadix(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
 		super("to_long", sourceRange, operations);
 	}
@@ -54,23 +52,23 @@ final public class ToLong extends BuiltInFunction {
 	public static Operation getInstance(SourceRange sourceRange,
 			Operation... operations) throws SyntaxException {
 
-		if (operations.length == 1) {
-			return new ToLong(sourceRange, operations);
-		} else if (operations.length == 2) {
-			return ToLongRadix.getInstance(sourceRange, operations);
-		} else {
-			throw SyntaxException.create(sourceRange, MSG_ONE_OR_TWO_ARGS_REQ,
-					"to_long");
+		if (operations.length != 2) {
+			throw SyntaxException.create(sourceRange, MSG_TWO_ARGS_REQ,
+					"radix with to_long");
 		}
 
+		return new ToLongRadix(sourceRange, operations);
 	}
 
 	@Override
 	public Element execute(Context context) {
 
-		assert (ops.length == 1);
+		assert (ops.length == 2);
 
 		Element result = ops[0].execute(context);
+		Element radixProperty = ops[1].execute(context);
+
+		int radix = getRadix(context, radixProperty);
 
 		try {
 			Element value = null;
@@ -86,7 +84,7 @@ final public class ToLong extends BuiltInFunction {
 			} else if (property instanceof StringProperty) {
 				String x = ((StringProperty) property).getValue();
 				try {
-					value = LongProperty.getInstance(Long.decode(x));
+					value = LongProperty.getInstance(Long.parseLong(x, radix));
 				} catch (NumberFormatException nfe) {
 					throw EvaluationException.create(sourceRange, context,
 							MSG_INVALID_STRING_FOR_LONG, x);
@@ -102,6 +100,30 @@ final public class ToLong extends BuiltInFunction {
 			throw EvaluationException.create(sourceRange, context,
 					MSG_ARG_NOT_PROPERTY, result.getTypeAsString());
 		}
+	}
+
+	private int getRadix(Context context, Element e) {
+		try {
+			long radix = 0L;
+
+			Property property = (Property) e;
+			if (property instanceof LongProperty) {
+				radix = ((LongProperty) e).getValue();
+				if (radix < Character.MIN_RADIX || radix > Character.MAX_RADIX) {
+					throw EvaluationException.create(sourceRange, context,
+							MSG_INVALID_RADIX, radix, Character.MIN_RADIX,
+							Character.MAX_RADIX);
+				}
+			} else {
+				throw EvaluationException.create(MSG_INVALID_RADIX_TYPE,
+						property.getClass());
+			}
+			return (int) radix;
+		} catch (ClassCastException cce) {
+			throw EvaluationException.create(sourceRange, context,
+					MSG_ARG_NOT_PROPERTY, e.getTypeAsString());
+		}
+
 	}
 
 }

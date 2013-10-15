@@ -270,11 +270,17 @@
     </dependency>
 
     <dependency>
+        <groupId>org.antlr</groupId>
+        <artifactId>ST4</artifactId>
+        <version>4.0.7</version>
+    </dependency>
+
+    <dependency>
       <groupId>reply</groupId>
       <artifactId>reply</artifactId>
       <scope>provided</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>jline</groupId>
       <artifactId>jline</artifactId>
@@ -285,7 +291,7 @@
       <groupId>org.clojure</groupId>
       <artifactId>clojure</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>tools.cli</artifactId>

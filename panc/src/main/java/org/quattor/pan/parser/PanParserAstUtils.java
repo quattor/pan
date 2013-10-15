@@ -85,6 +85,7 @@ import org.quattor.pan.dml.functions.Merge;
 import org.quattor.pan.dml.functions.Next;
 import org.quattor.pan.dml.functions.PathExists;
 import org.quattor.pan.dml.functions.Prepend;
+import org.quattor.pan.dml.functions.Render;
 import org.quattor.pan.dml.functions.Replace;
 import org.quattor.pan.dml.functions.Return;
 import org.quattor.pan.dml.functions.Splice;
@@ -301,7 +302,9 @@ public class PanParserAstUtils {
 
 			fc.put("substr", (Substr.class).getDeclaredMethod("getInstance",
 					SourceRange.class, Operation[].class));
-
+                        fc.put("render", (Render.class).getDeclaredMethod("getInstance",
+                                                                          SourceRange.class,
+                                                                          Operation[].class));
 			fc.put("replace", (Replace.class).getDeclaredMethod("getInstance",
 					SourceRange.class, Operation[].class));
 
@@ -1083,7 +1086,7 @@ public class PanParserAstUtils {
 		Context context = new CompileTimeContext();
 
 		Element value = null;
-		
+
 		// IF this is an AbstractOperation, pull out the source location.
 		SourceRange sourceRange = null;
 		if (dml instanceof AbstractOperation) {

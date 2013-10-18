@@ -330,17 +330,17 @@
 
       <programlisting># description of CD mount entry with the device undefined
 # (in file 'mount_cdrom.pan')
-structure template mount_cdrom; 
-'device' = undef; 
-'path' = '/mnt/cdrom'; 
-'type' = 'iso9660'; 
-'options' = list('noauto', 'owner', 'ro'); 
+structure template mount_cdrom;
+'device' = undef;
+'path' = '/mnt/cdrom';
+'type' = 'iso9660';
+'options' = list('noauto', 'owner', 'ro');
 
 # use from within another template
-'/system/mounts/0' = create('mount_cdrom', 'device', 'hdc'); 
+'/system/mounts/0' = create('mount_cdrom', 'device', 'hdc');
 
 # the above is equivalent to the following two lines
-'/system/mounts/0' = create('mount_cdrom'); 
+'/system/mounts/0' = create('mount_cdrom');
 '/system/mounts/0/device' = 'hdc';</programlisting>
     </refsection>
   </refentry>
@@ -444,11 +444,11 @@ structure template mount_cdrom;
       cause a fatal error. For subscripted variable references, this function
       has the same effect as assigning the variable reference to null.</para>
 
-      <programlisting># /result will contain the list ('a', 'c') 
-'/result' = { 
-  x = list('a', 'b', 'c'); 
-  delete(x[1]); 
-  x; 
+      <programlisting># /result will contain the list ('a', 'c')
+'/result' = {
+  x = list('a', 'b', 'c');
+  delete(x[1]);
+  x;
 }; </programlisting>
     </refsection>
   </refentry>
@@ -603,13 +603,13 @@ structure template mount_cdrom;
       place.</para>
 
       <programlisting># a user-defined function requiring one argument
-function foo = { 
+function foo = {
 
   if (ARGC != 1) {
     error("foo(): wrong number of arguments: " + to_string(ARGC));
   };
 
-  # normal processing... 
+  # normal processing...
 };</programlisting>
     </refsection>
   </refentry>
@@ -857,27 +857,27 @@ r = exists(v+'');</programlisting>
       an dict resource, the string value of the key itself. An example of
       using <function>first</function> with a list:</para>
 
-      <programlisting># compute the sum of the elements inside numlist 
-numlist = list(1, 2, 4, 8); 
-sum = 0; 
-ok = first(numlist, k, v); 
-while (ok) { 
-  sum = sum + v; 
-  ok = next(numlist, k, v); 
-}; 
+      <programlisting># compute the sum of the elements inside numlist
+numlist = list(1, 2, 4, 8);
+sum = 0;
+ok = first(numlist, k, v);
+while (ok) {
+  sum = sum + v;
+  ok = next(numlist, k, v);
+};
 # value of sum will be 15</programlisting>
 
       <para>An example of using <function>first</function> with an
       dict:</para>
 
-      <programlisting># put the list of all the keys of table inside keys 
-table = dict("a", 1, "b", 2, "c", 3); 
-keys = list(); 
-ok = first(table, k, v); 
-  while (ok) { 
+      <programlisting># put the list of all the keys of table inside keys
+table = dict("a", 1, "b", 2, "c", 3);
+keys = list();
+ok = first(table, k, v);
+  while (ok) {
   keys[length(keys)] = k;
   ok = next(table, k, v);
-}; 
+};
 # keys will be ("a", "b", "c") </programlisting>
     </refsection>
   </refentry>
@@ -1086,8 +1086,8 @@ ok = first(table, k, v);
       <literal>-1</literal> if not found; if the third argument is given,
       starts initially from that position.</para>
 
-      <programlisting>'/s1' = index('foo', 'abcfoodefoobar'); # 3 
-'/s2' = index('f0o', 'abcfoodefoobar'); # -1 
+      <programlisting>'/s1' = index('foo', 'abcfoodefoobar'); # 3
+'/s2' = index('f0o', 'abcfoodefoobar'); # -1
 '/s3' = index('foo', 'abcfoodefoobar', 4); # 8 </programlisting>
 
       <para>The second form searches for the given property inside the given
@@ -1097,7 +1097,7 @@ ok = first(table, k, v);
       <varname>arg</varname>’s children are not of the same type.</para>
 
       <programlisting># search in a list of strings (result = 2)
-"/l1" = index("foo", list("Foo", "FOO", "foo", "bar")); 
+"/l1" = index("foo", list("Foo", "FOO", "foo", "bar"));
 
 # search in a list of longs (result = 3)
 "/l2" = index(1, list(3, 1, 4, 1, 6), 2);</programlisting>
@@ -1109,10 +1109,10 @@ ok = first(table, k, v);
       <varname>arg</varname>’s children are not of the same type.</para>
 
       <programlisting># simple color table
-'/table' = dict('red', 0xf00, 'green', 0x0f0, 'blue', 0x00f); 
+'/table' = dict('red', 0xf00, 'green', 0x0f0, 'blue', 0x00f);
 
 # result will be the string 'green'
-'/name1' = index(0x0f0, value('/table')); 
+'/name1' = index(0x0f0, value('/table'));
 
 # result will be the empty string
 '/name2' = index(0x0f0, value('/table'), 1);</programlisting>
@@ -1179,6 +1179,65 @@ ok = first(table, k, v);
               1
              );</programlisting>
     </refsection>
+  </refentry>
+
+  <refentry xml:id="ip4_to_long">
+      <info>
+          <productnumber><?eval ${project.version}?></productnumber>
+          <productname>panc</productname>
+          <date><?eval ${buildTimestamp}?></date>
+          <copyright>
+              <year>2013</year>
+              <holder>Universiteit Gent</holder>
+          </copyright>
+      </info>
+
+      <refmeta>
+          <refentrytitle>ip4_to_long</refentrytitle>
+          <manvolnum>3</manvolnum>
+      </refmeta>
+
+      <refnamediv>
+          <refname>panc:ip4_to_long</refname>
+          <refpurpose>converts an IP address in dotted format with an
+          optional bitmask to a list of longs</refpurpose>
+      </refnamediv>
+
+      <refsynopsisdiv>
+          <funcsynopsis>
+              <funcprototype>
+                  <funcdef>long[]
+                  <function>ip4_to_long</function></funcdef>
+                  <paramdef>string
+                  <parameter>ip</parameter></paramdef>
+              </funcprototype>
+          </funcsynopsis>
+      </refsynopsisdiv>
+
+      <refsection>
+          <title>Description</title>
+
+          <para>The <function>ip4_to_long</function> function returns
+          the binary representation of an IPv4 address or network
+          specification represented as a dotted string, where the
+          netmask part is optional, like <literal>inet_aton</literal>
+          does in the C standard library.</para>
+
+          <para>The first element of the return value is the binary
+          representation of the IP address, where the second, if
+          present, is the binary representation of the network
+          mask.</para>
+
+          <para>This can be used for applying network masks and
+          calculating network ranges.</para>
+
+          <programlisting>variable NETWORK_RANGE_FOR_LOCALHOST = {
+    l = ip4_to_long("127.0.0.1/8");
+    l[0] &amp; l[1];
+};</programlisting>
+
+<programlisting>variable BINARY_LOCALHOST = ip4_to_long("127.0.0.1");</programlisting>
+      </refsection>
   </refentry>
 
   <refentry xml:id="is_boolean">
@@ -1738,22 +1797,22 @@ ok = first(table, k, v);
       The index corresponds to the key's position in the list of all keys,
       sorted in lexical order. The first index is 0.</para>
 
-      <programlisting>'/table' = dict('red', 0xf00, 'green', 0x0f0, 'blue', 0x00f); 
+      <programlisting>'/table' = dict('red', 0xf00, 'green', 0x0f0, 'blue', 0x00f);
 
-'/keys' = { 
+'/keys' = {
 
-  tbl = value('/table'); 
-  res = ''; 
-  len = length(tbl); 
-  idx = 0; 
-  while (idx &lt; len) { 
-    res = res + key(tbl, idx) + ' '; 
-    idx = idx + 1; 
-  }; 
+  tbl = value('/table');
+  res = '';
+  len = length(tbl);
+  idx = 0;
+  while (idx &lt; len) {
+    res = res + key(tbl, idx) + ' ';
+    idx = idx + 1;
+  };
 
-  if (length(res) &gt; 0) splice(res, -1, 1); 
-  return(res); 
-}; 
+  if (length(res) &gt; 0) splice(res, -1, 1);
+  return(res);
+};
 # /keys will be the string 'blue green red ' </programlisting>
     </refsection>
   </refentry>
@@ -1908,7 +1967,7 @@ ok = first(table, k, v);
       <para>This function checks if the given string matches the regular
       expression.</para>
 
-      <programlisting># device_t is a string that can only be "disk", "cd" or "net" 
+      <programlisting># device_t is a string that can only be "disk", "cd" or "net"
 type device_t = string with match(self, ’ˆ(disk|cd|net)$’);</programlisting>
     </refsection>
   </refentry>
@@ -1959,18 +2018,18 @@ type device_t = string with match(self, ’ˆ(disk|cd|net)$’);</programlisting
       expression and returns the list of captured substrings, the first one
       (at index 0) being the complete matched string.</para>
 
-      <programlisting># IPv4 address in dotted number notation 
-type ipv4 = string with { 
-  result = matches(self, ’ˆ(\d+)\.(\d+)\.(\d+)\.(\d+)$’); 
-  if (length(result) == 0) 
-  return("bad string"); 
-  i = 1; 
-  while (i &lt;= 4) { 
-    x = to_long(result[i]); 
-    if (x &gt; 255) return("chunk " + to_string(i) + " too big: " + result[i]); 
-    i = i + 1; 
+      <programlisting># IPv4 address in dotted number notation
+type ipv4 = string with {
+  result = matches(self, ’ˆ(\d+)\.(\d+)\.(\d+)\.(\d+)$’);
+  if (length(result) == 0)
+  return("bad string");
+  i = 1;
+  while (i &lt;= 4) {
+    x = to_long(result[i]);
+    if (x &gt; 255) return("chunk " + to_string(i) + " too big: " + result[i]);
+    i = i + 1;
   };
-  return(true); 
+  return(true);
 };</programlisting>
     </refsection>
   </refentry>
@@ -2025,8 +2084,8 @@ type ipv4 = string with {
       an error occurs.</para>
 
       <programlisting># /z will contain the list 'a', 'b', 'c', 'd', 'e'
-'/x' = list('a', 'b', 'c'); 
-'/y' = list('d', 'e'); 
+'/x' = list('a', 'b', 'c');
+'/y' = list('d', 'e');
 '/z' = merge (value('/x'), value('/y'));</programlisting>
     </refsection>
   </refentry>
@@ -2402,9 +2461,9 @@ type ipv4 = string with {
       and returns from it with the given value. This is often used in
       user-defined functions.</para>
 
-      <programlisting>function facto = { 
-  if (ARGV[0] &lt; 2) return(1); 
-  return(ARGV[0] * facto(ARGV[0] - 1)); 
+      <programlisting>function facto = {
+  if (ARGV[0] &lt; 2) return(1);
+  return(ARGV[0] * facto(ARGV[0] - 1));
 };</programlisting>
     </refsection>
   </refentry>
@@ -2471,8 +2530,8 @@ type ipv4 = string with {
       by <varname>start</varname> and <varname>length</varname> and, if a
       fourth argument is given, inserts <varname>repl</varname>.</para>
 
-      <programlisting>'/s1' = splice('abcde', 2, 0, '12');  # ab12cde 
-'/s2' = splice('abcde', -2, 1);       # abce 
+      <programlisting>'/s1' = splice('abcde', 2, 0, '12');  # ab12cde
+'/s2' = splice('abcde', -2, 1);       # abce
 '/s3' = splice('abcde', 2, 2, 'XXX'); # abXXXe </programlisting>
 
       <para>The second form of this function deletes the children of the given
@@ -2480,11 +2539,11 @@ type ipv4 = string with {
       <varname>length</varname> and, if a fourth argument is given, replaces
       them with the contents of <varname>repl</varname>.</para>
 
-      <programlisting># will be the list 'a', 'b', 1, 2, 'c', 'd', 'e' 
-'/l1' = splice(list('a','b','c','d','e'), 2, 0, list(1,2)); 
+      <programlisting># will be the list 'a', 'b', 1, 2, 'c', 'd', 'e'
+'/l1' = splice(list('a','b','c','d','e'), 2, 0, list(1,2));
 
-# will be the list 'a', 'b', 'c', 'e' 
-'/l2' = splice(list('a','b','c','d','e'), -2, 1); 
+# will be the list 'a', 'b', 'c', 'e'
+'/l2' = splice(list('a','b','c','d','e'), -2, 1);
 
 # will be the list 'a', 'b', 'XXX', 'e'
 '/l3' = splice(list('a','b','c','d','e'), 2, 2, list('XXX'));</programlisting>
@@ -2626,11 +2685,11 @@ type ipv4 = string with {
       of the string; if <parameter>length</parameter> is negative, leaves that
       many characters off the end of the string.</para>
 
-      <programlisting>"/s1" = substr("abcdef", 2); # cdef 
-"/s2" = substr("abcdef", 1, 1); # b 
-"/s3" = substr("abcdef", 1, -1); # bcde 
-"/s4" = substr("abcdef", -4); # cdef 
-"/s5" = substr("abcdef", -4, 1); # c 
+      <programlisting>"/s1" = substr("abcdef", 2); # cdef
+"/s2" = substr("abcdef", 1, 1); # b
+"/s3" = substr("abcdef", 1, -1); # bcde
+"/s4" = substr("abcdef", -4); # cdef
+"/s5" = substr("abcdef", -4, 1); # c
 "/s6" = substr("abcdef", -4, -1); # cde</programlisting>
     </refsection>
   </refentry>
@@ -3097,7 +3156,7 @@ type ipv4 = string with {
       element.</para>
 
       <programlisting># /y will be 200
-'/x' = 100; 
+'/x' = 100;
 '/y' = 2 * value('/x');</programlisting>
     </refsection>
   </refentry>

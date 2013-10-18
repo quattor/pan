@@ -66,6 +66,7 @@ import org.quattor.pan.dml.functions.Function;
 import org.quattor.pan.dml.functions.Hash;
 import org.quattor.pan.dml.functions.IfExists;
 import org.quattor.pan.dml.functions.Index;
+import org.quattor.pan.dml.functions.IpToLong;
 import org.quattor.pan.dml.functions.IsBoolean;
 import org.quattor.pan.dml.functions.IsDefined;
 import org.quattor.pan.dml.functions.IsDouble;
@@ -334,6 +335,9 @@ public class PanParserAstUtils {
 
 			fc.put("file_contents", (FileContents.class).getDeclaredMethod(
 					"getInstance", SourceRange.class, Operation[].class));
+
+                        fc.put("ip4_to_long", (IpToLong.class).getDeclaredMethod("getInstance",
+				SourceRange.class, Operation[].class));
 
 			fc.put("debug", (Debug.class).getDeclaredMethod("getInstance",
 					SourceRange.class, Operation[].class));
@@ -1083,7 +1087,7 @@ public class PanParserAstUtils {
 		Context context = new CompileTimeContext();
 
 		Element value = null;
-		
+
 		// IF this is an AbstractOperation, pull out the source location.
 		SourceRange sourceRange = null;
 		if (dml instanceof AbstractOperation) {

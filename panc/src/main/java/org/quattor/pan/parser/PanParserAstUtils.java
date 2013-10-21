@@ -80,6 +80,7 @@ import org.quattor.pan.dml.functions.IsResource;
 import org.quattor.pan.dml.functions.IsString;
 import org.quattor.pan.dml.functions.Key;
 import org.quattor.pan.dml.functions.Length;
+import org.quattor.pan.dml.functions.LongToIp;
 import org.quattor.pan.dml.functions.Match;
 import org.quattor.pan.dml.functions.Matches;
 import org.quattor.pan.dml.functions.Merge;
@@ -336,8 +337,11 @@ public class PanParserAstUtils {
 			fc.put("file_contents", (FileContents.class).getDeclaredMethod(
 					"getInstance", SourceRange.class, Operation[].class));
 
-                        fc.put("ip4_to_long", (IpToLong.class).getDeclaredMethod("getInstance",
-				SourceRange.class, Operation[].class));
+                        fc.put("ip4_to_long", (IpToLong.class).getDeclaredMethod(
+                                       "getInstance", SourceRange.class, Operation[].class));
+
+                        fc.put("long_to_ip4", (LongToIp.class).getDeclaredMethod(
+                                       "getInstance", SourceRange.class, Operation[].class));
 
 			fc.put("debug", (Debug.class).getDeclaredMethod("getInstance",
 					SourceRange.class, Operation[].class));

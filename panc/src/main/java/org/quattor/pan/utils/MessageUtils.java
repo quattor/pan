@@ -422,9 +422,14 @@ public class MessageUtils {
 	public final static String MSG_INVALID_FIRST_ARG_FORMAT = "MSG_INVALID_FIRST_ARG_FORMAT";
 
         public final static String MSG_INVALID_TYPE_IP_TO_LONG = "MSG_INVALID_TYPE_IP_TO_LONG";
+
         public final static String MSG_INVALID_IP4_FORMAT = "MSG_INVALID_IP4_FORMAT";
 
         public final static String MSG_INVALID_IP4_BITMASK = "MSG_INVALID_IP4_BITMASK";
+
+        public final static String MSG_INVALID_TYPE_LONG_TO_IP = "MSG_INVALID_TYPE_LONG_TO_IP";
+
+        public final static String MSG_INVALID_RANGE_LONG_TO_IP = "MSG_INVALID_RANGE_LONG_TO_IP";
 
 	public final static String MSG_INVALID_SYNTAX_ROOT_ELEMENT = "MSG_INVALID_SYNTAX_ROOT_ELEMENT";
 

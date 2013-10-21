@@ -2646,6 +2646,13 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
                 long.</entry>
             </row>
 
+            <row>
+                <entry><xref linkend="long_to_ip4"/></entry>
+
+                <entry>Convert the argument, a long into an IPv4
+                address in numbers-and-dots notation</entry>
+            </row>
+
           </tbody>
         </tgroup>
       </table>

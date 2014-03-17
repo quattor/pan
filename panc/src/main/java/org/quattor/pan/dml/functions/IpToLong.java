@@ -1,6 +1,5 @@
 /*
- Copyright (c) 2006 Charles A. Loomis, Jr, Cedric Duprilot, and
- Centre National de la Recherche Scientifique (CNRS).
+ Copyright 2013 - Luis Fernando Muñoz Mejías and Universiteit Gent.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.

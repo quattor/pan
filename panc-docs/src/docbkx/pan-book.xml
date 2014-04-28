@@ -326,9 +326,9 @@ $ cat hello_world.xml
       that was written to the <filename>hello_world.json</filename>
       file.</para>
 
-      <screen>$ panc --formats json hello_world.pan 
+      <screen>$ panc --formats json hello_world.pan
 
-$ cat hello_world.json 
+$ cat hello_world.json
 {
   "message": "Hello World!"
 } </screen>
@@ -465,10 +465,10 @@ edge [ color = black ]
 
       <programlisting>object template server.example.org;
 
-'/batch/server/nodes/worker01.example.org/queues' 
+'/batch/server/nodes/worker01.example.org/queues'
     = list('default');
 
-'/batch/server/nodes/worker01.example.org/capabilities' 
+'/batch/server/nodes/worker01.example.org/capabilities'
     = list('sw-license', 'fast-network');
 
 '/batch/server/queues/default/maxCpuHours' = 1;
@@ -543,10 +543,10 @@ edge [ color = black ]
 
       <programlisting>template services/batch-server;
 
-'/batch/server/nodes/worker01.example.org/queues' 
+'/batch/server/nodes/worker01.example.org/queues'
     = list('default');
 
-'/batch/server/nodes/worker01.example.org/capabilities' 
+'/batch/server/nodes/worker01.example.org/capabilities'
     = list('sw-license', 'fast-network');
 
 '/batch/server/queues/default/maxCpuHours' = 1;
@@ -707,10 +707,10 @@ include 'services/batch-types';
 
 bind '/batch/server' = batch_server;
 
-'/batch/server/nodes/worker01.example.org/queues' 
+'/batch/server/nodes/worker01.example.org/queues'
     = list('default');
 
-'/batch/server/nodes/worker01.example.org/capabilities' 
+'/batch/server/nodes/worker01.example.org/capabilities'
     = list('sw-license', 'fast-network');
 
 '/batch/server/queues/default/maxCpuHours' = 1;
@@ -811,7 +811,7 @@ include 'services/batch-types';
 
 bind '/batch/server' = batch_server;
 
-'/batch/server/nodes/worker01.example.org/capabilities' 
+'/batch/server/nodes/worker01.example.org/capabilities'
     = list('sw-license', 'fast-network');</programlisting>
 
       <programlisting>template services/batch-worker;
@@ -880,7 +880,7 @@ function server_knows_about_me<co xml:id="function-server_knows_about_me" /> = {
   regex = '^profiles/(.*)$';
   if (match(OBJECT, regex)) {
     parts = matches(OBJECT, regex);
-    path = 'profiles/' + ARGV[0] + 
+    path = 'profiles/' + ARGV[0] +
              ':/batch/server/nodes/' + parts[1];
     if (!path_exists(path)) {
       error(path + ' doesn''t exist');
@@ -901,7 +901,7 @@ type batch_capabilities = string[];
 type batch_queue_list = string[1..];
 
 type batch_node = {
-  'queues' : batch_queue_list = list('default') 
+  'queues' : batch_queue_list = list('default')
                with valid_batch_queue_list(SELF)<co
           xml:id="validate-batch_queue_list" />
   'capabilities' ? batch_capabilities
@@ -1029,7 +1029,7 @@ bind '/batch/server' = batch_server;
 
 prefix '/batch/server/nodes';
 
-'worker01.example.org/capabilities' 
+'worker01.example.org/capabilities'
     = list('sw-license', 'fast-network');
 
 'worker02.example.org/capabilities' = list();</programlisting>
@@ -1518,8 +1518,8 @@ prefix '/batch/server/nodes';
         is used to represent a single quote inside the string. For
         instance:</para>
 
-        <programlisting>’foo’ 
-’it’’s a sentence’ 
+        <programlisting>’foo’
+’it’’s a sentence’
 ’ˆ\d+\.\d+$’ </programlisting>
 
         <para>This is the most efficient string representation and should be
@@ -1528,12 +1528,12 @@ prefix '/batch/server/nodes';
         <para>Double quoted strings are more flexible and use the backslash to
         represent escape sequences. For instance:</para>
 
-        <programlisting>"foo" 
-"it’s a sentence" 
-"Java-style escapes: \t (tab) \r (carriage return) \n (newline)" 
-"Java-style escapes: \b (backspace) \f (form feed)" 
-"Hexadecimal escapes: \x3d (=) \x00 (NULL byte) \x0A (newline)" 
-"Miscellaneous escapes: \" (double quote) \\ (backslash)" 
+        <programlisting>"foo"
+"it’s a sentence"
+"Java-style escapes: \t (tab) \r (carriage return) \n (newline)"
+"Java-style escapes: \b (backspace) \f (form feed)"
+"Hexadecimal escapes: \x3d (=) \x00 (NULL byte) \x0A (newline)"
+"Miscellaneous escapes: \" (double quote) \\ (backslash)"
 "this string spans two lines and\
 does not contain a newline"</programlisting>
 
@@ -1543,10 +1543,10 @@ does not contain a newline"</programlisting>
         <para>Multi-line strings can be represented using the 'here-doc'
         syntax, like in shell or Perl.</para>
 
-        <programlisting>'/test' = 'foo' + &lt;&lt;EOT + 'bar'; 
-this code will assign to the path '/test' the string 
-made of ‘foo’, plus this text including the final newline, 
-plus ‘bar’... 
+        <programlisting>'/test' = 'foo' + &lt;&lt;EOT + 'bar';
+this code will assign to the path '/test' the string
+made of ‘foo’, plus this text including the final newline,
+plus ‘bar’...
 EOT</programlisting>
 
         <para>The contents of the 'here-doc' are treated as a single-quoted
@@ -1556,13 +1556,13 @@ EOT</programlisting>
         base64 encode it and put it inside "here-doc” strings like in the
         following example:</para>
 
-        <programlisting>'/system/binary/stuff' = base64_decode(&lt;&lt;EOT); 
+        <programlisting>'/system/binary/stuff' = base64_decode(&lt;&lt;EOT);
 H4sIAOwLyDwAA02PQQ7DMAgE731FX9BT1f8Q
-Z52iYhthEiW/r2SitCdmxCK0E3W8no+36n2G 
+Z52iYhthEiW/r2SitCdmxCK0E3W8no+36n2G
 8UbOrYYWGROCgurBe4JeCexI2ahgWF5rulaL
-tImkDxbucS0tcc3t5GXMAqeZnIYo+TvAmsL8 
+tImkDxbucS0tcc3t5GXMAqeZnIYo+TvAmsL8
 GGLobbUUX7pT+pxkXJc/5Bx5p0ki7Cgq5Kcc
-GrCR8PzruUfP2xfJgVqHCgEAAA== 
+GrCR8PzruUfP2xfJgVqHCgEAAA==
 EOT</programlisting>
 
         <para>The <function>base64_decode</function> function is one of the
@@ -1733,15 +1733,15 @@ EOT</programlisting>
       to work. They can contain properties and resources and you can easily
       access resource children using square brackets:</para>
 
-      <programlisting># populate /table which is an dict 
-’/table/red’ = ’rouge’; 
-’/table/green’ = ’vert’; 
+      <programlisting># populate /table which is an dict
+’/table/red’ = ’rouge’;
+’/table/green’ = ’vert’;
 
-’/test’ = { 
-  x = list(’a’, ’b’, ’c’); # x is a list 
-  y = value(’/table’);     # y is a dict 
+’/test’ = {
+  x = list(’a’, ’b’, ’c’); # x is a list
+  y = value(’/table’);     # y is a dict
   z = x[1] + y[’red’];     # z is a string ('arouge')
-  length(z);               # this will be 6 
+  length(z);               # this will be 6
 };</programlisting>
 
       <para>Local variables are subject to primitive type checking. So the
@@ -2637,6 +2637,22 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
               return a string representation for any argument, including list
               and dict.</entry>
             </row>
+
+            <row>
+                <entry><xref linkend="ip4_to_long" /></entry>
+
+                <entry>Convert the argument, which must be a string
+                representing an IPv4 address in dotted notation to a
+                long.</entry>
+            </row>
+
+            <row>
+                <entry><xref linkend="long_to_ip4"/></entry>
+
+                <entry>Convert the argument, a long into an IPv4
+                address in numbers-and-dots notation</entry>
+            </row>
+
           </tbody>
         </tgroup>
       </table>
@@ -2753,7 +2769,7 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
       <programlisting>function paired_numbers = {
 
   if (ARGC%2 != 0) {
-    error('number of arguments must be even'); 
+    error('number of arguments must be even');
   };
 
   foreach (k, v, ARGV) {
@@ -3006,7 +3022,7 @@ type disk = {
 
       <programlisting>type even_positive_long = long(1..) with (SELF % 2 == 0);
 
-type machine_state_enum = string 
+type machine_state_enum = string
     with match(SELF, 'open|closed|drain');
 
 type ip = string with is_ipv4(SELF);</programlisting>
@@ -3129,7 +3145,7 @@ type component = extensible {
       foreach (index; dependency; component['pre']) {
         if (!exists(SELF['dependency']['active'] ||
              SELF['dependency']['active'])) {
-          error('non-existant or inactive dependency: ' 
+          error('non-existant or inactive dependency: '
                   + dependency);
         };
       };
@@ -3184,7 +3200,7 @@ function valid_export = {
   mypath = info['path'];
 
   exports_path = host + ':/software/components/nfs/exports';
-  
+
   found = false;
   if (path_exists(exports_path)) {
 
@@ -3207,10 +3223,10 @@ type nfs_exports = {
   'authorized_host' : string
 };
 
-# Type containing parameters to mount remote NFS volume.                        
+# Type containing parameters to mount remote NFS volume.
 type nfs_mounts = {
   'host' : string
-  'path' : string           
+  'path' : string
   'mountpoint' : string
 } with valid_export(SELF);
 
@@ -3218,7 +3234,7 @@ type nfs_mounts = {
 type config_nfs = {
   include component
   'exports' ? nfs_exports[]
-  'mounts'  ? nfs_mounts[]   
+  'mounts'  ? nfs_mounts[]
 };</programlisting>
 
       <para>To do this type of validation, the full external path must be
@@ -3505,7 +3521,7 @@ bind '/' = root;
   email = jane.manager@example.org
 }
 @{
-  Example template that shows off the 
+  Example template that shows off the
   annotation features of the compiler.
 }
 object template annotations;
@@ -3538,7 +3554,7 @@ type KV_PAIR = extensible {
   @{additional information fields}
   include EXTERN
 
-  @{key for pair as string} 
+  @{key for pair as string}
   'key' : string
 
   @{value for pair as string}
@@ -3571,11 +3587,11 @@ bind '/pair' = KV_PAIR;
       indentation added for clarity).</para>
 
       <programlisting>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;template xmlns="http://quattor.org/pan/annotations" 
-          name="annotations" 
+&lt;template xmlns="http://quattor.org/pan/annotations"
+          name="annotations"
           type="OBJECT"&gt;
     &lt;desc&gt;
-  Example template that shows off the 
+  Example template that shows off the
   annotation features of the compiler.
 &lt;/desc&gt;
 
@@ -3870,10 +3886,10 @@ alpha = 1
 beta = 2
 EOF
 
-variable CONTENTS = CONTENTS + 
+variable CONTENTS = CONTENTS +
     'user = ' + USER + "\n";
 
-variable CONTENTS = CONTENTS + 
+variable CONTENTS = CONTENTS +
     'quota = ' + to_string(QUOTA) + "\n";
 
 
@@ -3909,7 +3925,7 @@ quota = %d</programlisting>
       <programlisting>variable USER = 'smith';
 variable QUOTA = 10;
 
-'/cfgfile' = format(file_contents('cfg-template.txt'), 
+'/cfgfile' = format(file_contents('cfg-template.txt'),
                     USER, QUOTA);</programlisting>
 
       <para>This is much easier to read and to maintain. It is especially
@@ -3948,7 +3964,7 @@ include if_exists('my_service/posthook');</programlisting>
 
 variable MY_OPTION ?= false;
 
-'/my_service/config/my_option' = 
+'/my_service/config/my_option' =
   if (MY_OPTION) {
     'some value';
   } else {

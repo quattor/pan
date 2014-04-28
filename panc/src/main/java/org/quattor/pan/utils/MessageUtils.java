@@ -8,7 +8,7 @@ import org.quattor.pan.exceptions.CompilerError;
 
 /**
  * Utilities to allow localization of compiler error messages.
- * 
+ *
  * @author loomis
  */
 public class MessageUtils {
@@ -421,6 +421,16 @@ public class MessageUtils {
 
 	public final static String MSG_INVALID_FIRST_ARG_FORMAT = "MSG_INVALID_FIRST_ARG_FORMAT";
 
+        public final static String MSG_INVALID_TYPE_IP_TO_LONG = "MSG_INVALID_TYPE_IP_TO_LONG";
+
+        public final static String MSG_INVALID_IP4_FORMAT = "MSG_INVALID_IP4_FORMAT";
+
+        public final static String MSG_INVALID_IP4_BITMASK = "MSG_INVALID_IP4_BITMASK";
+
+        public final static String MSG_INVALID_TYPE_LONG_TO_IP = "MSG_INVALID_TYPE_LONG_TO_IP";
+
+        public final static String MSG_INVALID_RANGE_LONG_TO_IP = "MSG_INVALID_RANGE_LONG_TO_IP";
+
 	public final static String MSG_INVALID_SYNTAX_ROOT_ELEMENT = "MSG_INVALID_SYNTAX_ROOT_ELEMENT";
 
 	public final static String MSG_INVALID_TYPE_FOR_ROOT_ELEMENT = "MSG_INVALID_TYPE_FOR_ROOT_ELEMENT";
@@ -466,10 +476,10 @@ public class MessageUtils {
 	/**
 	 * Look up a localized message in the message bundle and return a
 	 * MessageFormat for it.
-	 * 
+	 *
 	 * @param msgKey
 	 *            key that identifies which message to retrieve
-	 * 
+	 *
 	 * @return MessageFormat corresponding to the given key
 	 */
 	public static String getMessageString(String msgKey) {
@@ -492,12 +502,12 @@ public class MessageUtils {
 	/**
 	 * Format a message corresponding to the given key and using the given
 	 * arguments.
-	 * 
+	 *
 	 * @param msgKey
 	 *            key that identifies which message to retrieve
 	 * @param args
 	 *            arguments to use to complete the message
-	 * 
+	 *
 	 * @return localized String corresponding to the given key and arguments
 	 */
 	public static String format(String msgKey, Object... args) {

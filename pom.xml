@@ -191,7 +191,7 @@
       <dependency>
         <groupId>org.clojure</groupId>
         <artifactId>tools.cli</artifactId>
-        <version>0.2.2</version>
+        <version>0.3.1</version>
       </dependency>
 
       <dependency>

@@ -3508,7 +3508,7 @@ bind '/' = root;
   Example template that shows off the 
   annotation features of the compiler.
 }
-object template annotations;
+object template mysite/example;
 
 @use{
   type = long
@@ -3558,26 +3558,33 @@ bind '/pair' = KV_PAIR;
       provide both the desired output directory (which must exist) using the
       <option>--output-dir</option> option, as well as the root file system
       directory for all of the processed files with the
-      <option>--base-dir</option> option. Using the following command to
-      process the file:</para>
+      <option>--base-dir</option> option if this is not the current directory.
+      <option>--base-dir</option> option must be adjusted so that the template
+      file paths specified match the template namespaces, as for compiling the
+      themplates.</para>
 
+      <para>Below is an example:</para>
       <programlisting>$ panc-annotations \
-  --output-dir=annotations \
-  --base-dir=. \
-  annotations.pan</programlisting>
+          --output-dir=annotations \
+          --base-dir=templates \
+          mysite/exammple.pan</programlisting>
 
-      <para>will produce the following output in the file
-      <filename>annotations.pan.annotation.xml</filename> (with whitespace and
-      indentation added for clarity).</para>
+      <para>This command 
+      will produce the following output (with whitespace and
+      indentation added for clarity) in the file
+      <filename>example.pan.annotation.xml</filename> located in
+      <filename>annotations/mysite</filename> from template file 
+      <filename>example.pan</filename> located in subdirectory 
+      <filename>templates/mysite</filename> of current directory.</para>
 
       <programlisting>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;template xmlns="http://quattor.org/pan/annotations" 
           name="annotations" 
           type="OBJECT"&gt;
     &lt;desc&gt;
-  Example template that shows off the 
-  annotation features of the compiler.
-&lt;/desc&gt;
+        Example template that shows off the 
+        annotation features of the compiler.
+    &lt;/desc&gt;
 
     &lt;maintainer&gt;
         &lt;name&gt;Jane Manager&lt;/name&gt;
@@ -3610,9 +3617,9 @@ bind '/pair' = KV_PAIR;
 
     &lt;type name="KV_PAIR"&gt;
         &lt;documentation&gt;
-            &lt;desc&gt;
-  Simple definition of a key value pair.
-&lt;/desc&gt;
+        &lt;desc&gt;
+            Simple definition of a key value pair.
+        &lt;/desc&gt;
         &lt;/documentation&gt;
 
         &lt;basetype extensible="yes"&gt;

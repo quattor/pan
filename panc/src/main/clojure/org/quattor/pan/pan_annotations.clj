@@ -27,9 +27,9 @@
     (current-directory)
     (create-absolute-file dir)))
 
-(defn get-compiler-options
-  [{base-dir :base-dir output-dir :output-dir}]
-  (CompilerOptions/createAnnotationOptions output-dir base-dir))
+(defn get-compiler-options [options]
+  (println (str "base-dir=" (:base-dir options) "\toutput-dir=" (:output-dir options))) 
+  (CompilerOptions/createAnnotationOptions (clojure.java.io/file (:output-dir options)) (clojure.java.io/file (:base-dir options))))
 
 (defn generate-annotations [options files]
   (let [compiler-options (get-compiler-options options)
@@ -63,19 +63,21 @@
 
 (defn error-msg [errors]
   (str "The following errors occurred while parsing your command:\n\n"
-       (string/join \newline errors)))
+       (string/join \n errors)))
 
 (defn exit [status msg]
   (println msg)
   (System/exit status))
 
 (defn -main [& args]
-  (let [{:keys [options files errors summary]} (parse-opts args cli-options)]
+  (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)]
     (cond
       (:help options) (exit 0 (usage summary))
       (< (count args) 1) (exit 1 (usage summary))
-      errors (exit 1 (error-msg errors)))
-    (let [^CompilerResults results (generate-annotations options files)]
+      errors (exit 1 (str (error-msg errors) "\n\n" (usage summary))))
+    (when (:verbose options)
+      (println (str "Templates to process: " arguments))) 
+    (let [^CompilerResults results (generate-annotations options arguments)]
       (if-let [errors (.formatErrors results)]
         (println errors)
         "")

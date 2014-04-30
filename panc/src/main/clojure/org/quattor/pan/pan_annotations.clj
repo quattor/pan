@@ -1,7 +1,8 @@
 (ns org.quattor.pan.pan-annotations
   (:gen-class)
   (:require [clojure.tools.cli :refer [parse-opts]]
-            [clojure.string :as string])
+            [clojure.string :as string]
+            [clojure.java.io :as javaio])
   (:import (java.io File)
            (org.quattor.pan CompilerOptions CompilerResults)))
 
@@ -28,8 +29,12 @@
     (create-absolute-file dir)))
 
 (defn get-compiler-options [options]
-  (println (str "base-dir=" (:base-dir options) "\toutput-dir=" (:output-dir options))) 
-  (CompilerOptions/createAnnotationOptions (clojure.java.io/file (:output-dir options)) (clojure.java.io/file (:base-dir options))))
+  (when (> (:verbose options) 0)
+    (println (str "base-dir=" (:base-dir options) "\toutput-dir=" (:output-dir options))))
+  (let [compiler-options (CompilerOptions/createAnnotationOptions (:output-dir options) (:base-dir options))]
+    (when (> (:verbose options) 1)
+      (println "compiler-options:\n" compiler-options))
+    compiler-options))
 
 (defn generate-annotations [options files]
   (let [compiler-options (get-compiler-options options)
@@ -41,12 +46,18 @@
    ;; example argument description, and a description. All three are optional
    ;; and positional. short and long option must be replaced by nil if absent.
    [nil "--base-dir DIR" "base directory for templates" 
-    :default (current-directory) :parse-fn parse-directory]
+    :default (current-directory)
+    :parse-fn parse-directory]
    [nil "--output-dir DIR" "output directory" 
-    :default (current-directory) :parse-fn parse-directory]
+    :default (current-directory)
+    :parse-fn parse-directory]
    [nil "--java-opts OPTS" "options for JVM"]
-   ["-v" "--verbose" "show statistics and progress" :default false :flag true]
-   ["-h" "--help" "print command help" :default false :flag true]])
+   ["-v" "--verbose" "verbosity level; may be specified multiple times to increase value"
+    :default 0
+    :assoc-fn (fn [m k _] (update-in m [k] inc))]
+   ["-h" "--help" "print command help"
+    :default false
+    :flag true]])
    
 (defn usage [options-summary]
   (->> ["This tool processes annotations in pan templates."
@@ -75,7 +86,7 @@
       (:help options) (exit 0 (usage summary))
       (< (count args) 1) (exit 1 (usage summary))
       errors (exit 1 (str (error-msg errors) "\n\n" (usage summary))))
-    (when (:verbose options)
+    (when (> (:verbose options) 0)
       (println (str "Templates to process: " arguments))) 
     (let [^CompilerResults results (generate-annotations options arguments)]
       (if-let [errors (.formatErrors results)]

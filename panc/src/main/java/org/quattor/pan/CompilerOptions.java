@@ -164,8 +164,6 @@ public class CompilerOptions {
      * @param rootElement
      *            string containing description of root element to use; if null
      *            or empty string, this defaults to an empty dict
-     * @param failOnWarn
-     *            if set to true, all warnings will cause compilation to fail
      * @throws SyntaxException
      *             if the expression for the rootElement is invalid
      */
@@ -301,14 +299,12 @@ public class CompilerOptions {
     }
 
     /**
-     * Create a CompilerOptions object that is appropriate for just doing a
-     * syntax check.
+     * Create a CompilerOptions object that is appropriate for processiing annotations
      * 
-     * @param deprecationLevel
-     *            set the deprecation level, the higher the level the fewer
-     *            deprecation warnings are produced; 0 produces all warnings
-     * @param failOnWarn
-     *            if set to true, all warnings will cause compilation to fail
+     * @param annotationDirectory
+     *            Annotation output base directory
+     * @param annotationBaseDirectory
+     *            Annotation source base directory
      * @return
      */
     public static CompilerOptions createAnnotationOptions(
@@ -373,15 +369,15 @@ public class CompilerOptions {
 
         if (!d.isAbsolute()) {
             throw new IllegalArgumentException(dtype
-                    + " directory must be an absolute path");
+                    + " directory must be an absolute path (" + d.getPath() + ")");
         }
         if (!d.exists()) {
             throw new IllegalArgumentException(dtype
-                    + " directory does not exist");
+                    + " directory does not exist (" + d.getPath() + ")");
         }
         if (!d.isDirectory()) {
             throw new IllegalArgumentException(dtype
-                    + " directory value is not a directory");
+                    + " directory value is not a directory (" + d.getPath() + ")");
         }
 
     }
@@ -497,14 +493,70 @@ public class CompilerOptions {
         StringBuilder sb = new StringBuilder();
 
         sb.append("debug include pattern: ");
-        sb.append(debugNsInclude.toString());
-        sb.append("\n");
-        sb.append("\n");
+        if ( debugNsInclude != null ) {
+          sb.append(debugNsInclude.toString());
+          sb.append("\n");
+        } else {
+          sb.append("null;\n");
+        }
 
         sb.append("debug exclude pattern: ");
-        sb.append(debugNsExclude.toString());
+        if ( debugNsExclude != null ) {
+          sb.append(debugNsExclude.toString());
+          sb.append("\n");
+        } else {
+          sb.append("null;\n");
+        }
         sb.append("\n");
+
+        sb.append("output directory: ");
+        if ( outputDirectory != null ) {
+          sb.append(outputDirectory);
+          sb.append("\n");
+        } else {
+          sb.append("null;\n");
+        }
+
+        sb.append("annotation source base directory: ");
+        if ( annotationBaseDirectory != null ) {
+          sb.append(annotationBaseDirectory);
+          sb.append("\n");
+        } else {
+          sb.append("null;\n");
+        }
+
+        sb.append("annotation output base directory: ");
+        if ( annotationDirectory != null ) {
+          sb.append(annotationDirectory);
+          sb.append("\n");
+        } else {
+          sb.append("null;\n");
+        }
         sb.append("\n");
+
+        sb.append("formatter: ");
+        if (formatters != null) {
+            sb.append(formatters.getClass().toString());
+            sb.append("\n");
+        } else {
+            sb.append("null\n");
+        }
+
+        sb.append("rootElement: ");
+        if (rootElement != null) {
+            sb.append(rootElement);
+            sb.append("\n");
+        } else {
+            sb.append("null\n");
+        }
+
+        sb.append("source repository: ");
+        if ( sourceRepository != null ) {
+          sb.append(sourceRepository.toString());
+          sb.append("\n");
+        } else {
+          sb.append("null;\n");
+        }
 
         sb.append("max. iteration: ");
         sb.append(maxIteration);
@@ -514,20 +566,8 @@ public class CompilerOptions {
         sb.append(maxRecursion);
         sb.append("\n");
 
-        sb.append("output directory: ");
-        sb.append(outputDirectory);
-        sb.append("\n");
-
-        if (formatters != null) {
-            sb.append("formatter: ");
-            sb.append(formatters.getClass().toString());
-            sb.append("\n");
-        } else {
-            sb.append("formatter: null\n");
-        }
-
-        sb.append("source repository: ");
-        sb.append(sourceRepository.toString());
+        sb.append("deprecation warnings: ");
+        sb.append(deprecationWarnings);
         sb.append("\n");
 
         return sb.toString();

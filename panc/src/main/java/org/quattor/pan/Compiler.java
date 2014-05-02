@@ -287,7 +287,19 @@ public class Compiler {
             }
         } else {
             for (File f : files) {
-                ccache.compile(f.getAbsolutePath());
+                File t;
+                // When processing annotations, the annotationBaseDirectory must be used to 
+                // build the actual template path, except if the path name is already absolute
+                // (this happens when the compiler is called from ant)
+                if ( options.annotationBaseDirectory != null && !f.isAbsolute() ) {
+                  // FIXME: brute force addition of a /, should not have negative side effect as a file path should not
+                  // contain a useful //...
+                  String tpath = (options.annotationBaseDirectory.getPath() + "/" + f.getPath()).replaceAll("//","/");
+                  t = new File(tpath);
+                } else {
+                  t = f;
+                }
+                ccache.compile(t.getAbsolutePath());
             }
         }
 

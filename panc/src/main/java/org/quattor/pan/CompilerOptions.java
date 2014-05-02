@@ -299,12 +299,12 @@ public class CompilerOptions {
     }
 
     /**
-     * Create a CompilerOptions object that is appropriate for processiing annotations
-     * 
+     * Create a CompilerOptions object that is appropriate for processing annotations
+     *
      * @param annotationDirectory
-     *            Annotation output base directory
+     *            Output base directory that will contain the annotation xml files
      * @param annotationBaseDirectory
-     *            Annotation source base directory
+     *            Base directory where template files are being looked up
      * @return
      */
     public static CompilerOptions createAnnotationOptions(

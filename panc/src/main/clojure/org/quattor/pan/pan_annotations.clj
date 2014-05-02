@@ -52,6 +52,9 @@
     :default (current-directory)
     :parse-fn parse-directory]
    [nil "--java-opts OPTS" "options for JVM"]
+   ["-q" "--quiet" "do not print statistics"
+    :default false
+    :flag true]
    ["-v" "--verbose" "verbosity level; may be specified multiple times to increase value"
     :default 0
     :assoc-fn (fn [m k _] (update-in m [k] inc))]
@@ -92,5 +95,6 @@
       (if-let [errors (.formatErrors results)]
         (println errors)
         "")
-      (println (.formatStats results)))))
+      (if (not (:quiet options))
+        (println (.formatStats results))))))
 

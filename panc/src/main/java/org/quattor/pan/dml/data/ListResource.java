@@ -322,7 +322,7 @@ public class ListResource extends Resource {
 			return (index < backingList.size());
 		}
 
-		public Resource.Entry next() {
+		synchronized public Resource.Entry next() {
 			Resource.Entry entry = null;
 			try {
 				entry = new ListResourceEntry(LongProperty.getInstance(index),

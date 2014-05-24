@@ -1,5 +1,5 @@
 /*
- Copyright 2013 - Luis Fernando Mu�oz Mej�as and Universiteit Gent.
+ Copyright 2013 - Luis Fernando Muñoz Mejías and Universiteit Gent.
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -12,9 +12,6 @@
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
-
- $HeadURL: https://svn.lal.in2p3.fr/LCG/QWG/panc/trunk/src/org/quattor/pan/dml/functions/Format.java $
- $Id: Format.java 2799 2008-01-26 17:10:23Z loomis $
  */
 
 package org.quattor.pan.dml.functions;
@@ -46,7 +43,7 @@ import org.quattor.pan.template.SourceRange;
  * Produces the binary representation of an IPv4 address, maybe with
  * the binary representation of the network mask part of the string.
  *
- * @author Luis Fernando Muñoz Mejías
+ * @author Luis Fernando MuÃ±oz MejÃ­as
  *
  */
 final public class IpToLong extends BuiltInFunction {

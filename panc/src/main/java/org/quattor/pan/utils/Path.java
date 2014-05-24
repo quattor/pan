@@ -42,9 +42,9 @@ import org.quattor.pan.template.Template;
  * This immutable class represents a pan path. The paths can be either absolute
  * or relative. The individual path terms are validated when the Path is
  * created; an EvaluationException will be thrown if there is a syntax error.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 public class Path implements Comparable<Path> {
 
@@ -84,7 +84,7 @@ public class Path implements Comparable<Path> {
      * both an opening and closing brace.
      */
     private static Pattern validEscapeSequences = Pattern
-            .compile("^([^\\{\\}]*(\\{[^\\{\\}]*\\})?)*$"); //$NON-NLS-1$
+            .compile("^([^\\{\\}]*+(\\{[^\\{\\}]*\\})?)*$"); //$NON-NLS-1$
 
     /**
      * Constructor of a path from a String. If the path does not have the
@@ -295,7 +295,7 @@ public class Path implements Comparable<Path> {
 
     /**
      * Get the type of this path.
-     * 
+     *
      * @return the type of this path
      */
     public PathType getPathType() {

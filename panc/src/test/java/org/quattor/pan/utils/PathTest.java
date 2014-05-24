@@ -145,7 +145,9 @@ public class PathTest {
 	@Test
 	public void testInvalidEscapedValues() {
 		List<String> paths = Arrays.asList("{", "}", "{{}", "{}}",
-				"a/{a{b}c}/d", "a/{b}c}/d");
+				"a/{a{b}c}/d", "a/{b}c}/d",
+                "/software/components/filecopy/{/etc" // github issue #47
+        );
 		for (String s : paths) {
 			try {
 				new Path(s);
@@ -367,7 +369,7 @@ public class PathTest {
 	public void resolveNulls() throws SyntaxException {
 		assertNull(Path.resolve(null, null));
 	}
-	
+
 	@Test
 	public void resolveAgainstNull() throws SyntaxException {
 		Path relative = new Path("alpha");
@@ -391,5 +393,5 @@ public class PathTest {
 		Path resolved = Path.resolve(root, relative);
 		assertEquals(correct, resolved);
 	}
-	
+
 }

@@ -1067,6 +1067,12 @@ prefix '/batch/server/nodes';
         schema, and validation functions. Each template is named and is
         contained in a file having the same name.</para>
 
+        <warning>
+          <para>All pan source files, templates as well as included files,
+          must be encoded in UTF-8. No other character encodings are
+          supported.</para>
+        </warning>
+
         <para>The syntax of a template file is simple:</para>
 
         <para><programlisting>[ <replaceable>modifier</replaceable> ] <literal>template</literal> <replaceable>template-name</replaceable>;

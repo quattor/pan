@@ -1,56 +1,104 @@
 (ns org.quattor.pan.pan-annotations
   (:gen-class)
-  (:require [clojure.tools.cli :refer :all]
+  (:require [clojure.tools.cli :refer [parse-opts]]
             [clojure.string :as str])
   (:import (java.io File)
            (org.quattor.pan CompilerOptions CompilerResults)))
 
-(defn path-splitter-re []
-  (re-pattern (str "[^" File/pathSeparator "]+")))
+(def ^:const usage-fmt "This command processes annotations in pan templates.
 
-(defn split-path [path]
-  (re-seq (path-splitter-re) path))
+Usage: panc-annotations [options] files
 
-(defn create-absolute-file [^String name]
-  (.getAbsoluteFile (File. name)))
+  Options:
+  %s
 
-(defn current-directory []
-  (create-absolute-file ""))
+  Arguments:
+    files    space-separated list of pan template files relative to base directory
+")
 
-(defn parse-include-path [path]
-  (if-let [dirs (split-path path)]
-    (map create-absolute-file dirs)
-    (list (create-absolute-file ""))))
+(defn create-absolute-file
+  "Creates an absolute file from the given file name.  If
+   the filename is nil, then an absolute File to the
+   current working directory is returned."
+  [^String name]
+  (-> (or name "")
+      (File.)
+      (.getAbsoluteFile)))
 
-(defn parse-directory [dir]
+(defn current-directory
+  []
+  (create-absolute-file nil))
+
+(defn parse-directory
+  [dir]
   (if (str/blank? dir)
     (current-directory)
     (create-absolute-file dir)))
 
 (defn get-compiler-options
-  [{base-dir :base-dir output-dir :output-dir}]
-  (CompilerOptions/createAnnotationOptions output-dir base-dir))
+  [{:keys [base-dir output-dir verbose]}]
 
-(defn generate-annotations [options files]
+  (let [compiler-options (CompilerOptions/createAnnotationOptions output-dir base-dir)]
+    (when (pos? verbose)
+      (println (format "base-dir=%s\toutput-dir=%s" base-dir output-dir)))
+    (when (> verbose 1)
+      (println "compiler-options:\n" compiler-options))
+    compiler-options))
+
+(defn generate-annotations
+  [options files]
   (let [compiler-options (get-compiler-options options)
         pan-sources (map #(File. ^String %) files)]
     (org.quattor.pan.Compiler/run compiler-options nil pan-sources)))
 
-(defn -main [& args]
-  (let [[options files banner]
-        (cli args
-             ["--base-dir" "base directory for templates" 
-              :default (current-directory) :parse-fn parse-directory]
-             ["--output-dir" "output directory" 
-              :default (current-directory) :parse-fn parse-directory]
-             ["--java-opts" "options for JVM"]
-             ["-v" "--verbose" "show statistics and progress" :default false :flag true]
-             ["-h" "--help" "print command help" :default false :flag true])]
-    (when (:help options)
-      (println banner)
-      (System/exit 0))
-    (let [^CompilerResults results (generate-annotations options files)]
+(def cli-options
+  [;; First three strings describe a short-option, long-option with optional
+   ;; example argument description, and a description. All three are optional
+   ;; and positional. short and long option must be replaced by nil if absent.
+    [nil "--base-dir DIR" "base directory for templates"
+     :default (current-directory)
+     :parse-fn parse-directory]
+    [nil "--output-dir DIR" "output directory"
+     :default (current-directory)
+     :parse-fn parse-directory]
+    [nil "--java-opts OPTS" "options for JVM"]
+    ["-q" "--quiet" "do not print statistics"
+     :default false
+     :flag true]
+    ["-v" "--verbose" "verbosity level; may be specified multiple times to increase value"
+     :default 0
+     :assoc-fn (fn [m k _] (update-in m [k] inc))]
+    ["-h" "--help" "print help message"
+     :default false
+     :flag true]])
+
+(defn usage
+  [options-summary]
+  (format usage-fmt options-summary))
+
+(defn error-msg
+  [errors]
+  (str "The following errors occurred while parsing your command:\n\n"
+       (str/join \n errors)))
+
+(defn exit
+  [status msg]
+  (println msg)
+  (System/exit status))
+
+(defn -main
+  [& args]
+
+  (let [{:keys [{:keys [help verbose quiet] :as options}
+                arguments errors summary]} (parse-opts args cli-options)]
+    (cond
+      help (exit 0 (usage summary))
+      (zero? (count args)) (exit 1 (usage summary))
+      errors (exit 1 (str (error-msg errors) "\n\n" (usage summary))))
+    (when (pos? verbose)
+      (println "Templates to process: " arguments))
+    (let [^CompilerResults results (generate-annotations options arguments)]
       (if-let [errors (.formatErrors results)]
-        (println errors)
-        "")
-      (println (.formatStats results)))))
+        (println errors))
+      (if-not quiet
+        (println (.formatStats results))))))

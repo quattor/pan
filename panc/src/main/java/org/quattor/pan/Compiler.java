@@ -52,13 +52,13 @@ import org.quattor.pan.tasks.TaskResult;
  * Primary java interface for invoking the pan compiler. All external methods of
  * running the compiler (ant tasks, scripts, etc.) should make use of an
  * instance of this class.
- * 
+ *
  * Instances of this class are thread-safe (the underlying implementation uses
  * threads in the compilation and build of machine templates). However, the
  * <code>process</code> method should only be invoked only by a single thread;
  * the method is synchronized to ensure this. The <code>submit</code> method
  * should be called only by tasks created internally by the compiler.
- * 
+ *
  * @author loomis
  */
 public class Compiler {
@@ -149,7 +149,7 @@ public class Compiler {
     /**
      * Create a compiler object with the given options and that will process the
      * given templates (either by name or absolute path).
-     * 
+     *
      * @param options
      *            compiler options to use for the created compiler
      * @param objectNames
@@ -201,7 +201,7 @@ public class Compiler {
     /**
      * This is a convenience method which creates a compiler and then invokes
      * the <code>process</code> method.
-     * 
+     *
      * @param options
      *            compiler options to use for the created compiler
      * @param objectNames
@@ -209,7 +209,7 @@ public class Compiler {
      *            looked-up on the load path
      * @param tplFiles
      *            absolute file names of templates to process
-     * 
+     *
      * @return results from the compilation/build
      */
     public static CompilerResults run(CompilerOptions options,
@@ -220,7 +220,7 @@ public class Compiler {
     /**
      * Extracts the version of the compiler and prints the value on the standard
      * output. This is useful for packaging of the compiler.
-     * 
+     *
      * @param args
      *            all arguments are ignored
      */
@@ -238,7 +238,7 @@ public class Compiler {
      * each other, it is possible to deadlock the compilation with a rigidly
      * fixed build queue. To avoid this, allow the build queue limit to be
      * increased.
-     * 
+     *
      * @param minLimit
      *            minimum build queue limit
      */
@@ -263,7 +263,7 @@ public class Compiler {
      * initialize this instance. This will run through the complete compiling,
      * building, and validation stages as requested. This method should only be
      * invoked once per instance.
-     * 
+     *
      * @return the statistics of the compilation and any exceptions which were
      *         thrown
      */
@@ -286,7 +286,11 @@ public class Compiler {
                 ccache.retrieve(f.getAbsolutePath(), false);
             }
         } else {
+            // FIXME: Determine if this does the correct thing (nothing) for a syntax check.
             for (File f : files) {
+                if (!f.isAbsolute() && options.annotationBaseDirectory != null) {
+                    f = new File(options.annotationBaseDirectory, f.getPath());
+                }
                 ccache.compile(f.getAbsolutePath());
             }
         }
@@ -339,7 +343,7 @@ public class Compiler {
     /**
      * Returns a reference to the compile cache used to store compiled
      * templates.
-     * 
+     *
      * @return reference to compile cache
      */
     public CompileCache getCompileCache() {
@@ -349,7 +353,7 @@ public class Compiler {
     /**
      * Returns a reference to objects (machine profiles) which have already been
      * built. This allows cross-validation of templates.
-     * 
+     *
      * @return reference to object cache
      */
     public BuildCache getBuildCache() {
@@ -372,7 +376,7 @@ public class Compiler {
      * Submits a task to one of the compiler's task queues for processing.
      * Although public, this method should only be called by tasks started by
      * the compiler itself.
-     * 
+     *
      * @param task
      *            task to run on one of the compiler's task queues
      */
@@ -396,9 +400,9 @@ public class Compiler {
      * This class orders Throwables allowing duplicates to be removed. It orders
      * them based on their system identity hash code. The implementation will
      * not handle null values gracefully and will throw a NPE.
-     * 
+     *
      * @author loomis
-     * 
+     *
      */
     @SuppressWarnings("serial")
     public static class ThrowableComparator implements Serializable,

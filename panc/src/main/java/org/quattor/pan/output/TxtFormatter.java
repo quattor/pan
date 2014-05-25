@@ -52,7 +52,7 @@ public class TxtFormatter extends PanTxtFormatter {
 	@Override
 	public void writeBegin(PrintWriter ps, String nbTab, String name, int n,
 			String s) {
-		ps.printf("%s+-%s\n", nbTab, name);
+		ps.printf("%s+-%s%n", nbTab, name);
 	}
 
 	@Override
@@ -62,6 +62,6 @@ public class TxtFormatter extends PanTxtFormatter {
 	@Override
 	public void writeProperties(PrintWriter ps, String nbTab, String name,
 			String type, String value) {
-		ps.printf("%s$ %s : (%s) '%s'\n", nbTab, name, type, value);
+		ps.printf("%s$ %s : (%s) '%s'%n", nbTab, name, type, value);
 	}
 }

@@ -51,7 +51,7 @@ public class JsonFormatter extends AbstractFormatter {
 	private JsonFormatter() {
 		super("json", "json");
 	}
-	
+
 	protected JsonFormatter(String suffix, String key) {
 		super(suffix, key);
 	}
@@ -83,7 +83,7 @@ public class JsonFormatter extends AbstractFormatter {
 
 	}
 
-	private class PropertySerializer implements JsonSerializer<Property> {
+	private static class PropertySerializer implements JsonSerializer<Property> {
 		public JsonElement serialize(Property src, Type typeOfSrc,
 				JsonSerializationContext context) {
 
@@ -99,7 +99,7 @@ public class JsonFormatter extends AbstractFormatter {
 		}
 	}
 
-	private class HashSerializer implements JsonSerializer<HashResource> {
+	private static class HashSerializer implements JsonSerializer<HashResource> {
 
 		public JsonElement serialize(HashResource src, Type typeOfSrc,
 				JsonSerializationContext context) {
@@ -116,7 +116,7 @@ public class JsonFormatter extends AbstractFormatter {
 		}
 	}
 
-	private class ListSerializer implements JsonSerializer<ListResource> {
+	private static class ListSerializer implements JsonSerializer<ListResource> {
 
 		public JsonElement serialize(ListResource src, Type typeOfSrc,
 				JsonSerializationContext context) {

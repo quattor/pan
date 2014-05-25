@@ -26,9 +26,9 @@ import org.quattor.pan.dml.data.Element;
  * Exceptions of this type are thrown when executing a DML return statement.
  * Implementing the return statement in this way allows most of the stack
  * information to be kept within the virtual machine.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 @SuppressWarnings("serial")
 public class ReturnValueException extends RuntimeException {
@@ -36,7 +36,7 @@ public class ReturnValueException extends RuntimeException {
 	final private Element element;
 
 	public ReturnValueException(Element element) {
-		super((String) null);
+		super("ReturnValueException");
 		this.element = element;
 	}
 
@@ -46,7 +46,7 @@ public class ReturnValueException extends RuntimeException {
 
 	@Override
 	public String getMessage() {
-		return "ReturnValueException [" + element + "]";
+		return super.getMessage() + " [" + element + "]";
 	}
 
 }

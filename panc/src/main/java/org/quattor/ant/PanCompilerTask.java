@@ -45,9 +45,9 @@ import org.quattor.pan.repository.SourceType;
  * This task allows all of the compiler parameters to be accessed and will
  * optionally check dependency files before starting a build. See individual
  * setter methods for the parameters which can be used in the build file.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 public class PanCompilerTask extends Task {
 
@@ -73,12 +73,6 @@ public class PanCompilerTask extends Task {
     private boolean debugVerbose = false;
 
     private Pattern ignoreDependencyPattern = null;
-
-    private Boolean xmlWriteEnabled = null;
-
-    private Boolean depWriteEnabled = null;
-
-    private Boolean gzipOutput = null;
 
     private String formatterName = null;
 
@@ -139,9 +133,6 @@ public class PanCompilerTask extends Task {
             deprecationWarnings = CompilerOptions.getDeprecationWarnings(
                     deprecationLevel, failOnWarn);
         }
-
-        // This can be dropped when the old style parameters are removed.
-        setOldStyleOutputFormats();
 
         // Collect the options for the compilation.
         CompilerOptions options = null;
@@ -219,47 +210,10 @@ public class PanCompilerTask extends Task {
         }
     }
 
-    // If any of the old style output parameters are used, then set the various
-    // internal parameters correctly.
-    private void setOldStyleOutputFormats() {
-        if (xmlWriteEnabled != null || depWriteEnabled != null
-                || formatterName != null || gzipOutput != null) {
-
-            formatters = new HashSet<Formatter>();
-
-            String gz = (gzipOutput == null || !gzipOutput) ? "" : ".gz";
-
-            if (xmlWriteEnabled == null || xmlWriteEnabled) {
-                if (formatterName == null) {
-                    formatterName = "pan";
-                }
-            } else {
-                formatterName = null;
-            }
-
-            if (formatterName != null) {
-
-                String fname = formatterName + gz;
-                Formatter formatter = FormatterUtils
-                        .getFormatterInstance(fname);
-                if (formatter == null) {
-                    throw new BuildException("unknown output formatter: "
-                            + fname);
-                }
-
-                formatters.add(formatter);
-            }
-
-            if (depWriteEnabled == null || depWriteEnabled) {
-                formatters.add(DepFormatter.getInstance());
-            }
-        }
-    }
-
     /**
      * Set the directory to use for the include globs. This is required only if
      * the includes parameter is set.
-     * 
+     *
      * @param includeroot
      *            File giving the root directory for the include globs
      */
@@ -279,7 +233,7 @@ public class PanCompilerTask extends Task {
 
     /**
      * Set the include globs to use for the pan compiler loadpath.
-     * 
+     *
      * @param includes
      *            String of comma- or space-separated file globs
      */
@@ -303,7 +257,7 @@ public class PanCompilerTask extends Task {
      * children of the path have been processed. These are the include
      * directories to find non-object templates. Non-directory elements will be
      * silently ignored.
-     * 
+     *
      * @param path
      *            a configured Path
      */
@@ -316,7 +270,7 @@ public class PanCompilerTask extends Task {
      * Collect all of the directories listed within enclosed path tags. Order of
      * the path elements is preserved. Duplicates are included where first
      * specified.
-     * 
+     *
      * @param p
      *            Path containing directories to include in compilation
      */
@@ -335,7 +289,7 @@ public class PanCompilerTask extends Task {
      * Support nested fileset elements. This is called by ant only after all of
      * the children of the fileset have been processed. Collect all of the
      * selected files from the fileset.
-     * 
+     *
      * @param fileset
      *            a configured FileSet
      */
@@ -347,7 +301,7 @@ public class PanCompilerTask extends Task {
      * Utility method that adds all of the files in a fileset to the list of
      * files to be processed. Duplicate files appear only once in the final
      * list. Files not ending with a valid source file extension are ignored.
-     * 
+     *
      * @param fs
      *            FileSet from which to get the file names
      */
@@ -371,7 +325,7 @@ public class PanCompilerTask extends Task {
      * Setting this flag will print debugging information from the task itself.
      * This is primarily useful if one wants to debug a build using the command
      * line interface.
-     * 
+     *
      * @param debugTask
      *            flag to print task debugging information
      */
@@ -382,7 +336,7 @@ public class PanCompilerTask extends Task {
 
     /**
      * Set the regular expression used to include pan namespaces for debugging.
-     * 
+     *
      * @param pattern
      */
     public void setDebugNsInclude(String pattern) {
@@ -391,7 +345,7 @@ public class PanCompilerTask extends Task {
 
     /**
      * Set the regular expression used to exclude pan namespaces for debugging.
-     * 
+     *
      * @param pattern
      */
     public void setDebugNsExclude(String pattern) {
@@ -401,7 +355,7 @@ public class PanCompilerTask extends Task {
     /**
      * Provides a dict() with a data structure that will be used to initialize
      * all generated profiles.
-     * 
+     *
      * @param initialData
      */
     public void setInitialData(String initialData) {
@@ -411,7 +365,7 @@ public class PanCompilerTask extends Task {
     /**
      * Set the output directory for generated machine profiles and dependency
      * files.
-     * 
+     *
      * @param outputDir
      *            directory for produced files
      */
@@ -422,7 +376,7 @@ public class PanCompilerTask extends Task {
     /**
      * Defines the formatters used to generate the output files. The default
      * value is "pan,dep".
-     * 
+     *
      * @param fmts
      *            comma-separated list of formatters to use
      */
@@ -433,7 +387,7 @@ public class PanCompilerTask extends Task {
     /**
      * The pan compiler allows an iteration limit to be set to avoid infinite
      * loops. Non-positive values indicate that no limit should be used.
-     * 
+     *
      * @param maxIteration
      *            maximum number of permitted iterations
      */
@@ -443,7 +397,7 @@ public class PanCompilerTask extends Task {
 
     /**
      * Sets the default maximum number of recursions.
-     * 
+     *
      * @param maxRecursion
      */
     public void setMaxRecursion(int maxRecursion) {
@@ -453,7 +407,7 @@ public class PanCompilerTask extends Task {
     /**
      * Enable the given types of logging. Note that NONE will take precedence
      * over active logging flags and turn all logging off.
-     * 
+     *
      * @param loggingFlags
      *            a comma-separated list of logging types to enable
      */
@@ -463,7 +417,7 @@ public class PanCompilerTask extends Task {
 
     /**
      * Set the log file to use for logging.
-     * 
+     *
      * @param logFile
      *            file to use for logging
      */
@@ -474,7 +428,7 @@ public class PanCompilerTask extends Task {
     /**
      * Determines whether deprecation warnings are emitted and if so, whether to
      * treat them as fatal errors.
-     * 
+     *
      * @param warnings
      */
     public void setWarnings(String warnings) {
@@ -490,7 +444,7 @@ public class PanCompilerTask extends Task {
      * Flag to indicate that extra information should be written to the standard
      * output. This gives the total number of files which will be processed and
      * statistics coming from the compilation.
-     * 
+     *
      * @param verbose
      */
     public void setVerbose(boolean verbose) {
@@ -501,7 +455,7 @@ public class PanCompilerTask extends Task {
      * This any task can check machine profile dependencies to avoid processing
      * machine profiles which are already up-to-date. Setting this flag allows
      * the dependency checking to minimize the number of files which are built.
-     * 
+     *
      * @param checkDependencies
      */
     public void setCheckDependencies(boolean checkDependencies) {
@@ -511,10 +465,10 @@ public class PanCompilerTask extends Task {
     /**
      * Dependencies that must be ignored when selecting the profiles to rebuild.
      * Value must be a regular expression matching a (namespaced) template name.
-     * 
+     *
      * NOTE: Use of this option may cause incomplete builds. Use this option
      * with extreme caution.
-     * 
+     *
      * @param ignoreDependencyPattern
      *            regular expression used to match namespaced template names to
      *            ignore
@@ -540,9 +494,9 @@ public class PanCompilerTask extends Task {
     /**
      * This utility method will group the file into a set of equal sized batches
      * (except for possibly the last batch).
-     * 
+     *
      * @param outdatedFiles
-     * 
+     *
      * @return list of batched files
      */
     private List<List<File>> batchOutdatedFiles(List<File> outdatedFiles) {

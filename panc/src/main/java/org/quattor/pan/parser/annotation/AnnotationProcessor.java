@@ -54,11 +54,6 @@ public class AnnotationProcessor {
 				}
 			}
 
-			if (entries == null) {
-				String msg = MessageUtils.format(MSG_INVALID_ANNOTATION_SYNTAX);
-				throw new ParseException(msg);
-			}
-
 			try {
 
 				return new Annotation(name, entries);

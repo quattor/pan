@@ -23,6 +23,7 @@ package org.quattor.pan.output;
 import static org.quattor.pan.utils.MessageUtils.MSG_UNEXPECTED_EXCEPTION_WHILE_WRITING_OUTPUT;
 
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.sax.TransformerHandler;
@@ -50,7 +51,7 @@ public class PanFormatter extends AbstractFormatter {
 	private PanFormatter() {
 		super("xml", "pan");
 	}
-	
+
 	protected PanFormatter(String suffix, String key) {
 		super(suffix, key);
 	}
@@ -117,7 +118,7 @@ public class PanFormatter extends AbstractFormatter {
 			if (XMLFormatterUtils.isValidXMLString(s)) {
 				stringContents = s;
 			} else {
-				stringContents = Base64.encodeBytes(s.getBytes());
+				stringContents = Base64.encodeBytes(s.getBytes(Charset.forName("UTF-8")));
 				atts.addAttribute(PAN_NS, null, "encoding", "CDATA", "base64");
 			}
 

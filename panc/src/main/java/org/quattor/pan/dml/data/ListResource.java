@@ -29,6 +29,7 @@ import static org.quattor.pan.utils.MessageUtils.MSG_NONEXISTANT_LIST_ELEMENT;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.InvalidTermException;
@@ -138,7 +139,7 @@ public class ListResource extends Resource {
 
 		if (index < 0) {
 			throw new EvaluationException(MessageUtils.format(
-					MSG_INVALID_LIST_INDEX, Integer.valueOf(index).toString()));
+					MSG_INVALID_LIST_INDEX, Integer.toString(index)));
 		}
 
 		try {
@@ -164,8 +165,7 @@ public class ListResource extends Resource {
 			}
 		} catch (IndexOutOfBoundsException ioobe) {
 			throw new EvaluationException(MessageUtils.format(
-					MSG_NONEXISTANT_LIST_ELEMENT, Integer.valueOf(index)
-							.toString()));
+					MSG_NONEXISTANT_LIST_ELEMENT, Integer.toString(index)));
 		}
 		return oldValue;
 	}
@@ -303,14 +303,13 @@ public class ListResource extends Resource {
 
 	private static class ListResourceIterator implements Resource.Iterator {
 
-		private volatile int index;
+        private final AtomicInteger index = new AtomicInteger(0);
 
 		private final List<Element> backingList;
 
 		public ListResourceIterator(List<Element> backingList) {
 			assert (backingList != null);
 			this.backingList = backingList;
-			index = 0;
 		}
 
 		public void remove() {
@@ -319,20 +318,19 @@ public class ListResource extends Resource {
 		}
 
 		public boolean hasNext() {
-			return (index < backingList.size());
+			return (index.get() < backingList.size());
 		}
 
 		public Resource.Entry next() {
-			Resource.Entry entry = null;
 			try {
-				entry = new ListResourceEntry(LongProperty.getInstance(index),
-						backingList.get(index));
-				index++;
+                int i = index.getAndIncrement();
+				Resource.Entry entry = new ListResourceEntry(LongProperty.getInstance(i),
+						backingList.get(i));
+                return entry;
 			} catch (NoSuchElementException nsee) {
 				throw new EvaluationException(MessageUtils
 						.format(MSG_CONCURRENT_MODIFICATION), null);
 			}
-			return entry;
 		}
 
 	}

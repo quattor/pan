@@ -74,8 +74,6 @@ public class PanCompilerTask extends Task {
 
     private Pattern ignoreDependencyPattern = null;
 
-    private String formatterName = null;
-
     private boolean checkDependencies = true;
 
     private boolean verbose = false;

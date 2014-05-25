@@ -1,18 +1,20 @@
 package org.quattor.pan.output;
 
+import java.nio.charset.Charset;
+
 public class XMLFormatterUtils {
 
 	/**
 	 * Determine if the given character is a legal starting character for an XML
 	 * name. Note that although a colon is a legal value its use is strongly
 	 * discouraged and this method will return false for a colon.
-	 * 
+	 *
 	 * The list of valid characters can be found in the <a
 	 * href="http://www.w3.org/TR/xml/0sec-common-syn">Common Syntactic
 	 * Constructs section</a> of the XML specification.
-	 * 
+	 *
 	 * @param codepoint
-	 * 
+	 *
 	 * @return true if the character may appear as the first letter of an XML
 	 *         name; false otherwise
 	 */
@@ -59,13 +61,13 @@ public class XMLFormatterUtils {
 	 * Determine if the given character is a legal non-starting character for an
 	 * XML name. Note that although a colon is a legal value its use is strongly
 	 * discouraged and this method will return false for a colon.
-	 * 
+	 *
 	 * The list of valid characters can be found in the <a
 	 * href="http://www.w3.org/TR/xml/0sec-common-syn">Common Syntactic
 	 * Constructs section</a> of the XML specification.
-	 * 
+	 *
 	 * @param codepoint
-	 * 
+	 *
 	 * @return true if the character may appear as a non-starting letter of an
 	 *         XML name; false otherwise
 	 */
@@ -95,9 +97,9 @@ public class XMLFormatterUtils {
 	 * Determine if a given UNICODE character can appear in a valid XML file.
 	 * The allowed characters are 0x9, 0xA, 0xD, 0x20-0xD7FF, 0xE000-0xFFFD, and
 	 * 0x100000-0x10FFFF; all other characters may not appear in an XML file.
-	 * 
+	 *
 	 * @param codepoint
-	 * 
+	 *
 	 * @return true if the character may appear in a valid XML file; false
 	 *         otherwise
 	 */
@@ -121,7 +123,7 @@ public class XMLFormatterUtils {
 
 	/**
 	 * Determine if the given string is a valid XML name.
-	 * 
+	 *
 	 * @param s
 	 *            String to examine for illegal XML characters
 	 * @return true if the String can be written to an XML file without
@@ -168,7 +170,7 @@ public class XMLFormatterUtils {
 	 * Determine if the given string can be written to an XML file without
 	 * encoding. This will be the case so long as the string does not contain
 	 * illegal XML characters.
-	 * 
+	 *
 	 * @param s
 	 *            String to examine for illegal XML characters
 	 * @return true if the String can be written to an XML file without
@@ -199,20 +201,20 @@ public class XMLFormatterUtils {
 	 * This will encode the given string as a valid XML name. The format will be
 	 * an initial underscore followed by the hexadecimal representation of the
 	 * string.
-	 * 
+	 *
 	 * The method will throw an exception if the argument is null.
-	 * 
+	 *
 	 * @param s
 	 *            String to encode as an XML name
-	 * 
+	 *
 	 * @return valid XML name from String
-	 * 
+	 *
 	 * @throws NullPointerException
 	 */
 	public static String encodeAsXMLName(String s) {
 
 		StringBuilder sb = new StringBuilder("_");
-		for (byte b : s.getBytes()) {
+		for (byte b : s.getBytes(Charset.forName("UTF-8"))) {
 			sb.append(Integer.toHexString((b >>> 4) & 0xF));
 			sb.append(Integer.toHexString(b & 0xF));
 		}

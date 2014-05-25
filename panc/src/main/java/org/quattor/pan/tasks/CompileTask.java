@@ -21,7 +21,9 @@
 package org.quattor.pan.tasks;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
@@ -43,9 +45,9 @@ import org.quattor.pan.template.Template;
  * Wraps the <code>CompileCallable</code> as a <code>Task</code>. This wrapping
  * is done to make sure that the <code>CompileCallable</code> is fully
  * constructed before passing it to the <code>FutureTask</code>.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 public class CompileTask extends Task<CompileResult> {
 
@@ -62,9 +64,9 @@ public class CompileTask extends Task<CompileResult> {
      * Compiles the template from scratch. This class may create a task to write
      * a compiled template to disk. If the compiled template is an object
      * template, then this may create a task to build the machine configuration.
-     * 
+     *
      * @author loomis
-     * 
+     *
      */
     public static class CallImpl implements Callable<CompileResult> {
 
@@ -127,7 +129,7 @@ public class CompileTask extends Task<CompileResult> {
 
         /**
          * Run the compilation.
-         * 
+         *
          * @param tplfile
          *            file to compile
          * @param compilerOptions
@@ -140,7 +142,7 @@ public class CompileTask extends Task<CompileResult> {
          * @throws SystemException
          *             for IO exceptions or unexpected system exceptions; the
          *             cause is the underlying exception
-         * 
+         *
          */
         public static ASTTemplate compile(File tplfile,
                 CompilerOptions compilerOptions) throws Exception {
@@ -156,7 +158,7 @@ public class CompileTask extends Task<CompileResult> {
             // Parse the input file and generate a Template object.
             Reader reader = null;
             try {
-                reader = new FileReader(tplfile);
+                reader = new InputStreamReader(new FileInputStream(tplfile), "UTF-8");
 
                 PanParser parser = new PanParser(reader);
                 parser.setFile(tplfile);

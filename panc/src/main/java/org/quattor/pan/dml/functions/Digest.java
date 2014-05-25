@@ -26,6 +26,7 @@ import static org.quattor.pan.utils.MessageUtils.MSG_SECOND_STRING_ARG_REQ;
 import static org.quattor.pan.utils.MessageUtils.MSG_TWO_ARGS_REQ;
 
 import java.math.BigInteger;
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -39,9 +40,9 @@ import org.quattor.pan.template.SourceRange;
 
 /**
  * Creates a digest of a string using the specified algorithm.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 final public class Digest extends BuiltInFunction {
 
@@ -114,7 +115,7 @@ final public class Digest extends BuiltInFunction {
 		String digest = "";
 		try {
 			MessageDigest m = MessageDigest.getInstance(algorithm);
-			m.update(message.getBytes(), 0, message.length());
+			m.update(message.getBytes(Charset.forName("UTF-8")), 0, message.length());
 			digest = new BigInteger(1, m.digest()).toString(16);
 		} catch (NoSuchAlgorithmException e) {
 			throw EvaluationException.create(sourceRange,

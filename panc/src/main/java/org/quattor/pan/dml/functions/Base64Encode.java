@@ -33,11 +33,13 @@ import org.quattor.pan.template.SourceRange;
 import org.quattor.pan.utils.Base64;
 import org.quattor.pan.utils.MessageUtils;
 
+import java.nio.charset.Charset;
+
 /**
  * Encodes a string into its Base64 representation.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 final public class Base64Encode extends BuiltInFunction {
 
@@ -67,7 +69,7 @@ final public class Base64Encode extends BuiltInFunction {
 		Element result = ops[0].execute(context);
 		try {
 			String s = ((StringProperty) result).getValue();
-			return StringProperty.getInstance(Base64.encodeBytes(s.getBytes()));
+			return StringProperty.getInstance(Base64.encodeBytes(s.getBytes(Charset.forName("UTF-8"))));
 		} catch (ClassCastException cce) {
 			throw new EvaluationException(MessageUtils
 					.format(MSG_INVALID_ARGS_BASE64_ENCODE), sourceRange,

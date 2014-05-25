@@ -28,9 +28,9 @@ import org.quattor.pan.exceptions.SystemException;
 
 /**
  * Encapsulates the statistics and exceptions (or errors) from a compilation.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 public class CompilerResults {
 
@@ -41,13 +41,13 @@ public class CompilerResults {
 	/**
 	 * Create an object which contains the results of a compilation: the
 	 * statistics and the list of exceptions.
-	 * 
+	 *
 	 * @param stats
 	 *            Statistics for the compilation (may not be null)
 	 * @param errors
 	 *            Exceptions or errors thrown during the compilation (may be
 	 *            null if none were thrown)
-	 * 
+	 *
 	 * @throws IllegalArgumentException
 	 *             if stats is null
 	 */
@@ -58,16 +58,17 @@ public class CompilerResults {
 			throw new IllegalArgumentException(
 					"compiler statistics may not be null");
 		}
-		this.errors = Collections.unmodifiableSet(errors);
-		if (errors == null) {
-			this.errors = new TreeSet<Throwable>();
-		}
+        if (errors == null) {
+            this.errors = new TreeSet<Throwable>();
+        } else {
+            this.errors = Collections.unmodifiableSet(errors);
+        }
 	}
 
 	/**
 	 * Prints out the formatted results. Errors are printed to the standard
 	 * error stream and the summary (if requested) on standard output.
-	 * 
+	 *
 	 * @param results
 	 */
 	public boolean print(boolean verbose) {
@@ -88,7 +89,7 @@ public class CompilerResults {
 	/**
 	 * Format the exceptions thrown during the compilation process. A null value
 	 * will be returned if no exceptions were thrown.
-	 * 
+	 *
 	 * @return String containing exceptions thrown during execution or null if
 	 *         none were thrown
 	 */
@@ -139,7 +140,7 @@ public class CompilerResults {
 
 	/**
 	 * Format a summary of the compilation statistics and return the summary.
-	 * 
+	 *
 	 * @return String containing compiler statistics
 	 */
 	public String formatStats() {
@@ -149,7 +150,7 @@ public class CompilerResults {
 	/**
 	 * Return a list containing all of the errors and exceptions thrown during
 	 * processing.
-	 * 
+	 *
 	 * @return set of throwables (exceptions and errors)
 	 */
 	public Set<Throwable> getErrors() {

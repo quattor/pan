@@ -26,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 
 import org.quattor.pan.exceptions.CompilerError;
 import org.quattor.pan.tasks.FinalResult;
@@ -66,7 +67,7 @@ public abstract class AbstractFormatter implements Formatter {
 	}
 
 	protected PrintWriter getPrintWriter(File file) throws Exception {
-		return new PrintWriter(new FileOutputStream(file));
+		return new PrintWriter(file, "UTF-8");
 	}
 
 	protected abstract void write(FinalResult result, PrintWriter ps)

@@ -31,9 +31,9 @@ public class CompilerLogging {
 	 * activated in the given order. This allows NONE to turn off all logging no
 	 * matter what the order of the values and INCLUDE to defer to CALL or ALL
 	 * if specified.
-	 * 
+	 *
 	 * @author loomis
-	 * 
+	 *
 	 */
 	public static enum LoggingType {
 
@@ -127,7 +127,7 @@ public class CompilerLogging {
 	 * Enable the given types of logging. Note that NONE will take precedence
 	 * over active logging flags and turn all logging off. Illegal logging
 	 * values will be silently ignored.
-	 * 
+	 *
 	 * @param loggerList
 	 *            a comma-separated list of logging types to enable
 	 */
@@ -178,7 +178,7 @@ public class CompilerLogging {
 	 * called with null, then the log file will be removed. The log file and
 	 * logging parameters are global to the JVM. Interference is possible
 	 * between multiple threads.
-	 * 
+	 *
 	 * @param logfile
 	 */
 	public synchronized static void setLogFile(File logfile) {
@@ -190,8 +190,7 @@ public class CompilerLogging {
 			if (logfile != null) {
 				String absolutePath = logfile.getAbsolutePath();
 				if (initializedLogFile == null
-						|| (initializedLogFile != null && !initializedLogFile
-								.equals(absolutePath))) {
+						|| (!initializedLogFile.equals(absolutePath))) {
 
 					// Remove any existing handlers.
 					initializeLogger(topLogger);
@@ -209,10 +208,8 @@ public class CompilerLogging {
 		} catch (IOException consumed) {
 			StringBuilder sb = new StringBuilder();
 			sb.append("WARNING: unable to open logging file handler\n");
-			if (logfile != null) {
-				sb.append("WARNING: logfile = '" + logfile.getAbsolutePath()
+			sb.append("WARNING: logfile = '" + logfile.getAbsolutePath()
 						+ "'");
-			}
 			sb.append("\nWARNING: message = ");
 			sb.append(consumed.getMessage());
 			System.err.println(sb.toString());
@@ -226,9 +223,9 @@ public class CompilerLogging {
 	 * analysis. Each log message consists of a single line with space-separated
 	 * values. The values are: time in milliseconds, thread ID, log message, and
 	 * any message parameters.
-	 * 
+	 *
 	 * @author loomis
-	 * 
+	 *
 	 */
 	private static class LogFormatter extends Formatter {
 

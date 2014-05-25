@@ -180,6 +180,13 @@ $ mvn clean install
       <title>PanBuild Mojo Parameters</title>
 
       <tgroup cols="3">
+        <thead>
+          <row>
+            <entry>Parameter</entry>
+            <entry>Description</entry>
+            <entry>Required</entry>
+          </row>
+        </thead>
         <tbody>
           <row>
             <entry>sourceDirectory</entry>
@@ -311,6 +318,13 @@ $ mvn clean install
       <title>PanCheckSyntax Mojo Parameters</title>
 
       <tgroup cols="3">
+        <thead>
+          <row>
+            <entry>Parameter</entry>
+            <entry>Description</entry>
+            <entry>Required</entry>
+          </row>
+        </thead>
         <tbody>
           <row>
             <entry>sourceDirectory</entry>
@@ -432,6 +446,13 @@ $ mvn clean install
       <title>Ant Task Attributes (<command>panc</command> and <command>panc-check-syntax</command>)</title>
 
       <tgroup cols="3">
+        <thead>
+          <row>
+            <entry>Option</entry>
+            <entry>Description</entry>
+            <entry>Required</entry>
+          </row>
+        </thead>
         <tbody>
           <row>
             <entry>debugNsInclude</entry>
@@ -603,6 +624,13 @@ $ mvn clean install
       <title>Ant Task Attributes (<command>panc-annotations</command>)</title>
 
       <tgroup cols="3">
+        <thead>
+          <row>
+            <entry>Option</entry>
+            <entry>Description</entry>
+            <entry>Required</entry>
+          </row>
+        </thead>
         <tbody>
           <row>
             <entry>baseDir</entry>

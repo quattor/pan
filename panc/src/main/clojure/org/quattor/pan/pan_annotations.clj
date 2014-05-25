@@ -89,16 +89,16 @@ Usage: panc-annotations [options] files
 (defn -main
   [& args]
 
-  (let [{:keys [{:keys [help verbose quiet] :as options}
-                arguments errors summary]} (parse-opts args cli-options)]
-    (cond
-      help (exit 0 (usage summary))
-      (zero? (count args)) (exit 1 (usage summary))
-      errors (exit 1 (str (error-msg errors) "\n\n" (usage summary))))
-    (when (pos? verbose)
-      (println "Templates to process: " arguments))
-    (let [^CompilerResults results (generate-annotations options arguments)]
-      (if-let [errors (.formatErrors results)]
-        (println errors))
-      (if-not quiet
-        (println (.formatStats results))))))
+  (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)]
+    (let [{:keys [help verbose quiet]} options]
+      (cond
+        help (exit 0 (usage summary))
+        (zero? (count args)) (exit 1 (usage summary))
+        errors (exit 1 (str (error-msg errors) "\n\n" (usage summary))))
+      (when (pos? verbose)
+        (println "Templates to process: " arguments))
+      (let [^CompilerResults results (generate-annotations options arguments)]
+        (if-let [errors (.formatErrors results)]
+          (println errors))
+        (if-not quiet
+          (println (.formatStats results)))))))

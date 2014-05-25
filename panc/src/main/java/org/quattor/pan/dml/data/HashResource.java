@@ -95,7 +95,7 @@ public class HashResource extends Resource {
 	}
 
 	@Override
-	public Element put(Term term, Element newValue) throws InvalidTermException {
+	synchronized public Element put(Term term, Element newValue) throws InvalidTermException {
 
 		Element oldValue = null;
 

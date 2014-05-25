@@ -1182,62 +1182,65 @@ ok = first(table, k, v);
   </refentry>
 
   <refentry xml:id="ip4_to_long">
-      <info>
-          <productnumber><?eval ${project.version}?></productnumber>
-          <productname>panc</productname>
-          <date><?eval ${buildTimestamp}?></date>
-          <copyright>
-              <year>2013</year>
-              <holder>Universiteit Gent</holder>
-          </copyright>
-      </info>
+    <info>
+      <productnumber><?eval ${project.version}?></productnumber>
 
-      <refmeta>
-          <refentrytitle>ip4_to_long</refentrytitle>
-          <manvolnum>3</manvolnum>
-      </refmeta>
+      <productname>panc</productname>
 
-      <refnamediv>
-          <refname>panc:ip4_to_long</refname>
-          <refpurpose>converts an IP address in dotted format with an
-          optional bitmask to a list of longs</refpurpose>
-      </refnamediv>
+      <date><?eval ${buildTimestamp}?></date>
 
-      <refsynopsisdiv>
-          <funcsynopsis>
-              <funcprototype>
-                  <funcdef>long[]
-                  <function>ip4_to_long</function></funcdef>
-                  <paramdef>string
-                  <parameter>ip</parameter></paramdef>
-              </funcprototype>
-          </funcsynopsis>
-      </refsynopsisdiv>
+      <copyright>
+        <year>2013</year>
 
-      <refsection>
-          <title>Description</title>
+        <holder>Universiteit Gent</holder>
+      </copyright>
+    </info>
 
-          <para>The <function>ip4_to_long</function> function returns
-          the binary representation of an IPv4 address or network
-          specification represented as a dotted string, where the
-          netmask part is optional, like <literal>inet_aton</literal>
-          does in the C standard library.</para>
+    <refmeta>
+      <refentrytitle>ip4_to_long</refentrytitle>
 
-          <para>The first element of the return value is the binary
-          representation of the IP address, where the second, if
-          present, is the binary representation of the network
-          mask.</para>
+      <manvolnum>3</manvolnum>
+    </refmeta>
 
-          <para>This can be used for applying network masks and
-          calculating network ranges.</para>
+    <refnamediv>
+      <refname>panc:ip4_to_long</refname>
 
-          <programlisting>variable NETWORK_RANGE_FOR_LOCALHOST = {
+      <refpurpose>converts an IP address in dotted format with an optional
+      bitmask to a list of longs</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>long[] <function>ip4_to_long</function></funcdef>
+
+          <paramdef>string <parameter>ip</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>The <function>ip4_to_long</function> function returns the binary
+      representation of an IPv4 address or network specification represented
+      as a dotted string, where the netmask part is optional, like
+      <literal>inet_aton</literal> does in the C standard library.</para>
+
+      <para>The first element of the return value is the binary representation
+      of the IP address, where the second, if present, is the binary
+      representation of the network mask.</para>
+
+      <para>This can be used for applying network masks and calculating
+      network ranges.</para>
+
+      <programlisting>variable NETWORK_RANGE_FOR_LOCALHOST = {
     l = ip4_to_long("127.0.0.1/8");
     l[0] &amp; l[1];
 };</programlisting>
 
-<programlisting>variable BINARY_LOCALHOST = ip4_to_long("127.0.0.1");</programlisting>
-      </refsection>
+      <programlisting>variable BINARY_LOCALHOST = ip4_to_long("127.0.0.1");</programlisting>
+    </refsection>
   </refentry>
 
   <refentry xml:id="is_boolean">
@@ -1923,50 +1926,52 @@ ok = first(table, k, v);
   </refentry>
 
   <refentry xml:id="long_to_ip4">
-      <info>
-          <productnumber><?eval ${project.version}?></productnumber>
-          <productname>panc</productname>
-          <date><?eval ${buildTimestamp}?></date>
-          <copyright>
-              <year>2013</year>
-              <holder>Universiteit Gent</holder>
-          </copyright>
-      </info>
+    <info>
+      <productnumber><?eval ${project.version}?></productnumber>
 
-      <refmeta>
-          <refentrytitle>long_to_ip4</refentrytitle>
-          <manvolnum>3</manvolnum>
-      </refmeta>
+      <productname>panc</productname>
 
-      <refnamediv>
-          <refname>panc:long_to_ip4</refname>
-          <refpurpose>converts a long into an IP address in dotted
-          format</refpurpose>
-      </refnamediv>
+      <date><?eval ${buildTimestamp}?></date>
 
-      <refsynopsisdiv>
-          <funcsynopsis>
-              <funcprototype>
-                  <funcdef>string
-                  <function>long_to_ip4</function></funcdef>
-                  <paramdef>long
-                  <parameter>ip</parameter></paramdef>
-              </funcprototype>
-          </funcsynopsis>
-      </refsynopsisdiv>
+      <copyright>
+        <year>2013</year>
 
-      <refsection>
-          <title>Description</title>
+        <holder>Universiteit Gent</holder>
+      </copyright>
+    </info>
 
-          <para>The <function>long_to_ip4</function> function converts
-          an IP address represented as a long into a string with
-          numbers and dots, like <literal>inet_ntoa</literal> does in
-          the C standard library.</para>
+    <refmeta>
+      <refentrytitle>long_to_ip4</refentrytitle>
 
-          <programlisting>"/ipaddr" = long_to_ip4(0x01020304); # 1.2.3.4</programlisting>
+      <manvolnum>3</manvolnum>
+    </refmeta>
 
-      </refsection>
+    <refnamediv>
+      <refname>panc:long_to_ip4</refname>
 
+      <refpurpose>converts a long into an IP address in dotted
+      format</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>string <function>long_to_ip4</function></funcdef>
+
+          <paramdef>long <parameter>ip</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>The <function>long_to_ip4</function> function converts an IP
+      address represented as a long into a string with numbers and dots, like
+      <literal>inet_ntoa</literal> does in the C standard library.</para>
+
+      <programlisting>"/ipaddr" = long_to_ip4(0x01020304); # 1.2.3.4</programlisting>
+    </refsection>
   </refentry>
 
   <refentry xml:id="match">
@@ -2406,6 +2411,63 @@ type ipv4 = string with {
   prepend(x, 1); # will create local variable x
   prepend(x, 2);
 };</programlisting>
+    </refsection>
+  </refentry>
+
+  <refentry xml:id="render">
+    <info>
+      <productnumber><?eval ${project.version}?></productnumber>
+
+      <productname>panc</productname>
+
+      <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2014</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS) and
+        UGent</holder>
+      </copyright>
+    </info>
+
+    <refmeta>
+      <refentrytitle>render</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>panc:render</refname>
+
+      <refpurpose>interpolate named values in string</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>string <function>render</function></funcdef>
+
+          <paramdef>string <parameter>template</parameter></paramdef>
+
+          <paramdef>nlist <parameter>substitutions</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>The <function>render</function> function will replace all named
+      values in the template with the values in the nlist.</para>
+
+      <programlisting>variable vars = nlist('freq', 3, 'msg', 'hello');
+
+# produces string 'say hello 3 times'
+'/result' = render('say ${msg} ${freq} times', vars);</programlisting>
+
+      <para>The substitution allows for recursive references. If you need to
+      have something like '${myvar}' literally in the string, then use
+      '$${myvar}'.</para>
     </refsection>
   </refentry>
 

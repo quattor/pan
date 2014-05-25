@@ -87,6 +87,7 @@ import org.quattor.pan.dml.functions.Merge;
 import org.quattor.pan.dml.functions.Next;
 import org.quattor.pan.dml.functions.PathExists;
 import org.quattor.pan.dml.functions.Prepend;
+import org.quattor.pan.dml.functions.Render;
 import org.quattor.pan.dml.functions.Replace;
 import org.quattor.pan.dml.functions.Return;
 import org.quattor.pan.dml.functions.Splice;
@@ -302,6 +303,9 @@ public class PanParserAstUtils {
 					SourceRange.class, Operation[].class));
 
 			fc.put("substr", (Substr.class).getDeclaredMethod("getInstance",
+					SourceRange.class, Operation[].class));
+
+			fc.put("replace", (Render.class).getDeclaredMethod("getInstance",
 					SourceRange.class, Operation[].class));
 
 			fc.put("replace", (Replace.class).getDeclaredMethod("getInstance",

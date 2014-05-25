@@ -419,7 +419,11 @@ public class MessageUtils {
 
 	public final static String MSG_FORMAT_REQUIRES_PROPERTIES = "MSG_FORMAT_REQUIRES_PROPERTIES";
 
-	public final static String MSG_INVALID_FIRST_ARG_FORMAT = "MSG_INVALID_FIRST_ARG_FORMAT";
+    public final static String MSG_INVALID_FIRST_ARG_FORMAT = "MSG_INVALID_FIRST_ARG_FORMAT";
+
+    public final static String MSG_INVALID_FIRST_ARG_RENDER = "MSG_INVALID_FIRST_ARG_RENDER";
+
+    public final static String MSG_INVALID_SECOND_ARG_RENDER = "MSG_INVALID_SECOND_ARG_RENDER";
 
         public final static String MSG_INVALID_TYPE_IP_TO_LONG = "MSG_INVALID_TYPE_IP_TO_LONG";
 

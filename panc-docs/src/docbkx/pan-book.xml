@@ -2223,6 +2223,13 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
 
           <colspec align="left" colnum="2" colwidth="4*" />
 
+          <thead>
+            <row>
+              <entry>Name</entry>
+              <entry>Description</entry>
+            </row>
+          </thead>
+
           <tbody>
             <row>
               <entry><xref linkend="file_contents" /></entry>
@@ -2317,6 +2324,13 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
 
           <colspec align="left" colnum="2" colwidth="4*" />
 
+          <thead>
+            <row>
+              <entry>Name</entry>
+              <entry>Description</entry>
+            </row>
+          </thead>
+
           <tbody>
             <row>
               <entry><xref linkend="debug" /></entry>
@@ -2357,6 +2371,13 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
           <colspec align="left" colnum="1" colwidth="1*" />
 
           <colspec align="left" colnum="2" colwidth="4*" />
+
+          <thead>
+            <row>
+              <entry>Name</entry>
+              <entry>Description</entry>
+            </row>
+          </thead>
 
           <tbody>
             <row>
@@ -2402,6 +2423,13 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
           <colspec align="left" colnum="1" colwidth="1*" />
 
           <colspec align="left" colnum="2" colwidth="4*" />
+
+          <thead>
+            <row>
+              <entry>Name</entry>
+              <entry>Description</entry>
+            </row>
+          </thead>
 
           <tbody>
             <row>
@@ -2487,6 +2515,13 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
           <colspec align="left" colnum="1" colwidth="1*" />
 
           <colspec align="left" colnum="2" colwidth="4*" />
+
+          <thead>
+            <row>
+              <entry>Name</entry>
+              <entry>Description</entry>
+            </row>
+          </thead>
 
           <tbody>
             <row>
@@ -2600,6 +2635,13 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
 
           <colspec align="left" colnum="2" colwidth="4*" />
 
+          <thead>
+            <row>
+              <entry>Name</entry>
+              <entry>Description</entry>
+            </row>
+          </thead>
+
           <tbody>
             <row>
               <entry><xref linkend="to_boolean" /></entry>
@@ -2668,6 +2710,13 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
           <colspec align="left" colnum="1" colwidth="1*" />
 
           <colspec align="left" colnum="2" colwidth="4*" />
+
+          <thead>
+            <row>
+              <entry>Name</entry>
+              <entry>Description</entry>
+            </row>
+          </thead>
 
           <tbody>
             <row>

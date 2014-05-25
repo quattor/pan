@@ -1,11 +1,12 @@
 package org.quattor.pan.parser;
 
+import static org.quattor.pan.utils.MessageUtils.MSG_ERROR_CREATING_DIRECTORY;
 import static org.quattor.pan.utils.MessageUtils.MSG_ERROR_WHILE_WRITING_OUTPUT;
 import static org.quattor.pan.utils.MessageUtils.MSG_UNEXPECTED_EXCEPTION_WHILE_WRITING_OUTPUT;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Writer;
 
 import javax.xml.transform.sax.TransformerHandler;
@@ -14,6 +15,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.quattor.pan.annotation.Annotation;
 import org.quattor.pan.annotation.Annotation.Entry;
 import org.quattor.pan.exceptions.CompilerError;
+import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.exceptions.SystemException;
 import org.quattor.pan.parser.ASTStatement.StatementType;
@@ -31,7 +33,7 @@ public class PanParserAnnotationUtils {
 
         String templateName = ast.getIdentifier();
 
-        createDirectories(outputFile, templateName);
+        createDirectories(outputFile);
 
         Writer writer = null;
 
@@ -40,7 +42,7 @@ public class PanParserAnnotationUtils {
             TransformerHandler handler = XmlUtils.getSaxTransformerHandler();
 
             // Ok, feed SAX events to the output stream.
-            writer = new FileWriter(outputFile);
+            writer = new PrintWriter(outputFile, "UTF-8");
             handler.setResult(new StreamResult(writer));
 
             handler.startDocument();
@@ -74,12 +76,14 @@ public class PanParserAnnotationUtils {
 
     }
 
-    private static void createDirectories(File outputFile, String templateName) {
+    private static void createDirectories(File outputFile) {
 
         File outputDir = outputFile.getParentFile();
 
         if (!outputDir.exists()) {
-            outputDir.mkdirs();
+            if (!outputDir.mkdirs()) {
+                throw new SystemException(MSG_ERROR_CREATING_DIRECTORY, outputDir);
+            }
         }
 
     }

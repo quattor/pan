@@ -180,6 +180,16 @@ $ mvn clean install
       <title>PanBuild Mojo Parameters</title>
 
       <tgroup cols="3">
+        <thead>
+          <row>
+            <entry>Parameter</entry>
+
+            <entry>Description</entry>
+
+            <entry>Required</entry>
+          </row>
+        </thead>
+
         <tbody>
           <row>
             <entry>sourceDirectory</entry>
@@ -311,6 +321,16 @@ $ mvn clean install
       <title>PanCheckSyntax Mojo Parameters</title>
 
       <tgroup cols="3">
+        <thead>
+          <row>
+            <entry>Parameter</entry>
+
+            <entry>Description</entry>
+
+            <entry>Required</entry>
+          </row>
+        </thead>
+
         <tbody>
           <row>
             <entry>sourceDirectory</entry>
@@ -366,14 +386,41 @@ $ mvn clean install
     jar file <filename>panc.jar</filename> distributed with the pan compiler
     release.</para>
 
-    <para>There are two tasks defined: <command>panc</command> and
-    <command>panc-check-syntax</command>. The first provides all of the
-    functionality available through the compiler with a large number of
-    options. The second focuses on testing the pan language syntax and takes a
-    very limited number of options. Running the compiler can be done with
-    tasks like the following:</para>
+    <para>There are three tasks defined: <variablelist>
+        <varlistentry>
+          <term>
+            <command>panc</command>
+          </term>
 
-    <programlisting>&lt;target name="compile.cluster.profiles"&gt;
+          <listitem>
+            <para>Provides all of the functionality available through the
+            compiler.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>
+            <command>panc-check-syntax</command>
+          </term>
+
+          <listitem>
+            <para>Checks only the syntax of the pan source files. This is the
+            recommended way of doing a syntax check.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>
+            <command>panc-annotations</command>
+          </term>
+
+          <listitem>
+            <para>Processes panc annotations found in the templates and
+            produces XML files with the resulting content.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist><para>Running the compiler can be done with tasks like
+    the following:</para><programlisting>&lt;target name="compile.cluster.profiles"&gt;
 
   &lt;!-- Define the load path.  By default this is just the cluster area. --&gt;
   &lt;path id="pan.loadpath"&gt;
@@ -389,19 +436,29 @@ $ mvn clean install
     &lt;fileset dir="${basedir}/profiles" casesensitive="yes" includes="*.pan" /&gt;
   &lt;/panc&gt;
 
-&lt;/target&gt;</programlisting>
+  &lt;panc-annotations ...options... &gt;
+    &lt;fileset dir="${basedir}/profiles" casesensitive="yes" includes="*.pan" /&gt;
+  &lt;/panc-annotations&gt;
 
-    <para>where <replaceable>...options...</replaceable> is replaced with
-    valid options for the pan compiler ant tasks.</para>
-
-    <para>The ant task supports the attributes in the following table. Only
-    the <option>warnings</option> and <option>verbose</option> attributes are
-    permitted for the <command>panc-check-syntax</command> task.</para>
+&lt;/target&gt;</programlisting> where
+    <replaceable>...options...</replaceable> is replaced with valid options
+    (attributes) for the pan compiler ant tasks. The following tables describe
+    all of the attributes supported by the these tasks.</para>
 
     <table>
-      <title>Ant Task Attributes</title>
+      <title>Attributes for Ant Task <command>panc</command></title>
 
       <tgroup cols="3">
+        <thead>
+          <row>
+            <entry>Option</entry>
+
+            <entry>Description</entry>
+
+            <entry>Required</entry>
+          </row>
+        </thead>
+
         <tbody>
           <row>
             <entry>debugNsInclude</entry>
@@ -567,12 +624,100 @@ $ mvn clean install
       </tgroup>
     </table>
 
+    <table>
+      <title>Attributes for Ant Task
+      <command>panc-check-syntax</command></title>
+
+      <tgroup cols="3">
+        <thead>
+          <row>
+            <entry>Option</entry>
+
+            <entry>Description</entry>
+
+            <entry>Required</entry>
+          </row>
+        </thead>
+
+        <tbody>
+          <row>
+            <entry>warnings</entry>
+
+            <entry>Sets whether warnings are printed and whether they are
+            treated as fatal errors. Allowed values are 'on', 'off', and
+            'fatal'.</entry>
+
+            <entry>No. Default value: 'on'</entry>
+          </row>
+
+          <row>
+            <entry>verbose</entry>
+
+            <entry>Whether to include a summary of the compilation, including
+            number of profiles compiled and overall memory
+            utilization.</entry>
+
+            <entry>No. Default value: false</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+
+    <table>
+      <title>Attributes for Ant Task
+      <command>panc-annotations</command></title>
+
+      <tgroup cols="3">
+        <thead>
+          <row>
+            <entry>Option</entry>
+
+            <entry>Description</entry>
+
+            <entry>Required</entry>
+          </row>
+        </thead>
+
+        <tbody>
+          <row>
+            <entry>baseDir</entry>
+
+            <entry>Base directory used to locate the templates if their names
+            is a relative path and to build the relative path used to create
+            output file if the path is absolute.</entry>
+
+            <entry>Yes.</entry>
+          </row>
+
+          <row>
+            <entry>outputDir</entry>
+
+            <entry>Parent directory used to create output XML files. The
+            output file name is built by appending the template relative path
+            to this directory.</entry>
+
+            <entry>Yes.</entry>
+          </row>
+
+          <row>
+            <entry>verbose</entry>
+
+            <entry>If true, displays statistics after processing the
+            annotations.</entry>
+
+            <entry>No. Default: false.</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+
     <section>
       <title>Nested Elements</title>
 
       <para>Some of the configuration options are specified via nested
       elements. The <command>panc</command> task supports all of these; the
-      <command>panc-check-syntax</command> task only supports the
+      <command>panc-check-syntax</command> and
+      <command>panc-annotations</command> task only supports the
       <literal>fileset</literal> nested element.</para>
 
       <section>

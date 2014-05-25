@@ -29,6 +29,7 @@ import static org.quattor.pan.utils.MessageUtils.MSG_NONEXISTANT_LIST_ELEMENT;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.InvalidTermException;
@@ -39,9 +40,9 @@ import org.quattor.pan.utils.Term;
 
 /**
  * Represents an ordered list of elements.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 public class ListResource extends Resource {
 
@@ -79,7 +80,7 @@ public class ListResource extends Resource {
 	/**
 	 * This method creates a shallow copy of the given ListResource. The
 	 * children are not cloned, but they are protected.
-	 * 
+	 *
 	 * @param source
 	 *            ListResource to copy
 	 */
@@ -124,12 +125,12 @@ public class ListResource extends Resource {
 	/**
 	 * This is an optimized version of the put method which doesn't require
 	 * creating a Term object.
-	 * 
+	 *
 	 * @param index
 	 *            index of the element to insert
 	 * @param newValue
 	 *            value to insert into the list
-	 * 
+	 *
 	 * @return old value if it existed
 	 */
 	public Element put(int index, Element newValue) {
@@ -138,7 +139,7 @@ public class ListResource extends Resource {
 
 		if (index < 0) {
 			throw new EvaluationException(MessageUtils.format(
-					MSG_INVALID_LIST_INDEX, Integer.valueOf(index).toString()));
+					MSG_INVALID_LIST_INDEX, Integer.toString(index)));
 		}
 
 		try {
@@ -164,8 +165,7 @@ public class ListResource extends Resource {
 			}
 		} catch (IndexOutOfBoundsException ioobe) {
 			throw new EvaluationException(MessageUtils.format(
-					MSG_NONEXISTANT_LIST_ELEMENT, Integer.valueOf(index)
-							.toString()));
+					MSG_NONEXISTANT_LIST_ELEMENT, Integer.toString(index)));
 		}
 		return oldValue;
 	}
@@ -173,7 +173,7 @@ public class ListResource extends Resource {
 	/**
 	 * Specialized method for a ListResource to append an element to the end of
 	 * the list. This is used in the append() function implementation.
-	 * 
+	 *
 	 * @param e
 	 *            element to append to the end of the list; this may not be null
 	 */
@@ -186,7 +186,7 @@ public class ListResource extends Resource {
 	 * Specialized method for a ListResource to prepend an element at the
 	 * beginning of a list. This is used in the prepend() function
 	 * implementation.
-	 * 
+	 *
 	 * @param e
 	 *            element to prepend to beginning of list; this may not be null
 	 */
@@ -275,7 +275,7 @@ public class ListResource extends Resource {
 	 * information. This method is used in the equals method to determine if one
 	 * HashResource is equivalent to another. The map must not be modified by
 	 * the caller.
-	 * 
+	 *
 	 * @return backing map for hash resource
 	 */
 	protected List<Element> getBackingList() {
@@ -303,14 +303,13 @@ public class ListResource extends Resource {
 
 	private static class ListResourceIterator implements Resource.Iterator {
 
-		private volatile int index;
+        private final AtomicInteger index = new AtomicInteger(0);
 
 		private final List<Element> backingList;
 
 		public ListResourceIterator(List<Element> backingList) {
 			assert (backingList != null);
 			this.backingList = backingList;
-			index = 0;
 		}
 
 		public void remove() {
@@ -319,20 +318,19 @@ public class ListResource extends Resource {
 		}
 
 		public boolean hasNext() {
-			return (index < backingList.size());
+			return (index.get() < backingList.size());
 		}
 
 		public Resource.Entry next() {
-			Resource.Entry entry = null;
 			try {
-				entry = new ListResourceEntry(LongProperty.getInstance(index),
-						backingList.get(index));
-				index++;
+                int i = index.getAndIncrement();
+				Resource.Entry entry = new ListResourceEntry(LongProperty.getInstance(i),
+						backingList.get(i));
+                return entry;
 			} catch (NoSuchElementException nsee) {
 				throw new EvaluationException(MessageUtils
 						.format(MSG_CONCURRENT_MODIFICATION), null);
 			}
-			return entry;
 		}
 
 	}

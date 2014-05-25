@@ -42,9 +42,9 @@ import org.quattor.pan.template.Template.TemplateType;
  * Executes another referenced template whose name is either a constant or
  * computed from a DML expression. This superclass is used to collect the common
  * functionality of the static and computed include statements.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 abstract public class IncludeStatement extends Statement {
 
@@ -58,7 +58,7 @@ abstract public class IncludeStatement extends Statement {
 	/**
 	 * Constructor which must be called by subclasses. The IncludeStatement
 	 * itself is abstract, so a direct instance of this class cannot be created.
-	 * 
+	 *
 	 * @param sourceRange
 	 *            source location of this statement
 	 */
@@ -68,10 +68,10 @@ abstract public class IncludeStatement extends Statement {
 
 	/**
 	 * Determine if the given name is a valid template name.
-	 * 
+	 *
 	 * @param name
 	 *            template name to verify (name may not be null)
-	 * 
+	 *
 	 * @return flag indicating if the name is valid
 	 */
 	static boolean validIdentifier(String name) {
@@ -92,7 +92,7 @@ abstract public class IncludeStatement extends Statement {
 			// Usual case of a real computed include statement. This includes
 			// any DML expression that ends with an error.
 			return new ComputedIncludeStatement(sourceRange, dml);
-		} else if (element != null && element instanceof StringProperty) {
+		} else if (element instanceof StringProperty) {
 			// Compile-time constant string.
 			return new StaticIncludeStatement(sourceRange,
 					((StringProperty) element).getValue());
@@ -111,12 +111,12 @@ abstract public class IncludeStatement extends Statement {
 	 * This is a utility method which performs an include from a fixed template
 	 * name. The validity of the name should be checked by the subclass; this
 	 * avoids unnecessary regular expression matching.
-	 * 
+	 *
 	 * @param context
 	 *            evaluation context to use
 	 * @param name
 	 *            fixed template name
-	 * 
+	 *
 	 * @throws EvaluationException
 	 */
 	protected void executeWithNamedTemplate(Context context, String name)

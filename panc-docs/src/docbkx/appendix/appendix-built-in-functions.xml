@@ -2043,7 +2043,7 @@ type device_t = string with match(self, ’ˆ(disk|cd|net)$’);</programlisting
     <refnamediv>
       <refname>panc:matches</refname>
 
-      <refpurpose>checks if a regular expression matches a string</refpurpose>
+      <refpurpose>returns captured substrings matching a regular expression</refpurpose>
     </refnamediv>
 
     <refsynopsisdiv>

@@ -43,7 +43,7 @@ import org.quattor.pan.template.SourceRange;
  * Produces the binary representation of an IPv4 address, maybe with
  * the binary representation of the network mask part of the string.
  *
- * @author Luis Fernando MuÃ±oz MejÃ­as
+ * @author Luis Fernando Muñoz Mejías
  *
  */
 final public class IpToLong extends BuiltInFunction {

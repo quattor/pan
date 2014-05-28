@@ -187,9 +187,7 @@ public class Compiler {
 
         // Setup the executors for the build. There is one for each stage of the
         // processing.
-        // int nprocs = Runtime.getRuntime().availableProcessors();
-        // FIXME: THIS IS FOR DEBUGGING ONLY
-        int nprocs = 1;
+        int nprocs = Runtime.getRuntime().availableProcessors();
         executors = new TreeMap<TaskResult.ResultType, ThreadPoolExecutor>();
         for (TaskResult.ResultType t : TaskResult.ResultType.values()) {
             executors.put(t,

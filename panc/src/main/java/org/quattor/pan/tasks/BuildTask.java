@@ -207,8 +207,8 @@ public class BuildTask extends Task<BuildResult> {
 						// of
 						// the loop.
 						if (defaultValue != null) {
-							self = defaultValue;
-							context.putElement(path, defaultValue);
+                                                    self = defaultValue.duplicate();
+							context.putElement(path, self);
 							break;
 						}
 					}

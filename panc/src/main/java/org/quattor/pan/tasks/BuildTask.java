@@ -47,9 +47,9 @@ import org.quattor.pan.utils.Path;
  * Wraps the <code>BuildCallable</code> as a <code>Task</code>. This wrapping is
  * done to make sure that the <code>BuildCallable</code> is fully constructed
  * before passing it to the <code>FutureTask</code>.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 public class BuildTask extends Task<BuildResult> {
 
@@ -67,9 +67,9 @@ public class BuildTask extends Task<BuildResult> {
 	 * running it through the execution, default setting, and validation phases.
 	 * This class may create tasks to write the machine configuration or
 	 * dependency files to disk.
-	 * 
+	 *
 	 * @author loomis
-	 * 
+	 *
 	 */
 	private static class CallImpl implements Callable<BuildResult> {
 
@@ -204,11 +204,10 @@ public class BuildTask extends Task<BuildResult> {
 						Element defaultValue = type.findDefault(context);
 
 						// If something was found, set the value, then break out
-						// of
-						// the loop.
+						// of the loop.
 						if (defaultValue != null) {
-                                                    self = defaultValue.duplicate();
-							context.putElement(path, self);
+                            self = defaultValue;
+							context.putElement(path, defaultValue);
 							break;
 						}
 					}

@@ -21,48 +21,48 @@ Please file a bug report with including the stack trace.
 
 (defn create-compiler-options []
   (let [ {:keys [debug-ns-include
-                 debug-ns-exclude 
-                 max-iteration 
-                 max-recursion 
-                 formatter 
+                 debug-ns-exclude
+                 max-iteration
+                 max-recursion
+                 formatter
                  output-dir
-                 includeDirectories 
-                 warnings 
-                 annotationDirectory 
-                 annotationBaseDirectory 
+                 include-path
+                 warnings
+                 annotationDirectory
+                 annotationBaseDirectory
                  rootElement] } settings/*settings* ]
-   (CompilerOptions. debug-ns-include 
-                     debug-ns-exclude 
-                     max-iteration 
-                     max-recursion 
-                     formatter 
-                     output-dir 
-                     includeDirectories 
-                     warnings 
+   (CompilerOptions. debug-ns-include
+                     debug-ns-exclude
+                     max-iteration
+                     max-recursion
+                     formatter
+                     output-dir
+                     include-path
+                     warnings
                      annotationDirectory
                      annotationBaseDirectory
                      rootElement)))
 
 (defn default-compiler-options []
   (let [ {:keys [debug-ns-include
-                 debug-ns-exclude 
-                 max-iteration 
-                 max-recursion 
-                 formatter 
-                 output-dir 
-                 includeDirectories 
-                 warnings 
-                 annotationDirectory 
-                 annotationBaseDirectory 
+                 debug-ns-exclude
+                 max-iteration
+                 max-recursion
+                 formatter
+                 output-dir
+                 include-path
+                 warnings
+                 annotationDirectory
+                 annotationBaseDirectory
                  rootElement] } (settings/defaults) ]
-   (CompilerOptions. debug-ns-include 
-                     debug-ns-exclude 
-                     max-iteration 
-                     max-recursion 
-                     formatter 
-                     output-dir 
-                     includeDirectories 
-                     warnings 
+   (CompilerOptions. debug-ns-include
+                     debug-ns-exclude
+                     max-iteration
+                     max-recursion
+                     formatter
+                     output-dir
+                     include-path
+                     warnings
                      annotationDirectory
                      annotationBaseDirectory
                      rootElement)))
@@ -102,7 +102,7 @@ Please file a bug report with including the stack trace.
   (println (format-ex-info e))
   (System/exit 1))
 
-(defn build-profiles [options pan-sources] 
+(defn build-profiles [options pan-sources]
   (let [compiler-options (create-compiler-options)]
     (org.quattor.pan.Compiler/run compiler-options nil pan-sources)))
 
@@ -125,4 +125,3 @@ Please file a bug report with including the stack trace.
       (error-and-exit e))
     (catch Throwable t
       (compiler-error-and-exit t))))
-  

@@ -11,6 +11,14 @@ if [ ! -x $javaexe ]; then
 	exit 1
 fi
 
+if [ -n "$DRIP" ]; then
+    javaexe=`which drip`
+    if [ ! -x $javaexe ]; then
+        echo " ERROR: cannot find executable for drip"
+        exit 1
+    fi
+fi
+
 jopts=""
 if [ -n $JAVA_OPTS ]; then
     jopts=$JAVA_OPTS

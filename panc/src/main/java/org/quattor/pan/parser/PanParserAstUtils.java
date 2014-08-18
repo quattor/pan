@@ -40,6 +40,7 @@ import org.quattor.pan.dml.functions.ErrorMessage;
 import org.quattor.pan.dml.functions.Escape;
 import org.quattor.pan.dml.functions.Exists;
 import org.quattor.pan.dml.functions.FileContents;
+import org.quattor.pan.dml.functions.FileExists;
 import org.quattor.pan.dml.functions.First;
 import org.quattor.pan.dml.functions.Format;
 import org.quattor.pan.dml.functions.Function;
@@ -307,6 +308,9 @@ public class PanParserAstUtils {
 
             fc.put("file_contents",
                     (FileContents.class).getDeclaredMethod("getInstance", SourceRange.class, Operation[].class));
+
+            fc.put("file_exists",
+                    (FileExists.class).getDeclaredMethod("getInstance", SourceRange.class, Operation[].class));
 
             fc.put("ip4_to_long",
                     (IpToLong.class).getDeclaredMethod("getInstance", SourceRange.class, Operation[].class));

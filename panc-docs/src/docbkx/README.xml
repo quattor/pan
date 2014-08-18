@@ -65,6 +65,10 @@
 
       <itemizedlist>
         <listitem>
+          <para>(GitHub Issue #34) add the file_exists function</para>
+        </listitem>
+
+        <listitem>
           <para>(GitHub Issue #63) allow user to specify number of threads for
           processing (nthread option)</para>
         </listitem>

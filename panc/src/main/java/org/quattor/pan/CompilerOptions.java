@@ -134,6 +134,8 @@ public class CompilerOptions {
 
     public final HashResource rootElement;
 
+    public final int nthread;
+
     /**
      * Construct a CompilerOptions instance to drive a Compiler run. Instances
      * of this class are immutable.
@@ -164,14 +166,16 @@ public class CompilerOptions {
      * @param rootElement
      *            string containing description of root element to use; if null
      *            or empty string, this defaults to an empty dict
+     * @param nthread
+     *            number of threads to use for each executor queue; 0 uses number
+     *            of CPU cores on the machine
      * @throws SyntaxException
      *             if the expression for the rootElement is invalid
      */
-    public CompilerOptions(Pattern debugNsInclude, Pattern debugNsExclude,
-            int maxIteration, int maxRecursion, Set<Formatter> formatters,
-            File outputDirectory, List<File> includeDirectories,
-            DeprecationWarnings deprecationWarnings, File annotationDirectory,
-            File annotationBaseDirectory, String rootElement)
+    public CompilerOptions(Pattern debugNsInclude, Pattern debugNsExclude, int maxIteration, int maxRecursion, Set
+            <Formatter> formatters,
+                           File outputDirectory, List<File> includeDirectories, DeprecationWarnings deprecationWarnings, File annotationDirectory,
+                           File annotationBaseDirectory, String rootElement, int nthread)
             throws SyntaxException {
 
         // Check that the iteration and call depth limits are sensible. If
@@ -249,6 +253,13 @@ public class CompilerOptions {
         }
 
         this.rootElement = createRootElement(rootElement);
+
+        int nprocs = Runtime.getRuntime().availableProcessors();
+        if (nthread <= 0 || nthread > nprocs) {
+            this.nthread = nprocs;
+        } else {
+            this.nthread = nthread;
+        }
     }
 
     // Utility method to turn old options into new deprecation flag.
@@ -288,7 +299,7 @@ public class CompilerOptions {
             return new CompilerOptions(debugNsInclude, debugNsExclude,
                     maxIteration, maxRecursion, formatters, outputDirectory,
                     includeDirectories, deprecationWarnings,
-                    annotationDirectory, annotationBaseDirectory, null);
+                    annotationDirectory, annotationBaseDirectory, null, 0);
 
         } catch (SyntaxException consumed) {
             throw CompilerError.create(MSG_FILE_BUG_REPORT);
@@ -319,7 +330,7 @@ public class CompilerOptions {
             return new CompilerOptions(debugNsInclude, debugNsExclude,
                     maxIteration, maxRecursion, formatters, outputDirectory,
                     includeDirectories, DeprecationWarnings.OFF,
-                    annotationDirectory, annotationBaseDirectory, null);
+                    annotationDirectory, annotationBaseDirectory, null, 0);
 
         } catch (SyntaxException consumed) {
             throw CompilerError.create(MSG_FILE_BUG_REPORT);

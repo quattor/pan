@@ -58,7 +58,7 @@ public class CompilerOptionsTest {
         CompilerOptions options = new CompilerOptions(null, null,
                 iterationLimit, callDepthLimit, formatters, outputDirectory,
                 includeDirectories, CompilerOptions.DeprecationWarnings.ON,
-                null, null, null);
+                null, null, null, 0);
 
         assertTrue(iterationLimit == options.maxIteration);
         assertTrue(callDepthLimit == options.maxRecursion);
@@ -84,7 +84,7 @@ public class CompilerOptionsTest {
         CompilerOptions options = new CompilerOptions(null, null,
                 iterationLimit, callDepthLimit, formatters, outputDirectory,
                 includeDirectories, CompilerOptions.DeprecationWarnings.ON,
-                null, null, null);
+                null, null, null, 0);
 
         assertTrue(iterationLimit == options.maxIteration);
         assertTrue(callDepthLimit == options.maxRecursion);
@@ -110,7 +110,7 @@ public class CompilerOptionsTest {
         CompilerOptions options = new CompilerOptions(null, null,
                 iterationLimit, callDepthLimit, formatters, outputDirectory,
                 includeDirectories, CompilerOptions.DeprecationWarnings.ON,
-                null, null, null);
+                null, null, null, 0);
 
         assertTrue(Integer.MAX_VALUE == options.maxIteration);
         assertTrue(Integer.MAX_VALUE == options.maxRecursion);
@@ -131,7 +131,7 @@ public class CompilerOptionsTest {
 
         new CompilerOptions(null, null, iterationLimit, callDepthLimit,
                 formatters, outputDirectory, includeDirectories,
-                CompilerOptions.DeprecationWarnings.ON, null, null, null);
+                CompilerOptions.DeprecationWarnings.ON, null, null, null, 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -149,7 +149,7 @@ public class CompilerOptionsTest {
 
         new CompilerOptions(null, null, iterationLimit, callDepthLimit,
                 formatters, outputDirectory, includeDirectories,
-                CompilerOptions.DeprecationWarnings.ON, null, null, null);
+                CompilerOptions.DeprecationWarnings.ON, null, null, null, 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -167,7 +167,7 @@ public class CompilerOptionsTest {
 
         new CompilerOptions(null, null, iterationLimit, callDepthLimit,
                 formatters, outputDirectory, includeDirectories,
-                CompilerOptions.DeprecationWarnings.ON, null, null, null);
+                CompilerOptions.DeprecationWarnings.ON, null, null, null, 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -184,7 +184,7 @@ public class CompilerOptionsTest {
 
         new CompilerOptions(null, null, iterationLimit, callDepthLimit,
                 formatters, outputDirectory, includeDirectories,
-                CompilerOptions.DeprecationWarnings.ON, null, null, null);
+                CompilerOptions.DeprecationWarnings.ON, null, null, null, 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -202,7 +202,7 @@ public class CompilerOptionsTest {
 
         new CompilerOptions(null, null, iterationLimit, callDepthLimit,
                 formatters, outputDirectory, includeDirectories,
-                CompilerOptions.DeprecationWarnings.ON, null, null, null);
+                CompilerOptions.DeprecationWarnings.ON, null, null, null, 0);
     }
 
     @Test

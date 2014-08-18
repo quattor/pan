@@ -15,7 +15,7 @@ import org.quattor.pan.output.Formatter;
 
 /**
  * perform a full build of pan language templates
- * 
+ *
  * @goal pan-build
  * @phase compile
  */
@@ -23,7 +23,7 @@ public class PanBuildMojo extends AbstractPanMojo {
 
     /**
      * subdirectory with object templates
-     * 
+     *
      * @parameter property="panc.profiles" default-value="profiles"
      * @required
      */
@@ -31,28 +31,28 @@ public class PanBuildMojo extends AbstractPanMojo {
 
     /**
      * pattern to include templates for debugging
-     * 
+     *
      * @parameter property="panc.debugNsInclude" default-value=".+"
      */
     private String debugNsInclude = ".+";
 
     /**
      * pattern to exclude templates for debugging
-     * 
+     *
      * @parameter property="panc.debugNsExclude" default-value="^$"
      */
     private String debugNsExclude = "^$";
 
     /**
      * initial data for configuration
-     * 
+     *
      * @parameter property="panc.initialData"
      */
     private String initialData = null;
 
     /**
      * directory for generated profiles
-     * 
+     *
      * @parameter property="panc.outputDir" default-value="${basedir}/target"
      * @required
      */
@@ -60,7 +60,7 @@ public class PanBuildMojo extends AbstractPanMojo {
 
     /**
      * list of formats for output files (comma-separated list)
-     * 
+     *
      * @parameter property="panc.formats" default-value="pan,dep"
      * @required
      */
@@ -68,7 +68,7 @@ public class PanBuildMojo extends AbstractPanMojo {
 
     /**
      * maximum number of iterations
-     * 
+     *
      * @parameter property="panc.maxIteration" default-value=10000
      * @required
      */
@@ -76,22 +76,30 @@ public class PanBuildMojo extends AbstractPanMojo {
 
     /**
      * maximum number of recursions
-     * 
+     *
      * @parameter property="panc.maxRecursion" default-value=50
      * @required
      */
     private int maxRecursion = 50;
 
     /**
+     * number of threads to use
+     *
+     * @parameter property="panc.nthread" default-value=0
+     * @required
+     */
+    private int nthread = 0;
+
+    /**
      * logging types
-     * 
+     *
      * @parameter property="panc.logging" default-value="none"
      */
     private String logging = "none";
 
     /**
      * log file
-     * 
+     *
      * @parameter property="panc.logFile"
      */
     private File logFile = null;
@@ -147,7 +155,7 @@ public class PanBuildMojo extends AbstractPanMojo {
             return new CompilerOptions(Pattern.compile(debugNsInclude),
                     Pattern.compile(debugNsExclude), maxIteration,
                     maxRecursion, formatters, outputDir, includeDirectories,
-                    warningsFromString(warnings), null, null, initialData);
+                    warningsFromString(warnings), null, null, initialData, nthread);
 
         } catch (SyntaxException e) {
             throw new MojoExecutionException(

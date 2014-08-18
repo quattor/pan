@@ -17,7 +17,6 @@
 package org.quattor.ant;
 
 import java.io.File;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -35,9 +34,7 @@ import org.quattor.pan.CompilerLogging;
 import org.quattor.pan.CompilerOptions;
 import org.quattor.pan.CompilerResults;
 import org.quattor.pan.exceptions.SyntaxException;
-import org.quattor.pan.output.DepFormatter;
 import org.quattor.pan.output.Formatter;
-import org.quattor.pan.output.FormatterUtils;
 import org.quattor.pan.repository.SourceType;
 
 /**
@@ -90,6 +87,8 @@ public class PanCompilerTask extends Task {
 
     private int batchSize = 0;
 
+    private int nthread = 0;
+
     private int maxIteration = 10000;
 
     private int maxRecursion = 50;
@@ -137,7 +136,7 @@ public class PanCompilerTask extends Task {
         try {
             options = new CompilerOptions(debugNsInclude, debugNsExclude,
                     maxIteration, maxRecursion, formatters, outputDir, includeDirectories,
-                    deprecationWarnings, null, null, initialData);
+                    deprecationWarnings, null, null, initialData, nthread);
         } catch (SyntaxException e) {
             throw new BuildException("invalid root element: " + e.getMessage());
         }
@@ -487,6 +486,14 @@ public class PanCompilerTask extends Task {
 
     public void setBatchSize(int batchSize) {
         this.batchSize = (batchSize > 0) ? batchSize : 0;
+    }
+
+    public int getNthread() {
+        return nthread;
+    }
+
+    public void setNthread(int nthread) {
+        this.nthread = (nthread > 0) ? nthread : 0;
     }
 
     /**

@@ -20,6 +20,14 @@
 
 package org.quattor.pan;
 
+import org.quattor.pan.cache.BuildCache;
+import org.quattor.pan.cache.CompileCache;
+import org.quattor.pan.cache.Valid1Cache;
+import org.quattor.pan.cache.Valid2Cache;
+import org.quattor.pan.repository.SourceRepository;
+import org.quattor.pan.tasks.Task;
+import org.quattor.pan.tasks.TaskResult;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,7 +36,6 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
@@ -41,24 +48,14 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.quattor.pan.cache.BuildCache;
-import org.quattor.pan.cache.CompileCache;
-import org.quattor.pan.cache.Valid1Cache;
-import org.quattor.pan.cache.Valid2Cache;
-import org.quattor.pan.repository.SourceRepository;
-import org.quattor.pan.tasks.Task;
-import org.quattor.pan.tasks.TaskResult;
-
 /**
- * Primary java interface for invoking the pan compiler. All external methods of
- * running the compiler (ant tasks, scripts, etc.) should make use of an
- * instance of this class.
+ * Primary java interface for invoking the pan compiler. All external methods of running the compiler (ant tasks,
+ * scripts, etc.) should make use of an instance of this class.
  *
- * Instances of this class are thread-safe (the underlying implementation uses
- * threads in the compilation and build of machine templates). However, the
- * <code>process</code> method should only be invoked only by a single thread;
- * the method is synchronized to ensure this. The <code>submit</code> method
- * should be called only by tasks created internally by the compiler.
+ * Instances of this class are thread-safe (the underlying implementation uses threads in the compilation and build of
+ * machine templates). However, the <code>process</code> method should only be invoked only by a single thread; the
+ * method is synchronized to ensure this. The <code>submit</code> method should be called only by tasks created
+ * internally by the compiler.
  *
  * @author loomis
  */
@@ -78,8 +75,7 @@ public class Compiler {
 
         Properties values = new Properties(defaults);
 
-        InputStream is = Compiler.class
-                .getResourceAsStream("version.properties");
+        InputStream is = Compiler.class.getResourceAsStream("version.properties");
 
         try {
             values.load(is);
@@ -100,37 +96,34 @@ public class Compiler {
     private final TreeMap<TaskResult.ResultType, ThreadPoolExecutor> executors;
 
     /**
-     * This value is used to synchronize the tasks running within the compiler.
-     * Before each task is started, this counter must be incremented. The
-     * compiler decrements the counter as tasks finish. When the counter reaches
-     * zero, the processing stops.
+     * This value is used to synchronize the tasks running within the compiler. Before each task is started, this
+     * counter must be incremented. The compiler decrements the counter as tasks finish. When the counter reaches zero,
+     * the processing stops.
      */
     private final AtomicInteger remainingTasks = new AtomicInteger(0);
 
     /**
-     * This queue holds the results from all tasks. All tasks must be submitted
-     * to this queue.
+     * This queue holds the results from all tasks. All tasks must be submitted to this queue.
      */
-    private final BlockingQueue<Future<? extends TaskResult>> resultsQueue = new LinkedBlockingQueue<Future<? extends TaskResult>>();
+    private final BlockingQueue<Future<? extends TaskResult>> resultsQueue = new LinkedBlockingQueue<Future<? extends
+            TaskResult>>();
 
     /**
-     * Build queue thread limit. The build queue must be treated specially
-     * because object dependencies can deadlock the compiler. The number of
-     * concurrent threads must be at least equal to the number of outstanding
-     * object dependencies during the build.
+     * Build queue thread limit. The build queue must be treated specially because object dependencies can deadlock the
+     * compiler. The number of concurrent threads must be at least equal to the number of outstanding object
+     * dependencies during the build.
      */
     private final AtomicInteger buildThreadLimit;
     private final Object buildThreadLock = new Object();
 
     /**
-     * The initialization of this must be done when the instance is constructed
-     * to avoid nasty questions about when the loggers get initialized.
+     * The initialization of this must be done when the instance is constructed to avoid nasty questions about when the
+     * loggers get initialized.
      */
     private final CompilerStatistics stats;
 
     /**
-     * This holds a reference to the compiler options. The options are immutable
-     * and hence visible to all threads.
+     * This holds a reference to the compiler options. The options are immutable and hence visible to all threads.
      */
     public final CompilerOptions options;
 
@@ -148,19 +141,14 @@ public class Compiler {
     private final Valid2Cache v2cache;
 
     /**
-     * Create a compiler object with the given options and that will process the
-     * given templates (either by name or absolute path).
+     * Create a compiler object with the given options and that will process the given templates (either by name or
+     * absolute path).
      *
-     * @param options
-     *            compiler options to use for the created compiler
-     * @param objectNames
-     *            template names to compile/build; these will be looked-up on
-     *            the load path
-     * @param tplFiles
-     *            absolute file names of templates to process
+     * @param options     compiler options to use for the created compiler
+     * @param objectNames template names to compile/build; these will be looked-up on the load path
+     * @param tplFiles    absolute file names of templates to process
      */
-    public Compiler(CompilerOptions options, List<String> objectNames,
-            Collection<File> tplFiles) {
+    public Compiler(CompilerOptions options, List<String> objectNames, Collection<File> tplFiles) {
 
         // Sanity check.
         assert (options != null);
@@ -188,52 +176,37 @@ public class Compiler {
 
         // Setup the executors for the build. There is one for each stage of the
         // processing.
-        //int nprocs = Runtime.getRuntime().availableProcessors();
-        // FIXME: FOR DEBUGGING PURPOSES ONLY
-        Map<TaskResult.ResultType, Integer> nprocmap = new TreeMap<TaskResult.ResultType, Integer>();
-        nprocmap.put(TaskResult.ResultType.ANNOTATION, 1);
-        nprocmap.put(TaskResult.ResultType.BUILD, 1);
-        nprocmap.put(TaskResult.ResultType.COMPILED, 1);
-        nprocmap.put(TaskResult.ResultType.DEP, 1);
-        nprocmap.put(TaskResult.ResultType.VALID1, 1);
-        nprocmap.put(TaskResult.ResultType.VALID2, 1);
-        nprocmap.put(TaskResult.ResultType.XML, 1);
+        int nprocs = Runtime.getRuntime().availableProcessors();
+        if (options.nthread > 0 && options.nthread < nprocs) {
+            nprocs = options.nthread;
+        }
 
         executors = new TreeMap<TaskResult.ResultType, ThreadPoolExecutor>();
         for (TaskResult.ResultType t : TaskResult.ResultType.values()) {
-            executors.put(t,
-                    (ThreadPoolExecutor) Executors.newFixedThreadPool(nprocmap.get(t)));
+            executors.put(t, (ThreadPoolExecutor) Executors.newFixedThreadPool(nprocs));
         }
 
         // Must initialize the build thread limit to the number used above.
-        buildThreadLimit = new AtomicInteger(nprocmap.get(TaskResult.ResultType.BUILD));
+        buildThreadLimit = new AtomicInteger(nprocs);
     }
 
     /**
-     * This is a convenience method which creates a compiler and then invokes
-     * the <code>process</code> method.
+     * This is a convenience method which creates a compiler and then invokes the <code>process</code> method.
      *
-     * @param options
-     *            compiler options to use for the created compiler
-     * @param objectNames
-     *            object template names to compile/build; these will be
-     *            looked-up on the load path
-     * @param tplFiles
-     *            absolute file names of templates to process
-     *
+     * @param options     compiler options to use for the created compiler
+     * @param objectNames object template names to compile/build; these will be looked-up on the load path
+     * @param tplFiles    absolute file names of templates to process
      * @return results from the compilation/build
      */
-    public static CompilerResults run(CompilerOptions options,
-            List<String> objectNames, Collection<File> tplFiles) {
+    public static CompilerResults run(CompilerOptions options, List<String> objectNames, Collection<File> tplFiles) {
         return (new Compiler(options, objectNames, tplFiles)).process();
     }
 
     /**
-     * Extracts the version of the compiler and prints the value on the standard
-     * output. This is useful for packaging of the compiler.
+     * Extracts the version of the compiler and prints the value on the standard output. This is useful for packaging of
+     * the compiler.
      *
-     * @param args
-     *            all arguments are ignored
+     * @param args all arguments are ignored
      */
     public static void main(String[] args) {
         System.out.println(Compiler.version);
@@ -244,21 +217,17 @@ public class Compiler {
     }
 
     /**
-     * Ensures that the number of threads in the build pool is at least as large
-     * as the number given. Because object templates can have dependencies on
-     * each other, it is possible to deadlock the compilation with a rigidly
-     * fixed build queue. To avoid this, allow the build queue limit to be
-     * increased.
+     * Ensures that the number of threads in the build pool is at least as large as the number given. Because object
+     * templates can have dependencies on each other, it is possible to deadlock the compilation with a rigidly fixed
+     * build queue. To avoid this, allow the build queue limit to be increased.
      *
-     * @param minLimit
-     *            minimum build queue limit
+     * @param minLimit minimum build queue limit
      */
     public void ensureMinimumBuildThreadLimit(int minLimit) {
         if (buildThreadLimit.get() < minLimit) {
             synchronized (buildThreadLock) {
                 buildThreadLimit.set(minLimit);
-                ThreadPoolExecutor buildExecutor = executors
-                        .get(TaskResult.ResultType.BUILD);
+                ThreadPoolExecutor buildExecutor = executors.get(TaskResult.ResultType.BUILD);
 
                 // Must set both the maximum and the core limits. If the core is
                 // not set, then the thread pool will not be forced to expand to
@@ -270,19 +239,16 @@ public class Compiler {
     }
 
     /**
-     * Process the templates referenced by the CompilerOptions object used to
-     * initialize this instance. This will run through the complete compiling,
-     * building, and validation stages as requested. This method should only be
-     * invoked once per instance.
+     * Process the templates referenced by the CompilerOptions object used to initialize this instance. This will run
+     * through the complete compiling, building, and validation stages as requested. This method should only be invoked
+     * once per instance.
      *
-     * @return the statistics of the compilation and any exceptions which were
-     *         thrown
+     * @return the statistics of the compilation and any exceptions which were thrown
      */
     public synchronized CompilerResults process() {
 
         // Create the list to hold all of the exceptions.
-        Set<Throwable> exceptions = new TreeSet<Throwable>(
-                new ThrowableComparator());
+        Set<Throwable> exceptions = new TreeSet<Throwable>(new ThrowableComparator());
 
         long start = new Date().getTime();
 
@@ -352,8 +318,7 @@ public class Compiler {
     }
 
     /**
-     * Returns a reference to the compile cache used to store compiled
-     * templates.
+     * Returns a reference to the compile cache used to store compiled templates.
      *
      * @return reference to compile cache
      */
@@ -362,8 +327,8 @@ public class Compiler {
     }
 
     /**
-     * Returns a reference to objects (machine profiles) which have already been
-     * built. This allows cross-validation of templates.
+     * Returns a reference to objects (machine profiles) which have already been built. This allows cross-validation of
+     * templates.
      *
      * @return reference to object cache
      */
@@ -384,12 +349,10 @@ public class Compiler {
     }
 
     /**
-     * Submits a task to one of the compiler's task queues for processing.
-     * Although public, this method should only be called by tasks started by
-     * the compiler itself.
+     * Submits a task to one of the compiler's task queues for processing. Although public, this method should only be
+     * called by tasks started by the compiler itself.
      *
-     * @param task
-     *            task to run on one of the compiler's task queues
+     * @param task task to run on one of the compiler's task queues
      */
     public void submit(Task<? extends TaskResult> task) {
 
@@ -408,16 +371,13 @@ public class Compiler {
     }
 
     /**
-     * This class orders Throwables allowing duplicates to be removed. It orders
-     * them based on their system identity hash code. The implementation will
-     * not handle null values gracefully and will throw a NPE.
+     * This class orders Throwables allowing duplicates to be removed. It orders them based on their system identity
+     * hash code. The implementation will not handle null values gracefully and will throw a NPE.
      *
      * @author loomis
-     *
      */
     @SuppressWarnings("serial")
-    public static class ThrowableComparator implements Serializable,
-            Comparator<Throwable> {
+    public static class ThrowableComparator implements Serializable, Comparator<Throwable> {
 
         public int compare(Throwable o1, Throwable o2) {
             if (o1 == o2) {

@@ -60,6 +60,8 @@
 
         <arg>--max-recursion <replaceable>limit</replaceable></arg>
 
+        <arg>--nthread <replaceable>number</replaceable></arg>
+
         <arg>--logging <replaceable>string</replaceable></arg>
 
         <arg>--log-file <replaceable>file</replaceable></arg>
@@ -189,6 +191,16 @@
           <listitem>
             <para>Set the limit on the maximum number of permitted recursions.
             The default value is 10.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><option>--nthread=<replaceable>number</replaceable></option></term>
+
+          <listitem>
+            <para>The number of threads to use for profile processing. The
+            default value of zero will use a number equal to the number of CPU
+            cores on the machine.</para>
           </listitem>
         </varlistentry>
 

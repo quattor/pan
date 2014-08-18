@@ -69,7 +69,7 @@ public class JavaCompilerTest {
 		formatters.add(DepFormatter.getInstance());
 		CompilerOptions options = new CompilerOptions(null, null, 100, 50,
 				formatters, getTmpdir(), path,
-				CompilerOptions.DeprecationWarnings.ON, null, null, null);
+				CompilerOptions.DeprecationWarnings.ON, null, null, null, 0);
 		List<File> tplfiles = new LinkedList<File>();
 		tplfiles.add(tplfile);
 		return new Compiler(options, new LinkedList<String>(), tplfiles);
@@ -86,7 +86,7 @@ public class JavaCompilerTest {
 		CompilerOptions options = new CompilerOptions(null, null, 100, 50,
 				formatters, getTmpdir(), path,
 				CompilerOptions.DeprecationWarnings.ON, null, null,
-				"nlist('root-element-test', 'OK')");
+				"nlist('root-element-test', 'OK')", 0);
 		List<File> tplfiles = new LinkedList<File>();
 		tplfiles.add(tplfile);
 		return new Compiler(options, new LinkedList<String>(), tplfiles);
@@ -103,7 +103,7 @@ public class JavaCompilerTest {
 		formatters.add(DepFormatter.getInstance());
 		CompilerOptions options = new CompilerOptions(null, null, 100, 50,
 				formatters, getTmpdir(), path,
-				CompilerOptions.DeprecationWarnings.ON, null, null, null);
+				CompilerOptions.DeprecationWarnings.ON, null, null, null, 0);
 		List<File> tplfiles = new LinkedList<File>();
 		tplfiles.add(tplfile);
 		return new Compiler(options, new LinkedList<String>(), tplfiles);
@@ -122,7 +122,7 @@ public class JavaCompilerTest {
 		formatters.add(DepFormatter.getInstance());
 		CompilerOptions options = new CompilerOptions(null, null, 100, 50,
 				formatters, getTmpdir(), path,
-				CompilerOptions.DeprecationWarnings.ON, null, null, null);
+				CompilerOptions.DeprecationWarnings.ON, null, null, null, 0);
 
 		List<String> objects = new LinkedList<String>();
 		objects.add("non-existant/object/template");
@@ -168,7 +168,7 @@ public class JavaCompilerTest {
 
 		CompilerOptions options = new CompilerOptions(null, null, 100, 50,
 				formatters, tmpdir, path,
-				CompilerOptions.DeprecationWarnings.ON, null, null, null);
+				CompilerOptions.DeprecationWarnings.ON, null, null, null, 0);
 
 		// Create the list of input files.
 		List<File> tplfiles = new LinkedList<File>();
@@ -309,7 +309,7 @@ public class JavaCompilerTest {
 	 * Invoke a single test by extracting the expected result from the object
 	 * template, building the configuration, and ensuring that the expected
 	 * result (either an exception or an XPath expression) is returned.
-	 * 
+	 *
 	 * @param rootdir
 	 *            root directory for build of this object template
 	 * @param objtpl
@@ -486,12 +486,12 @@ public class JavaCompilerTest {
 	 * Invoke a single dependency test by extracting the expected dependencies
 	 * from the object template, building the configuration, and ensuring that
 	 * the dependency file contains the correct templates.
-	 * 
+	 *
 	 * @param rootdir
 	 *            root directory for build of this object template
 	 * @param objtpl
 	 *            the object template to compile
-	 * 
+	 *
 	 * @return message (String) if there is an error, null otherwise
 	 */
 	protected String invokeDependencyTest(File rootdir, File objtpl)

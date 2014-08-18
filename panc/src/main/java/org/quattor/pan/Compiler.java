@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
@@ -187,15 +188,25 @@ public class Compiler {
 
         // Setup the executors for the build. There is one for each stage of the
         // processing.
-        int nprocs = Runtime.getRuntime().availableProcessors();
+        //int nprocs = Runtime.getRuntime().availableProcessors();
+        // FIXME: FOR DEBUGGING PURPOSES ONLY
+        Map<TaskResult.ResultType, Integer> nprocmap = new TreeMap<TaskResult.ResultType, Integer>();
+        nprocmap.put(TaskResult.ResultType.ANNOTATION, 1);
+        nprocmap.put(TaskResult.ResultType.BUILD, 1);
+        nprocmap.put(TaskResult.ResultType.COMPILED, 1);
+        nprocmap.put(TaskResult.ResultType.DEP, 1);
+        nprocmap.put(TaskResult.ResultType.VALID1, 1);
+        nprocmap.put(TaskResult.ResultType.VALID2, 1);
+        nprocmap.put(TaskResult.ResultType.XML, 1);
+
         executors = new TreeMap<TaskResult.ResultType, ThreadPoolExecutor>();
         for (TaskResult.ResultType t : TaskResult.ResultType.values()) {
             executors.put(t,
-                    (ThreadPoolExecutor) Executors.newFixedThreadPool(nprocs));
+                    (ThreadPoolExecutor) Executors.newFixedThreadPool(nprocmap.get(t)));
         }
 
         // Must initialize the build thread limit to the number used above.
-        buildThreadLimit = new AtomicInteger(nprocs);
+        buildThreadLimit = new AtomicInteger(nprocmap.get(TaskResult.ResultType.BUILD));
     }
 
     /**

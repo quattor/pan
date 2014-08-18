@@ -20,70 +20,85 @@
 
 package org.quattor.pan.statement;
 
-import static org.quattor.pan.utils.MessageUtils.MSG_ABSOLUTE_PATH_ONLY_FOR_BIND;
-
+import org.apache.commons.lang3.text.StrLookup;
+import org.apache.commons.lang3.text.StrSubstitutor;
+import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
-import org.quattor.pan.template.Context;
 import org.quattor.pan.template.SourceRange;
 import org.quattor.pan.type.FullType;
 import org.quattor.pan.utils.Path;
 
+import static org.quattor.pan.utils.MessageUtils.MSG_ABSOLUTE_PATH_ONLY_FOR_BIND;
+
 /**
  * Associates a FullType (which may have a validation function) to a path.
- * 
+ *
  * @author loomis
- * 
  */
-public class BindStatement extends Statement {
+public abstract class BindStatement extends Statement {
 
-	private final Path path;
+    protected BindStatement(SourceRange sourceRange) {
+        super(sourceRange);
+    }
 
-	private final FullType fullType;
+    public static BindStatement getInstance(SourceRange sourceRange, String pathname, FullType fullType) throws
+            SyntaxException {
 
-	/**
-	 * This constructor creates a new BindStatement which associates a FullType
-	 * to a particular, absolute path.
-	 * 
-	 * @param sourceRange
-	 *            source location of this statement
-	 * @param path
-	 *            absolute Path to associate with the FullType
-	 * @param fullType
-	 *            type to associate with the Path
-	 */
-	public BindStatement(SourceRange sourceRange, Path path, FullType fullType)
-			throws SyntaxException {
+        // Check that the arguments are acceptable.
+        assert (pathname != null);
+        assert (fullType != null);
 
-		super(sourceRange);
+        // Determine if a static or dynamic bind statement should be used.
+        if (isStaticPath(pathname)) {
 
-		// Check that the arguments are acceptable.
-		assert (path != null);
-		assert (fullType != null);
-		if (!path.isAbsolute()) {
-			throw SyntaxException.create(sourceRange,
-					MSG_ABSOLUTE_PATH_ONLY_FOR_BIND, path);
-		}
+            Path path = createPathFromIdentifier(sourceRange, pathname);
+            if (!path.isAbsolute()) {
+                throw SyntaxException.create(sourceRange, MSG_ABSOLUTE_PATH_ONLY_FOR_BIND, path);
+            }
+            return new StaticBindStatement(sourceRange, path, fullType);
 
-		// Copy in the information.
-		this.path = path;
-		this.fullType = fullType;
-	}
+        } else {
+            return new DynamicBindStatement(sourceRange, pathname, fullType);
+        }
+    }
 
-	@Override
-	public void execute(Context context) {
-		assert (context != null);
-		context.setBinding(path, fullType, context.getCurrentTemplate(),
-				getSourceRange());
-	}
+    private static Path createPathFromIdentifier(SourceRange sourceRange, String pathname) throws SyntaxException {
 
-	/**
-	 * Return a reasonable string representation of this statement.
-	 * 
-	 * @return String representation of this BindStatement
-	 */
-	@Override
-	public String toString() {
-		return "BIND: " + path + ", " + fullType;
-	}
+        try {
+            assert (pathname != null);
+            return new Path(pathname);
+        } catch (EvaluationException ee) {
+            throw SyntaxException.create(sourceRange, ee);
+        } catch (SyntaxException se) {
+            throw se.addExceptionInfo(sourceRange, null);
+        }
+    }
+
+    private static boolean isStaticPath(String pathname) {
+
+        NoOpResolver noOpResolver = new NoOpResolver();
+        StrSubstitutor sub = new StrSubstitutor(noOpResolver);
+        sub.replace(pathname);
+
+        return !noOpResolver.lookupOccurred();
+    }
+
+    /**
+     * This resolver will just set a flag if it is ever called.  This
+     * is used to determine if a given string has variable references.
+     */
+    private static class NoOpResolver extends StrLookup<String> {
+
+        private boolean lookupOccurred = false;
+
+        public String lookup(String variable) {
+            lookupOccurred = true;
+            return "";
+        }
+
+        public boolean lookupOccurred() {
+            return lookupOccurred;
+        }
+    }
 
 }

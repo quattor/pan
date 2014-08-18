@@ -403,9 +403,6 @@ public class PanParserAstUtils {
         // Sanity check. Ensure that this is a bind statement.
         assert (ast.getStatementType() == StatementType.BIND);
 
-        // Get identifier and create path.
-        Path path = createPathFromIdentifier(ast);
-
         // Verify that there is exactly one child.
         assert (ast.jjtGetNumChildren() == 1);
 
@@ -422,7 +419,7 @@ public class PanParserAstUtils {
             assert (false);
         }
 
-        return new BindStatement(ast.getSourceRange(), path, fullType);
+        return BindStatement.getInstance(ast.getSourceRange(), ast.getIdentifier(), fullType);
     }
 
     private static Path createPathFromIdentifier(ASTStatement ast) throws SyntaxException {

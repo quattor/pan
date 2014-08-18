@@ -65,6 +65,11 @@
 
       <itemizedlist>
         <listitem>
+          <para>(GitHub Issue #48) allow variable substitution for bind/valid
+          paths</para>
+        </listitem>
+
+        <listitem>
           <para>(GitHub Issue #34) add the file_exists function</para>
         </listitem>
 

@@ -1386,6 +1386,14 @@ prefix '/batch/server/nodes';
 
         <para>The pan compiler internally implements this statement as the
         <command>bind</command> statement above.</para>
+
+        <para>The path used in these statement can contain <emphasis>global
+        variable</emphasis> references of the form
+        ${<varname>vname</varname>}. This allows the binding between the
+        validation code and a path to be determined when a profile is built.
+        If the path references an undefined global variable, then will abort
+        with an error. The build will also be aborted if the path is not valid
+        after the values of the variables have been substituted.</para>
       </section>
     </section>
   </chapter>

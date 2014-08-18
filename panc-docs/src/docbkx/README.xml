@@ -65,12 +65,76 @@
 
       <itemizedlist>
         <listitem>
+          <para>(GitHub Issue #63) allow user to specify number of threads for
+          processing (nthread option)</para>
+        </listitem>
+
+        <listitem>
+          <para>(GitHub Issue #61) fix processing of include path CLI
+          argument</para>
+        </listitem>
+
+        <listitem>
           <para>(GitHub Issue #59) add substitute function to replace named
           values in string template</para>
         </listitem>
 
         <listitem>
-          <para>(GitHub Issue #24) add OBJECT to debug and error output</para>
+          <para>(GitHub Issue #54) convert source files to UTF-8</para>
+        </listitem>
+
+        <listitem>
+          <para>(GitHub Issue #49) add warning in docs that all pan source
+          files must be UTF-8 (also for file_contents function)</para>
+        </listitem>
+
+        <listitem>
+          <para>(GitHub Issue #47) fix compiler hang when using escape
+          sequence in path literal</para>
+        </listitem>
+
+        <listitem>
+          <para>(GitHub Issue #43) fix compiler crash when SELF is used as a
+          function</para>
+        </listitem>
+
+        <listitem>
+          <para>(GitHub Issue #41) RPM package should not own /usr/bin and
+          /usr/lib</para>
+        </listitem>
+
+        <listitem>
+          <para>(GitHub Issue #40) ensure line number and file name are
+          correct for traceback function</para>
+        </listitem>
+
+        <listitem>
+          <para>(GitHub Issue #38) add ip address and netmask functions</para>
+        </listitem>
+
+        <listitem>
+          <para>(GitHub Issue #37) ensure line numbers appear in error message
+          for bad default values</para>
+        </listitem>
+
+        <listitem>
+          <para>(GitHub Issue #36) allow to_long to treat values like "08" and
+          "09"</para>
+        </listitem>
+
+        <listitem>
+          <para>(GitHub Issue #31) fix options processing for CLI (bad
+          processing causes failure)</para>
+        </listitem>
+
+        <listitem>
+          <para>(GitHub Issue #29) update links in documentation to GitHub
+          from SourceForge</para>
+        </listitem>
+
+        <listitem>
+          <para>(GitHub Issue #15, #24) add OBJECT to debug and error
+          output</para>
         </listitem>
 
         <listitem>

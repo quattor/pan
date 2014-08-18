@@ -798,6 +798,53 @@ r = exists(v+'');</programlisting>
     </refsection>
   </refentry>
 
+  <refentry xml:id="file_exists">
+    <info>
+      <productnumber><?eval ${project.version}?></productnumber>
+
+      <productname>panc</productname>
+
+      <date><?eval ${buildTimestamp}?></date>
+
+      <copyright>
+        <year>2012</year>
+
+        <holder>Centre National de la Recherche Scientifique (CNRS)</holder>
+      </copyright>
+    </info>
+
+    <refmeta>
+      <refentrytitle>file_exists</refentrytitle>
+
+      <manvolnum>3</manvolnum>
+    </refmeta>
+
+    <refnamediv>
+      <refname>panc:file_exists</refname>
+
+      <refpurpose>determine if the named file exists</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>string <function>file_exists</function></funcdef>
+
+          <paramdef>string <parameter>filename</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+    <refsection>
+      <title>Description</title>
+
+      <para>This function will return a boolean indicating whether the named
+      file exists. The file is located using the standard source file lookup
+      algorithm. Because the load path is used to find the file, this function
+      may not be used to create a compile-time constant.</para>
+    </refsection>
+  </refentry>
+
   <refentry xml:id="first">
     <info>
       <productnumber><?eval ${project.version}?></productnumber>

@@ -2240,6 +2240,13 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
             </row>
 
             <row>
+              <entry><xref linkend="file_exists" /></entry>
+
+              <entry>Lookup the named file and return true if it exists;
+              return false otherwise.</entry>
+            </row>
+
+            <row>
               <entry><xref linkend="format" /></entry>
 
               <entry>Generate a formatted string based on the formatting

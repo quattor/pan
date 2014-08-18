@@ -65,6 +65,11 @@
 
       <itemizedlist>
         <listitem>
+          <para>(GitHub Issue #59) add substitute function to replace named
+          values in string template</para>
+        </listitem>
+
+        <listitem>
           <para>(GitHub Issue #24) add OBJECT to debug and error output</para>
         </listitem>
 

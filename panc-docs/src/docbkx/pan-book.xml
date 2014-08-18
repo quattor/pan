@@ -2226,6 +2226,7 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
           <thead>
             <row>
               <entry>Name</entry>
+
               <entry>Description</entry>
             </row>
           </thead>
@@ -2294,6 +2295,12 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
             </row>
 
             <row>
+              <entry><xref linkend="substitute" /></entry>
+
+              <entry>Substitute named values in a string template.</entry>
+            </row>
+
+            <row>
               <entry><xref linkend="substr" /></entry>
 
               <entry>Extract a substring from the given string.</entry>
@@ -2327,6 +2334,7 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
           <thead>
             <row>
               <entry>Name</entry>
+
               <entry>Description</entry>
             </row>
           </thead>
@@ -2375,6 +2383,7 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
           <thead>
             <row>
               <entry>Name</entry>
+
               <entry>Description</entry>
             </row>
           </thead>
@@ -2427,6 +2436,7 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
           <thead>
             <row>
               <entry>Name</entry>
+
               <entry>Description</entry>
             </row>
           </thead>
@@ -2519,6 +2529,7 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
           <thead>
             <row>
               <entry>Name</entry>
+
               <entry>Description</entry>
             </row>
           </thead>
@@ -2638,6 +2649,7 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
           <thead>
             <row>
               <entry>Name</entry>
+
               <entry>Description</entry>
             </row>
           </thead>
@@ -2714,6 +2726,7 @@ if ( condition-dml ) true-dml else false-dml;</programlisting>
           <thead>
             <row>
               <entry>Name</entry>
+
               <entry>Description</entry>
             </row>
           </thead>

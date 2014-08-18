@@ -14,13 +14,25 @@
 (defn positive-integer
   "Ensure that the given value is a positive integer, otherwise throw an
    IllegalArgumentException."
-  [name value]
+  [key value]
   (if-let [i (to-integer value)]
     (if (pos? i)
-      {name i}
-      (let [msg (str "only postive values for " name "are allowed")]
+      {key i}
+      (let [msg (str "only postive values for " (name key) " are allowed")]
         (throw (ex-info msg {:type :options :msg msg}))))
-    (let [msg (str "invalid integer value (" value ") for " name)]
+    (let [msg (str "invalid integer value (" value ") for " (name key))]
+      (throw (ex-info msg {:type :options :msg msg})))))
+
+(defn non-negative-integer
+  "Ensure that the given value is a non-negative integer, otherwise throw an
+   IllegalArgumentException."
+  [key value]
+  (if-let [i (to-integer value)]
+    (if-not (neg? i)
+      {key i}
+      (let [msg (str "only non-negative values for " (name key) " are allowed")]
+        (throw (ex-info msg {:type :options :msg msg}))))
+    (let [msg (str "invalid integer value (" value ") for " (name key))]
       (throw (ex-info msg {:type :options :msg msg})))))
 
 (defn split-on-commas
@@ -30,7 +42,7 @@
   [s]
   (filter (complement str/blank?)
           (filter (complement nil?)
-                  (str/split (or s "") #"[\s,]+"))))  
+                  (str/split (or s "") #"[\s,]+"))))
 
 (defn split-path
   "Returns list of non-blank and non-null strings,
@@ -38,7 +50,7 @@
   [s]
   (filter (complement str/blank?)
           (filter (complement nil?)
-                  (str/split (or s "") (re-pattern File/pathSeparator))))) 
+                  (str/split (or s "") (re-pattern File/pathSeparator)))))
 
 (defn absolute-file
   "Returns an absolute File object based on the argument.

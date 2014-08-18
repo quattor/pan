@@ -1,93 +1,104 @@
 (ns org.quattor.pan.pan-compiler
   (:gen-class)
-  (:require [clojure.tools.cli :refer [cli]]
+  (:require [clojure.tools.cli :as cli]
+            [clojure.pprint :refer [pprint]]
             [clojure.java.io :as io]
             [org.quattor.pan.cmd-option :refer [to-settings]]
-            [org.quattor.pan.settings :as settings])
+            [org.quattor.pan.settings :as settings]
+            [clojure.string :as str])
   (:import [org.quattor.pan CompilerOptions CompilerResults]
            [clojure.lang ExceptionInfo]))
 
 (def ^:const bug-report-msg
   "**********
 An unexpected exception was thrown in the compiler.
-Please file a bug report with including the stack trace.
+Please file a bug report including the stack trace.
 **********")
 
-(defn format-ex-info [e]
-  (let [info (ex-data e)
-        type (.toUpperCase (name (:type info)))
-        msg (:msg info)]
-    (str type " ERROR: " msg)))
+(defn format-ex-info
+  [ex]
+  (let [{:keys [type msg]} (ex-data ex)]
+    (-> type
+        (name)
+        (.toUpperCase)
+        (str " ERROR: " msg))))
 
 (defn create-compiler-options []
-  (let [ {:keys [debug-ns-include
-                 debug-ns-exclude
-                 max-iteration
-                 max-recursion
-                 formatter
-                 output-dir
-                 include-path
-                 warnings
-                 annotationDirectory
-                 annotationBaseDirectory
-                 rootElement] } settings/*settings* ]
-   (CompilerOptions. debug-ns-include
-                     debug-ns-exclude
-                     max-iteration
-                     max-recursion
-                     formatter
-                     output-dir
-                     include-path
-                     warnings
-                     annotationDirectory
-                     annotationBaseDirectory
-                     rootElement)))
+  (let [{:keys [debug-ns-include
+                debug-ns-exclude
+                max-iteration
+                max-recursion
+                formatter
+                output-dir
+                include-path
+                warnings
+                annotationDirectory
+                annotationBaseDirectory
+                rootElement
+                nthread]} settings/*settings*]
+    (CompilerOptions. debug-ns-include
+                      debug-ns-exclude
+                      max-iteration
+                      max-recursion
+                      formatter
+                      output-dir
+                      include-path
+                      warnings
+                      annotationDirectory
+                      annotationBaseDirectory
+                      rootElement
+                      nthread)))
 
 (defn default-compiler-options []
-  (let [ {:keys [debug-ns-include
-                 debug-ns-exclude
-                 max-iteration
-                 max-recursion
-                 formatter
-                 output-dir
-                 include-path
-                 warnings
-                 annotationDirectory
-                 annotationBaseDirectory
-                 rootElement] } (settings/defaults) ]
-   (CompilerOptions. debug-ns-include
-                     debug-ns-exclude
-                     max-iteration
-                     max-recursion
-                     formatter
-                     output-dir
-                     include-path
-                     warnings
-                     annotationDirectory
-                     annotationBaseDirectory
-                     rootElement)))
+  (let [{:keys [debug-ns-include
+                debug-ns-exclude
+                max-iteration
+                max-recursion
+                formatter
+                output-dir
+                include-path
+                warnings
+                annotationDirectory
+                annotationBaseDirectory
+                rootElement
+                nthread]} (settings/defaults)]
+    (CompilerOptions. debug-ns-include
+                      debug-ns-exclude
+                      max-iteration
+                      max-recursion
+                      formatter
+                      output-dir
+                      include-path
+                      warnings
+                      annotationDirectory
+                      annotationBaseDirectory
+                      rootElement
+                      nthread)))
 
-(defn process-cli-args [args]
+(defn parse-int
+  [^String s]
   (try
-    (cli args
-         ["--debug" "enable all debugging" :default false :flag true]
-         ["--debug-ns-include" "ns regex to include debugging"]
-         ["--debug-ns-exclude" "ns regex to exclude debugging"]
-         ["--initial-data" "set root element (must be a dict)"]
-         ["--include-path" "template lookup path"]
-         ["--output-dir" "output directory" ]
-         ["--formats" "generated output formats" :default "pan,dep"]
-         ["--java-opts" "options for JVM"]
-         ["--max-iteration" "set max. no. of iterations" :default "10000"]
-         ["--max-recursion" "set max. depth of recursion" :default "50"]
-         ["--logging" "set logging types"]
-         ["--log-file" "specify log file"]
-         ["--warnings" "off, on, fatal" :default "on" ]
-         ["-v" "--verbose" "show statistics and progress" :default false :flag true]
-         ["-h" "--help" "print command help" :default false :flag true])
+    (Integer/parseInt s)
     (catch Exception e
-      (let [msg (.getMessage e)]
-        (throw (ex-info msg {:type :options :msg msg}))))))
+      (throw (ex-info (str "invalid integer: '" s "'") {})))))
+
+(def cli-args
+  [[nil "--debug" "enable all debugging" :default false]
+   [nil "--debug-ns-include REGEX" "ns regex to include debugging"]
+   [nil "--debug-ns-exclude REGEX" "ns regex to exclude debugging"]
+   [nil "--initial-data DICT" "set root element (must be a dict)"]
+   [nil "--include-path PATH" "template lookup path"]
+   [nil "--output-dir DIR" "output directory"]
+   [nil "--formats FORMATS" "generated output formats" :default "pan,dep"]
+   [nil "--java-opts OPTS" "options for JVM"]
+   [nil "--max-iteration LIMIT" "set max. no. of iterations" :default "10000"]
+   [nil "--max-recursion LIMIT" "set max. depth of recursion" :default "50"]
+   [nil "--nthread NUM" "no. of executor threads (0=no. CPU)" :default "0"]
+   [nil "--logging LOG_TYPES" "set logging types"]
+   [nil "--log-file FILE" "specify log file"]
+   [nil "--warnings FLAG" "off, on, fatal" :default "on"]
+   ["-v" "--verbose" "show statistics and progress" :default false :flag true]
+   ["-h" "--help" "print command help" :default false :flag true]])
 
 (defn banner-and-exit [banner]
   (println (str "\npanc [options] [pan source files...]\n\n" banner))
@@ -106,21 +117,34 @@ Please file a bug report with including the stack trace.
   (let [compiler-options (create-compiler-options)]
     (org.quattor.pan.Compiler/run compiler-options nil pan-sources)))
 
+(defn error-message
+  [errors]
+  (pprint errors)
+  (let [msg (str/join \newline errors)]
+    (throw (ex-info msg {:type :options :msg msg}))))
+
+(defn run-compiler
+  [options arguments]
+  (settings/with-settings
+    (to-settings options)
+
+    (let [sources (map io/file arguments)
+          ^CompilerResults results (build-profiles options sources)
+          errors (.formatErrors results)
+          rc (if errors 1 0)]
+      (if errors
+        (println errors))
+      (if (:verbose options)
+        (println (.formatStats results)))
+      (System/exit rc))))
+
 (defn -main [& args]
   (try
-    (let [[options files banner] (process-cli-args args)]
-      (when (:help options)
-        (banner-and-exit banner))
-      (settings/with-settings (to-settings options)
-        (let [sources (map io/file files)
-              ^CompilerResults results (build-profiles options sources)
-              errors (.formatErrors results)
-              rc (if errors 1 0)]
-          (if errors
-            (println errors))
-          (if (:verbose options)
-            (println (.formatStats results)))
-          (System/exit rc))))
+    (let [{:keys [options arguments errors summary]} (cli/parse-opts args cli-args)]
+      (cond
+        (:help options) (banner-and-exit summary)
+        errors (error-message errors)
+        :else (run-compiler options arguments)))
     (catch ExceptionInfo e
       (error-and-exit e))
     (catch Throwable t

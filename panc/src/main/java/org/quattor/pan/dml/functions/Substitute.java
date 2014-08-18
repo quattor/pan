@@ -18,44 +18,44 @@
 
 package org.quattor.pan.dml.functions;
 
+import org.apache.commons.lang3.text.StrLookup;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.quattor.pan.dml.Operation;
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.HashResource;
-import org.quattor.pan.dml.data.Resource;
 import org.quattor.pan.dml.data.StringProperty;
 import org.quattor.pan.exceptions.EvaluationException;
+import org.quattor.pan.exceptions.InvalidTermException;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.template.Context;
 import org.quattor.pan.template.SourceRange;
 
-import java.util.HashMap;
 import java.util.IllegalFormatException;
-import java.util.Map;
 
-import static org.quattor.pan.utils.MessageUtils.MSG_FIRST_STRING_ARG_REQ;
 import static org.quattor.pan.utils.MessageUtils.MSG_ILLEGAL_FORMAT;
-import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_FIRST_ARG_RENDER;
-import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_SECOND_ARG_RENDER;
+import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_FIRST_ARG_SUBSTITUTE;
+import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_SECOND_ARG_SUBSTITUTE;
+import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_SUBSTITUTE_VARIABLE;
+import static org.quattor.pan.utils.MessageUtils.MSG_SUBSTITUTE_VARIABLE_UNDEFINED;
+import static org.quattor.pan.utils.MessageUtils.MSG_TWO_ARGS_REQ;
 
 /**
  * Produces a formatted string based on the given format specification and dictionary of arguments
  *
  * @author Luis Fernando Munoz Mejias
  */
-final public class Render extends BuiltInFunction {
+final public class Substitute extends BuiltInFunction {
 
-    private Render(SourceRange sourceRange, Operation... operations) throws SyntaxException {
-        super("render", sourceRange, operations);
+    private Substitute(SourceRange sourceRange, Operation... operations) throws SyntaxException {
+        super("substitute", sourceRange, operations);
 
-        // There must be at least one argument.
-        if (operations.length == 0) {
-            throw SyntaxException.create(sourceRange, MSG_FIRST_STRING_ARG_REQ, name);
+        if (operations.length < 2) {
+            throw SyntaxException.create(sourceRange, MSG_TWO_ARGS_REQ, name);
         }
     }
 
     public static Operation getInstance(SourceRange sourceRange, Operation... operations) throws SyntaxException {
-        return new Render(sourceRange, operations);
+        return new Substitute(sourceRange, operations);
     }
 
     @Override
@@ -71,35 +71,52 @@ final public class Render extends BuiltInFunction {
         try {
             template = ((StringProperty) args[0]).getValue();
         } catch (ClassCastException cce) {
-            throw EvaluationException.create(sourceRange, context, MSG_INVALID_FIRST_ARG_RENDER);
+            throw EvaluationException.create(sourceRange, context, MSG_INVALID_FIRST_ARG_SUBSTITUTE);
         }
 
         // Pull out the value map.
         HashResource valueMap = null;
         try {
-            valueMap = ((HashResource) args[0]);
+            valueMap = ((HashResource) args[1]);
         } catch (ClassCastException cce) {
-            throw EvaluationException.create(sourceRange, context, MSG_INVALID_SECOND_ARG_RENDER);
-        }
-
-        // Reformat valueMap to have only string values.
-        Map<String, String> substitutionMap = new HashMap<String, String>();
-        for (Resource.Entry entry : valueMap) {
-            String key = entry.getKey().toString();
-            String value = entry.getValue().toString();
-            substitutionMap.put(key, value);
+            throw EvaluationException.create(sourceRange, context, MSG_INVALID_SECOND_ARG_SUBSTITUTE);
         }
 
         StringProperty result = null;
         try {
-            StrSubstitutor substitutor = new StrSubstitutor(substitutionMap);
-            result = StringProperty.getInstance(substitutor.replace(template));
+            Resolver resolver = new Resolver(valueMap, context);
+            StrSubstitutor sub = new StrSubstitutor(resolver);
+            result = StringProperty.getInstance(sub.replace(template));
         } catch (IllegalFormatException ife) {
             throw EvaluationException.create(sourceRange, context, MSG_ILLEGAL_FORMAT, ife.getLocalizedMessage());
         }
 
         assert (result != null);
         return result;
+
+    }
+
+    private class Resolver extends StrLookup<String> {
+
+        private final HashResource valueMap;
+
+        private final Context context;
+
+        public Resolver(HashResource valueMap, Context context) {
+            this.valueMap = valueMap;
+            this.context = context;
+        }
+
+        public String lookup(String key) {
+            StringProperty k = StringProperty.getInstance(key);
+            try {
+                return valueMap.get(k).toString();
+            } catch (InvalidTermException e) {
+                throw EvaluationException.create(sourceRange, context, MSG_INVALID_SUBSTITUTE_VARIABLE, key);
+            } catch (NullPointerException e) {
+                throw EvaluationException.create(sourceRange, context, MSG_SUBSTITUTE_VARIABLE_UNDEFINED, key);
+            }
+        }
 
     }
 }

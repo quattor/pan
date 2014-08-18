@@ -1,13 +1,13 @@
 #
-# @expect="/nlist[@name='profile']/string[@name='result']='ok1-ok2'"
+# @expect="/nlist[@name='profile']/string[@name='result']='true-1'"
 # @format=pan
 #
-object template substitute5;
+object template substitute8;
 
-variable V1 = 'ok1';
+variable V1 = true;
 
 '/result' = {
-  v2 = 'ok2';
+  v2 = 1;
   substitute('${V1}-${v2}');
 };
 

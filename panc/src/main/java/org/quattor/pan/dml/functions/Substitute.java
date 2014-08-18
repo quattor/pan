@@ -36,6 +36,7 @@ import static org.quattor.pan.utils.MessageUtils.MSG_ILLEGAL_FORMAT;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_FIRST_ARG_SUBSTITUTE;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_SECOND_ARG_SUBSTITUTE;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_SUBSTITUTE_VARIABLE;
+import static org.quattor.pan.utils.MessageUtils.MSG_ONE_OR_TWO_ARGS_REQ;
 import static org.quattor.pan.utils.MessageUtils.MSG_SUBSTITUTE_VARIABLE_UNDEFINED;
 import static org.quattor.pan.utils.MessageUtils.MSG_TWO_ARGS_REQ;
 
@@ -48,20 +49,22 @@ final public class Substitute extends BuiltInFunction {
 
     private Substitute(SourceRange sourceRange, Operation... operations) throws SyntaxException {
         super("substitute", sourceRange, operations);
-
-        if (operations.length < 2) {
-            throw SyntaxException.create(sourceRange, MSG_TWO_ARGS_REQ, name);
-        }
     }
 
     public static Operation getInstance(SourceRange sourceRange, Operation... operations) throws SyntaxException {
-        return new Substitute(sourceRange, operations);
+
+        if (operations.length == 1 || operations.length == 2) {
+            return new Substitute(sourceRange, operations);
+        } else {
+            throw SyntaxException.create(sourceRange, MSG_ONE_OR_TWO_ARGS_REQ, "substitute");
+        }
+
     }
 
     @Override
     public Element execute(Context context) {
 
-        assert (ops.length == 2);
+        assert (ops.length == 1 || ops.length == 2);
 
         // Calculate arguments.
         Element[] args = calculateArgs(context);
@@ -76,10 +79,12 @@ final public class Substitute extends BuiltInFunction {
 
         // Pull out the value map.
         HashResource valueMap = null;
-        try {
-            valueMap = ((HashResource) args[1]);
-        } catch (ClassCastException cce) {
-            throw EvaluationException.create(sourceRange, context, MSG_INVALID_SECOND_ARG_SUBSTITUTE);
+        if (ops.length == 2) {
+            try {
+                valueMap = ((HashResource) args[1]);
+            } catch (ClassCastException cce) {
+                throw EvaluationException.create(sourceRange, context, MSG_INVALID_SECOND_ARG_SUBSTITUTE);
+            }
         }
 
         StringProperty result = null;
@@ -108,9 +113,13 @@ final public class Substitute extends BuiltInFunction {
         }
 
         public String lookup(String key) {
-            StringProperty k = StringProperty.getInstance(key);
             try {
-                return valueMap.get(k).toString();
+                if (valueMap != null) {
+                    StringProperty k = StringProperty.getInstance(key);
+                    return valueMap.get(k).toString();
+                } else {
+                    return context.getVariable(key).toString();
+                }
             } catch (InvalidTermException e) {
                 throw EvaluationException.create(sourceRange, context, MSG_INVALID_SUBSTITUTE_VARIABLE, key);
             } catch (NullPointerException e) {

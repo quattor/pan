@@ -193,11 +193,11 @@ public class SourceFile implements Comparable<SourceFile> {
      * Perform some weak verification checks between the source file name, type,
      * and the source location. It will return the presumed loadpath (location)
      * of the source file.
-     * 
+     *
      * @param name
      * @param type
      * @param source
-     * @return
+     * @return presumed loadpath (location) of the source file
      * @throws IllegalArgumentException
      */
     private static File weakTemplateNameVerification(String name,

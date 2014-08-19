@@ -69,7 +69,10 @@ public class CompilerResults {
 	 * Prints out the formatted results. Errors are printed to the standard
 	 * error stream and the summary (if requested) on standard output.
 	 *
-	 * @param results
+	 * @param verbose
+     *        whether or not to print verbose compiler output
+     *
+     * @return true if there are no errors; false otherwise
 	 */
 	public boolean print(boolean verbose) {
 

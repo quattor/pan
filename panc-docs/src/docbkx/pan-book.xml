@@ -259,8 +259,8 @@
       command line interface. (See Appendix A for installation instructions
       for all the execution methods.) Locate and download the latest version
       of the pan tarball and untar this into a convenient directory. You can
-      find the packaged versions of the compiler in the Quattor project space
-      on SourceForge.</para>
+      find the packaged versions of the compiler in the releases area of the
+      GitHub repository.</para>
 
       <para>The pan compiler requires a Java Runtime Environment (JRE) or Java
       Development Kit (JDK) 1.5 or later. If you will just be running a binary

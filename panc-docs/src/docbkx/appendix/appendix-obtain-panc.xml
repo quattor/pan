@@ -12,13 +12,16 @@
   <section>
     <title>Binary Distributions</title>
 
-    <para>Binary packages for all releases are available from SourceForge in a
-    variety of formats:</para>
+    <para>Current binary packages (v10.1 and later) as well as the compiler
+    documentation are available from the GitHub repository in a variety of
+    formats.</para>
+
+    <programlisting>https://github.com/quattor/pan/releases</programlisting>
+
+    <para>Older releases (previous to 10.1) are available from
+    SourceForge:</para>
 
     <programlisting>http://sourceforge.net/projects/quattor/files/panc/</programlisting>
-
-    <para>The same location also contains documentation for the compiler. This
-    document is also bundled in the distribution files.</para>
   </section>
 
   <section>
@@ -32,7 +35,7 @@
 
     <para>This provides a <emphasis>read-only</emphasis> copy of the pan
     repository. Patches to the compiler can be provided via GitHub pull
-    requests. </para>
+    requests.</para>
 
     <para>The master branch is the main development branch. Although an effort
     is made to ensure that this code functions correctly, there may be times

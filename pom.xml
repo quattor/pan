@@ -50,8 +50,8 @@
   </scm>
 
   <issueManagement>
-    <system>SourceForge Tracker</system>
-    <url>https://sourceforge.net/tracker/?group_id=221766</url>
+    <system>GitHub Issues</system>
+    <url>https://github.com/quattor/pan/issues</url>
   </issueManagement>
 
   <mailingLists>

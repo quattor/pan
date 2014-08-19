@@ -302,7 +302,7 @@
     <refnamediv>
       <refname>panc:create</refname>
 
-      <refpurpose>create an nlist from a structure template</refpurpose>
+      <refpurpose>create a dict from a structure template</refpurpose>
     </refnamediv>
 
     <refsynopsisdiv>
@@ -2766,7 +2766,7 @@ type ipv4 = string with {
 
           <paramdef>string <parameter>template</parameter></paramdef>
 
-          <paramdef>nlist <parameter>substitutions</parameter></paramdef>
+          <paramdef>dict <parameter>substitutions</parameter></paramdef>
         </funcprototype>
       </funcsynopsis>
     </refsynopsisdiv>
@@ -2778,11 +2778,11 @@ type ipv4 = string with {
       named values in the template, delimited like '${myvar}', with associated
       values. If only one argument is given, then the values will be looked up
       in the local and global variable definitions. If two arguments are
-      given, then the lookup will be done in the explicit nlist provided; this
+      given, then the lookup will be done in the explicit dict provided; this
       form will <emphasis>not</emphasis> use local or global variable
       values.</para>
 
-      <programlisting>variable vars = nlist('freq', 3, 'msg', 'hello');
+      <programlisting>variable vars = dict('freq', 3, 'msg', 'hello');
 
 # produces string 'say hello 3 times'
 '/result' = substitute('say ${msg} ${freq} times', vars);</programlisting>

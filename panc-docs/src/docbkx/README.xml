@@ -65,6 +65,11 @@
 
       <itemizedlist>
         <listitem>
+          <para>(GitHub Issue #68) revert a couple of UTF-8 read/write changes
+          to conserve backward compatibility</para>
+        </listitem>
+
+        <listitem>
           <para>(GitHub Issue #67) update source and bytecode to java
           1.6</para>
         </listitem>

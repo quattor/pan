@@ -41,7 +41,7 @@
 			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>target/docbkx/manpages/pan-book</directory>
+			<directory>target/docbkx/manpages</directory>
 			<outputDirectory>man</outputDirectory>
 		</fileSet>
 	</fileSets>

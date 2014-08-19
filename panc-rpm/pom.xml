@@ -100,13 +100,13 @@
 	    </mapping>
 
 	    <mapping>
-	      <directory>/usr/man/man1</directory>
+	      <directory>/usr/man</directory>
 	      <filemode>655</filemode>
 	      <username>root</username>
 	      <groupname>root</groupname>
 	      <sources>
 		<source>
-		  <location>target/contents/man/man1</location>
+		  <location>target/contents/man</location>
 		</source>
 	      </sources>
 	    </mapping>

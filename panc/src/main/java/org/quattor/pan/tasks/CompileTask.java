@@ -21,9 +21,7 @@
 package org.quattor.pan.tasks;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
-import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
@@ -158,7 +156,7 @@ public class CompileTask extends Task<CompileResult> {
             // Parse the input file and generate a Template object.
             Reader reader = null;
             try {
-                reader = new InputStreamReader(new FileInputStream(tplfile), "UTF-8");
+		reader = new FileReader(tplfile);
 
                 PanParser parser = new PanParser(reader);
                 parser.setFile(tplfile);

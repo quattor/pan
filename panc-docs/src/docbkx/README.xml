@@ -65,6 +65,10 @@
 
       <itemizedlist>
         <listitem>
+          <para>(GitHub Issue #13) change nlist references to dict</para>
+        </listitem>
+
+        <listitem>
           <para>(GitHub Issue #48) allow variable substitution for bind/valid
           paths</para>
         </listitem>

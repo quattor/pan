@@ -91,6 +91,14 @@ public class PanBuildMojo extends AbstractPanMojo {
     private int nthread = 0;
 
     /**
+     * disable escaping/unescaping of path elements
+     *
+     * @parameter property="panc.disableEscaping" default-value=false
+     * @required
+     */
+    private boolean disableEscaping = false;
+
+    /**
      * logging types
      *
      * @parameter property="panc.logging" default-value="none"
@@ -155,7 +163,7 @@ public class PanBuildMojo extends AbstractPanMojo {
             return new CompilerOptions(Pattern.compile(debugNsInclude),
                     Pattern.compile(debugNsExclude), maxIteration,
                     maxRecursion, formatters, outputDir, includeDirectories,
-                    warningsFromString(warnings), null, null, initialData, nthread);
+                    warningsFromString(warnings), null, null, initialData, nthread, disableEscaping);
 
         } catch (SyntaxException e) {
             throw new MojoExecutionException(

@@ -30,7 +30,8 @@
    :annotationDirectory nil
    :annotationBaseDirectory nil
    :rootElement nil
-   :nthread 0})
+   :nthread 0
+   :disableEscaping false})
 
 (def ^:dynamic *settings* (defaults))
 

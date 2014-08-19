@@ -69,7 +69,7 @@ public class JavaCompilerTest {
 		formatters.add(DepFormatter.getInstance());
 		CompilerOptions options = new CompilerOptions(null, null, 100, 50,
 				formatters, getTmpdir(), path,
-				CompilerOptions.DeprecationWarnings.ON, null, null, null, 0);
+				CompilerOptions.DeprecationWarnings.ON, null, null, null, 0, false);
 		List<File> tplfiles = new LinkedList<File>();
 		tplfiles.add(tplfile);
 		return new Compiler(options, new LinkedList<String>(), tplfiles);
@@ -86,7 +86,7 @@ public class JavaCompilerTest {
 		CompilerOptions options = new CompilerOptions(null, null, 100, 50,
 				formatters, getTmpdir(), path,
 				CompilerOptions.DeprecationWarnings.ON, null, null,
-				"nlist('root-element-test', 'OK')", 0);
+				"nlist('root-element-test', 'OK')", 0, false);
 		List<File> tplfiles = new LinkedList<File>();
 		tplfiles.add(tplfile);
 		return new Compiler(options, new LinkedList<String>(), tplfiles);
@@ -103,7 +103,7 @@ public class JavaCompilerTest {
 		formatters.add(DepFormatter.getInstance());
 		CompilerOptions options = new CompilerOptions(null, null, 100, 50,
 				formatters, getTmpdir(), path,
-				CompilerOptions.DeprecationWarnings.ON, null, null, null, 0);
+				CompilerOptions.DeprecationWarnings.ON, null, null, null, 0, false);
 		List<File> tplfiles = new LinkedList<File>();
 		tplfiles.add(tplfile);
 		return new Compiler(options, new LinkedList<String>(), tplfiles);
@@ -122,7 +122,7 @@ public class JavaCompilerTest {
 		formatters.add(DepFormatter.getInstance());
 		CompilerOptions options = new CompilerOptions(null, null, 100, 50,
 				formatters, getTmpdir(), path,
-				CompilerOptions.DeprecationWarnings.ON, null, null, null, 0);
+				CompilerOptions.DeprecationWarnings.ON, null, null, null, 0, false);
 
 		List<String> objects = new LinkedList<String>();
 		objects.add("non-existant/object/template");
@@ -168,7 +168,7 @@ public class JavaCompilerTest {
 
 		CompilerOptions options = new CompilerOptions(null, null, 100, 50,
 				formatters, tmpdir, path,
-				CompilerOptions.DeprecationWarnings.ON, null, null, null, 0);
+				CompilerOptions.DeprecationWarnings.ON, null, null, null, 0, false);
 
 		// Create the list of input files.
 		List<File> tplfiles = new LinkedList<File>();

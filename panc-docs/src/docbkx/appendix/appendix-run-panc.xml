@@ -323,6 +323,14 @@ $ mvn clean install
 
             <entry>No. Default value: 0.</entry>
           </row>
+
+          <row>
+            <entry>disableEscaping</entry>
+
+            <entry>Disable the escaping of path elements.</entry>
+
+            <entry>No. Default value: false.</entry>
+          </row>
         </tbody>
       </tgroup>
     </table>
@@ -639,6 +647,14 @@ $ mvn clean install
             CPU cores on the machine.</entry>
 
             <entry>No. Default value: 0</entry>
+          </row>
+
+          <row>
+            <entry>disableEscaping</entry>
+
+            <entry>Disable the escaping of path elements.</entry>
+
+            <entry>No. Default value: false</entry>
           </row>
         </tbody>
       </tgroup>

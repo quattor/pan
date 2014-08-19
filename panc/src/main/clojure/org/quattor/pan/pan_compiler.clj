@@ -35,7 +35,8 @@ Please file a bug report including the stack trace.
                 annotationDirectory
                 annotationBaseDirectory
                 rootElement
-                nthread]} settings/*settings*]
+                nthread
+                disableEscaping]} settings/*settings*]
     (CompilerOptions. debug-ns-include
                       debug-ns-exclude
                       max-iteration
@@ -47,7 +48,8 @@ Please file a bug report including the stack trace.
                       annotationDirectory
                       annotationBaseDirectory
                       rootElement
-                      nthread)))
+                      nthread
+                      disableEscaping)))
 
 (defn default-compiler-options []
   (let [{:keys [debug-ns-include
@@ -61,7 +63,8 @@ Please file a bug report including the stack trace.
                 annotationDirectory
                 annotationBaseDirectory
                 rootElement
-                nthread]} (settings/defaults)]
+                nthread
+                disableEscaping]} (settings/defaults)]
     (CompilerOptions. debug-ns-include
                       debug-ns-exclude
                       max-iteration
@@ -73,7 +76,8 @@ Please file a bug report including the stack trace.
                       annotationDirectory
                       annotationBaseDirectory
                       rootElement
-                      nthread)))
+                      nthread
+                      disableEscaping)))
 
 (defn parse-int
   [^String s]
@@ -94,11 +98,12 @@ Please file a bug report including the stack trace.
    [nil "--max-iteration LIMIT" "set max. no. of iterations" :default "10000"]
    [nil "--max-recursion LIMIT" "set max. depth of recursion" :default "50"]
    [nil "--nthread NUM" "no. of executor threads (0=no. CPU)" :default "0"]
+   [nil "--disable-escaping" "disable path element escaping" :default false]
    [nil "--logging LOG_TYPES" "set logging types"]
    [nil "--log-file FILE" "specify log file"]
    [nil "--warnings FLAG" "off, on, fatal" :default "on"]
-   ["-v" "--verbose" "show statistics and progress" :default false :flag true]
-   ["-h" "--help" "print command help" :default false :flag true]])
+   ["-v" "--verbose" "show statistics and progress" :default false]
+   ["-h" "--help" "print command help" :default false]])
 
 (defn banner-and-exit [banner]
   (println (str "\npanc [options] [pan source files...]\n\n" banner))

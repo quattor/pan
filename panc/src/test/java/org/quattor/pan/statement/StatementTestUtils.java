@@ -80,7 +80,7 @@ public class StatementTestUtils {
 
 		CompilerOptions options = new CompilerOptions(null, null, 1000, 50,
 				formatters, tmpfile, paths, CompilerOptions.DeprecationWarnings.OFF, null, null,
-				null, 0);
+				null, 0, false);
 
 		Compiler compiler = new Compiler(options, new LinkedList<String>(),
 				files);
@@ -124,7 +124,7 @@ public class StatementTestUtils {
 
 		CompilerOptions options = new CompilerOptions(null, null, 1000, 50,
 				formatters, tmpfile, paths, CompilerOptions.DeprecationWarnings.OFF, null, null,
-				null, 0);
+				null, 0, false);
 
 		Compiler compiler = new Compiler(options, new LinkedList<String>(),
 				files);
@@ -176,7 +176,7 @@ public class StatementTestUtils {
 
 		CompilerOptions options = new CompilerOptions(null, null, 1000, 50,
 				formatters, tmpfile, paths, CompilerOptions.DeprecationWarnings.OFF, null, null,
-				null, 0);
+				null, 0, false);
 
 		Compiler compiler = new Compiler(options, new LinkedList<String>(),
 				files);

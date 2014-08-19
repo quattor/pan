@@ -89,6 +89,8 @@ public class PanCompilerTask extends Task {
 
     private int nthread = 0;
 
+    private boolean disableEscaping = false;
+
     private int maxIteration = 10000;
 
     private int maxRecursion = 50;
@@ -136,7 +138,7 @@ public class PanCompilerTask extends Task {
         try {
             options = new CompilerOptions(debugNsInclude, debugNsExclude,
                     maxIteration, maxRecursion, formatters, outputDir, includeDirectories,
-                    deprecationWarnings, null, null, initialData, nthread);
+                    deprecationWarnings, null, null, initialData, nthread, disableEscaping);
         } catch (SyntaxException e) {
             throw new BuildException("invalid root element: " + e.getMessage());
         }
@@ -494,6 +496,14 @@ public class PanCompilerTask extends Task {
 
     public void setNthread(int nthread) {
         this.nthread = (nthread > 0) ? nthread : 0;
+    }
+
+    public boolean getDisableEscaping() {
+        return disableEscaping;
+    }
+
+    public void setDisableEscaping(boolean disableEscaping) {
+        this.disableEscaping = disableEscaping;
     }
 
     /**

@@ -136,6 +136,8 @@ public class CompilerOptions {
 
     public final int nthread;
 
+    public final boolean disableEscapes;
+
     /**
      * Construct a CompilerOptions instance to drive a Compiler run. Instances
      * of this class are immutable.
@@ -169,13 +171,16 @@ public class CompilerOptions {
      * @param nthread
      *            number of threads to use for each executor queue; 0 uses number
      *            of CPU cores on the machine
+     * @param disableEscapes
+     *            disable the escaping and unescaping functions for path
+     *            elements
      * @throws SyntaxException
      *             if the expression for the rootElement is invalid
      */
     public CompilerOptions(Pattern debugNsInclude, Pattern debugNsExclude, int maxIteration, int maxRecursion, Set
             <Formatter> formatters,
                            File outputDirectory, List<File> includeDirectories, DeprecationWarnings deprecationWarnings, File annotationDirectory,
-                           File annotationBaseDirectory, String rootElement, int nthread)
+                           File annotationBaseDirectory, String rootElement, int nthread, boolean disableEscapes)
             throws SyntaxException {
 
         // Check that the iteration and call depth limits are sensible. If
@@ -260,6 +265,8 @@ public class CompilerOptions {
         } else {
             this.nthread = nthread;
         }
+
+        this.disableEscapes = disableEscapes;
     }
 
     // Utility method to turn old options into new deprecation flag.
@@ -299,7 +306,7 @@ public class CompilerOptions {
             return new CompilerOptions(debugNsInclude, debugNsExclude,
                     maxIteration, maxRecursion, formatters, outputDirectory,
                     includeDirectories, deprecationWarnings,
-                    annotationDirectory, annotationBaseDirectory, null, 0);
+                    annotationDirectory, annotationBaseDirectory, null, 0, false);
 
         } catch (SyntaxException consumed) {
             throw CompilerError.create(MSG_FILE_BUG_REPORT);
@@ -330,7 +337,7 @@ public class CompilerOptions {
             return new CompilerOptions(debugNsInclude, debugNsExclude,
                     maxIteration, maxRecursion, formatters, outputDirectory,
                     includeDirectories, DeprecationWarnings.OFF,
-                    annotationDirectory, annotationBaseDirectory, null, 0);
+                    annotationDirectory, annotationBaseDirectory, null, 0, false);
 
         } catch (SyntaxException consumed) {
             throw CompilerError.create(MSG_FILE_BUG_REPORT);
@@ -418,9 +425,8 @@ public class CompilerOptions {
                 if (!source.isAbsent()) {
                     filesToProcess.add(source.getPath());
                 } else {
-                    throw EvaluationException.create((SourceRange) null,
-                            (Context) null, MSG_CANNOT_LOCATE_OBJECT_TEMPLATE,
-                            oname);
+                    throw EvaluationException.create((SourceRange) null, (Context) null,
+                            MSG_CANNOT_LOCATE_OBJECT_TEMPLATE, oname);
                 }
             }
         }

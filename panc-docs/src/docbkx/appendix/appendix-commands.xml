@@ -62,6 +62,8 @@
 
         <arg>--nthread <replaceable>number</replaceable></arg>
 
+        <arg>--no-disable-escaping | --disable-escaping</arg>
+
         <arg>--logging <replaceable>string</replaceable></arg>
 
         <arg>--log-file <replaceable>file</replaceable></arg>
@@ -201,6 +203,16 @@
             <para>The number of threads to use for profile processing. The
             default value of zero will use a number equal to the number of CPU
             cores on the machine.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><option>--no-disable-escaping,
+          --disable-escaping</option></term>
+
+          <listitem>
+            <para>Enable or disable the escaping of path elements. The default
+            value is to enable the escaping of path elements.</para>
           </listitem>
         </varlistentry>
 

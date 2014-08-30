@@ -31,9 +31,9 @@ import org.quattor.pan.exceptions.EvaluationException;
 
 /**
  * Represents a null value in the pan language.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 @Immutable
 public class Null extends TransientElement {
@@ -49,13 +49,6 @@ public class Null extends TransientElement {
 
 	static public Null getInstance() {
 		return VALUE;
-	}
-
-	@Override
-	public String locateUndefinedElement() {
-		// This element should never be found in a configuration tree. Throw a
-		// compiler error to indicate that a bug report should be filed.
-		throw CompilerError.create(MSG_NULL_ELEMENT_IN_CONFIGURATION);
 	}
 
 	@Override

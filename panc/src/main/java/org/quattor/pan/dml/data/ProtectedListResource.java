@@ -49,11 +49,6 @@ public class ProtectedListResource extends ListResource {
 	}
 
 	@Override
-	public String locateUndefinedElement() {
-		return baseList.locateUndefinedElement();
-	}
-
-	@Override
 	public void checkRange(Range range) throws ValidationException {
 		baseList.checkRange(range);
 	}
@@ -78,7 +73,7 @@ public class ProtectedListResource extends ListResource {
 	/**
 	 * Override this method to return the list from the base list. This allows
 	 * use of the superclass' equals method.
-	 * 
+	 *
 	 * @return backing list for list resource
 	 */
 	@Override

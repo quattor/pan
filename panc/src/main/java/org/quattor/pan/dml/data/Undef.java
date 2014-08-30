@@ -28,9 +28,9 @@ import org.quattor.pan.exceptions.EvaluationException;
 
 /**
  * Represents the undef value in the pan language.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 @Immutable
 public class Undef extends TransientElement {
@@ -46,14 +46,6 @@ public class Undef extends TransientElement {
 
 	static public Undef getInstance() {
 		return VALUE;
-	}
-
-	@Override
-	public String locateUndefinedElement() {
-		// This must return an empty string indicating that an undefined element
-		// has been found with a relative path of "". The full path will be
-		// completed by the caller.
-		return "";
 	}
 
 	@Override

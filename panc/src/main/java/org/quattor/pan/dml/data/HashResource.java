@@ -41,9 +41,9 @@ import org.quattor.pan.utils.TermFactory;
 /**
  * Represents an dict (nlist or hash) that associates a string value (key) to
  * another element. The key must be a string the is a valid term in a pan path.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 public class HashResource extends Resource {
 
@@ -73,7 +73,7 @@ public class HashResource extends Resource {
 	 * This constructor creates a shallow copy of the given HashResource. The
 	 * children of the referenced HashResource are not cloned, but they are
 	 * protected.
-	 * 
+	 *
 	 * @param source
 	 *            HashResource to copy
 	 */
@@ -125,21 +125,6 @@ public class HashResource extends Resource {
 	}
 
 	@Override
-	public String locateUndefinedElement() {
-
-		// Loop over all of my children to see if there is an undefined element.
-		for (String term : map.keySet()) {
-			String rpath = map.get(term).locateUndefinedElement();
-			if (rpath != null) {
-				return (!"".equals(rpath)) ? term + "/" + rpath : term;
-			}
-		}
-
-		// Nothing found; return null to indicate this.
-		return null;
-	}
-
-	@Override
 	public void checkRange(Range range) throws ValidationException {
 		if (!range.isInRange(map.size())) {
 			throw ValidationException.create(MSG_HASH_SIZE_OUTSIDE_RANGE,
@@ -170,8 +155,8 @@ public class HashResource extends Resource {
 
 	@Override
 	public String getTypeAsString() {
-		// This must remain as "nlist" until we decide to change the 
-		// name of the resource in downstream clients. 
+		// This must remain as "nlist" until we decide to change the
+		// name of the resource in downstream clients.
 		return "nlist";
 	}
 
@@ -194,7 +179,7 @@ public class HashResource extends Resource {
 	 * information. This method is used in the equals method to determine if one
 	 * HashResource is equivalent to another. The map must not be modified by
 	 * the caller.
-	 * 
+	 *
 	 * @return backing map for hash resource
 	 */
 	protected Map<String, Element> getBackingMap() {

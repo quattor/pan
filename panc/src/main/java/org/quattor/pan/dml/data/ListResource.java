@@ -206,23 +206,6 @@ public class ListResource extends Resource {
 	}
 
 	@Override
-	public String locateUndefinedElement() {
-
-		// Loop over all of my children to see if there is an undefined element.
-		int nchild = list.size();
-		for (int i = 0; i < nchild; i++) {
-			String rpath = list.get(i).locateUndefinedElement();
-			if (rpath != null) {
-				return (!"".equals(rpath)) ? i + "/" + rpath : Integer
-						.toString(i);
-			}
-		}
-
-		// Nothing found; return null to indicate this.
-		return null;
-	}
-
-	@Override
 	public void checkRange(Range range) throws ValidationException {
 		if (!range.isInRange(list.size())) {
 			throw ValidationException.create(MSG_LIST_SIZE_OUTSIDE_RANGE, list

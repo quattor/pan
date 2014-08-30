@@ -23,4 +23,32 @@ public class ElementUtils {
 
     }
 
+    /**
+     * Determine if the element contains any undefined (transient) elements. The call will return null if no undefined
+     * elements are found; it will return a string indicating the relative path if an undefined element is found.
+     *
+     * @return String representation of the path of the undefined element, null otherwise
+     */
+    public static String locateUndefinedElement(Element e) {
+
+        if (e instanceof Resource) {
+            // recursively check all of the resources children
+            Resource r = (Resource) e;
+            for (Resource.Entry entry : r) {
+                String rpath = locateUndefinedElement(entry.getValue());
+                String term = entry.getValue().toString();
+                if (rpath != null) {
+                    return (!"".equals(rpath)) ? term + "/" + rpath : term;
+                }
+            }
+            return null;
+        } else if (e instanceof TransientElement) {
+            // return empty string as relative path and indicating transient element was found
+            return "";
+        } else {
+            // property that isn't a transient element
+            return null;
+        }
+    }
+
 }

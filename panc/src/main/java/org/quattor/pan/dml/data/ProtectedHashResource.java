@@ -45,11 +45,6 @@ public class ProtectedHashResource extends HashResource {
 	}
 
 	@Override
-	public String locateUndefinedElement() {
-		return baseHash.locateUndefinedElement();
-	}
-
-	@Override
 	public void checkRange(Range range) throws ValidationException {
 		baseHash.checkRange(range);
 	}
@@ -74,7 +69,7 @@ public class ProtectedHashResource extends HashResource {
 	/**
 	 * Override this method to return the map from the base hash. This allows
 	 * use of the superclass' equals method.
-	 * 
+	 *
 	 * @return backing map for hash resource
 	 */
 	@Override

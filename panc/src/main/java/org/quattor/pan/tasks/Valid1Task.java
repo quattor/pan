@@ -33,6 +33,7 @@ import org.quattor.pan.Compiler;
 import org.quattor.pan.CompilerLogging.LoggingType;
 import org.quattor.pan.cache.BuildCache;
 import org.quattor.pan.dml.data.Element;
+import org.quattor.pan.dml.data.ElementUtils;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.ValidationException;
 import org.quattor.pan.template.Context;
@@ -43,9 +44,9 @@ import org.quattor.pan.utils.Path;
  * Wraps the <code>BuildCallable</code> as a <code>Task</code>. This wrapping is
  * done to make sure that the <code>BuildCallable</code> is fully constructed
  * before passing it to the <code>FutureTask</code>.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 public class Valid1Task extends Task<Valid1Result> {
 
@@ -61,9 +62,9 @@ public class Valid1Task extends Task<Valid1Result> {
 	 * running it through the execution, default setting, and validation phases.
 	 * This class may create tasks to write the machine configuration or
 	 * dependency files to disk.
-	 * 
+	 *
 	 * @author loomis
-	 * 
+	 *
 	 */
 	private static class CallImpl implements Callable<Valid1Result> {
 
@@ -102,7 +103,7 @@ public class Valid1Task extends Task<Valid1Result> {
 
 		/**
 		 * Validate the generated configuration information.
-		 * 
+		 *
 		 * @param context
 		 *            context (and configuration) to validate
 		 */
@@ -115,7 +116,7 @@ public class Valid1Task extends Task<Valid1Result> {
 			// First check that the tree contains no undefined elements. If so,
 			// throw a validation error with the returned path. Note that this
 			// method only finds the first undefined element.
-			String rpath = context.getRoot().locateUndefinedElement();
+            String rpath = ElementUtils.locateUndefinedElement(context.getRoot());
 			if (rpath != null) {
 				ValidationException ve = ValidationException.create(
 						MSG_VALUE_AT_PATH_UNDEFINED, rpath);

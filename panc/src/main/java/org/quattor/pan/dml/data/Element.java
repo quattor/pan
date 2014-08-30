@@ -34,17 +34,6 @@ import org.quattor.pan.utils.Term;
 public interface Element extends Operation {
 
     /**
-     * Determine if the element contains any undefined (transient) elements. The call will return null if no undefined
-     * elements are found; it will return a string indicating the relative path if an undefined element is found.
-     *
-     * Subclasses MUST override this method appropriately. This default method will work only for elements which are not
-     * containers and not a transient element.
-     *
-     * @return String representation of the path of the undefined element, null otherwise
-     */
-    public String locateUndefinedElement();
-
-    /**
      * Determine if the element satisfies the given range constraint. This is used in the validation of the element. By
      * default, this method with throw a ValidationException indicating that range checking of this element is not
      * appropriate.

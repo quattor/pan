@@ -55,7 +55,7 @@ public class FormatterTestsUtils {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 */
 	public FormatterTestsUtils() {
 		elementName = new Vector<String>();
@@ -98,7 +98,7 @@ public class FormatterTestsUtils {
 
 	/**
 	 * Creates a child
-	 * 
+	 *
 	 * @param name
 	 *            the name of the child
 	 * @param value
@@ -127,13 +127,13 @@ public class FormatterTestsUtils {
 			throw new RuntimeException("This element may not have a child");
 		}
 
-		if (parent.isNlist() == true) {
+		if (parent instanceof HashResource) {
 
 			HashResource parentCast = (HashResource) parent;
 			parentCast.put(TermFactory.create(name), value);
 		}
 
-		else if (parent.isList() == true) {
+		else if (parent instanceof ListResource) {
 
 			ListResource parentCast = (ListResource) parent;
 			parentCast.put(TermFactory.create(name), value);
@@ -146,12 +146,12 @@ public class FormatterTestsUtils {
 
 	/**
 	 * Verification of the type of the element
-	 * 
+	 *
 	 * @param elem
 	 *            element to verify
 	 */
 	public boolean verifyParentType(Element elem) {
-		if ((elem.isNlist() == true) || (elem.isList() == true)) {
+		if ((elem instanceof HashResource) || (elem instanceof ListResource)) {
 			return true;
 		} else {
 			return false;
@@ -176,7 +176,7 @@ public class FormatterTestsUtils {
 
 	/**
 	 * Creates an OutputStream
-	 * 
+	 *
 	 * @param os
 	 *            the OutputStream
 	 * @param flagGzip

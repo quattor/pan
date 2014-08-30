@@ -13,15 +13,10 @@
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
-
- $HeadURL: https://svn.lal.in2p3.fr/LCG/QWG/panc/trunk/src/org/quattor/pan/dml/data/Element.java $
- $Id: Element.java 3595 2008-08-17 07:35:14Z loomis $
  */
 
 package org.quattor.pan.dml.data;
 
-import net.jcip.annotations.Immutable;
-import org.quattor.pan.dml.Operation;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.InvalidTermException;
 import org.quattor.pan.exceptions.SyntaxException;
@@ -44,98 +39,7 @@ import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_REPLACEMENT;
  * @author loomis
  *
  */
-@Immutable
 abstract public class AbstractElement implements Element {
-
-	/**
-	 * Returns true for all Element objects except Null.
-	 *
-	 * @return true unless object is Null
-	 */
-	public boolean exists() {
-		return !(this instanceof Null);
-	}
-
-	/**
-	 * Determine if the given Element is defined. This will return true for all
-	 * Elements except Null and Undef.
-	 */
-	public boolean defined() {
-		return exists() && !(this instanceof Undef);
-	}
-
-	/**
-	 * Determine if the given Element is a Property.
-	 */
-	public boolean isProperty() {
-		return (this instanceof Property);
-	}
-
-	/**
-	 * Determine if the given Element is a Long.
-	 */
-	public boolean isLong() {
-		return (this instanceof LongProperty);
-	}
-
-	/**
-	 * Determine if the given Element is a Double.
-	 */
-	public boolean isDouble() {
-		return (this instanceof DoubleProperty);
-	}
-
-	/**
-	 * Determine if the given Element is a Boolean.
-	 */
-	public boolean isBoolean() {
-		return (this instanceof BooleanProperty);
-	}
-
-	/**
-	 * Determine if the given Element is a String.
-	 */
-	public boolean isString() {
-		return (this instanceof StringProperty);
-	}
-
-	/**
-	 * Determine if the given Element is a Resource.
-	 */
-	public boolean isResource() {
-		return (this instanceof Resource);
-	}
-
-	/**
-	 * Determine if the given Element is an Nlist.
-	 */
-	public boolean isNlist() {
-		return (this instanceof HashResource);
-	}
-
-	/**
-	 * Determine if the given Element is a List.
-	 */
-	public boolean isList() {
-		return (this instanceof ListResource);
-	}
-
-	/**
-	 * Determine if the given Element is Persistent. Persistent Elements are
-	 * valid entries in a final configuration tree.
-	 */
-	public boolean isPersistent() {
-		return (this instanceof PersistentElement);
-	}
-
-	/**
-	 * Determine if the given Element is Transient. Transient Elements are only
-	 * valid while building the tree. They may not appear in the final
-	 * configuration tree.
-	 */
-	public boolean isTransient() {
-		return (this instanceof TransientElement);
-	}
 
 	/**
 	 * Determine if the element contains any undefined (transient) elements. The

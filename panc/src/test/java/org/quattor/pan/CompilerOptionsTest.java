@@ -210,7 +210,7 @@ public class CompilerOptionsTest {
         String[] inputs = new String[] { null, "", " ", "\t" };
         for (String input : inputs) {
             Element rootElement = CompilerOptions.createRootElement(input);
-            assertTrue(rootElement.isNlist());
+            assertTrue(rootElement instanceof HashResource);
             HashResource hash = (HashResource) rootElement;
             assertTrue(hash.size() == 0);
         }
@@ -229,7 +229,7 @@ public class CompilerOptionsTest {
             int value = entry.getValue();
 
             Element rootElement = CompilerOptions.createRootElement(dml);
-            assertTrue(rootElement.isNlist());
+            assertTrue(rootElement instanceof HashResource);
 
             HashResource hash = (HashResource) rootElement;
             assertEquals(value, hash.size());

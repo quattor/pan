@@ -23,10 +23,10 @@ package org.quattor.pan.dml.data;
 /**
  * Subclasses of this abstract class can appear as valid elements in a generated
  * configuration tree (hence can be made persistent).
- * 
+ *
  * @author loomis
- * 
+ *
  */
-abstract public class PersistentElement extends Element {
+abstract public class PersistentElement extends AbstractElement {
 
 }

@@ -26,11 +26,11 @@ import net.jcip.annotations.Immutable;
  * Subclasses of this abstract class may not appear in a final configuration
  * tree. (Hence are transient.) These Elements are used only during the
  * construction of the configuration tree.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 @Immutable
-abstract public class TransientElement extends Element {
+abstract public class TransientElement extends AbstractElement {
 
 }

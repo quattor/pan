@@ -20,6 +20,8 @@
 
 package org.quattor.pan.dml;
 
+import clojure.lang.IFn;
+import clojure.lang.IObj;
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
@@ -28,21 +30,21 @@ import org.quattor.pan.template.Context;
 /**
  * All DML (data manipulation language) components implement this interface and
  * act as operators.
- * 
+ *
  * @author loomis
- * 
+ *
  */
-public interface Operation {
+public interface Operation extends IFn, IObj {
 
 	/**
 	 * Execute this operation within the given context. If an error occurs, an
 	 * EvaluationException will be thrown with the details.
-	 * 
+	 *
 	 * @param context
 	 *            evaluation context for the statement
 	 * @throws EvaluationException
 	 *             if an error occurs during processing
-	 * 
+	 *
 	 * @return Element produced by running operation
 	 */
 	public Element execute(Context context) throws EvaluationException;
@@ -54,7 +56,7 @@ public interface Operation {
 	 * functions which operate by throwing exceptions (like return and error).
 	 * This method will throw a SyntaxException if called on an Operation which
 	 * cannot be used in a restricted context.
-	 * 
+	 *
 	 * @throws SyntaxException
 	 *             if this operation cannot be run within a restricted context
 	 */
@@ -67,7 +69,7 @@ public interface Operation {
 	 * is no value being assigned.) For operations that do not reference SELF,
 	 * this should be a no-op. For those that do, a SyntaxException should be
 	 * thrown.
-	 * 
+	 *
 	 * @throws SyntaxException
 	 *             if this operation references SELF
 	 */

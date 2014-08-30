@@ -466,6 +466,8 @@ public class MessageUtils {
 
     public final static String MSG_INVALID_STRING_FOR_LONG = "MSG_INVALID_STRING_FOR_LONG";
 
+    public final static String MSG_OPERATION_WITHOUT_CONTEXT = "MSG_OPERATION_WITHOUT_CONTEXT";
+
     // Name of the resource bundle to use for compiler messages.
     private final static String bundleName = "org.quattor.pan.Messages";
 

@@ -20,7 +20,11 @@
 
 package org.quattor.pan.dml;
 
+import clojure.lang.AFn;
+import clojure.lang.IObj;
+import clojure.lang.IPersistentMap;
 import org.quattor.pan.dml.data.Element;
+import org.quattor.pan.exceptions.CompilerError;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.template.Context;
@@ -28,14 +32,18 @@ import org.quattor.pan.template.SourceRange;
 import org.quattor.pan.utils.Term;
 import org.quattor.pan.utils.TermFactory;
 
+import java.util.concurrent.atomic.AtomicReference;
+
+import static org.quattor.pan.utils.MessageUtils.MSG_OPERATION_WITHOUT_CONTEXT;
+
 /**
  * Abstract class which implements the Operation interface and provides some
  * functionality common to all DML components.
- * 
+ *
  * @author loomis
- * 
+ *
  */
-abstract public class AbstractOperation implements Operation {
+abstract public class AbstractOperation extends AFn implements Operation {
 
 	/**
 	 * Source location of this operation and its arguments.
@@ -47,9 +55,11 @@ abstract public class AbstractOperation implements Operation {
 	 */
 	final protected Operation[] ops;
 
-	/**
+    private final AtomicReference<IPersistentMap> metadataRef = new AtomicReference<IPersistentMap>();
+
+    /**
 	 * Set the source location information and arguments for this operation.
-	 * 
+	 *
 	 * @param sourceRange
 	 *            source location of this operation and arguments
 	 * @param operations
@@ -60,7 +70,26 @@ abstract public class AbstractOperation implements Operation {
 		this.ops = operations.clone();
 	}
 
-	// Description will be taken from interface.
+    @Override
+    public IPersistentMap meta() {
+        return metadataRef.get();
+    }
+
+    public IObj withMeta(IPersistentMap iPersistentMap) {
+        metadataRef.set(iPersistentMap);
+        return this;
+    }
+
+    public Object invoke(Object o1) {
+        try {
+            return execute((Context) o1);
+        } catch (ClassCastException ex) {
+            throw CompilerError.create(MSG_OPERATION_WITHOUT_CONTEXT);
+        }
+    }
+
+
+    // Description will be taken from interface.
 	abstract public Element execute(Context context) throws EvaluationException;
 
 	/**
@@ -68,7 +97,7 @@ abstract public class AbstractOperation implements Operation {
 	 * contained operations (arguments). Subclasses that cannot appear in a
 	 * restricted context (array indices or function arguments) should override
 	 * this method and throw a SyntaxException.
-	 * 
+	 *
 	 * @throws SyntaxException
 	 *             if operation cannot appear in restricted context
 	 */
@@ -82,7 +111,7 @@ abstract public class AbstractOperation implements Operation {
 	 * Default implementation recursively calls this method on all of the
 	 * contained operations (arguments). Subclasses that reference SELF should
 	 * override this method and throw a SyntaxException.
-	 * 
+	 *
 	 * @throws SyntaxException
 	 *             if operation references SELF
 	 */
@@ -95,10 +124,10 @@ abstract public class AbstractOperation implements Operation {
 	/**
 	 * A utility method which calls <code>execute</code> on each of this
 	 * operation's arguments and returns an array of the results.
-	 * 
+	 *
 	 * @param context
 	 *            evaluation context to use
-	 * 
+	 *
 	 * @return array of the results of executing the arguments
 	 */
 	protected Element[] calculateArgs(Context context)
@@ -114,12 +143,12 @@ abstract public class AbstractOperation implements Operation {
 
 	/**
 	 * A utility method that creates a list of terms from the given arguments.
-	 * 
+	 *
 	 * @param context
 	 *            evaluation context to use
-	 * 
+	 *
 	 * @return array of terms calculated from the operations
-	 * 
+	 *
 	 * @throws EvaluationException
 	 *             if any error occurs when evaluating the arguments or if the
 	 *             resulting value is not a valid Term
@@ -138,7 +167,7 @@ abstract public class AbstractOperation implements Operation {
 	 * Retrieve the source information from this operation. The SourceRange is
 	 * available to subclasses as a protected field, so subclasses can access
 	 * the value directly.
-	 * 
+	 *
 	 * @return SourceRange giving location of this operation and its arguments
 	 */
 	public SourceRange getSourceRange() {
@@ -154,7 +183,7 @@ abstract public class AbstractOperation implements Operation {
 
 	/**
 	 * Default string representation of an operation is the class' simple name.
-	 * 
+	 *
 	 * @return string of class' simple name
 	 */
 	@Override

@@ -17,6 +17,10 @@
 
 package org.quattor.pan.dml.data;
 
+import clojure.lang.AFn;
+import clojure.lang.IObj;
+import clojure.lang.IPersistentMap;
+import org.quattor.pan.exceptions.CompilerError;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.InvalidTermException;
 import org.quattor.pan.exceptions.SyntaxException;
@@ -26,10 +30,13 @@ import org.quattor.pan.utils.MessageUtils;
 import org.quattor.pan.utils.Range;
 import org.quattor.pan.utils.Term;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import static org.quattor.pan.utils.MessageUtils.MSG_CANNOT_ADD_CHILD;
 import static org.quattor.pan.utils.MessageUtils.MSG_ILLEGAL_DEREFERENCE;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_RANGE_CHECK;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_REPLACEMENT;
+import static org.quattor.pan.utils.MessageUtils.MSG_OPERATION_WITHOUT_CONTEXT;
 
 /**
  * Represents the most general data element in the Data Manipulation Language
@@ -39,9 +46,29 @@ import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_REPLACEMENT;
  * @author loomis
  *
  */
-abstract public class AbstractElement implements Element {
+abstract public class AbstractElement extends AFn implements Element {
 
-	/**
+    private final AtomicReference<IPersistentMap> metadataRef = new AtomicReference<IPersistentMap>();
+
+    @Override
+    public IPersistentMap meta() {
+        return metadataRef.get();
+    }
+
+    public IObj withMeta(IPersistentMap iPersistentMap) {
+        metadataRef.set(iPersistentMap);
+        return this;
+    }
+
+    public Object invoke(Object o1) {
+        try {
+            return execute((Context) o1);
+        } catch (ClassCastException ex) {
+            throw CompilerError.create(MSG_OPERATION_WITHOUT_CONTEXT);
+        }
+    }
+
+    /**
 	 * Determine if the element satisfies the given range constraint. This is
 	 * used in the validation of the element. By default, this method with throw
 	 * a ValidationException indicating that range checking of this element is

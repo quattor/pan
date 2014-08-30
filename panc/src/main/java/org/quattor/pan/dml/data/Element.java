@@ -19,7 +19,6 @@ package org.quattor.pan.dml.data;
 import org.quattor.pan.dml.Operation;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.InvalidTermException;
-import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.exceptions.ValidationException;
 import org.quattor.pan.template.Context;
 import org.quattor.pan.utils.Range;
@@ -74,18 +73,6 @@ public interface Element extends Operation {
      * this object is returned
      */
     public Element writableCopy();
-
-    /**
-     * The default implementation does nothing. This should not need to be overridden as all data elements can appear
-     * anywhere within a DML block. (Although placement may cause other errors during evaluation.)
-     */
-    public void checkRestrictedContext() throws SyntaxException;
-
-    /**
-     * The default implementation does nothing. This should not need to be overridden as all data elements explicitly
-     * make no reference to SELF.
-     */
-    public void checkInvalidSelfContext() throws SyntaxException;
 
     /**
      * This method indicates if the given Element is protected. A protected element may not be written to and concerns

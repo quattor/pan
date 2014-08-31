@@ -37,16 +37,16 @@ import org.quattor.pan.utils.Path;
 /**
  * Assigns a constant or computed value to a relative path. If the value is
  * Null, then the corresponding path will be removed.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 public class RelativeAssignmentStatement extends ComputedAssignmentStatement {
 
 	/**
 	 * This constructor creates a new AssignmentStatement which assigns a the
 	 * result of a DML block to the associated path.
-	 * 
+	 *
 	 * @param sourceRange
 	 *            source location of this statement
 	 * @param path
@@ -74,7 +74,7 @@ public class RelativeAssignmentStatement extends ComputedAssignmentStatement {
 	}
 
 	@Override
-	public void execute(Context context) throws EvaluationException {
+	public Element execute(Context context) throws EvaluationException {
 
 		assert (context != null);
 
@@ -130,6 +130,7 @@ public class RelativeAssignmentStatement extends ComputedAssignmentStatement {
 		} catch (EvaluationException ee) {
 			throw ee.addExceptionInfo(getSourceRange(), context);
 		}
+        return null;
 	}
 
 }

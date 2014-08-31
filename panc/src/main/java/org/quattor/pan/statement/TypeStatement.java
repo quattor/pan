@@ -20,6 +20,7 @@
 
 package org.quattor.pan.statement;
 
+import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.template.Context;
 import org.quattor.pan.template.SourceRange;
@@ -28,9 +29,9 @@ import org.quattor.pan.type.FullType;
 /**
  * Associates a name with a FullType definition. A type can only be defined once
  * per machine profile.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 public class TypeStatement extends Statement {
 
@@ -40,7 +41,7 @@ public class TypeStatement extends Statement {
 
 	/**
 	 * Creates a TypeStatement which associates a name to a FullType.
-	 * 
+	 *
 	 * @param sourceRange
 	 *            source location of this statement
 	 * @param name
@@ -61,7 +62,7 @@ public class TypeStatement extends Statement {
 	/**
 	 * Retrieve the name of the defined type. This information is used by
 	 * Template for compile-time error checking.
-	 * 
+	 *
 	 * @return name of the defined type
 	 */
 	public String getName() {
@@ -69,18 +70,19 @@ public class TypeStatement extends Statement {
 	}
 
 	@Override
-	public void execute(Context context) {
+	public Element execute(Context context) {
 		try {
 			context.setFullType(name, fullType, context.getCurrentTemplate(),
 					getSourceRange());
 		} catch (EvaluationException ee) {
 			throw ee.addExceptionInfo(getSourceRange(), context);
 		}
+        return null;
 	}
 
 	/**
 	 * Return a reasonable string representation of this statement.
-	 * 
+	 *
 	 * @return String representation of this TypeStatement
 	 */
 	@Override

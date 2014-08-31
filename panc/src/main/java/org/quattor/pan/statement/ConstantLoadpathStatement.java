@@ -36,7 +36,7 @@ public class ConstantLoadpathStatement extends ConstantVariableStatement {
 	}
 
 	@Override
-	public void execute(Context context) {
+	public Element execute(Context context) {
 
 		super.execute(context);
 
@@ -44,6 +44,7 @@ public class ConstantLoadpathStatement extends ConstantVariableStatement {
 		Element element = context.getGlobalVariable("LOADPATH");
 		List<String> rpaths = convertLoadpathVariable(element);
 		context.setRelativeLoadpaths(rpaths);
+        return null;
 	}
 
 }

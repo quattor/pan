@@ -21,6 +21,7 @@
 package org.quattor.pan.statement;
 
 import org.quattor.pan.dml.Operation;
+import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.template.Context;
 import org.quattor.pan.template.SourceRange;
@@ -28,9 +29,9 @@ import org.quattor.pan.template.SourceRange;
 /**
  * Associates a DML block to a given function name. A function may only be
  * defined once during the construction of any given machine profile.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 public class FunctionStatement extends Statement {
 
@@ -41,7 +42,7 @@ public class FunctionStatement extends Statement {
 	/**
 	 * Creates a FunctionStatement which associates a name with a given DML
 	 * block.
-	 * 
+	 *
 	 * @param sourceRange
 	 *            source location of this statement
 	 * @param name
@@ -63,7 +64,7 @@ public class FunctionStatement extends Statement {
 	/**
 	 * Retrieve the name of the defined function. This information is used by
 	 * Template for compile-time error checking.
-	 * 
+	 *
 	 * @return name of the defined function
 	 */
 	public String getName() {
@@ -71,18 +72,19 @@ public class FunctionStatement extends Statement {
 	}
 
 	@Override
-	public void execute(Context context) {
+	public Element execute(Context context) {
 		try {
 			context.setFunction(name, function, context.getCurrentTemplate(),
 					getSourceRange());
 		} catch (EvaluationException ee) {
 			throw ee.addExceptionInfo(getSourceRange(), context);
 		}
+        return null;
 	}
 
 	/**
 	 * Return a reasonable string representation of this statement.
-	 * 
+	 *
 	 * @return String representation of this FunctionStatement
 	 */
 	@Override

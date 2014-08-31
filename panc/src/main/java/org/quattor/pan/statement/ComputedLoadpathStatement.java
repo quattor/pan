@@ -37,7 +37,7 @@ public class ComputedLoadpathStatement extends ComputedVariableStatement {
 	}
 
 	@Override
-	public void execute(Context context) {
+	public Element execute(Context context) {
 
 		super.execute(context);
 
@@ -45,6 +45,7 @@ public class ComputedLoadpathStatement extends ComputedVariableStatement {
 		Element element = context.getGlobalVariable("LOADPATH");
 		List<String> rpaths = convertLoadpathVariable(element);
 		context.setRelativeLoadpaths(rpaths);
+        return null;
 	}
 
 }

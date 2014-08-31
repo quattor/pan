@@ -32,9 +32,9 @@ import org.quattor.pan.utils.Path;
 /**
  * Assigns either a constant or computed value to an absolute path. If the value
  * is Null, then the path is deleted.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 public class ConstantAssignmentStatement extends AssignmentStatement {
 
@@ -43,7 +43,7 @@ public class ConstantAssignmentStatement extends AssignmentStatement {
 	/**
 	 * This constructor creates a new AbsoluteAssignmentStatement that assigns a
 	 * constant value (Element) to the associated path.
-	 * 
+	 *
 	 * @param sourceRange
 	 *            source location of this statement
 	 * @param path
@@ -69,7 +69,7 @@ public class ConstantAssignmentStatement extends AssignmentStatement {
 	}
 
 	@Override
-	public void execute(Context context) throws EvaluationException {
+	public Element execute(Context context) throws EvaluationException {
 
 		assert (context != null);
 
@@ -108,11 +108,12 @@ public class ConstantAssignmentStatement extends AssignmentStatement {
 		} catch (EvaluationException ee) {
 			throw ee.addExceptionInfo(getSourceRange(), context);
 		}
+        return null;
 	}
 
 	/**
 	 * Return a reasonable string representation of this statement.
-	 * 
+	 *
 	 * @return String representation of this statement
 	 */
 	@Override

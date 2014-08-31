@@ -34,9 +34,9 @@ import org.quattor.pan.template.SourceRange;
 /**
  * Evaluates a DML expression and then executes the named template. If the DML
  * block evaluates to Undef or Null, nothing is done.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 public class ComputedIncludeStatement extends IncludeStatement {
 
@@ -48,7 +48,7 @@ public class ComputedIncludeStatement extends IncludeStatement {
 	 * block is Undef or Null, then this statement does nothing. If the DML
 	 * block evaluates to something other than a StringProperty, Undef, or Null
 	 * an exception is thrown.
-	 * 
+	 *
 	 * @param sourceRange
 	 *            source location of this statement
 	 * @param dml
@@ -63,7 +63,7 @@ public class ComputedIncludeStatement extends IncludeStatement {
 	}
 
 	@Override
-	public void execute(Context context) {
+	public Element execute(Context context) {
 
 		SelfHolder selfHolder = new InvalidSelfHolder();
 		context.initializeSelfHolder(selfHolder);
@@ -74,7 +74,7 @@ public class ComputedIncludeStatement extends IncludeStatement {
 
 		// If the result is null or undef, then no template is to be included.
 		if (result instanceof Null || result instanceof Undef) {
-			return;
+			return null;
 		}
 
 		// Check that the result is actually a string and set the name.
@@ -95,11 +95,12 @@ public class ComputedIncludeStatement extends IncludeStatement {
 		}
 
 		executeWithNamedTemplate(context, name);
+        return null;
 	}
 
 	/**
 	 * Return a reasonable string representation of this statement.
-	 * 
+	 *
 	 * @return String representation of this ComputedIncludeStatement
 	 */
 	@Override

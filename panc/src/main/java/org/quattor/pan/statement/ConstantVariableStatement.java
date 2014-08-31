@@ -31,9 +31,9 @@ import org.quattor.pan.utils.GlobalVariable;
 
 /**
  * Sets a global variable to a constant or computed value.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 public class ConstantVariableStatement extends VariableStatement {
 
@@ -51,7 +51,7 @@ public class ConstantVariableStatement extends VariableStatement {
 	}
 
 	@Override
-	public void execute(Context context) {
+	public Element execute(Context context) {
 
 		try {
 
@@ -83,6 +83,7 @@ public class ConstantVariableStatement extends VariableStatement {
 		} catch (EvaluationException ee) {
 			throw ee.addExceptionInfo(getSourceRange(), context);
 		}
+        return null;
 	}
 
 	@Override

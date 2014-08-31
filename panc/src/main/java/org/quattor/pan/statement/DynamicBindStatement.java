@@ -22,6 +22,7 @@ package org.quattor.pan.statement;
 
 import org.apache.commons.lang3.text.StrLookup;
 import org.apache.commons.lang3.text.StrSubstitutor;
+import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.template.Context;
@@ -63,7 +64,7 @@ public class DynamicBindStatement extends BindStatement {
     }
 
     @Override
-    public void execute(Context context) {
+    public Element execute(Context context) {
         assert (context != null);
 
         String resolvedPath = null;
@@ -77,6 +78,7 @@ public class DynamicBindStatement extends BindStatement {
 
         Path path = createPathFromIdentifier(getSourceRange(), resolvedPath);
         context.setBinding(path, fullType, context.getCurrentTemplate(), getSourceRange());
+        return null;
     }
 
     /**

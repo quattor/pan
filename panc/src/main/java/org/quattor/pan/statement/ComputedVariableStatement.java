@@ -34,9 +34,9 @@ import org.quattor.pan.utils.GlobalVariable;
 
 /**
  * Sets a global variable to a constant or computed value.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 public class ComputedVariableStatement extends VariableStatement {
 
@@ -45,7 +45,7 @@ public class ComputedVariableStatement extends VariableStatement {
 	/**
 	 * Creates a VariableStatement which assign a global variable to the result
 	 * of a DML block.
-	 * 
+	 *
 	 * @param sourceRange
 	 *            source location of this statement
 	 * @param name
@@ -68,7 +68,7 @@ public class ComputedVariableStatement extends VariableStatement {
 	}
 
 	@Override
-	public void execute(Context context) {
+	public Element execute(Context context) {
 
 		try {
 
@@ -108,11 +108,12 @@ public class ComputedVariableStatement extends VariableStatement {
 		} catch (EvaluationException ee) {
 			throw ee.addExceptionInfo(getSourceRange(), context);
 		}
+        return null;
 	}
 
 	/**
 	 * Return a reasonable string representation of this statement.
-	 * 
+	 *
 	 * @return String representation of this VariableStatement
 	 */
 	@Override

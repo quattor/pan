@@ -20,9 +20,20 @@
 
 package org.quattor.pan.statement;
 
+import clojure.lang.AFn;
+import clojure.lang.IObj;
+import clojure.lang.IPersistentMap;
+import org.quattor.pan.dml.Operation;
+import org.quattor.pan.dml.data.Element;
+import org.quattor.pan.exceptions.CompilerError;
 import org.quattor.pan.exceptions.EvaluationException;
+import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.template.Context;
 import org.quattor.pan.template.SourceRange;
+
+import java.util.concurrent.atomic.AtomicReference;
+
+import static org.quattor.pan.utils.MessageUtils.MSG_OPERATION_WITHOUT_CONTEXT;
 
 /**
  * Provides the superclass of all declarative statements in the pan
@@ -30,26 +41,28 @@ import org.quattor.pan.template.SourceRange;
  * of a particular machine profile through the <code>execute</code> method. The
  * arguments and flags for each statement are expected to be different, but this
  * is not important for evaluating the configuration.
- * 
+ *
  * All statements must be immutable.
- * 
+ *
  * Subclasses are expected to throw an exception (SyntaxException or
  * EvaluationException) if illegal parameters are passed to the constructor.
  * Similarly, if an error is encountered during the execute() method, an
  * EvaluationException should be thrown.
- * 
+ *
  * @author loomis
- * 
+ *
  */
-abstract public class Statement {
+abstract public class Statement extends AFn implements Operation {
 
 	private final SourceRange sourceRange;
 
-	/**
+    private final AtomicReference<IPersistentMap> metadataRef = new AtomicReference<IPersistentMap>();
+
+    /**
 	 * The base constructor for Statement takes a SourceRange object which
 	 * indicates the location of the statement within the source file. All
 	 * subclasses must call this constructor as part of their constructors.
-	 * 
+	 *
 	 * @param sourceRange
 	 *            the location of this statement within the source file
 	 */
@@ -58,9 +71,26 @@ abstract public class Statement {
 		this.sourceRange = sourceRange;
 	}
 
+    @Override
+    public IPersistentMap meta() {
+        return metadataRef.get();
+    }
+
+    public IObj withMeta(IPersistentMap iPersistentMap) {
+        metadataRef.set(iPersistentMap);
+        return this;
+    }
+
+    public Object invoke(Object o1) {
+        try {
+            return execute((Context) o1);
+        } catch (ClassCastException ex) {
+            throw CompilerError.create(MSG_OPERATION_WITHOUT_CONTEXT);
+        }
+    }
 	/**
 	 * Retrieve the source location for this Statement.
-	 * 
+	 *
 	 * @return SourceRange object indicating the source location
 	 */
 	public SourceRange getSourceRange() {
@@ -69,12 +99,20 @@ abstract public class Statement {
 
 	/**
 	 * Execute this Statement within the given context.
-	 * 
+	 *
 	 * @param context
 	 *            DML context to use for the evalution of this statement
-	 * 
+	 *
 	 * @throws EvaluationException
 	 */
-	abstract public void execute(Context context) throws EvaluationException;
+	abstract public Element execute(Context context) throws EvaluationException;
+
+    public void checkRestrictedContext() throws SyntaxException {
+        // not applicable for statements; no-op
+    }
+
+    public void checkInvalidSelfContext() throws SyntaxException {
+        // not applicable for statements; no-op
+    }
 
 }

@@ -22,15 +22,16 @@ package org.quattor.pan.statement;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_IDENTIFIER;
 
+import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.template.Context;
 import org.quattor.pan.template.SourceRange;
 
 /**
  * Executes a template identified by a constant string.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 public class StaticIncludeStatement extends IncludeStatement {
 
@@ -39,7 +40,7 @@ public class StaticIncludeStatement extends IncludeStatement {
 	/**
 	 * Constructs a StaticIncludeStatement from the given template name. If the
 	 * name is invalid, a SyntaxException will be thrown.
-	 * 
+	 *
 	 * @param sourceRange
 	 *            source location of this statement
 	 * @param name
@@ -63,13 +64,14 @@ public class StaticIncludeStatement extends IncludeStatement {
 	}
 
 	@Override
-	public void execute(Context context) {
+	public Element execute(Context context) {
 		executeWithNamedTemplate(context, name);
+        return null;
 	}
 
 	/**
 	 * Return a reasonable string representation of this statement.
-	 * 
+	 *
 	 * @return String representation of this BindStatement
 	 */
 	@Override

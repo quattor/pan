@@ -20,6 +20,7 @@
 
 package org.quattor.pan.statement;
 
+import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.template.Context;
 import org.quattor.pan.template.SourceRange;
@@ -60,9 +61,10 @@ public class StaticBindStatement extends BindStatement {
     }
 
     @Override
-    public void execute(Context context) {
+    public Element execute(Context context) {
         assert (context != null);
         context.setBinding(path, fullType, context.getCurrentTemplate(), getSourceRange());
+        return null;
     }
 
     /**

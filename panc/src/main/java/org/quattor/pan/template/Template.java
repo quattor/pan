@@ -32,6 +32,7 @@ import static org.quattor.pan.utils.MessageUtils.MSG_MULTIPLY_DEFINED_FUNCTION;
 import static org.quattor.pan.utils.MessageUtils.MSG_MULTIPLY_DEFINED_TYPE;
 import static org.quattor.pan.utils.MessageUtils.MSG_ONLY_ABS_ASSIGNMENT_ALLOWED;
 import static org.quattor.pan.utils.MessageUtils.MSG_ONLY_REL_ASSIGNMENT_ALLOWED;
+import static org.quattor.pan.utils.MessageUtils.MSG_OPERATION_WITHOUT_CONTEXT;
 import static org.quattor.pan.utils.MessageUtils.MSG_TEMPLATE_CONTAINS_NON_STATIC_STATEMENTS;
 
 import java.io.File;
@@ -39,8 +40,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
+import clojure.lang.AFn;
+import clojure.lang.IObj;
+import clojure.lang.IPersistentMap;
 import org.quattor.pan.exceptions.CompilerError;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.repository.SourceFile;
@@ -58,11 +63,13 @@ import org.quattor.pan.statement.VariableStatement;
  * caught by the parsing process. The constructor will throw a
  * <code>SyntaxException</code> if any of the additional constraints are not
  * met.
- * 
+ *
  * @author loomis
- * 
+ *
  */
-public class Template {
+public class Template extends AFn implements IObj {
+
+    private final AtomicReference<IPersistentMap> metadataRef = new AtomicReference<IPersistentMap>();
 
 	/**
 	 * An enumeration of the possible template types. An ordinary template can
@@ -72,7 +79,7 @@ public class Template {
 	 */
 	public static enum TemplateType {
 		ORDINARY, OBJECT, DECLARATION, STRUCTURE, UNIQUE,
-	};
+	}
 
 	/**
 	 * A matrix that gives a boolean flag on whether a particular include
@@ -186,7 +193,7 @@ public class Template {
 	 * Constructs a new template from the given information. Additional
 	 * constraints are applied which are not caught by the parser. If any of the
 	 * additional constraints fail, an SyntaxException is thrown.
-	 * 
+	 *
 	 * @param source
 	 *            absolute File indicating the source pan language template;
 	 *            used for error messages and logging; may be null
@@ -344,10 +351,10 @@ public class Template {
 	 * pluses, and slashes. In addition, each term when split by slashes must
 	 * not be empty and must not start with a period. The second case excludes
 	 * potential hidden files and special names like "." and "..".
-	 * 
+	 *
 	 * @param name
 	 *            template name to check for validity
-	 * 
+	 *
 	 * @return boolean value indicating if the given name is a valid template
 	 *         name
 	 */
@@ -373,29 +380,49 @@ public class Template {
 		return true;
 	}
 
-	/**
+    @Override
+    public IPersistentMap meta() {
+        return metadataRef.get();
+    }
+
+    public IObj withMeta(IPersistentMap iPersistentMap) {
+        metadataRef.set(iPersistentMap);
+        return this;
+    }
+
+    public Object invoke(Object o1, Object o2) {
+        try {
+            return execute((Context) o1, (Boolean) o2);
+        } catch (ClassCastException ex) {
+            throw CompilerError.create(MSG_OPERATION_WITHOUT_CONTEXT);
+        }
+    }
+
+
+    /**
 	 * Execute each of the statements in turn.
-	 * 
-	 * @param runStatic
-	 *            flag which indicates whether to run the static statements or
-	 *            not
-	 * @param context
-	 *            context for the evaluation of the template
-	 */
-	public void execute(boolean runStatic, Context context) {
+	 *
+     * @param context
+     *            context for the evaluation of the template
+     * @param runStatic
+*            flag which indicates whether to run the static statements or
+*            not
+     */
+	public Object execute(Context context, boolean runStatic) {
 		for (Statement s : ((runStatic) ? staticStatements : normalStatements)) {
 			s.execute(context);
 		}
+        return null;
 	}
 
 	/**
 	 * Determine whether a particular include combination is legal.
-	 * 
+	 *
 	 * @param includeeType
 	 *            type of the template that is including another one
 	 * @param includedType
 	 *            type of the included template
-	 * 
+	 *
 	 * @return flag indicating whether this is a legal combination
 	 */
 	public static boolean checkValidInclude(TemplateType includeeType,
@@ -405,7 +432,7 @@ public class Template {
 
 	/**
 	 * Check that the internal template name matches the expected template name.
-	 * 
+	 *
 	 * @param expectedName
 	 *            expected name of the compiled template
 	 */

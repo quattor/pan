@@ -47,9 +47,9 @@ import org.quattor.pan.utils.TermFactory;
  * Creates an dict from the named structure template. Additional pairs of
  * arguments may also be given that will override any entries with the same keys
  * from the structure template.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 final public class Create extends BuiltInFunction {
 
@@ -166,7 +166,7 @@ final public class Create extends BuiltInFunction {
 		context.pushTemplate(template, getSourceRange(), Level.INFO,
 				"STRUCTURE");
 		SelfHolder self = context.saveSelf();
-		template.execute(runStatic, context);
+		template.execute(context, runStatic);
 		context.restoreSelf(self);
 		context.popTemplate(Level.INFO, "STRUCTURE");
 

@@ -152,7 +152,7 @@ public class BuildTask extends Task<BuildResult> {
 			try {
 				context.setObjectAndLoadpath();
 				context.setCurrentTemplate(context.getObjectTemplate());
-				context.getObjectTemplate().execute(true, context);
+				context.getObjectTemplate().execute(context, true);
 			} catch (EvaluationException ee) {
 				throw ee.addExceptionInfo(null,
 						context.getCurrentTemplate().source, null);

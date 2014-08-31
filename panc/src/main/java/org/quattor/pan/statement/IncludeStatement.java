@@ -159,7 +159,7 @@ abstract public class IncludeStatement extends Statement {
 		// the template.
 		context.pushTemplate(template, getSourceRange(), Level.INFO,
 				includedType.toString());
-		template.execute(runStatic, context);
+		template.execute(context, runStatic);
 		context.popTemplate(Level.INFO, includedType.toString());
 
 	}

@@ -49,9 +49,9 @@ import org.quattor.pan.utils.Term;
 
 /**
  * Implements the pan record type.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 public class RecordType extends BaseType {
 
@@ -307,7 +307,7 @@ public class RecordType extends BaseType {
 	 * This method will loop through all of the fields defined in this record
 	 * and remove them from the given list. This is used in the validation of
 	 * the fields.
-	 * 
+	 *
 	 * @param context
 	 *            ObjectContext to use to look up included type definitions
 	 * @param undefinedFields
@@ -352,7 +352,7 @@ public class RecordType extends BaseType {
 	}
 
 	@Override
-	public void validate(final Context context, final Element self)
+	public Object validate(final Context context, final Element self)
 			throws ValidationException {
 
 		// If this is not an extensible record, then we must verify that
@@ -397,6 +397,7 @@ public class RecordType extends BaseType {
 		// rest of the checks.
 		validateAsIncludedType(context, self);
 
+        return null;
 	}
 
 	@Override

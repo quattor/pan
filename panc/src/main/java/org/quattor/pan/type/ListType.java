@@ -37,9 +37,9 @@ import org.quattor.pan.utils.TermFactory;
 
 /**
  * Implements a list type for the pan language.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 public class ListType extends CompositeType {
 
@@ -47,7 +47,7 @@ public class ListType extends CompositeType {
 	 * Constructor for LinkType takes another BaseType as the type of the list.
 	 * The method does not check for circular references. Be careful not to
 	 * create them.
-	 * 
+	 *
 	 * @param source
 	 *            source where this type is defined
 	 * @param sourceRange
@@ -111,7 +111,7 @@ public class ListType extends CompositeType {
 	}
 
 	@Override
-	public void validate(final Context context, final Element self)
+	public Object validate(final Context context, final Element self)
 			throws ValidationException {
 
 		try {
@@ -142,7 +142,7 @@ public class ListType extends CompositeType {
 			throw ValidationException.create(MSG_MISMATCHED_TYPES, "list", self
 					.getTypeAsString());
 		}
-
+        return null;
 	}
 
 	@Override

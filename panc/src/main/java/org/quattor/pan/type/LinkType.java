@@ -37,9 +37,9 @@ import org.quattor.pan.utils.Path;
 
 /**
  * Implements the link type for the pan language.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 public class LinkType extends CompositeType {
 
@@ -47,7 +47,7 @@ public class LinkType extends CompositeType {
 	 * Constructor for LinkType takes another BaseType as the type of the link.
 	 * The method does not check for circular references. Be careful not to
 	 * create them.
-	 * 
+	 *
 	 * @param source
 	 *            source where this type is defined
 	 * @param sourceRange
@@ -113,7 +113,7 @@ public class LinkType extends CompositeType {
 	}
 
 	@Override
-	public void validate(final Context context, final Element self)
+	public Object validate(final Context context, final Element self)
 			throws ValidationException {
 
 		try {
@@ -156,7 +156,7 @@ public class LinkType extends CompositeType {
 			throw ValidationException.create(MSG_CONFLICTING_TYPES, "link",
 					self.getTypeAsString());
 		}
-
+        return null;
 	}
 
 	@Override

@@ -36,9 +36,9 @@ import org.quattor.pan.utils.Range;
 /**
  * Defines an alias type that references another defined type and can optionally
  * have an additional range defined.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 public class AliasType extends BaseType {
 
@@ -48,7 +48,7 @@ public class AliasType extends BaseType {
 
 	/**
 	 * Constructor for AliasType takes the name of the type identifier.
-	 * 
+	 *
 	 * @param source
 	 *            String describing the source containing this definition
 	 * @param identifier
@@ -104,7 +104,7 @@ public class AliasType extends BaseType {
 	}
 
 	@Override
-	public void validate(final Context context, final Element self)
+	public Object validate(final Context context, final Element self)
 			throws ValidationException {
 
 		FullType type = context.getFullType(identifier);
@@ -124,7 +124,7 @@ public class AliasType extends BaseType {
 			npe.printStackTrace();
 			throw CompilerError.create(MSG_NONEXISTANT_TYPE, identifier);
 		}
-
+        return null;
 	}
 
 	@Override

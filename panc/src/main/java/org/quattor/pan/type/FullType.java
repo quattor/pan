@@ -35,9 +35,9 @@ import org.quattor.pan.template.TypeMap;
 /**
  * Represents a complete type specification in the pan language, which can have
  * a default value and/or a validation block defined.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 public class FullType extends Type {
 
@@ -50,7 +50,7 @@ public class FullType extends Type {
 	/**
 	 * This contructor is intended for built-in types that have neither source
 	 * locations or default values.
-	 * 
+	 *
 	 * @param baseType
 	 */
 	public FullType(BaseType baseType) {
@@ -77,7 +77,7 @@ public class FullType extends Type {
 	}
 
 	@Override
-	public void validate(final Context context, final Element self)
+	public Object validate(final Context context, final Element self)
 			throws ValidationException {
 
 		// Self cannot be null; if it is, the self element doesn't exist and a
@@ -101,7 +101,7 @@ public class FullType extends Type {
 				throw ve;
 			}
 		}
-
+        return null;
 	}
 
 	/**

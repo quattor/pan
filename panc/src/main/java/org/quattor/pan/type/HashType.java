@@ -36,9 +36,9 @@ import org.quattor.pan.utils.Term;
 
 /**
  * Implements the dict type for the pan language.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 public class HashType extends CompositeType {
 
@@ -46,12 +46,12 @@ public class HashType extends CompositeType {
 	 * Constructor for HashType takes another BaseType as the type of the hash.
 	 * The method does not check for circular references. Be careful not to
 	 * create them.
-	 * 
+	 *
 	 * @param source
 	 *            source where this type is defined
 	 * @param sourceRange
 	 *            location in source where type is defined
-	 * 
+	 *
 	 * @param baseType
 	 *            reference to the base type of this hash
 	 * @param range
@@ -113,7 +113,7 @@ public class HashType extends CompositeType {
 	}
 
 	@Override
-	public void validate(final Context context, final Element self)
+	public Object validate(final Context context, final Element self)
 			throws ValidationException {
 
 		try {
@@ -142,7 +142,7 @@ public class HashType extends CompositeType {
 			throw ValidationException.create(MSG_MISMATCHED_TYPES, "dict",
 					self.getTypeAsString());
 		}
-
+        return null;
 	}
 
 	@Override

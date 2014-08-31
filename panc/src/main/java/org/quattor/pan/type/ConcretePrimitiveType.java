@@ -30,9 +30,9 @@ import org.quattor.pan.template.Context;
 /**
  * Concrete implementations of primitive types like booleans, longs, etc. The
  * functionality for these types is identical and implemented in this class.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 public class ConcretePrimitiveType extends PrimitiveType {
 
@@ -51,7 +51,7 @@ public class ConcretePrimitiveType extends PrimitiveType {
 	}
 
 	@Override
-	public void validate(final Context context, final Element self)
+	public Object validate(final Context context, final Element self)
 			throws ValidationException {
 
 		try {
@@ -73,6 +73,6 @@ public class ConcretePrimitiveType extends PrimitiveType {
 
 			throw ve;
 		}
-
+        return null;
 	}
 }

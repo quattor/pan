@@ -24,7 +24,8 @@ public class FormatterUtils {
 		Formatter[] instances = new Formatter[] { DotFormatter.getInstance(),
 				PanFormatter.getInstance(), PanGzipFormatter.getInstance(),
 				XmlFormatter.getInstance(), XmlGzipFormatter.getInstance(),
-				JsonFormatter.getInstance(), JsonGzipFormatter.getInstance() };
+				JsonFormatter.getInstance(), JsonGzipFormatter.getInstance(),
+                NullFormatter.getInstance()};
 
 		// Insert the values, letting the instances choose their key values.
 		// Ensure that the values are in lowercase.
@@ -44,10 +45,10 @@ public class FormatterUtils {
 	 * This method maps a formatter name to a <code>Formatter</code> instance.
 	 * If the formatter name is unknown, then null will be returned. The name
 	 * comparison ignores the case of the given name.
-	 * 
+	 *
 	 * @param name
 	 *            name of the formatter
-	 * 
+	 *
 	 * @return <code>Formatter</code> instance corresponding to the name or null
 	 *         if the formatter name is unknown
 	 */
@@ -59,7 +60,7 @@ public class FormatterUtils {
 	/**
 	 * This method returns the default formatter to use if the user does not
 	 * specify one explicitly.
-	 * 
+	 *
 	 * @return default Formatter for output files
 	 */
 	public static Formatter getDefaultFormatterInstance() {
@@ -68,9 +69,9 @@ public class FormatterUtils {
 
 	/**
 	 * Creates parent directories of the given file. The file must be absolute.
-	 * 
+	 *
 	 * @param file
-	 * 
+	 *
 	 * @throws SystemException
 	 *             if directory or directories cannot be created
 	 */
@@ -92,7 +93,7 @@ public class FormatterUtils {
 	/**
 	 * Sets the modification time of the given file to the given timestamp.
 	 * Errors are silently ignored.
-	 * 
+	 *
 	 * @param absolutePath
 	 * @param timestamp
 	 */

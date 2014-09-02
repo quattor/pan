@@ -3,11 +3,12 @@
             [clojure.string :refer [join]]
             [clojure.set :refer [subset?]]
             [org.quattor.pan.cmd-option :refer :all])
-  (:import [org.quattor.pan.output TxtFormatter 
-                                   JsonFormatter 
-                                   DotFormatter 
-                                   PanFormatter 
-                                   DepFormatter]
+  (:import [org.quattor.pan.output TxtFormatter
+                                   JsonFormatter
+                                   DotFormatter
+                                   PanFormatter
+                                   DepFormatter
+                                   NullFormatter]
            [org.quattor.pan CompilerOptions$DeprecationWarnings]
            [java.util.regex Pattern]
            [clojure.lang ExceptionInfo]))
@@ -20,15 +21,17 @@
   (let [unknown (process [:unknown "ok"])]
     (is (= "ok" (:unknown unknown)))
     (is (= 1 (count unknown)))))
-    
+
 (deftest test-formats
   (let [pandep (process [:formats "pan,dep"])
         text (process [:formats "text"])
         json (process [:formats "json"])
-        dot (process [:formats "dot"])]
+        dot (process [:formats "dot"])
+        null (process [:formats "null"])]
     (is (= #{(PanFormatter/getInstance) (DepFormatter/getInstance)} (:formatter pandep)))
     (is (= #{(TxtFormatter/getInstance)} (:formatter text)))
     (is (= #{(JsonFormatter/getInstance)} (:formatter json)))
+    (is (= #{(NullFormatter/getInstance)} (:formatter null)))
     (is (= #{(DotFormatter/getInstance)} (:formatter dot))))
   (is (thrown? ExceptionInfo (process [:formats "unknown"]))))
 
@@ -80,7 +83,7 @@
     (is (= CompilerOptions$DeprecationWarnings/ON (:warnings on)))
     (is (= CompilerOptions$DeprecationWarnings/FATAL (:warnings fatal))))
   (is (thrown? ExceptionInfo (process [:warnings "unknown"]))))
-  
+
 (deftest test-verbose
   (are [x y] (= x (:verbose (process [:verbose y])))
        false false

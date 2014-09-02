@@ -47,6 +47,7 @@ import org.quattor.pan.output.DotFormatter;
 import org.quattor.pan.output.Formatter;
 import org.quattor.pan.output.JsonFormatter;
 import org.quattor.pan.output.JsonGzipFormatter;
+import org.quattor.pan.output.NullFormatter;
 import org.quattor.pan.output.PanFormatter;
 import org.quattor.pan.output.PanGzipFormatter;
 import org.quattor.pan.output.TxtFormatter;
@@ -483,6 +484,8 @@ public class CompilerOptions {
                 formatters.add(XmlGzipFormatter.getInstance());
             } else if ("dep".equals(fname)) {
                 formatters.add(DepFormatter.getInstance());
+            } else if ("null".equals(fname)) {
+                formatters.add(NullFormatter.getInstance());
             } else if ("none".equals(fname)) {
                 // No-op
             }

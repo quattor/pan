@@ -98,6 +98,7 @@ Please file a bug report including the stack trace.
    [nil "--log-file FILE" "specify log file"]
    [nil "--warnings FLAG" "off, on, fatal" :default "on"]
    ["-v" "--verbose" "show statistics and progress" :default false :flag true]
+   [nil "--version" "show pan compiler version" :default false :flag true]
    ["-h" "--help" "print command help" :default false :flag true]])
 
 (defn banner-and-exit [banner]
@@ -112,6 +113,10 @@ Please file a bug report including the stack trace.
 (defn error-and-exit [e]
   (println (format-ex-info e))
   (System/exit 1))
+
+(defn compiler-version []
+  (println "pan compiler version:" (org.quattor.pan.Compiler/version))
+  (System/exit 0))
 
 (defn build-profiles [options pan-sources]
   (let [compiler-options (create-compiler-options)]
@@ -143,6 +148,7 @@ Please file a bug report including the stack trace.
     (let [{:keys [options arguments errors summary]} (cli/parse-opts args cli-args)]
       (cond
         (:help options) (banner-and-exit summary)
+        (:version options) (compiler-version)
         errors (error-message errors)
         :else (run-compiler options arguments)))
     (catch ExceptionInfo e

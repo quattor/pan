@@ -68,6 +68,9 @@ Usage: panc-annotations [options] files
     ["-v" "--verbose" "verbosity level; may be specified multiple times to increase value"
      :default 0
      :assoc-fn (fn [m k _] (update-in m [k] inc))]
+    [nil "--version" "show pan compiler version" 
+     :default false
+     :flag true]
     ["-h" "--help" "print help message"
      :default false
      :flag true]])
@@ -75,6 +78,10 @@ Usage: panc-annotations [options] files
 (defn usage
   [options-summary]
   (format usage-fmt options-summary))
+
+(defn compiler-version []
+  (println "pan compiler version:" (org.quattor.pan.Compiler/version))
+  (System/exit 0))
 
 (defn error-msg
   [errors]
@@ -90,9 +97,10 @@ Usage: panc-annotations [options] files
   [& args]
 
   (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)]
-    (let [{:keys [help verbose quiet]} options]
+    (let [{:keys [help verbose version quiet]} options]
       (cond
         help (exit 0 (usage summary))
+        version (compiler-version)
         (zero? (count args)) (exit 1 (usage summary))
         errors (exit 1 (str (error-msg errors) "\n\n" (usage summary))))
       (when (pos? verbose)

@@ -396,7 +396,7 @@ $ mvn clean install
     jar file <filename>panc.jar</filename> distributed with the pan compiler
     release.</para>
 
-    <para>There are three tasks defined: <variablelist>
+    <para>There are four tasks defined: <variablelist>
         <varlistentry>
           <term>
             <command>panc</command>
@@ -429,8 +429,23 @@ $ mvn clean install
             produces XML files with the resulting content.</para>
           </listitem>
         </varlistentry>
-      </variablelist><para>Running the compiler can be done with tasks like
-    the following:</para><programlisting>&lt;target name="compile.cluster.profiles"&gt;
+
+        <varlistentry>
+          <term>
+            <command>panc-version</command>
+          </term>
+
+          <listitem>
+            <para>Displays the pan compiler version.</para>
+          </listitem>
+        </varlistentry>
+
+      </variablelist>
+
+    <para>Running the compiler can be done with tasks like
+    the following:</para>
+
+    <programlisting>&lt;target name="compile.cluster.profiles"&gt;
 
   &lt;!-- Define the load path.  By default this is just the cluster area. --&gt;
   &lt;path id="pan.loadpath"&gt;
@@ -450,10 +465,13 @@ $ mvn clean install
     &lt;fileset dir="${basedir}/profiles" casesensitive="yes" includes="*.pan" /&gt;
   &lt;/panc-annotations&gt;
 
-&lt;/target&gt;</programlisting> where
+&lt;/target&gt;
+    </programlisting> where
+
     <replaceable>...options...</replaceable> is replaced with valid options
     (attributes) for the pan compiler ant tasks. The following tables describe
-    all of the attributes supported by the these tasks.</para>
+    all of the attributes supported by the these tasks (task <command>panc-version</command> 
+    accepts no option).</para>
 
     <table>
       <title>Attributes for Ant Task <command>panc</command></title>
@@ -808,4 +826,52 @@ $ mvn clean install
     edit and add the additional parameters in the "DefaultVM arguments"
     field.</para>
   </section>
+
+  <section>
+    <title>Displaying the compiler version</title>
+
+    <para>There are different ways of displaying the pan compiler version, depending on the invocation method.</para>
+
+    <table>
+      <title>How to get panc version</title>
+
+      <tgroup cols="2">
+<!-- Breaks rendering when put in appendix - see #74.
+        <colspec align="left" column="1" colwidth="1*" />
+        <colspec align="left" column="2" colwidth="3*" />
+-->
+        <thead>
+          <row>
+            <entry>Invocation</entry>
+            <entry>Command</entry>
+          </row>
+        </thead>
+
+        <tbody>
+          <row>
+            <entry>Java</entry>
+            <entry>java -jar /path/to/panc.jar</entry>
+          </row>
+
+          <row>
+            <entry>panc</entry>
+            <entry>panc --version</entry>
+          </row>
+
+          <row>
+            <entry>panc-annotations</entry>
+            <entry>panc-annotations --version</entry>
+          </row>
+
+          <row>
+            <entry>Ant</entry>
+            <entry>task panc-version</entry>
+          </row>
+
+        </tbody>
+      </tgroup>
+    </table>
+
+  </section>
+
 </appendix>

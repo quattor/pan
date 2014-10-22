@@ -177,7 +177,7 @@ public class PanCompilerTask extends Task {
         // Print out information on how many files will be processed.
         if (verbose) {
             System.out.println(outdatedFiles.size() + "/" + objectFiles.size()
-                    + " object template(s) being processed");
+                    + " template(s) being processed");
         }
 
         // Activate loggers if specified. If the logging is activated but there

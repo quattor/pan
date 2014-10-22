@@ -9,6 +9,13 @@
   
   <xsl:param name="body.font.size">12pt</xsl:param>
 
+  <!-- Generate PDF bookmarks -->
+  <xsl:param name="fop1.extensions">1</xsl:param>
+
+  <!-- Enable use of colspec in tables -->
+  <xsl:param name="use.extensions">1</xsl:param>
+  <xsl:param name="tablecolumns.extensions">1</xsl:param>
+
   <!-- Only label the chapters, appendices, etc. -->
   <xsl:param name="section.autolabel">0</xsl:param>
 

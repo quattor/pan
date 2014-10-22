@@ -74,6 +74,8 @@
 
         <arg>-h | --no-help | --help</arg>
 
+        <arg>--version</arg>
+
         <arg choice="opt"
         rep="repeat"><replaceable>template</replaceable></arg>
       </cmdsynopsis>
@@ -263,6 +265,15 @@
             other processing is done if this option is given.</para>
           </listitem>
         </varlistentry>
+
+        <varlistentry>
+          <term><option>--version</option></term>
+
+          <listitem>
+            <para>Prints pan compiler version.</para>
+          </listitem>
+        </varlistentry>
+      
       </variablelist>
 
       <para>The <command>panc</command> command is just a wrapper script
@@ -309,6 +320,8 @@
         <arg>-v | --no-verbose | --verbose</arg>
 
         <arg>-h | --no-help | --help</arg>
+
+        <arg>--version</arg>
 
         <arg choice="opt"
         rep="repeat"><replaceable>template</replaceable></arg>
@@ -373,6 +386,15 @@
             other processing is done if this option is given.</para>
           </listitem>
         </varlistentry>
+      
+        <varlistentry>
+          <term><option>--version</option></term>
+
+          <listitem>
+            <para>Prints pan compiler version.</para>
+          </listitem>
+        </varlistentry>
+
       </variablelist>
 
       <para>The <command>panc-annotations</command> command is just a wrapper

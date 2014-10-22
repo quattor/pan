@@ -165,6 +165,11 @@
             </goals>
             <phase>package</phase>
             <configuration>
+              <archive>
+                <manifest>
+                  <mainClass>org.quattor.pan.Compiler</mainClass>
+                </manifest>
+              </archive>
               <descriptorRefs>
                 <descriptorRef>jar-with-dependencies</descriptorRef>
               </descriptorRefs>

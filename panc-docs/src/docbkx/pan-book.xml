@@ -1387,13 +1387,27 @@ prefix '/batch/server/nodes';
         <para>The pan compiler internally implements this statement as the
         <command>bind</command> statement above.</para>
 
-        <para>The path used in these statement can contain <emphasis>global
+        <para>The path used in these statements can contain <emphasis>global
         variable</emphasis> references of the form
         ${<varname>vname</varname>}. This allows the binding between the
         validation code and a path to be determined when a profile is built.
         If the path references an undefined global variable, then will abort
         with an error. The build will also be aborted if the path is not valid
-        after the values of the variables have been substituted.</para>
+        after the values of the variables have been substituted.
+        Below is an example of using <emphasis>global variable</emphasis>
+        references:</para>
+
+        <programlisting>variable MYFILE = 'test';
+bind  '/a/${MYFILE}' = type-spec;</programlisting>
+
+        As with any path element, the variable contents can be escaped if necessary by
+        enclosing the variable reference into '{}'. For example:
+
+        <programlisting>variable MYFILE = '/tmp/test';
+bind  '/a/{${MYFILE}}' = type-spec;</programlisting>
+
+        See chapter on Validation for more details.
+
       </section>
     </section>
   </chapter>

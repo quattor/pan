@@ -13,10 +13,55 @@
     <version>10.2-SNAPSHOT</version>
   </parent>
 
+  <licenses>
+    <license>
+      <name>Creative Commons Attribution 3.0 Unported</name>
+      <url>http://creativecommons.org/licenses/by/3.0/legalcode</url>
+      <distribution>repo</distribution>
+      <comments>Copyright (c) 2010-2014, Centre National de la Recherche Scientifique (CNRS)</comments>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>loomisc</id>
+      <name>Charles LOOMIS</name>
+      <email>loomis@lal.in2p3.fr</email>
+      <organization>CNRS/LAL</organization>
+      <organizationUrl>http://www.lal.in2p3.fr/</organizationUrl>
+      <roles>
+	<role>maintainer</role>
+      </roles>
+    </developer>
+  </developers>
+
   <build>
 
     <plugins>
 
+      <plugin>
+        <groupId>org.tomdz.maven</groupId>
+        <artifactId>sphinx-maven-plugin</artifactId>
+        <version>1.0.2</version>
+        <configuration>
+          <sourceDirectory>source</sourceDirectory>
+        </configuration>
+        <executions>
+          <execution>
+            <id>build-html</id>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <phase>compile</phase>
+            <configuration>
+              <builder>html</builder>
+              <outputDirectory>${project.build.directory}/docs/html</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+<!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
@@ -61,59 +106,12 @@
             <phase>prepare-package</phase>
           </execution>
 
-          <execution>
-            <id>create-epub</id>
-            <goals>
-              <goal>generate-epub</goal>
-            </goals>
-            <configuration>
-              <epubCustomization>${basedir}/src/docbkx/epub-customization.xsl</epubCustomization>
-              <epubAutolabel>true</epubAutolabel>
-              <epubNcxDepth>2</epubNcxDepth>
-              <htmlStylesheet>pan.css</htmlStylesheet>
-              <preProcess>
-                <copy todir="${project.build.directory}/docbkx/epub/pan-book/images">
-                  <fileset dir="src/docbkx/images">
-                    <include name="**/*.png" />
-                  </fileset>
-                 </copy>
-		 <!--
-                <copy todir="${project.build.directory}/docbkx/epub/pan-tutorial/images">
-                  <fileset dir="src/docbkx/images">
-                    <include name="**/hello.png" />
-                  </fileset>
-                 </copy>
-		 -->
-                 <copy todir="${project.build.directory}/docbkx/epub/pan-book/" file="src/docbkx/pan.css">
-                 </copy>
-		 <!--
-                 <copy todir="${project.build.directory}/docbkx/epub/pan-tutorial/" file="src/docbkx/pan.css">
-                 </copy>
-		 -->
-              </preProcess>
-            </configuration>
-            <phase>prepare-package</phase>
-          </execution>
-
-          <execution>
-            <id>create-manpages</id>
-            <goals>
-              <goal>generate-manpages</goal>
-            </goals>
-            <configuration>
-              <manOutputBaseDir>${project.build.directory}/docbkx/man/</manOutputBaseDir>
-              <manOutputInSeparateDir>true</manOutputInSeparateDir>
-              <manOutputSubdirsEnabled>true</manOutputSubdirsEnabled>
-            </configuration>
-            <phase>prepare-package</phase>
-          </execution>
-
         </executions>
         <configuration>
           <xincludeSupported>true</xincludeSupported>
         </configuration>
       </plugin>
-
+-->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
@@ -136,7 +134,7 @@
         </executions>
 
       </plugin>
-
+<!--
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
@@ -157,31 +155,9 @@
           </execution>
         </executions>
       </plugin>
-
+-->
     </plugins>
 
   </build>
-
-  <licenses>
-    <license>
-      <name>Creative Commons Attribution 3.0 Unported</name>
-      <url>http://creativecommons.org/licenses/by/3.0/legalcode</url>
-      <distribution>repo</distribution>
-      <comments>Copyright (c) 2010, Centre National de la Recherche Scientifique (CNRS)</comments>
-    </license>
-  </licenses>
-
-  <developers>
-    <developer>
-      <id>loomisc</id>
-      <name>Charles LOOMIS</name>
-      <email>loomis@lal.in2p3.fr</email>
-      <organization>CNRS/LAL</organization>
-      <organizationUrl>http://www.lal.in2p3.fr/</organizationUrl>
-      <roles>
-	<role>maintainer</role>
-      </roles>
-    </developer>
-  </developers>
 
 </project>

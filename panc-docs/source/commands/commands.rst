@@ -1,51 +1,38 @@
-Command Reference
-=================
-
-The pan distributions provide a set of commands that allow the compiler
-to be invoked and that demonstrate how to analyze available logging
-information. These commands are provided for ease of use for one-off
-tasks. The compiler can be more efficiently invoked via Apache Ant or
-Maven for automated use of the compiler in production.
 
 panc
-1
+====
+
+Name
+----
+
+panc -- compile pan language templates
+
+Synopsis
+--------
+
 panc
-compile pan language templates
-panc
---no-debug \| --debug
---debug-ns-include
-regex
---debug-ns-exclude
-regex
---initial-data
-dict-dml
---include-path
-path
---output-dir
-dir
---formats
-formats
---java-opts
-java-options
---max-iteration
-limit
---max-recursion
-limit
---nthread
-number
---no-disable-escaping \| --disable-escaping
---logging
-string
---log-file
-file
---warnings
-flag
--v \| --no-verbose \| --verbose
--h \| --no-help \| --help
---version
-template
+``--no-debug`` \| ``--debug``
+``--debug-ns-include regex``
+``--debug-ns-exclude regex``
+``--initial-data dict-dml``
+``--include-path path``
+``--output-dir dir``
+``--formats formats``
+``--java-opts java-options``
+``--max-iteration limit``
+``--max-recursion limit``
+``--nthread number``
+``--no-disable-escaping`` \| ``--disable-escaping``
+``--logging string``
+``--log-file file``
+``--warnings flag``
+``-v`` \| ``--no-verbose`` \| ``--verbose``
+``-h`` \| ``--no-help`` \| ``--help``
+``--version``
+templates
+
 Description
-===========
+-----------
 
 The ``panc`` command will compile a collection of pan language templates
 into a set of machine configuration files. This command, with its
@@ -148,23 +135,29 @@ templates as the arguments. Larger sets of templates will need to set
 the memory option for the Java Virtual Machine; this should be done
 through the ``--java-opts`` option.
 
+
 panc-annotations
-1
+================
+
+Name
+----
+
+panc-annotations -- process annotations in pan configuration files
+
+Synopsis
+--------
+
 panc-annotations
-process annotations in pan configuration files
-panc-annotations
---base-dir
-base-directory
---output-dir
-dir
---java-opts
-jvm-options
--v \| --no-verbose \| --verbose
--h \| --no-help \| --help
---version
-template
+``--base-dir base-directory``
+``--output-dir dir``
+``--java-opts jvm-options``
+``-v`` \| ``--no-verbose`` \| ``--verbose``
+``-h`` \| ``--no-help`` \| ``--help``
+``--version``
+templates
+
 Description
-===========
+-----------
 
 The ``panc-annotations`` command will process the annotations contains
 within pan configuration files within the given base directory.
@@ -201,14 +194,20 @@ The ``panc-annotations`` command is just a wrapper script around the
 ``java`` command to simplify setting various options.
 
 panc-build-stats.pl
-1
-panc-build-stats.pl
-create a report of panc build statistics
-panc-build-stats.pl
---help
-logfile
+===================
+
+Name
+----
+
+panc-build-stats.pl -- create a report of panc build statistics
+
+Synopsis
+--------
+
+panc-build-stats.pl ``--help`` logfile
+
 Description
-===========
+-----------
 
 The ``panc-build-stats.pl`` script will analyze a panc log file and
 report build statistics. The script takes the name of the log file as
@@ -227,7 +226,7 @@ appropriate for the R statistical analysis package, but should be
 trivial to import into excel or any other analysis package.
 
 Example
-=======
+-------
 
 If the output from the command is written to the file ``build.txt``,
 then the following R script will do a simple analysis of the results.
@@ -250,15 +249,20 @@ show histograms of the distributions.
     detach(bstats)
 
 panc-call-tree.pl
-1
-panc-call-tree.pl
-create a graph of pan call tree
-panc-call-tree.pl
---help
---format=dot\|hg
-logfile
+=================
+
+Name
+----
+
+panc-call-tree.pl -- create a graph of pan call tree
+
+Synopsis
+--------
+
+panc-call-tree.pl ``--help`` ``--format=dot\|hg`` logfile
+
 Description
-===========
+-----------
 
 The ``panc-call-tree.pl`` script will analyze a panc log file and create
 a graph of the pan call tree. One output file will be created for each
@@ -276,14 +280,20 @@ are shown in the graph; in particular unique and declaration templates
 will appear in the graph wherever they are referenced.
 
 panc-compile-stats.pl
-1
-panc-compile-stats.pl
-create a report of panc compilation statistics
-panc-compile-stats.pl
---help
-logfile
+=====================
+
+Name
+----
+
+panc-compile-stats.pl -- create a report of panc compilation statistics
+
+Synopsis
+--------
+
+panc-compile-stats.pl ``--help`` logfile
+
 Description
-===========
+-----------
 
 The ``panc-compile-stats.pl`` script will analyze a panc log file and
 report compilation statistics. The script takes the name of the log file
@@ -300,7 +310,7 @@ for the R statistical analysis package, but should be trivial to import
 into excel or any other analysis package.
 
 Example
-=======
+-------
 
 If the output from the command is written to the file ``compile.txt``,
 then the following R script will create a "high-density" plot of the
@@ -317,14 +327,20 @@ height of the line the duration.
     detach(cstats)
 
 panc-memory.pl
-1
-panc-memory.pl
-create a report of panc memory utilization
-panc-memory.pl
---help
-logfile
+==============
+
+Name
+----
+
+panc-memory.pl -- create a report of panc memory utilization
+
+Synopsis
+--------
+
+panc-memory.pl ``--help`` logfile
+
 Description
-===========
+-----------
 
 The ``panc-memory.pl`` script will analyze a panc log file and report on
 the memory usage. The script takes the name of the log file as its only
@@ -342,7 +358,7 @@ fluctuations in memory usage may not be directly related to the compiler
 activity at any instant in time.
 
 Example
-=======
+-------
 
 If the output from the command is written to the file ``memory.txt``,
 then the following R script will create a plot of the memory utilization
@@ -357,15 +373,20 @@ as a function of time.
     detach(mstats)
 
 panc-profiling.pl
-1
-panc-profiling.pl
-generate profiling information from panc log file
-panc-profiling.pl
---help
---usefunctions
-logfile
+=================
+
+Name
+----
+
+panc-profiling.pl -- generate profiling information from panc log file
+
+Synopsis
+--------
+
+panc-profiling.pl ``--help`` ``--usefunctions`` logfile
+
 Description
-===========
+-----------
 
 The ``panc-profiling.pl`` script will analyze a panc log file and report
 profiling information. The script takes the name of the log file as its
@@ -394,14 +415,20 @@ Nonetheless, the profiling information should be adequate to understand
 inefficient parts of a particular build.
 
 panc-threads.pl
-1
-panc-threads.pl
-create a report of thread activity
-panc-threads.pl
---help
-logfile
+===============
+
+Name
+----
+
+panc-threads.pl -- create a report of thread activity
+
+Synopsis
+--------
+
+panc-threads.pl ``--help`` logfile
+
 Description
-===========
+-----------
 
 The ``panc-threads.pl`` script will analyze a panc log file and report
 on build activity per thread. The script takes the name of the log file
@@ -415,7 +442,7 @@ thread activity in a particular compilation. The times are given in
 milliseconds relative to the first entry in the log file.
 
 Example
-=======
+-------
 
 If the output from the command is written to the file ``thread.txt``,
 then the following R script will create a plot showing the duration of

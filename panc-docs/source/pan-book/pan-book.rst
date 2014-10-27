@@ -1788,21 +1788,21 @@ Table: String Manipulation Functions
 
 Table: Debugging Functions
 
-+----------------+-----------------------------------------------------------+
-| Name           | Description                                               |
-+================+===========================================================+
-| ?              | Decode a string that is encoded using the Base64          |
-|                | standard.                                                 |
-+----------------+-----------------------------------------------------------+
-| ?              | Encode a string using the Base64 standard.                |
-+----------------+-----------------------------------------------------------+
-| ?              | Create message digest using specified algorithm.          |
-+----------------+-----------------------------------------------------------+
-| ?              | Escape characters within the string to ensure string is a |
-|                | valid dict key (path term).                               |
-+----------------+-----------------------------------------------------------+
-| ?              | Transform an escaped string into its original form.       |
-+----------------+-----------------------------------------------------------+
++----------------------+-----------------------------------------------------------+
+| Name                 | Description                                               |
++======================+===========================================================+
+| :ref:`base64_decode` | Decode a string that is encoded using the Base64          |
+|                      | standard.                                                 |
++----------------------+-----------------------------------------------------------+
+| ?                    | Encode a string using the Base64 standard.                |
++----------------------+-----------------------------------------------------------+
+| ?                    | Create message digest using specified algorithm.          |
++----------------------+-----------------------------------------------------------+
+| ?                    | Escape characters within the string to ensure string is a |
+|                      | valid dict key (path term).                               |
++----------------------+-----------------------------------------------------------+
+| ?                    | Transform an escaped string into its original form.       |
++----------------------+-----------------------------------------------------------+
 
 Table: Encoding and Decoding Functions
 

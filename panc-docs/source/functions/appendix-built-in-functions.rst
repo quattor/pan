@@ -1,7 +1,8 @@
-Built-In Function Reference
+===========================
+Standard Function Reference
 ===========================
 
-Pan provides a large (and growing) number of built-in functions. These
+Pan provides a large (and growing) number of standard functions. These
 are treated as operators by the pan compiler implementation and are thus
 highly optimized. Consequently, they should be preferred to writing your
 own user-defined functions when possible. Because they are built into
@@ -9,28 +10,27 @@ the compiler, the argument processing is different than that for
 user-defined functions. In particular, some arguments may be evaluated
 only when necessary and ``null`` can be a valid function argument.
 
+.. _append:
+
 append
-3
-panc:append
-adds a value to the end of a list
-list
-append
-element
-value
-list
-append
-list
-target
-element
-value
-list
-append
-variable\_reference
-target
-element
-value
+======
+
+Name
+----
+
+append -- adds a value to the end of a list
+
+Synopsis
+--------
+
+list **append** (element *value*)
+
+list **append** (list *target*, element *value*)
+
+list **append** (variable_reference *target*, element *value*)
+
 Description
-===========
+-----------
 
 The ``append`` function will add the given value to the end of the
 target list. There are three variants of this function. For all of the
@@ -87,16 +87,24 @@ from within a DML block is forbidden.
       append(x, 2);
     };
 
+
+.. _base64_decode:
+
 base64\_decode
-3
-panc:base64\_decode
-decodes a string that has been encoded in base64 format
-string
-base64\_decode
-string
-encoded
+==============
+
+Name
+----
+
+base64\_decode -- decodes a string that has been encoded in base64 format
+
+Synopsis
+--------
+
+string **base64\_decode** (string *encoded*)
+
 Description
-===========
+-----------
 
 The ``base64_decode`` function will return the unencoded value of the
 base64 (RFC 2045) encoded argument. If the argument is not a valid
@@ -107,16 +115,24 @@ base64 encoded value a fatal error will occur.
     # /result have the string value 'hello world'
     '/result' = base64_decode('aGVsbG8gd29ybGQ=');
 
+.. _base64_encode:
+
 base64\_encode
-3
-panc:base64\_encode
-encodes a string in base64 format
-string
-base64\_encode
-string
-unencoded
+==============
+
+Name
+----
+
+base64\_encode -- encodes a string in base64 format
+
+Synopsis
+--------
+
+string **base64\_encode** (string *encoded)
+
 Description
-===========
+-----------
+
 
 The ``base64_encode`` function will return the base64 (RFC 2045) encoded
 format of the argument.
@@ -126,16 +142,23 @@ format of the argument.
     # /result have the string value 'aGVsbG8gd29ybGQ='
     '/result' = base64_encode('hello world');
 
+.. _clone:
+
 clone
-3
-panc:clone
-returns a clone (copy) of the argument
-element
-clone
-element
-arg
+=====
+
+Name
+----
+
+clone -- returns a clone (copy) of the argument
+
+Synopsis
+--------
+
+element **clone** (element *arg*)
+
 Description
-===========
+-----------
 
 The ``clone`` function may return a clone (copy) of the argument. If the
 argument is a resource, the result will be a "deep" copy of the
@@ -144,17 +167,23 @@ and vice versa. Because properties are immutable internally, this
 function will not actually copy a property instead returning the
 argument itself.
 
+.. _create:
+
 create
-3
-panc:create
-create a dict from a structure template
-dict
-create
-string
-tpl\_name
-...
+======
+
+Name
+----
+
+create -- create a dict from a structure template
+
+Synopsis
+--------
+
+dict **create** (string *tpl_name*, ...)
+
 Description
-===========
+-----------
 
 The ``create`` function will return an dict from the named structure
 template. The optional additional arguments are key, value pairs that
@@ -180,16 +209,23 @@ values will delete the given key from the resulting dict.
     '/system/mounts/0' = create('mount_cdrom');
     '/system/mounts/0/device' = 'hdc';
 
+.. _debug:
+
 debug
-3
-panc:debug
-print debugging information to the console
-string
-debug
-string
-msg
+=====
+
+Name
+----
+
+debug -- print debugging information to the console
+
+Synopsis
+--------
+
+string **debug** (string *msg*)
+
 Description
-===========
+-----------
 
 This function will print the given string to the console (on stdout) and
 return the message as the result. The string has '[object] ' prepended
@@ -199,16 +235,22 @@ compiler option (see compiler manual for details). If this is not
 activated, the function will not evaluate the argument and will return
 undef.
 
+.. _delete:
+
 delete
-3
-panc:delete
-delete the element identified by the variable expression
-undef
-delete
-variable\_expression
-arg
+======
+
+Name
+----
+delete -- delete the element identified by the variable expression
+
+Synopsis
+--------
+
+undef **delete** (variable\_expression *arg*)
+
 Description
-===========
+-----------
 
 This function will delete the element identified by the variable
 expression given in the argument and return undef. The variable
@@ -225,20 +267,25 @@ has the same effect as assigning the variable reference to null.
       x = list('a', 'b', 'c');
       delete(x[1]);
       x;
-    }; 
+    };
+
+.. deprecated:
 
 deprecated
-3
-panc:deprecated
-print deprecation warning to console
-string
-deprecated
-long
-level
-string
-msg
+==========
+
+Name
+----
+
+deprecated -- print deprecation warning to console
+
+Synopsis
+--------
+
+string **deprecated** (long *level*, string *msg*)
+
 Description
-===========
+-----------
 
 This function will print the given string to the console (on stderr) and
 return the message as the result, if ``level`` is less than or equal to
@@ -246,34 +293,78 @@ the deprecation level given as a compiler option. If the message is not
 printed, the function returns undef. The value of ``level`` must be
 non-negative.
 
-digest
-3
-panc:digest
-creates a digest of a message using the specified algorithm
-string
-digest
-string
-algorithm
-string
-message
+.. _dict:
+
+dict
+====
+
+Name
+----
+
+dict -- create an dict from the arguments
+
+Synopsis
+--------
+
+dict **dict** (string *key*, element *property*, ...)
+
 Description
-===========
+-----------
+
+The ``dict`` function returns a new dict consisting of the passed
+arguments; the arguments must be key value pairs. All of the keys must
+be strings and have values that are legal path terms (see Path Literals
+Section).
+
+::
+
+    # resulting dict associates name with long value
+    '/result' = dict(
+      'one', 1,
+      'two', 2,
+      'three', 3,
+    };
+
+.. _digest:
+
+digest
+======
+
+Name
+----
+
+digest -- creates a digest of a message using the specified algorithm
+
+Synopsis
+--------
+
+string **digest** (string *algorithm*, string *message*)
+
+Description
+-----------
 
 This function returns a digest of the message using the specified
 algorithm. The valid algorithms are: ``MD2``, ``MD5``, ``SHA``,
 ``SHA-1``, ``SHA-256``, ``SHA-384``, and ``SHA-512``. The algorithm name
 is not case sensitive.
 
+.. _error::
+
 error
-3
-panc:error
-print message to console and abort compilation
-void
-error
-string
-msg
+=====
+
+Name
+----
+
+error -- print message to console and abort compilation
+
+Synopsis
+--------
+
+void **error** (string *msg*)
+
 Description
-===========
+-----------
 
 This function prints the given message to the console (stderr) and
 aborts the compilation. The message has '[object ]' prepended to it as a
@@ -293,16 +384,23 @@ place.
       # normal processing...
     };
 
+.. _escape:
+
 escape
-3
-panc:escape
-escape non-alphanumeric characters to allow use as dict key
-string
-escape
-string
-str
+======
+
+Name
+----
+
+escape -- escape non-alphanumeric characters to allow use as dict key
+
+Synopsis
+--------
+
+string **escape** (string *str*)
+
 Description
-===========
+-----------
 
 This function escapes non-alphanumeric characters in the argument so
 that it can be used inside paths, for instance as an dict key.
@@ -314,26 +412,29 @@ returned value is a single underscore '\_'.
 ::
 
     # /result will have the value '1_2b1'
-    '/result' = escape('1+1'); 
+    '/result' = escape('1+1');
+
+.. _exists:
 
 exists
-3
-panc:exists
-determines if a variable expression, path, or template exists
-boolean
-exists
-variable\_expression
-var
-boolean
-exists
-string
-path
-boolean
-exists
-string
-tpl
+======
+
+Name
+----
+
+exists -- determines if a variable expression, path, or template exists
+
+Synopsis
+--------
+
+boolean **exists** (variable\_expression *var*)
+
+boolean **exists** (string *path*)
+
+boolean **exists** (string *tpl*)
+
 Description
-===========
+-----------
 
 This function will return a boolean indicating whether a variable
 expression, path, or template exists. If the argument is a variable
@@ -365,16 +466,23 @@ like the following:
 The value of ``r`` in this case will be ``true`` if
 ``/some/absolute/path`` exists or ``false`` otherwise.
 
+.. _file_contents:
+
 file\_contents
-3
-panc:file\_contents
-provide contents of file as a string
-string
-file\_contents
-string
-filename
+==============
+
+Name
+----
+
+file\_contents -- provide contents of file as a string
+
+Synopsis
+--------
+
+string **file\_contents** (string *filename*)
+
 Description
-===========
+-----------
 
 This function will return a string containing the contents of the named
 file. The file is located using the standard source file lookup
@@ -382,36 +490,47 @@ algorithm. Because the load path is used to find the file, this function
 may not be used to create a compile-time constant. If the file cannot be
 found, an error will be raised.
 
+.. _file_exists:
+
 file\_exists
-3
-panc:file\_exists
-determine if the named file exists
-string
-file\_exists
-string
-filename
+============
+
+Name
+----
+
+file\_exists -- determine if the named file exists
+
+Synopsis
+--------
+
+string **file\_exists** (string *filename*)
+
 Description
-===========
+-----------
 
 This function will return a boolean indicating whether the named file
 exists. The file is located using the standard source file lookup
 algorithm. Because the load path is used to find the file, this function
 may not be used to create a compile-time constant.
 
+.. first:
+
 first
-3
-panc:first
-initialize an iterator over a resource and return first entry
-boolean
-first
-resource
-r
-variable\_expression
-key
-variable\_expression
-value
+=====
+
+Name
+----
+
+first -- initialize an iterator over a resource and return first entry
+
+Synopsis
+--------
+
+boolean **first** (resource *r*, variable\_expression *key*,
+                   variable\_expression *value*)
+
 Description
-===========
+-----------
 
 This function resets the iterator associated with ``r`` so that it
 points to the beginning of the resource. It will return ``false`` if the
@@ -447,21 +566,25 @@ An example of using ``first`` with an dict:
       keys[length(keys)] = k;
       ok = next(table, k, v);
     };
-    # keys will be ("a", "b", "c") 
+    # keys will be ("a", "b", "c")
+
+.. format:
 
 format
-3
-panc:format
-format a string by replacing references to parameters
-string
-format
-string
-fmt
-property
-param
-...
+======
+
+Name
+----
+
+format -- format a string by replacing references to parameters
+
+Synopsis
+--------
+
+string **format** (string *fmt*, property *param*, ...)
+
 Description
-===========
+-----------
 
 The ``format`` function will replace all references within the ``fmt``
 string with the values of the referenced properties. This provides
@@ -469,16 +592,23 @@ functionality similar to the c-language's ``printf`` function. The
 syntax of the ``fmt`` string follows that provided in the java language;
 see the Formatter entry for full details.
 
+.. _if_exists:
+
 if\_exists
-3
-panc:if\_exists
-check if a template exists, returning template name if it does
-string\|undef
-if\_exists
-string
-tpl
+==========
+
+Name
+----
+
+if\_exists -- check if a template exists, returning template name if it does
+
+Synopsis
+--------
+
+string\|undef **if\_exists** (string *tpl*)
+
 Description
-===========
+-----------
 
 The ``if_exists`` function checks if the named template exists on the
 current load path. If it does, the function returns the name of the
@@ -493,52 +623,31 @@ This function should be used with caution as this brings in dependencies
 based on the state of the file system and may cause dependency checking
 to be inaccurate.
 
+.. _index:
+
 index
-3
-panc:index
-finds substring within a string or element within a resource
-long
-index
-string
-sub
-string
-arg
-long
-start
-long
-index
-property
-sub
-string
-list
-long
-start
-string
-index
-property
-sub
-dict
-arg
-long
-start
-long
-index
-dict
-sub
-list
-arg
-long
-start
-string
-index
-dict
-sub
-dict
-arg
-long
-start
+=====
+
+Name
+----
+
+index -- finds substring within a string or element within a resource
+
+Synopsis
+--------
+
+long **index** (string *sub*, string *arg*, long *start*)
+
+long **index** (property *sub*, string *list*, long *start*)
+
+string **index** (property *sub*, dict *arg*, long *start*)
+
+long **index** (dict *sub*, list *arg*, long *start*)
+
+string **index** (dict *sub*, dict *arg*, long *start*)
+
 Description
-===========
+-----------
 
 The ``index`` function returns the location of a substring within a
 string or an element within a resource. In detail the five different
@@ -553,7 +662,7 @@ position.
 
     '/s1' = index('foo', 'abcfoodefoobar'); # 3
     '/s2' = index('f0o', 'abcfoodefoobar'); # -1
-    '/s3' = index('foo', 'abcfoodefoobar', 4); # 8 
+    '/s3' = index('foo', 'abcfoodefoobar', 4); # 8
 
 The second form searches for the given property inside the given list of
 properties and returns its position or ``-1`` if not found; if the third
@@ -649,17 +758,25 @@ if their common children don’t have the same type.
                   1
                  );
 
+
+.. _ip4_to_long:
+
 ip4\_to\_long
-3
-panc:ip4\_to\_long
-converts an IP address in dotted format with an optional bitmask to a
+=============
+
+Name
+----
+
+ip4\_to\_long -- converts an IP address in dotted format with an optional bitmask to a
 list of longs
-long[]
-ip4\_to\_long
-string
-ip
+
+Synopsis
+--------
+
+long[] **ip4\_to\_long** (string *ip*)
+
 Description
-===========
+-----------
 
 The ``ip4_to_long`` function returns the binary representation of an
 IPv4 address or network specification represented as a dotted string,
@@ -684,178 +801,256 @@ ranges.
 
     variable BINARY_LOCALHOST = ip4_to_long("127.0.0.1");
 
+.. _is_boolean:
+
 is\_boolean
-3
-panc:is\_boolean
-checks to see if the argument is a double
-boolean
-is\_boolean
-element
-arg
-Description
 ===========
+
+Name
+----
+
+is\_boolean -- checks to see if the argument is a double
+
+Synopsis
+--------
+
+boolean **is\_boolean** (element *arg*)
+
+Description
+-----------
 
 The ``is_boolean`` function will return ``true`` if the argument is a
 boolean value; it will return ``false`` otherwise.
 
+.. _is_defined:
+
 is\_defined
-3
-panc:is\_defined
-checks to see if the argument is anything but
-undef
-or
-null
-boolean
-is\_defined
-element
-arg
-Description
 ===========
+
+Name
+----
+
+is\_defined -- checks to see if the argument is anything but undef or null
+
+Synopsis
+--------
+
+boolean **is\_defined** (element *arg*)
+
+Description
+-----------
 
 The ``is_defined`` function will return a ``true`` value if the argument
 is anything but ``undef`` or ``null``; it will return ``false``
 otherwise.
 
+.. _is_double:
+
 is\_double
-3
-panc:is\_double
-checks to see if the argument is a double
-boolean
-is\_double
-element
-arg
+==========
+
+Name
+----
+
+is\_double --checks to see if the argument is a double
+
+Synopsis
+--------
+
+boolean **is\_double** (element *arg*)
+
 Description
-===========
+-----------
 
 The ``is_double`` function will return ``true`` if the argument is a
 double value; it will return ``false`` otherwise.
 
+.. _is_list:
+
 is\_list
-3
-panc:is\_list
-checks to see if the argument is a double
-boolean
-is\_list
-element
-arg
+========
+
+Name
+----
+
+is\_list -- checks to see if the argument is a double
+
+Synopsis
+--------
+
+boolean **is\_list** (element *arg*)
+
 Description
-===========
+-----------
 
 The ``is_list`` function will return ``true`` if the argument is a list;
 it will return ``false`` otherwise.
 
+.. _is_long:
+
 is\_long
-3
-panc:is\_long
-checks to see if the argument is a long
-boolean
-is\_long
-element
-arg
+========
+
+Name
+----
+
+is\_long -- checks to see if the argument is a long
+
+Synopsis
+--------
+
+boolean **is\_long** (element *arg*)
+
 Description
-===========
+-----------
 
 The ``is_long`` function will return ``true`` if the argument is a long
 value; it will return ``false`` otherwise.
 
+.. _is_dict:
+
 is\_dict
-3
-panc:is\_dict
-checks to see if the argument is an dict
-boolean
-is\_dict
-element
-arg
+========
+
+Name
+----
+
+is\_dict -- checks to see if the argument is an dict
+
+Synopsis
+--------
+
+boolean **is\_dict** (element *arg*)
+
 Description
-===========
+-----------
 
 The ``is_dict`` function will return ``true`` if the argument is an
 dict; it will return ``false`` otherwise.
 
+.. _is_null:
+
 is\_null
-3
-panc:is\_null
-checks to see if the argument is
-null
-boolean
-is\_null
-element
-arg
+========
+
+Name
+----
+
+is\_null -- checks to see if the argument is null
+
+Synopsis
+--------
+
+boolean **is\_null** (element *arg*)
+
 Description
-===========
+-----------
 
 The ``is_null`` function will return a ``true`` value if the argument is
 ``null``; it will return ``false`` otherwise.
 
+.. _is_number:
+
 is\_number
-3
-panc:is\_number
-checks to see if the argument is a number
-boolean
-is\_number
-element
-arg
+==========
+
+Name
+----
+
+is\_number -- checks to see if the argument is a number
+
+Synopsis
+--------
+
+boolean **is\_number** (element *arg*)
+
 Description
-===========
+-----------
 
 The ``is_number`` function will return a ``true`` value if the argument
 is a number (long or double); it will return ``false`` otherwise.
 
+.. _is_property:
+
 is\_property
-3
-panc:is\_property
-checks to see if the argument is a property
-boolean
-is\_property
-element
-arg
+============
+
+Name
+----
+
+is\_property -- checks to see if the argument is a property
+
+Synopsis
+--------
+
+boolean **is\_property** (element *arg*)
+
 Description
-===========
+-----------
 
 The ``is_property`` function will return a ``true`` value if the
 argument is a property (atomic value); it will return ``false``
 otherwise.
 
+.. _is_resource:
+
 is\_resource
-3
-panc:is\_resource
-checks to see if the argument is a resource
-boolean
-is\_resource
-element
-arg
+============
+
+Name
+----
+
+is\_resource -- checks to see if the argument is a resource
+
+Synopsis
+--------
+
+boolean **is\_resource** (element *arg*)
+
 Description
-===========
+-----------
 
 The ``is_resource`` function will return a ``true`` value if the
 argument is a resource (collection); it will return ``false`` otherwise.
 
+.. _is_string:
+
 is\_string
-3
-panc:is\_string
-checks to see if the argument is a string
-boolean
-is\_string
-element
-arg
+==========
+
+Name
+----
+
+is\_string -- checks to see if the argument is a string
+
+Synopsis
+--------
+
+boolean **is\_string** (element *arg*)
+
 Description
-===========
+-----------
 
 The ``is_string`` function will return ``true`` if the argument is a
 string value; it will return ``false`` otherwise.
 
+.. _key:
+
 key
-3
-panc:key
-returns name of child based on the index
-string
-key
-dict
-resource
-long
-index
+===
+
+Name
+----
+
+key -- returns name of child based on the index
+
+Synopsis
+--------
+
+string **key** (dict *resource*, long *index*)
+
 Description
-===========
+-----------
 
 This function returns the name of the child identified by its index,
 this can be used to iterate through all the children of an dict. The
@@ -880,37 +1075,46 @@ in lexical order. The first index is 0.
       if (length(res) > 0) splice(res, -1, 1);
       return(res);
     };
-    # /keys will be the string 'blue green red ' 
+    # /keys will be the string 'blue green red '
+
+.. _length:
 
 length
-3
-panc:length
-returns size of a string or resource
-long
-length
-string
-str
-long
-length
-resource
-res
+======
+
+Name
+----
+
+length -- returns size of a string or resource
+
+Synopsis
+--------
+
+long **length** (string *str*, long *length*, resource *res*)
+
 Description
-===========
+-----------
 
 Returns the size of the given string or the number of children of the
 given resource.
 
+.. _list:
+
 list
-3
-panc:list
-create a new list consisting of the function arguments
-list
-list
-element
-elem
-...
+====
+
+Name
+----
+
+list -- create a new list consisting of the function arguments
+
+Synopsis
+--------
+
+list **list** (element *elem*, ...)
+
 Description
-===========
+-----------
 
 Returns a newly created list containing the function arguments.
 
@@ -922,16 +1126,23 @@ Returns a newly created list containing the function arguments.
     # define list of two DNS servers
     '/dns' = list('137.138.16.5', '137.138.17.6');
 
+.. _long_to_ip4:
+
 long\_to\_ip4
-3
-panc:long\_to\_ip4
-converts a long into an IP address in dotted format
-string
-long\_to\_ip4
-long
-ip
+=============
+
+Name
+----
+
+long\_to\_ip4 -- converts a long into an IP address in dotted format
+
+Synopsis
+--------
+
+string **long\_to\_ip4** (long *ip*)
+
 Description
-===========
+-----------
 
 The ``long_to_ip4`` function converts an IP address represented as a
 long into a string with numbers and dots, like ``inet_ntoa`` does in the
@@ -941,18 +1152,23 @@ C standard library.
 
     "/ipaddr" = long_to_ip4(0x01020304); # 1.2.3.4
 
+.. _match:
+
 match
-3
-panc:match
-checks if a regular expression matches a string
-boolean
-match
-string
-target
-string
-regex
+=====
+
+Name
+----
+
+match -- checks if a regular expression matches a string
+
+Synopsis
+--------
+
+boolean **match** (string *target*, string regex)
+
 Description
-===========
+-----------
 
 This function checks if the given string matches the regular expression.
 
@@ -961,18 +1177,23 @@ This function checks if the given string matches the regular expression.
     # device_t is a string that can only be "disk", "cd" or "net"
     type device_t = string with match(self, ’ˆ(disk|cd|net)$’);
 
+.. _matches:
+
 matches
-3
-panc:matches
-returns captured substrings matching a regular expression
-string[]
-matches
-string
-target
-string
-regex
+=======
+
+Name
+----
+
+matches -- returns captured substrings matching a regular expression
+
+Synopsis
+--------
+
+string[] **matches** (string *target*, string *regex*)
+
 Description
-===========
+-----------
 
 This function matches the given string against the regular expression
 and returns the list of captured substrings, the first one (at index 0)
@@ -994,19 +1215,23 @@ being the complete matched string.
       return(true);
     };
 
+.. _merge:
+
 merge
-3
-panc:merge
-combine two resources into a single one
-resource
-merge
-resource
-res1
-resource
-res2
-...
+=====
+
+Name
+----
+
+merge -- combine two resources into a single one
+
+Synopsis
+--------
+
+resource **merge** (resource *res1*, resource *res2*, ...)
+
 Description
-===========
+-----------
 
 This function returns the resource which combines the resources given as
 arguments, all of which must be of the same type: either all lists or
@@ -1020,48 +1245,23 @@ occurs.
     '/y' = list('d', 'e');
     '/z' = merge (value('/x'), value('/y'));
 
-dict
-3
-panc:dict
-create an dict from the arguments
-dict
-dict
-string
-key
-element
-property
-...
-Description
-===========
-
-The ``dict`` function returns a new dict consisting of the passed
-arguments; the arguments must be key value pairs. All of the keys must
-be strings and have values that are legal path terms (see Path Literals
-Section).
-
-::
-
-    # resulting dict associates name with long value
-    '/result' = dict(
-      'one', 1,
-      'two', 2,
-      'three', 3,
-    };
+.. _next:
 
 next
-3
-panc:next
-increment iterator over a resource
-boolean
-next
-resource
-res
-identifier
-key
-identifier
-value
+====
+
+Name
+----
+
+next -- increment iterator over a resource
+
+Synopsis
+--------
+
+boolean **next** (resource *res*, identifier *key*, identifier *value*)
+
 Description
-===========
+-----------
 
 This function increments the iterator associated with ``res`` so that it
 points to the next child element. The key and value of the next child
@@ -1069,16 +1269,23 @@ are stored in the named variables ``key`` and ``value``, either of which
 could be ``undef``. The function returns ``true`` if the child exists,
 or ``false`` otherwise.
 
+.. _path_exists:
+
 path\_exists
-3
-panc:path\_exists
-determines if a path exists
-boolean
-path\_exists
-string
-path
+============
+
+Name
+----
+
+path\_exists -- determines if a path exists
+
+Synopsis
+--------
+
+boolean **path\_exists** (string *path*)
+
 Description
-===========
+-----------
 
 This function will return a boolean indicating whether the given path
 exists. The path must be an absolute or external path. This function
@@ -1086,28 +1293,27 @@ should be used in preference to the ``exists`` function to avoid an
 ambiguity in handling the argument to ``exists`` as a path or variable
 reference.
 
+.. _prepend:
+
 prepend
-3
-panc:prepend
-adds a value to the beginning of a list
-list
-prepend
-element
-value
-list
-prepend
-list
-target
-element
-value
-list
-prepend
-variable\_reference
-target
-element
-value
+=======
+
+Name
+----
+
+prepend -- adds a value to the beginning of a list
+
+Synopsis
+--------
+
+list **prepend** (element *value*)
+
+list **prepend** (list *target*, element *value*)
+
+list **prepend** (variable\_reference *target*, element *value*)
+
 Description
-===========
+-----------
 
 The ``prepend`` function will add the given value to the beginning of
 the target list. There are three variants of this function. For all of
@@ -1164,20 +1370,23 @@ from within a DML block is forbidden.
       prepend(x, 2);
     };
 
+.. _replace:
+
 replace
-3
-panc:replace
-replace all occurrences of a regular expression
-string
-replace
-string
-regex
-string
-repl
-string
-target
+=======
+
+Name
+----
+
+replace -- replace all occurrences of a regular expression
+
+Synopsis
+--------
+
+string **replace** (string *regex*, string *repl*, string *target*)
+
 Description
-===========
+-----------
 
 The ``replace`` function will replace all occurrences of the given
 regular expression with the replacement string. The regular expression
@@ -1187,16 +1396,23 @@ the regular expression. The group references are indicated with a dollar
 sign ($) followed by the group number. A literal dollar sign can be
 obtained by preceding it with a backslash.
 
+.. return:
+
 return
-3
-panc:return
-exit DML block with given value
-element
-return
-element
-value
+======
+
+Name
+----
+
+return -- exit DML block with given value
+
+Synopsis
+--------
+
+element **return** (element *value*)
+
 Description
-===========
+-----------
 
 This function interrupts the processing of the current DML block and
 returns from it with the given value. This is often used in user-defined
@@ -1209,32 +1425,25 @@ functions.
       return(ARGV[0] * facto(ARGV[0] - 1));
     };
 
+.. splice:
+
 splice
-3
-panc:splice
-insert string or list into another
-string
-splice
-string
-str
-long
-start
-long
-length
-string
-repl
-list
-splice
-list
-list
-long
-start
-long
-length
-list
-repl
+======
+
+Name
+----
+
+splice -- insert string or list into another
+
+Synopsis
+--------
+
+string **splice** (string *str*, long *start*, long *length*, string *repl*)
+
+list **splice** (list *list*, long *start*, long *length*, list *repl*)
+
 Description
-===========
+-----------
 
 The first form of this function deletes the substring identified by
 ``start`` and ``length`` and, if a fourth argument is given, inserts
@@ -1244,7 +1453,7 @@ The first form of this function deletes the substring identified by
 
     '/s1' = splice('abcde', 2, 0, '12');  # ab12cde
     '/s2' = splice('abcde', -2, 1);       # abce
-    '/s3' = splice('abcde', 2, 2, 'XXX'); # abXXXe 
+    '/s3' = splice('abcde', 2, 2, 'XXX'); # abXXXe
 
 The second form of this function deletes the children of the given list
 identified by ``start`` and ``length`` and, if a fourth argument is
@@ -1268,26 +1477,25 @@ given, replaces them with the contents of ``repl``.
     by the function. If you ignore the return value, then the function
     call will have no effect.
 
+.. _split:
+
 split
-3
-panc:split
-split a string using a regular expression
-string[]
-split
-string
-regex
-string
-target
-string[]
-split
-string
-regex
-long
-limit
-string
-target
+=====
+
+Name
+----
+
+split -- split a string using a regular expression
+
+Synopsis
+--------
+
+string[] **split** (string *regex*, string *target*)
+
+string[] **split** (string *regex*, long *limit*, string *target*)
+
 Description
-===========
+-----------
 
 The ``split`` function will split the ``target`` string around matches
 of the given regular expression. The regular expression is specified
@@ -1301,22 +1509,24 @@ will be removed. A positive value will return an array with at most
 most ``limit``-1 times; the unmatched part of the string will be
 returned in the last element of the list.
 
+.. substitute:
+
 substitute
-3
-panc:substitute
-substitute named values in string template
-string
-substitute
-string
-template
-string
-substitute
-string
-template
-dict
-substitutions
+==========
+
+Name
+----
+
+substitute -- substitute named values in string template
+
+Synopsis
+--------
+
+string **substitute** (string *template*)
+string **substitute** (string *template*, dict *substitutions*)
+
 Description
-===========
+-----------
 
 The ``substitute`` function will replace all named values in the
 template, delimited like '${myvar}', with associated values. If only one
@@ -1337,26 +1547,25 @@ something like '${myvar}' literally in the string, then use '$${myvar}'.
 If the template references an undefined value, then an
 EvaluationException will be raised.
 
+.. _substr:
+
 substr
-3
-panc:substr
-extract a substring from a string
-string
-substr
-string
-target
-long
-start
-string
-substr
-string
-target
-long
-start
-long
-length
+======
+
+Name
+----
+
+substr -- extract a substring from a string
+
+Synopsis
+--------
+
+string **substr** (string *target*, long *start*)
+
+string **substr** (string *target*, long *start*, long *length*)
+
 Description
-===========
+-----------
 
 This function returns the part of the given string characterised by its
 ``start`` position (starting from 0) and its ``length``. If ``length``
@@ -1373,16 +1582,23 @@ negative, leaves that many characters off the end of the string.
     "/s5" = substr("abcdef", -4, 1); # c
     "/s6" = substr("abcdef", -4, -1); # cde
 
+.. _to_boolean:
+
 to\_boolean
-3
-panc:to\_boolean
-convert argument to a boolean value
-boolean
-to\_boolean
-property
-prop
-Description
 ===========
+
+Name
+----
+
+to\_boolean -- convert argument to a boolean value
+
+Synopsis
+--------
+
+boolean **to\_boolean** (property *prop*)
+
+Description
+-----------
 
 This function converts the given property into a boolean value. The
 numeric values 0 and 0.0 are considered ``false``; other numbers,
@@ -1390,16 +1606,23 @@ numeric values 0 and 0.0 are considered ``false``; other numbers,
 return ``false``; all other strings will return ``true``. The function
 will not accept resources.
 
+.. _to_double:
+
 to\_double
-3
-panc:to\_double
-convert argument to a double value
-double
-to\_double
-property
-prop
+==========
+
+Name
+----
+
+to\_double -- convert argument to a double value
+
+Synopsis
+--------
+
+double **to\_double** (property *prop*)
+
 Description
-===========
+-----------
 
 This function converts the given property into a double.
 
@@ -1416,22 +1639,25 @@ returned.
 
 If the argument is a double, then the value is returned directly.
 
+.. _to_long:
+
 to\_long
-3
-panc:to\_long
-convert argument to a long value
-long
-to\_long
-property
-prop
-long
-to\_long
-property
-prop
-long
-radix
+========
+
+Name
+----
+
+to\_long -- convert argument to a long value
+
+Synopsis
+--------
+
+long **to\_long** (property *prop*)
+
+long **to\_long** (property *prop*, long *radix*)
+
 Description
-===========
+-----------
 
 This function converts the given property into a long value.
 
@@ -1453,63 +1679,91 @@ the nearest long value.
 
 If the argument is a long value, it is returned directly.
 
+.. _to_lowercase:
+
 to\_lowercase
-3
-panc:to\_lowercase
-change all uppercase letters to lowercase
-string
-to\_lowercase
-string
-target
+=============
+
+Name
+----
+
+to\_lowercase -- change all uppercase letters to lowercase
+
+Synopsis
+--------
+
+string **to\_lowercase** (string *target*)
+
 Description
-===========
+-----------
 
 The ``to_lowercase`` function will convert all uppercase letters in the
 ``target`` to lowercase. The United States (US) locale is forced for the
 conversion to guarantee consistent behavior independent of the current
 default locale.
 
+.. _to_string:
+
 to\_string
-3
-panc:to\_string
-convert argument to a string value
-string
-to\_string
-element
-elem
+==========
+
+Name
+----
+
+to\_string -- convert argument to a string value
+
+Synopsis
+--------
+
+string **to\_string** (element *elem*)
+
 Description
-===========
+-----------
 
 This function will convert the argument into a string. The function will
 create a reasonable human-readable representation of all data types,
 including lists and dicts.
 
+.. _to_uppercase:
+
 to\_uppercase
-3
-panc:to\_uppercase
-change all lowercase letters to uppercase
-string
-to\_uppercase
-string
-target
+=============
+
+Name
+----
+
+to\_uppercase -- change all lowercase letters to uppercase
+
+Synopsis
+--------
+
+string **to\_uppercase** (string *target*)
+
 Description
-===========
+-----------
 
 The to\_uppercase function will convert all lowercase letters in the
 target to uppercase. The United States (US) locale is forced for the
 conversion to guarantee consistent behavior independent of the current
 default locale.
 
+.. traceback:
+
 traceback
-3
-panc:traceback
-print message and traceback to console
-string
-traceback
-string
-msg
+=========
+
+Name
+----
+
+traceback -- print message and traceback to console
+
+Synopsis
+--------
+
+string **traceback** (string *msg*)
+
 Description
-===========
+-----------
 
 Prints the argument and a traceback from the current execution point to
 the console (stderr). Value returned is the argument. An argument that
@@ -1517,31 +1771,45 @@ is not a string will cause a fatal error; the traceback will still be
 printed. This may be selectively enabled or disabled via a compiler
 option. See the compiler manual for details.
 
+.. _unescape:
+
 unescape
-3
-panc:unescape
-replaces escaped characters with ASCII characters
-string
-unescape
-string
-str
+========
+
+Name
+----
+
+unescape -- replaces escaped characters with ASCII characters
+
+Synopsis
+--------
+
+string **unescape** (string *str*)
+
 Description
-===========
+-----------
 
 This function replaces escaped characters in the given string ``str`` to
 get back the original string. This is the inverse of the ``escape``
 function.
 
+.. value:
+
 value
-3
-panc:value
-retrieve a value specified by a path
-element
-value
-string
-path
+=====
+
+Name
+----
+
+value -- retrieve a value specified by a path
+
+Synopsis
+--------
+
+element **value** (string *path*)
+
 Description
-===========
+-----------
 
 This function returns the element identified by the given path, which
 can be an external path. An error occurs if there is no such element.
@@ -1551,4 +1819,3 @@ can be an external path. An error occurs if there is no such element.
     # /y will be 200
     '/x' = 100;
     '/y' = 2 * value('/x');
-

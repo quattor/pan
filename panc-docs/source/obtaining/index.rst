@@ -1,12 +1,14 @@
 
-==================
-Obtaining
-==================
+====================
+Getting the Compiler
+====================
 
-Blah, blah, ...
+You will need to download and install the pan language compiler in order to
+use it.  This chapter explains where to obtain the compiler and how to
+install it.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :glob:
 
-   appendix*
+   obtain-panc*

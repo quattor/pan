@@ -1,5 +1,3 @@
-Obtaining the Compiler
-======================
 
 Binary Distributions
 ====================
@@ -65,7 +63,7 @@ or
 
 ::
 
-    setenv JAVA_HOME <path to java area> 
+    setenv JAVA_HOME <path to java area>
 
 depending on the type of shell that you use. After that, the entire
 build can be accomplished with:

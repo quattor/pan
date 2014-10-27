@@ -8,7 +8,7 @@ Guides
 .. toctree::
    :maxdepth: 1
 
-   readme/index
+   release-notes/index
    pan-book/index
    functions/index
    commands/index

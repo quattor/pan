@@ -197,7 +197,7 @@ was written to the ``hello_world.json`` file.
     $ cat hello_world.json
     {
       "message": "Hello World!"
-    } 
+    }
 
 In this book, the most convenient representation is the text format.
 This provides a clean representation of the configuration tree in plain
@@ -579,23 +579,23 @@ added.
     type batch_queue_list = string[1..];
 
     type batch_node = {
-      'queues' : batch_queue_list = list('default') 
+      'queues' : batch_queue_list = list('default')
       'capabilities' ? batch_capabilities
     };
 
     type batch_queue = {
-      'maxCpuHours' : long(0..) = 1 
-      'enabled' : boolean = true 
+      'maxCpuHours' : long(0..) = 1
+      'enabled' : boolean = true
     };
 
     type batch_server = {
       'nodes' : batch_node{}
-      'queues' : batch_queue{} = dict('default', dict()) 
+      'queues' : batch_queue{} = dict('default', dict())
     };
 
     type batch_worker = {
       'server' : string
-      'enabled' : boolean = true 
+      'enabled' : boolean = true
     };
 
 If the queue list for a node is not specified, then assume that the node
@@ -964,7 +964,7 @@ is:
 
 ::
 
-    [ final ] path = dml; 
+    [ final ] path = dml;
 
 where the path is represented by a string literal. Single-quoted strings
 are slightly more efficient, but double-quoted strings work as well.
@@ -1089,7 +1089,7 @@ function definition syntax is:
 
 ::
 
-    function identifier = dml; 
+    function identifier = dml;
 
 See the Function section for more information on user-defined functions
 and a list of built-in functions.
@@ -1279,7 +1279,7 @@ represent a single quote inside the string. For instance:
 
     ’foo’
     ’it’’s a sentence’
-    ’ˆ\d+\.\d+$’ 
+    ’ˆ\d+\.\d+$’
 
 This is the most efficient string representation and should be used when
 possible.
@@ -1522,9 +1522,9 @@ double arguments. In the case of binary operators, the result will be
 promoted to a double if the operands are mixed.
 
 +-----------+--------------------+-----------------------------------------------+
-| +         | number             | preserves sign of argument                    |
+| \+         | number             | preserves sign of argument                   |
 +-----------+--------------------+-----------------------------------------------+
-| -         | number             | changes sign of argument                      |
+| \-         | number             | changes sign of argument                     |
 +-----------+--------------------+-----------------------------------------------+
 | ~         | long               | bitwise not                                   |
 +-----------+--------------------+-----------------------------------------------+
@@ -1534,11 +1534,11 @@ promoted to a double if the operands are mixed.
 Table: Unary DML Operators
 
 +-----------+--------------------+-----------------------------------------------+
-| +         | number             | addition                                      |
+| \+         | number             | addition                                     |
 +-----------+--------------------+-----------------------------------------------+
-| +         | string             | string concatenation                          |
+| \+         | string             | string concatenation                         |
 +-----------+--------------------+-----------------------------------------------+
-| -         | number             | subtraction                                   |
+| \-         | number             | subtraction                                  |
 +-----------+--------------------+-----------------------------------------------+
 | \*        | number             | multiplication                                |
 +-----------+--------------------+-----------------------------------------------+
@@ -1598,11 +1598,11 @@ Table: Binary DML Operators
 +------------------------------+
 | <, <=, >, >=                 |
 +------------------------------+
-| + (binary), - (binary)       |
+| \+ (binary), \- (binary)     |
 +------------------------------+
 | \*, /, %                     |
 +------------------------------+
-| + (unary), - (unary), !, ~   |
+| \+ (unary), \- (unary), !, ~ |
 +------------------------------+
 
 Table: Operator Precedence (lowest to highest)
@@ -2064,7 +2064,7 @@ Full type specifications are of the form:
 
 ::
 
-     =   
+     =
 
 where constant is a DML block that evaluates to a compile-time constant
 (the default value), and the validation-dml is a DML block that will be
@@ -2844,7 +2844,7 @@ template file ``example.pan`` located in subdirectory
               name="annotations"
               type="OBJECT">
         <desc>
-            Example template that shows off the 
+            Example template that shows off the
             annotation features of the compiler.
         </desc>
 

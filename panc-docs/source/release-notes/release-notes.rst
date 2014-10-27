@@ -1,3 +1,15 @@
+Overview
+========
+
+The pan configuration language allows system administrators to define
+machine configurations and to validate them. The pan language compiler
+transforms the machine configurations into machine-readable representations
+for other tools in the Quattor Toolkit.
+
+This document provides the compiler release notes and change log.  See the
+full documentation for information about the pan language and use of the
+compiler.
+
 License
 =======
 
@@ -10,6 +22,14 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for
 the specific language governing permissions and limitations under the
 License.
 
+Support
+=======
+
+The v10 series is in active development; the v9 series is frozen.  Both of
+these series are supported.  The old v8 series of releases is no longer
+supported.  Migration from v8 to a more recent release is very strongly
+recommended.
+
 Migration Issues
 ================
 
@@ -21,8 +41,8 @@ been removed from the v9 and v10 series. Ensure that your configuration
 compiles with the deprecation warnings activated with the v8 compiler
 before migrating to the v9 or v10 series.
 
-ChangeLog
-=========
+Change Log
+==========
 
 Version 10.1
 ------------

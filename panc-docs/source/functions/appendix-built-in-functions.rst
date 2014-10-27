@@ -269,7 +269,7 @@ has the same effect as assigning the variable reference to null.
       x;
     };
 
-.. deprecated:
+.. _deprecated:
 
 deprecated
 ==========
@@ -348,7 +348,7 @@ algorithm. The valid algorithms are: ``MD2``, ``MD5``, ``SHA``,
 ``SHA-1``, ``SHA-256``, ``SHA-384``, and ``SHA-512``. The algorithm name
 is not case sensitive.
 
-.. _error::
+.. _error:
 
 error
 =====
@@ -513,7 +513,7 @@ exists. The file is located using the standard source file lookup
 algorithm. Because the load path is used to find the file, this function
 may not be used to create a compile-time constant.
 
-.. first:
+.. _first:
 
 first
 =====
@@ -568,7 +568,7 @@ An example of using ``first`` with an dict:
     };
     # keys will be ("a", "b", "c")
 
-.. format:
+.. _format:
 
 format
 ======
@@ -1396,7 +1396,7 @@ the regular expression. The group references are indicated with a dollar
 sign ($) followed by the group number. A literal dollar sign can be
 obtained by preceding it with a backslash.
 
-.. return:
+.. _return:
 
 return
 ======
@@ -1425,7 +1425,7 @@ functions.
       return(ARGV[0] * facto(ARGV[0] - 1));
     };
 
-.. splice:
+.. _splice:
 
 splice
 ======
@@ -1509,7 +1509,7 @@ will be removed. A positive value will return an array with at most
 most ``limit``-1 times; the unmatched part of the string will be
 returned in the last element of the list.
 
-.. substitute:
+.. _substitute:
 
 substitute
 ==========
@@ -1747,7 +1747,7 @@ target to uppercase. The United States (US) locale is forced for the
 conversion to guarantee consistent behavior independent of the current
 default locale.
 
-.. traceback:
+.. _traceback:
 
 traceback
 =========
@@ -1793,7 +1793,7 @@ This function replaces escaped characters in the given string ``str`` to
 get back the original string. This is the inverse of the ``escape``
 function.
 
-.. value:
+.. _value:
 
 value
 =====

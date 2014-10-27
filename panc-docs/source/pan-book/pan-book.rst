@@ -1724,67 +1724,67 @@ functions to user-defined functions when possible. The following tables
 describe all of the built-in functions; refer to the appendix to see the
 arguments and other detailed information about the functions.
 
-+----------------+-----------------------------------------------------------+
-| Name           | Description                                               |
-+================+===========================================================+
-| ?              | Lookup the named file and provide the file's contents as  |
-|                | a string.                                                 |
-+----------------+-----------------------------------------------------------+
-| ?              | Lookup the named file and return true if it exists;       |
-|                | return false otherwise.                                   |
-+----------------+-----------------------------------------------------------+
-| ?              | Generate a formatted string based on the formatting       |
-|                | parameters and the values provided.                       |
-+----------------+-----------------------------------------------------------+
-| ?              | Return the index of a substring or -1 if the substring is |
-|                | not found.                                                |
-+----------------+-----------------------------------------------------------+
-| ?              | Gives the length of a string.                             |
-+----------------+-----------------------------------------------------------+
-| ?              | Return a boolean indicating if a string matches the given |
-|                | regular expression.                                       |
-+----------------+-----------------------------------------------------------+
-| ?              | Return an array containing the matched string and matched |
-|                | groups for a given string and regular expression.         |
-+----------------+-----------------------------------------------------------+
-| ?              | Replace all occurrences of a substring within a given     |
-|                | string.                                                   |
-+----------------+-----------------------------------------------------------+
-| ?              | Remove a substring and optionally replace it with         |
-|                | another.                                                  |
-+----------------+-----------------------------------------------------------+
-| ?              | Split a string based on a given regular expression and    |
-|                | return an array of the results.                           |
-+----------------+-----------------------------------------------------------+
-| ?              | Substitute named values in a string template.             |
-+----------------+-----------------------------------------------------------+
-| ?              | Extract a substring from the given string.                |
-+----------------+-----------------------------------------------------------+
-| ?              | Change all of the characters in a string to lowercase     |
-|                | (using the US locale).                                    |
-+----------------+-----------------------------------------------------------+
-| ?              | Change all of the characters in a string to uppercase     |
-|                | (using the US locale).                                    |
-+----------------+-----------------------------------------------------------+
++----------------------+-----------------------------------------------------------+
+| Name                 | Description                                               |
++======================+===========================================================+
+| :ref:`file_contents` | Lookup the named file and provide the file's contents as  |
+|                      | a string.                                                 |
++----------------------+-----------------------------------------------------------+
+| :ref:`file_exists`   | Lookup the named file and return true if it exists;       |
+|                      | return false otherwise.                                   |
++----------------------+-----------------------------------------------------------+
+| :ref:`format`        | Generate a formatted string based on the formatting       |
+|                      | parameters and the values provided.                       |
++----------------------+-----------------------------------------------------------+
+| :ref:`index`         | Return the index of a substring or -1 if the substring is |
+|                      | not found.                                                |
++----------------------+-----------------------------------------------------------+
+| :ref:`length`        | Gives the length of a string.                             |
++----------------------+-----------------------------------------------------------+
+| :ref:`match`         | Return a boolean indicating if a string matches the given |
+|                      | regular expression.                                       |
++----------------------+-----------------------------------------------------------+
+| :ref:`matches`       | Return an array containing the matched string and matched |
+|                      | groups for a given string and regular expression.         |
++----------------------+-----------------------------------------------------------+
+| :ref:`replace`       | Replace all occurrences of a substring within a given     |
+|                      | string.                                                   |
++----------------------+-----------------------------------------------------------+
+| :ref:`splice`        | Remove a substring and optionally replace it with         |
+|                      | another.                                                  |
++----------------------+-----------------------------------------------------------+
+| :ref:`split`         | Split a string based on a given regular expression and    |
+|                      | return an array of the results.                           |
++----------------------+-----------------------------------------------------------+
+| :ref:`substitute`    | Substitute named values in a string template.             |
++----------------------+-----------------------------------------------------------+
+| :ref:`substr`        | Extract a substring from the given string.                |
++----------------------+-----------------------------------------------------------+
+| :ref:`to_lowercase`  | Change all of the characters in a string to lowercase     |
+|                      | (using the US locale).                                    |
++----------------------+-----------------------------------------------------------+
+| :ref:`to_uppercase`  | Change all of the characters in a string to uppercase     |
+|                      | (using the US locale).                                    |
++----------------------+-----------------------------------------------------------+
 
 Table: String Manipulation Functions
 
-+----------------+-----------------------------------------------------------+
-| Name           | Description                                               |
-+================+===========================================================+
-| ?              | Print a debugging message to the standard error stream.   |
-|                | Returns the message or ``undef``.                         |
-+----------------+-----------------------------------------------------------+
-| ?              | Print an error message to the standard error and          |
-|                | terminate processing.                                     |
-+----------------+-----------------------------------------------------------+
-| ?              | Print an error message to the standard error along with a |
-|                | traceback. Returns ``undef``.                             |
-+----------------+-----------------------------------------------------------+
-| ?              | Print a warning message to the standard error if required |
-|                | by the deprecation level in effect. Returns ``the message |
-|                |               or undef``.                                 |
-+----------------+-----------------------------------------------------------+
++-------------------+-----------------------------------------------------------+
+| Name              | Description                                               |
++===================+===========================================================+
+| :ref:`debug`      | Print a debugging message to the standard error stream.   |
+|                   | Returns the message or ``undef``.                         |
++-------------------+-----------------------------------------------------------+
+| :ref:`error`      | Print an error message to the standard error and          |
+|                   | terminate processing.                                     |
++-------------------+-----------------------------------------------------------+
+| :ref:`traceback`  | Print an error message to the standard error along with a |
+|                   | traceback. Returns ``undef``.                             |
++-------------------+-----------------------------------------------------------+
+| :ref:`deprecated` | Print a warning message to the standard error if required |
+|                   | by the deprecation level in effect. Returns ``the message |
+|                   |               or undef``.                                 |
++-------------------+-----------------------------------------------------------+
 
 Table: Debugging Functions
 
@@ -1794,14 +1794,14 @@ Table: Debugging Functions
 | :ref:`base64_decode` | Decode a string that is encoded using the Base64          |
 |                      | standard.                                                 |
 +----------------------+-----------------------------------------------------------+
-| ?                    | Encode a string using the Base64 standard.                |
+| :ref:`base64_encode` | Encode a string using the Base64 standard.                |
 +----------------------+-----------------------------------------------------------+
-| ?                    | Create message digest using specified algorithm.          |
+| :ref:`digest`        | Create message digest using specified algorithm.          |
 +----------------------+-----------------------------------------------------------+
-| ?                    | Escape characters within the string to ensure string is a |
+| :ref:`escape`        | Escape characters within the string to ensure string is a |
 |                      | valid dict key (path term).                               |
 +----------------------+-----------------------------------------------------------+
-| ?                    | Transform an escaped string into its original form.       |
+| :ref:`unescape`      | Transform an escaped string into its original form.       |
 +----------------------+-----------------------------------------------------------+
 
 Table: Encoding and Decoding Functions
@@ -1809,162 +1809,162 @@ Table: Encoding and Decoding Functions
 +----------------+-----------------------------------------------------------+
 | Name           | Description                                               |
 +================+===========================================================+
-| ?              | Add a value to the end of a list.                         |
+| :ref:`append`  | Add a value to the end of a list.                         |
 +----------------+-----------------------------------------------------------+
-| ?              | Create an dict from the named structure template.         |
+| :ref:`create`  | Create an dict from the named structure template.         |
 +----------------+-----------------------------------------------------------+
-| ?              | Initialize an iterator over a resource. Returns a boolean |
+| :ref:`first`   | Initialize an iterator over a resource. Returns a boolean |
 |                | to indicate if more values exist in the resource.         |
 +----------------+-----------------------------------------------------------+
-| ?              | Create an dict from the given key/value pairs given as    |
+| :ref:`dict`    | Create an dict from the given key/value pairs given as    |
 |                | arguments.                                                |
 +----------------+-----------------------------------------------------------+
-| ?              | Find the n'th key in an dict.                             |
+| :ref:`key`     | Find the n'th key in an dict.                             |
 +----------------+-----------------------------------------------------------+
-| ?              | Get the number of elements in the given resource.         |
+| :ref:`length`  | Get the number of elements in the given resource.         |
 +----------------+-----------------------------------------------------------+
-| ?              | Create a list from the given arguments.                   |
+| :ref:`list`    | Create a list from the given arguments.                   |
 +----------------+-----------------------------------------------------------+
-| ?              | Perge two resources into a single one. This function      |
+| :ref:`merge`   | Perge two resources into a single one. This function      |
 |                | always creates a new resource and leaves the arguments    |
 |                | untouched.                                                |
 +----------------+-----------------------------------------------------------+
-| ?              | Extract the next value while iterating over a resource.   |
+| :ref:`next`    | Extract the next value while iterating over a resource.   |
 |                | Returns a boolean to indicate if more values exist in the |
 |                | resource.                                                 |
 +----------------+-----------------------------------------------------------+
-| ?              | Add a value to the beginning of a list.                   |
+| :ref:`prepend` | Add a value to the beginning of a list.                   |
 +----------------+-----------------------------------------------------------+
-| ?              | Remove a section of a list and optionally replace removed |
+| :ref:`splice`  | Remove a section of a list and optionally replace removed |
 |                | values with those in a given list.                        |
 +----------------+-----------------------------------------------------------+
 
 Table: Resource Manipulation Functions
 
-+----------------+-----------------------------------------------------------+
-| Name           | Description                                               |
-+================+===========================================================+
-| ?              | Check if the argument is a boolean value. If the argument |
-|                | is a simple variable reference and the referenced         |
-|                | variable does not exist, the function will return false   |
-|                | rather than raising an error.                             |
-+----------------+-----------------------------------------------------------+
-| ?              | Check if the argument is a value other than ``null`` or   |
-|                | ``undef``. If the argument is a simple variable reference |
-|                | and the referenced variable does not exist, the function  |
-|                | will return false rather than raising an error.           |
-+----------------+-----------------------------------------------------------+
-| ?              | Check if the argument is a double value. If the argument  |
-|                | is a simple variable reference and the referenced         |
-|                | variable does not exist, the function will return false   |
-|                | rather than raising an error.                             |
-+----------------+-----------------------------------------------------------+
-| ?              | Check if the argument is a list. If the argument is a     |
-|                | simple variable reference and the referenced variable     |
-|                | does not exist, the function will return false rather     |
-|                | than raising an error.                                    |
-+----------------+-----------------------------------------------------------+
-| ?              | Check if the argument is a long value. If the argument is |
-|                | a simple variable reference and the referenced variable   |
-|                | does not exist, the function will return false rather     |
-|                | than raising an error.                                    |
-+----------------+-----------------------------------------------------------+
-| ?              | Check if the argument is an dict. If the argument is a    |
-|                | simple variable reference and the referenced variable     |
-|                | does not exist, the function will return false rather     |
-|                | than raising an error.                                    |
-+----------------+-----------------------------------------------------------+
-| ?              | Check if the argument is a ``null``. If the argument is a |
-|                | simple variable reference and the referenced variable     |
-|                | does not exist, the function will return false rather     |
-|                | than raising an error.                                    |
-+----------------+-----------------------------------------------------------+
-| ?              | Check if the argument is either a long or double value.   |
-|                | If the argument is a simple variable reference and the    |
-|                | referenced variable does not exist, the function will     |
-|                | return false rather than raising an error.                |
-+----------------+-----------------------------------------------------------+
-| ?              | Check if the argument is a property (long, double, or     |
-|                | string). If the argument is a simple variable reference   |
-|                | and the referenced variable does not exist, the function  |
-|                | will return false rather than raising an error.           |
-+----------------+-----------------------------------------------------------+
-| ?              | Check if the argument is a list or dict. If the argument  |
-|                | is a simple variable reference and the referenced         |
-|                | variable does not exist, the function will return false   |
-|                | rather than raising an error.                             |
-+----------------+-----------------------------------------------------------+
-| ?              | Check if the argument is a string value. If the argument  |
-|                | is a simple variable reference and the referenced         |
-|                | variable does not exist, the function will return false   |
-|                | rather than raising an error.                             |
-+----------------+-----------------------------------------------------------+
++--------------------+-----------------------------------------------------------+
+| Name               | Description                                               |
++====================+===========================================================+
+| :ref:`is_boolean`  | Check if the argument is a boolean value. If the argument |
+|                    | is a simple variable reference and the referenced         |
+|                    | variable does not exist, the function will return false   |
+|                    | rather than raising an error.                             |
++--------------------+-----------------------------------------------------------+
+| :ref:`is_defined`  | Check if the argument is a value other than ``null`` or   |
+|                    | ``undef``. If the argument is a simple variable reference |
+|                    | and the referenced variable does not exist, the function  |
+|                    | will return false rather than raising an error.           |
++--------------------+-----------------------------------------------------------+
+| :ref:`is_double`   | Check if the argument is a double value. If the argument  |
+|                    | is a simple variable reference and the referenced         |
+|                    | variable does not exist, the function will return false   |
+|                    | rather than raising an error.                             |
++--------------------+-----------------------------------------------------------+
+| :ref:`is_list`     | Check if the argument is a list. If the argument is a     |
+|                    | simple variable reference and the referenced variable     |
+|                    | does not exist, the function will return false rather     |
+|                    | than raising an error.                                    |
++--------------------+-----------------------------------------------------------+
+| :ref:`is_long`     | Check if the argument is a long value. If the argument is |
+|                    | a simple variable reference and the referenced variable   |
+|                    | does not exist, the function will return false rather     |
+|                    | than raising an error.                                    |
++--------------------+-----------------------------------------------------------+
+| :ref:`is_dict`     | Check if the argument is an dict. If the argument is a    |
+|                    | simple variable reference and the referenced variable     |
+|                    | does not exist, the function will return false rather     |
+|                    | than raising an error.                                    |
++--------------------+-----------------------------------------------------------+
+| :ref:`is_null`     | Check if the argument is a ``null``. If the argument is a |
+|                    | simple variable reference and the referenced variable     |
+|                    | does not exist, the function will return false rather     |
+|                    | than raising an error.                                    |
++--------------------+-----------------------------------------------------------+
+| :ref:`is_number`   | Check if the argument is either a long or double value.   |
+|                    | If the argument is a simple variable reference and the    |
+|                    | referenced variable does not exist, the function will     |
+|                    | return false rather than raising an error.                |
++--------------------+-----------------------------------------------------------+
+| :ref:`is_property` | Check if the argument is a property (long, double, or     |
+|                    | string). If the argument is a simple variable reference   |
+|                    | and the referenced variable does not exist, the function  |
+|                    | will return false rather than raising an error.           |
++--------------------+-----------------------------------------------------------+
+| :ref:`is_resource` | Check if the argument is a list or dict. If the argument  |
+|                    | is a simple variable reference and the referenced         |
+|                    | variable does not exist, the function will return false   |
+|                    | rather than raising an error.                             |
++--------------------+-----------------------------------------------------------+
+| :ref:`is_string`   | Check if the argument is a string value. If the argument  |
+|                    | is a simple variable reference and the referenced         |
+|                    | variable does not exist, the function will return false   |
+|                    | rather than raising an error.                             |
++--------------------+-----------------------------------------------------------+
 
 Table: Type Checking Functions
 
-+----------------+-----------------------------------------------------------+
-| Name           | Description                                               |
-+================+===========================================================+
-| ?              | Convert the argument to a boolean. Any number other than  |
-|                | 0 and 0.0 is ``true``. The empty string and the string    |
-|                | 'false' (ignoring case) return ``false``. Any other       |
-|                | string will return ``true``. If the argument is a         |
-|                | resource, an error will occur.                            |
-+----------------+-----------------------------------------------------------+
-| ?              | Convert the argument to a double value. Strings will be   |
-|                | parsed to create a double value; any literal form of a    |
-|                | double is valid. Boolean values will convert to ``0.0``   |
-|                | and ``1.0`` for ``false`` and ``true``, respectively.     |
-|                | Long values are converted to the corresponding double     |
-|                | value. Double values are unchanged.                       |
-+----------------+-----------------------------------------------------------+
-| ?              | Convert the argument to a long value. Strings will be     |
-|                | parsed to create a long value; any literal form of a long |
-|                | is valid (e.g. hex or octal literals). Boolean values     |
-|                | will convert to ``0`` and ``1`` for ``false`` and         |
-|                | ``true``, respectively. Double values are rounded to the  |
-|                | nearest long value. Long values are unchanged. An         |
-|                | optional second argument can be provided that defines the |
-|                | radix to use.                                             |
-+----------------+-----------------------------------------------------------+
-| ?              | Convert the argument to a string. The function will       |
-|                | return a string representation for any argument,          |
-|                | including list and dict.                                  |
-+----------------+-----------------------------------------------------------+
-| ?              | Convert the argument, which must be a string representing |
-|                | an IPv4 address in dotted notation to a long.             |
-+----------------+-----------------------------------------------------------+
-| ?              | Convert the argument, a long into an IPv4 address in      |
-|                | numbers-and-dots notation                                 |
-+----------------+-----------------------------------------------------------+
++--------------------+-----------------------------------------------------------+
+| Name               | Description                                               |
++====================+===========================================================+
+| :ref:`to_boolean`  | Convert the argument to a boolean. Any number other than  |
+|                    | 0 and 0.0 is ``true``. The empty string and the string    |
+|                    | 'false' (ignoring case) return ``false``. Any other       |
+|                    | string will return ``true``. If the argument is a         |
+|                    | resource, an error will occur.                            |
++--------------------+-----------------------------------------------------------+
+| :ref:`to_double`   | Convert the argument to a double value. Strings will be   |
+|                    | parsed to create a double value; any literal form of a    |
+|                    | double is valid. Boolean values will convert to ``0.0``   |
+|                    | and ``1.0`` for ``false`` and ``true``, respectively.     |
+|                    | Long values are converted to the corresponding double     |
+|                    | value. Double values are unchanged.                       |
++--------------------+-----------------------------------------------------------+
+| :ref:`to_long`     | Convert the argument to a long value. Strings will be     |
+|                    | parsed to create a long value; any literal form of a long |
+|                    | is valid (e.g. hex or octal literals). Boolean values     |
+|                    | will convert to ``0`` and ``1`` for ``false`` and         |
+|                    | ``true``, respectively. Double values are rounded to the  |
+|                    | nearest long value. Long values are unchanged. An         |
+|                    | optional second argument can be provided that defines the |
+|                    | radix to use.                                             |
++--------------------+-----------------------------------------------------------+
+| :ref:`to_string`   | Convert the argument to a string. The function will       |
+|                    | return a string representation for any argument,          |
+|                    | including list and dict.                                  |
++--------------------+-----------------------------------------------------------+
+| :ref:`ip4_to_long` | Convert the argument, which must be a string representing |
+|                    | an IPv4 address in dotted notation to a long.             |
++--------------------+-----------------------------------------------------------+
+| :ref:`long_to_ip4` | Convert the argument, a long into an IPv4 address in      |
+|                    | numbers-and-dots notation                                 |
++--------------------+-----------------------------------------------------------+
 
 Table: Type Conversion Functions
 
-+----------------+-----------------------------------------------------------+
-| Name           | Description                                               |
-+================+===========================================================+
-| ?              | Create a deep copy of the given value.                    |
-+----------------+-----------------------------------------------------------+
-| ?              | Delete a local variable or child of a local variable.     |
-+----------------+-----------------------------------------------------------+
-| ?              | Return true if the given argument exists. The argument    |
-|                | can either be a variable reference, path, or template     |
-|                | name.                                                     |
-+----------------+-----------------------------------------------------------+
-| ?              | Return true if the given path exists. The argument must   |
-|                | be an absolute or external path.                          |
-+----------------+-----------------------------------------------------------+
-| ?              | For a given template name, return the template name if it |
-|                | exists or undef if it does not. This can be used with the |
-|                | include statement for a conditional include.              |
-+----------------+-----------------------------------------------------------+
-| ?              | Interrupt the normal flow of processing and return the    |
-|                | given value as the result of the current frame (either a  |
-|                | function call or the main DML block).                     |
-+----------------+-----------------------------------------------------------+
-| ?              | Retrieve the value associated with the given path. The    |
-|                | path may either be an absolute or external path.          |
-+----------------+-----------------------------------------------------------+
++--------------------+-----------------------------------------------------------+
+| Name               | Description                                               |
++====================+===========================================================+
+| :ref:`clone`       | Create a deep copy of the given value.                    |
++--------------------+-----------------------------------------------------------+
+| :ref:`delete`      | Delete a local variable or child of a local variable.     |
++--------------------+-----------------------------------------------------------+
+| :ref:`exists`      | Return true if the given argument exists. The argument    |
+|                    | can either be a variable reference, path, or template     |
+|                    | name.                                                     |
++--------------------+-----------------------------------------------------------+
+| :ref:`path_exists` | Return true if the given path exists. The argument must   |
+|                    | be an absolute or external path.                          |
++--------------------+-----------------------------------------------------------+
+| :ref:`if_exists`   | For a given template name, return the template name if it |
+|                    | exists or undef if it does not. This can be used with the |
+|                    | include statement for a conditional include.              |
++--------------------+-----------------------------------------------------------+
+| :ref:`return`      | Interrupt the normal flow of processing and return the    |
+|                    | given value as the result of the current frame (either a  |
+|                    | function call or the main DML block).                     |
++--------------------+-----------------------------------------------------------+
+| :ref:`value`       | Retrieve the value associated with the given path. The    |
+|                    | path may either be an absolute or external path.          |
++--------------------+-----------------------------------------------------------+
 
 Table: Miscellaneous Functions
 

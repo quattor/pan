@@ -11,25 +11,25 @@ Synopsis
 --------
 
 panc
-``--no-debug`` \| ``--debug``
-``--debug-ns-include regex``
-``--debug-ns-exclude regex``
-``--initial-data dict-dml``
-``--include-path path``
-``--output-dir dir``
-``--formats formats``
-``--java-opts java-options``
-``--max-iteration limit``
-``--max-recursion limit``
-``--nthread number``
-``--no-disable-escaping`` \| ``--disable-escaping``
-``--logging string``
-``--log-file file``
-``--warnings flag``
-``-v`` \| ``--no-verbose`` \| ``--verbose``
-``-h`` \| ``--no-help`` \| ``--help``
-``--version``
-templates
+[``--no-debug`` \| ``--debug``]
+[``--debug-ns-include regex``]
+[``--debug-ns-exclude regex``]
+[``--initial-data dict-dml``]
+[``--include-path path``]
+[``--output-dir dir``]
+[``--formats formats``]
+[``--java-opts java-options``]
+[``--max-iteration limit``]
+[``--max-recursion limit``]
+[``--nthread number``]
+[``--no-disable-escaping`` \| ``--disable-escaping``]
+[``--logging string``]
+[``--log-file file``]
+[``--warnings flag``]
+[``-v`` \| ``--no-verbose`` \| ``--verbose``]
+[``-h`` \| ``--no-help`` \| ``--help``]
+[``--version``]
+[template ...]
 
 Description
 -----------
@@ -98,8 +98,7 @@ reorganized and simplified options, replaces the older ``panc`` command.
     value of zero will use a number equal to the number of CPU cores on
     the machine.
 
-``--no-disable-escaping,
-          --disable-escaping``
+``--no-disable-escaping, --disable-escaping``
     Enable or disable the escaping of path elements. The default value
     is to enable the escaping of path elements.
 
@@ -148,13 +147,13 @@ Synopsis
 --------
 
 panc-annotations
-``--base-dir base-directory``
-``--output-dir dir``
-``--java-opts jvm-options``
-``-v`` \| ``--no-verbose`` \| ``--verbose``
-``-h`` \| ``--no-help`` \| ``--help``
-``--version``
-templates
+[``--base-dir base-directory``]
+[``--output-dir dir``]
+[``--java-opts jvm-options``]
+[``-v`` \| ``--no-verbose`` \| ``--verbose``]
+[``-h`` \| ``--no-help`` \| ``--help``]
+[``--version``]
+[template ...]
 
 Description
 -----------
@@ -204,7 +203,7 @@ panc-build-stats.pl -- create a report of panc build statistics
 Synopsis
 --------
 
-panc-build-stats.pl ``--help`` logfile
+panc-build-stats.pl [``--help``] {logfile}
 
 Description
 -----------
@@ -259,7 +258,7 @@ panc-call-tree.pl -- create a graph of pan call tree
 Synopsis
 --------
 
-panc-call-tree.pl ``--help`` ``--format=dot\|hg`` logfile
+panc-call-tree.pl [``--help``] [``--format=dot\|hg``] {logfile}
 
 Description
 -----------
@@ -290,7 +289,7 @@ panc-compile-stats.pl -- create a report of panc compilation statistics
 Synopsis
 --------
 
-panc-compile-stats.pl ``--help`` logfile
+panc-compile-stats.pl [``--help``] {logfile}
 
 Description
 -----------
@@ -337,7 +336,7 @@ panc-memory.pl -- create a report of panc memory utilization
 Synopsis
 --------
 
-panc-memory.pl ``--help`` logfile
+panc-memory.pl [``--help``] {logfile}
 
 Description
 -----------
@@ -383,7 +382,7 @@ panc-profiling.pl -- generate profiling information from panc log file
 Synopsis
 --------
 
-panc-profiling.pl ``--help`` ``--usefunctions`` logfile
+panc-profiling.pl [``--help``] [``--usefunctions``] {logfile}
 
 Description
 -----------
@@ -425,7 +424,7 @@ panc-threads.pl -- create a report of thread activity
 Synopsis
 --------
 
-panc-threads.pl ``--help`` logfile
+panc-threads.pl [``--help``] {logfile}
 
 Description
 -----------

@@ -1,30 +1,3 @@
-Running the Compiler
-====================
-
-To facilitate the use of the pan configuration language compiler in
-different contexts, several mechanisms for running the compiler are
-supported, ranging from direct invocation from the command line to use
-within build frameworks like ant and maven.
-
-The performance of the compiler can vary significantly depending on how
-the compiler is invoked and on what options are used. Some general
-points to keep in mind are:
-
--  For large builds, try to start the underlying Java Virtual Machine
-   (JVM) only once. That is, avoid the command line interface and
-   instead use one of the build framework integrations.
-
--  The pan compiler can be memory-intensive to medium to large-scale
-   builds. Use the verbose output to see the allocated and used heap
-   space. Increase the allocated memory for the JVM if the used memory
-   exceeds about 80% of the total.
-
--  Other JVM optimizations and options can improve performance. Check
-   out what options are available with your Java implementation and
-   experiment with those options.
-
-The following sections provide details on the supported mechanisms for
-invoking the pan configuration language compiler.
 
 Command Line
 ============
@@ -83,14 +56,14 @@ following command (use the latest version of the archetype):
 
     Define value for property 'groupId': : org.example.pan
     Define value for property 'artifactId': : mysite
-    Define value for property 'version':  1.0-SNAPSHOT: : 
-    Define value for property 'package':  org.example.pan: : 
+    Define value for property 'version':  1.0-SNAPSHOT: :
+    Define value for property 'package':  org.example.pan: :
     Confirm properties configuration:
     groupId: org.example.pan
     artifactId: mysite
     version: 1.0-SNAPSHOT
     package: org.example.pan
-     Y: : 
+     Y: :
 
     ...
 
@@ -118,7 +91,7 @@ build process by doing the following:
     ...
 
     [INFO] --- panc-maven-plugin:9.2-SNAPSHOT:pan-check-syntax (check-syntax) @ mysite ---
-    [INFO] 
+    [INFO]
     [INFO] --- panc-maven-plugin:9.2-SNAPSHOT:pan-build (build) @ mysite ---
 
     ...
@@ -276,7 +249,7 @@ Running the compiler can be done with tasks like the following:
       </panc-annotations>
 
     </target>
-        
+
 
 where ...options... is replaced with valid options (attributes) for the
 pan compiler ant tasks. The following tables describe all of the

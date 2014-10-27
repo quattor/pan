@@ -10,7 +10,7 @@ Guides
 
    release-notes/index
    pan-book/index
-   functions/index
+   standard-functions/index
    commands/index
    obtaining/index
    running/index

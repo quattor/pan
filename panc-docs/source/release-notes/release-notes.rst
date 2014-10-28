@@ -33,6 +33,23 @@ before migrating to the v9 or v10 series.
 Change Log
 ==========
 
+Version 10.2
+------------
+
+-  (GitHub Issue #80) enable automated build of documentation on the
+   http://quattor-pan.readthedocs.org/.
+
+-  (GitHub Issue #79, #81) move documentation sources from DocBook to
+   restructured text.
+
+-  (GitHub Issue #76) remove 'object' template reference in output stats
+
+-  (GitHub Issue #71, #72, #73, #74, #75) add options for displaying the
+   pan compiler version and update documentation
+
+-  (GitHub Issue #70) create a null formatter mainly for performance testing
+
+
 Version 10.1
 ------------
 

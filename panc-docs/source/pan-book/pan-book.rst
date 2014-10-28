@@ -1,42 +1,3 @@
-Preface
-=======
-
-Organization
-------------
-
-This book is intended to act as both a reference guide for the pan
-configuration language as well as a tutorial on using the associated
-compiler. The first chapter introduces the language and guides you
-through a basic installation of the compiler. The following chapter
-provides a simplified, real-world example to show the major features of
-the pan language for site configuration. Chapters 3-8 provide a detailed
-description of the pan language and act as a reference for it. Chapters
-9-11 provide information about advanced features and best practices when
-using the language. Finally, Chapter 12 gives some information about
-troubleshooting problems that can arise when using the compiler and
-language. The appendices provide detailed information on installing and
-using the compiler in various environments as well as detailed
-information on the pan commands and functions.
-
-Typographic Conventions
------------------------
-
-+----------------+-----------------------------------------------------------+
-| ``filename``   | References to files are typeset in this style. In this    |
-|                | book, these are usually references to configuration       |
-|                | templates.                                                |
-+----------------+-----------------------------------------------------------+
-| command        | Commands to be executed from the command line are typeset |
-|                | in this style. This is usually a direct or indirect       |
-|                | invocation of the pan configuration language compiler.    |
-+----------------+-----------------------------------------------------------+
-| ``keyword``    | Pan configuration language keywords are typeset in this   |
-|                | style. They represent the language's reserved words and   |
-|                | should appear in configuration files exactly as written.  |
-+----------------+-----------------------------------------------------------+
-
-Table: Typographic Conventions
-
 Getting Started
 ===============
 
@@ -116,18 +77,23 @@ Download and Installation
 
 The pan compiler can be invoked via the Unix (Linux) command line, ant,
 or maven. The easiest for the simple examples in this book is the
-command line interface. (See Appendix A for installation instructions
-for all the execution methods.) Locate and download the latest version
-of the pan tarball and untar this into a convenient directory. You can
-find the packaged versions of the compiler in the releases area of the
-GitHub repository.
+command line interface. (See :ref:`running_panc`for installation
+instructions for all the execution methods.) Locate and download the latest
+version of the pan tarball and untar this into a convenient directory. You
+can find the packaged versions of the compiler in the releases area of
+the GitHub repository.
 
 The pan compiler requires a Java Runtime Environment (JRE) or Java
-Development Kit (JDK) 1.5 or later. If you will just be running a binary
+Development Kit (JDK) 1.6 or later. If you will just be running a binary
 version of the pan compiler, the JRE is sufficient; compiling the
 sources will require the JDK. Use a complete, certified version of the
-Java Virtual Machine; in particular avoid the GNU Java Compiler (GJC) as
-the pan compiler will not run correctly with it.
+Java Virtual Machine.
+
+.. warning::
+
+   The GNU Java Compiler (GJC) distributed with many Linux-based operating
+   systems is **not** a certified version of the Java Virtual Machine.  The
+   pan compiler will not run correctly with it.
 
 To use the compiler from the command line, you must make it accessible
 from the path.
@@ -137,17 +103,16 @@ from the path.
     $ export PANC_HOME=/panc/location
     $ export PATH=$PANC_HOME/bin:$PATH
 
-The above will work for Bourne shells; adjust the command for the shell
-that you use. Change the value of ``PANC_HOME`` to the directory where
+The above will work for Bourne shells on \*nix-like operating systems;
+adjust the command for the operating system and shell that you use. Change
+the value of ``PANC_HOME`` to the directory where
 the pan compiler was unpacked.
 
 Validating the Installation
 ---------------------------
 
 Once you have installed the compiler, make sure that it is working
-correctly by using the command:
-
-::
+correctly by using the command::
 
     $ panc --help
 
@@ -158,9 +123,7 @@ Invoking the Pan Compiler
 -------------------------
 
 Now create a file (called a "template") named ``hello_world.pan`` that
-contains the following:
-
-::
+contains the following::
 
     object template hello_world;
     '/message' = 'Hello World!';
@@ -233,9 +196,14 @@ The last style is the "dot" format.
 Although the text is not very enlightening by itself, it can be used by
 `Graphviz <http://www.graphviz.org/>`__ to generate a graph of the
 configuration. Processing the above file with Graphviz produces the
-image shown in ?.
+image shown in the :ref:`figure_hello_world`.
 
-|Graph of configuration produced by ``hello_world.pan``.|
+.. _figure_hello_world:
+
+.. figure:: images/hello.png
+   :alt: graphical representation of hello_world.pan
+
+   Graph of ``hello_world.pan`` configuration
 
 A Whirlwind Tour
 ================
@@ -850,16 +818,14 @@ simultaneously the configuration parameters, the configuration schema,
 and validation functions. Each template is named and is contained in a
 file having the same name.
 
-    **Warning**
+.. warning::
 
     All pan source files, templates as well as included files, must be
     encoded in UTF-8. No other character encodings are supported.
 
-The syntax of a template file is simple:
+The syntax of a template file is simple::
 
-::
-
-    [  ]  ;
+    [ modifier ] template template-name ;
     [ statement ... ]
 
 where the optional modifier is either ``object``, ``structure``,
@@ -878,12 +844,13 @@ example, a template with the name "service/batch/worker-23" must have a
 file name of ``worker-23.pan`` and reside in a subdirectory
 ``service/batch/``.
 
-    **Note**
+.. warning::
 
-    The older file extension "tpl" is also accepted by the pan compiler,
-    but the "pan" extension is preferred. If files with both extensions
-    exist for a given template, then the file with the "pan" extension
-    will be used by the compiler.
+   The older file extension "tpl" is also accepted by the pan compiler,
+   but is **deprecated**.  Support for this older prefix will disappear
+   in the next major release.  Currently, if files with both extensions
+   exist for a given template, then the file with the "pan" extension
+   will be used by the compiler.
 
 Types of Templates
 ~~~~~~~~~~~~~~~~~~
@@ -960,9 +927,7 @@ Assignment statements are used to modify a part of the configuration
 tree by replacing the subtree identified by its path by the result of
 the execution a DML block. This result can be a single property or a
 resource holding any number of elements. The unconditional assignment
-is:
-
-::
+is::
 
     [ final ] path = dml;
 
@@ -980,9 +945,7 @@ If the ``final`` modifier is used, then the path and any children of
 that path may not be subsequently modified. Attempts to do so will
 result in a fatal error.
 
-A conditional form of the assignment statement also exists:
-
-::
+A conditional form of the assignment statement also exists::
 
     [ final ] path ?= dml;
 
@@ -995,9 +958,7 @@ Prefix
 
 The ``prefix`` (pseudo-)statement provides an absolute path used to
 resolve relative paths in assignment statements that occur afterwards in
-the template. It has the form:
-
-::
+the template. It has the form::
 
     prefix '/some/absolute/path';
 
@@ -1070,7 +1031,7 @@ the load path used to locate template for the ``include`` statement.
 
 Any valid identifier may be used to name a global variable.
 
-    **Caution**
+.. caution::
 
     Global and local variables share a common namespace. Best practice
     dictates that global variables have names with all uppercase letters
@@ -1085,9 +1046,7 @@ Functions can be defined by the user. These are arbitrary DML blocks
 bound to an identifier. Once defined, functions can be called from any
 subsequent DML block. Functions may only be defined once; attempts to
 redefine an existing function will cause the compilation to abort. The
-function definition syntax is:
-
-::
+function definition syntax is::
 
     function identifier = dml;
 
@@ -1102,9 +1061,7 @@ Type Definition
 
 Type definitions are critical for the validation of the generated
 machine profiles. Types can be built up from the primitive pan types and
-arbitrary validation functions. New types can be defined with
-
-::
+arbitrary validation functions. New types can be defined with::
 
     type identifier = type-spec;
 
@@ -1130,16 +1087,12 @@ corresponding to the named path will be checked against the bound types.
 See the Type section for a complete description of the type-spec syntax.
 
 The ``valid`` statement binds a validation DML block to a path. It has
-the form:
-
-::
+the form::
 
     valid path = DML;
 
 This is a convenience statement and has exactly the same effect as the
-statement:
-
-::
+statement::
 
     bind path = element with DML;
 
@@ -1152,21 +1105,19 @@ the validation code and a path to be determined when a profile is built.
 If the path references an undefined global variable, then will abort
 with an error. The build will also be aborted if the path is not valid
 after the values of the variables have been substituted. Below is an
-example of using *global variable* references:
-
-::
+example of using *global variable* references::
 
     variable MYFILE = 'test';
     bind  '/a/${MYFILE}' = type-spec;
 
 As with any path element, the variable contents can be escaped if
-necessary by enclosing the variable reference into '{}'. For example:
-::
+necessary by enclosing the variable reference into '{}'. For example::
 
     variable MYFILE = '/tmp/test';
     bind  '/a/{${MYFILE}}' = type-spec;
 
 See chapter on Validation for more details.
+
 Data Types
 ==========
 
@@ -1190,10 +1141,15 @@ as the key. The named list (dict) associates a string key with a value;
 these are also known as hashes or associative lists. These collections
 are known as "resources".
 
-The complete type hierarchy is shown in ?, including the two special
-types ``undef`` and ``null``.
+The complete type hierarchy is shown in the graph :ref:`pan_types`,
+including the two special types ``undef`` and ``null``.
 
-|Pan language type hierarchy|
+.. _pan_types:
+
+.. figure:: images/pan-type-hierarchy-truncated.png
+   :alt: pan language type hierarchy
+
+   Pan language type hierarchy
 
 Implicit Typing
 ~~~~~~~~~~~~~~~
@@ -1231,9 +1187,7 @@ Long literals may be given in decimal, hexadecimal, or octal format. A
 decimal literal is a sequence of digits starting with a number other
 than zero. A hexadecimal literal starts with the '0x' or '0X' and is
 followed by a sequence of hexadecimal digits. An octal literal starts
-with a zero is followed by a sequence of octal digits. Examples:
-
-::
+with a zero is followed by a sequence of octal digits. Examples::
 
     123  # decimal long literal
     0755 # octal long literal
@@ -1248,9 +1202,7 @@ Double Literals
 
 Double literals represent a floating point number. A double literal must
 start with a digit and must contain either a decimal point or an
-exponent. Examples:
-
-::
+exponent. Examples::
 
     0.01
     3.14159
@@ -1273,9 +1225,7 @@ be of any length and can contain any character, including the NULL byte.
 Single quoted strings are used to represent short and simple strings.
 They cannot span several lines and all the characters will appear
 verbatim in the string, except the doubled single quote which is used to
-represent a single quote inside the string. For instance:
-
-::
+represent a single quote inside the string. For instance::
 
     ’foo’
     ’it’’s a sentence’
@@ -1285,9 +1235,7 @@ This is the most efficient string representation and should be used when
 possible.
 
 Double quoted strings are more flexible and use the backslash to
-represent escape sequences. For instance:
-
-::
+represent escape sequences. For instance::
 
     "foo"
     "it’s a sentence"
@@ -1316,9 +1264,7 @@ That is, no escape processing is done.
 
 The easiest solution to put binary data inside pan code is to base64
 encode it and put it inside "here-doc” strings like in the following
-example:
-
-::
+example::
 
     '/system/binary/stuff' = base64_decode(<<EOT);
     H4sIAOwLyDwAA02PQQ7DMAgE731FX9BT1f8Q
@@ -1342,9 +1288,7 @@ quoted forms for a string literal can be used to represent a path. There
 are three different types of paths: external, absolute, and relative.
 
 An *external path* explicitly references an object template. The syntax
-for an external path is:
-
-::
+for an external path is::
 
     my/external/object:/some/absolute/path
 
@@ -1369,9 +1313,7 @@ Terms beginning with a digit must be a valid long literal. Terms that
 contain other characters must be escaped, either by using the ``escape``
 function within a DML block or by enclosing the term within braces for a
 path literal. For example, the following creates an absolute path with
-three terms:
-
-::
+three terms::
 
     /alpha/{a/b}/gamma
 
@@ -1421,9 +1363,7 @@ same children from one compilation to the next.
 Within a given path, lists and dicts can be distinguished by the names
 of their children. Lists always have children whose names are valid long
 literals. In the following example, ``/mylist`` is a list with three
-children:
-
-::
+children::
 
     object template mylist;
 
@@ -1480,9 +1420,7 @@ terminates.
 
 As a first approximation, variables work the way you expect them to
 work. They can contain properties and resources and you can easily
-access resource children using square brackets:
-
-::
+access resource children using square brackets::
 
     # populate /table which is an dict
     ’/table/red’ = ’rouge’;
@@ -1503,7 +1441,7 @@ Global variables (defined with the ``variable`` statement) can be read
 from the DML block. Global variables may not be modified from within the
 block; attempting to do so will abort the execution.
 
-    **Caution**
+.. caution::
 
     Global and local variables share the same namespace. Consequently,
     there may be unintended naming conflicts between them. The best
@@ -1522,9 +1460,9 @@ double arguments. In the case of binary operators, the result will be
 promoted to a double if the operands are mixed.
 
 +-----------+--------------------+-----------------------------------------------+
-| \+         | number             | preserves sign of argument                   |
+| \+        | number             | preserves sign of argument                    |
 +-----------+--------------------+-----------------------------------------------+
-| \-         | number             | changes sign of argument                     |
+| \-        | number             | changes sign of argument                      |
 +-----------+--------------------+-----------------------------------------------+
 | ~         | long               | bitwise not                                   |
 +-----------+--------------------+-----------------------------------------------+
@@ -1534,11 +1472,11 @@ promoted to a double if the operands are mixed.
 Table: Unary DML Operators
 
 +-----------+--------------------+-----------------------------------------------+
-| \+         | number             | addition                                     |
+| \+        | number             | addition                                      |
 +-----------+--------------------+-----------------------------------------------+
-| \+         | string             | string concatenation                         |
+| \+        | string             | string concatenation                          |
 +-----------+--------------------+-----------------------------------------------+
-| \-         | number             | subtraction                                  |
+| \-        | number             | subtraction                                   |
 +-----------+--------------------+-----------------------------------------------+
 | \*        | number             | multiplication                                |
 +-----------+--------------------+-----------------------------------------------+
@@ -1616,7 +1554,7 @@ the ``while`` statement allows looping over a DML block, the ``for``
 statement allows the same, and the ``foreach`` statement allows
 iteration over an entire resource (``list`` or ``dict``).
 
-    **Caution**
+.. caution::
 
     These statements, like all DML statements, return a value. Be
     careful of this, because unexecuted blocks generally will return
@@ -1627,9 +1565,7 @@ Branching (``if`` statement)
 
 The ``if`` statement allows the conditional execution of a DML block.
 The statement may include an ``else`` clause that will be executed if
-the condition is ``false``. The syntax is:
-
-::
+the condition is ``false``. The syntax is::
 
     if ( condition-dml ) true-dml;
     if ( condition-dml ) true-dml else false-dml;
@@ -1646,9 +1582,7 @@ Looping (``while`` and ``for`` statements)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Simple looping behavior is provided by the ``while`` statement. The
-syntax is:
-
-::
+syntax is::
 
     while ( condition-dml ) body-dml;
 
@@ -1657,9 +1591,7 @@ The value of this statement is that returned by the body-dml block. If
 the body-dml block is never executed, then ``undef`` is returned.
 
 The pan language also contains a ``for`` statement that in many cases
-provides a more concise syntax for many types of loops. The syntax is:
-
-::
+provides a more concise syntax for many types of loops. The syntax is::
 
     for (initialization-dml; condition-dml; increment-dml) body-dml;
 
@@ -1680,9 +1612,7 @@ Iteration (``foreach`` statement)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ``foreach`` statement allows iteration over all of the elements of a
-list or dict. The syntax is:
-
-::
+list or dict. The syntax is::
 
     foreach (key; value; resource) body-dml;
 
@@ -1975,9 +1905,7 @@ The pan language permits user-defined functions. These functions are
 essentially a DML block bound to an identifier. Only one DML block may
 be assigned to a given identifier. Attempts to redefine an existing
 function will cause the execution to be aborted. The syntax for defining
-a function is:
-
-::
+a function is::
 
     function  = DML;
 
@@ -1991,9 +1919,7 @@ values of the arguments.
 
 Note that ``ARGV`` is a standard pan list. Consequently, passing null
 values (intended to delete elements) to functions can have non-obvious
-effects. For example, the call:
-
-::
+effects. For example, the call::
 
     f(null);
 
@@ -2011,9 +1937,7 @@ recursion. Typically, the maximum is a small number like 10. Recursion
 is expensive within the pan language and should be avoided if possible.
 
 The following example defines a function that checks if the number of
-arguments is even and are all numbers:
-
-::
+arguments is even and are all numbers::
 
     function paired_numbers = {
 
@@ -2051,20 +1975,16 @@ definition features. This chapter deals with more complicated scenarios.
 
 The following statement will bind an existing type definition (either a
 built-in definition or a user-defined one) to a path in a machine
-configuration:
+configuration::
 
-::
-
-    bind  = ;
+    bind path = type-spec;
 
 where path is a valid path name and type-spec is either a type
 specification or name of an existing type.
 
-Full type specifications are of the form:
+Full type specifications are of the form::
 
-::
-
-     =
+    identifier = constant with validation-dml
 
 where constant is a DML block that evaluates to a compile-time constant
 (the default value), and the validation-dml is a DML block that will be
@@ -2113,9 +2033,7 @@ the value at all will cause the compilation to fail.
 The above constraint only does part of the work though; the value could
 still be set to zero or a negative value without having the compiler
 complain. Pan also allows a range to be specified for primitive values.
-Changing the statement to the following:
-
-::
+Changing the statement to the following::
 
     bind '/hardware/cpu/number' = long(1..);
 
@@ -2132,11 +2050,9 @@ User-Defined Types
 
 Users can create new types built up from the primitive types and with
 optional validation functions. The general format for creating a new
-type is:
+type is::
 
-::
-
-    type  = ;
+    type identifier = type-spec;
 
 where the general form for a type specification type-spec is given
 above.
@@ -2154,18 +2070,14 @@ an existing type, plus some restrictions.
     type small_even = long(-16..16) with SELF % 2 == 0;
 
 Similarly one can create link types for elements in the machine
-configuration:
-
-::
+configuration::
 
     type mylink = long(0..)* with match(SELF, 'r$');
 
 Values associated to this type must be a string ending with 'r'; the
 value must be a valid path that references an unsigned long value.
 
-Slightly more complex is to create uniform collections:
-
-::
+Slightly more complex is to create uniform collections::
 
     type long_list = long[10];
     type matrix = long[3][4];
@@ -2178,9 +2090,7 @@ as the built-in primitive types.
 
 A record is an dict that explicitly names and types its children. A
 record is by far, the most frequently encountered type definition. For
-example, the type definition:
-
-::
+example, the type definition::
 
     type cpu = {
       'vendor' : string
@@ -2193,9 +2103,7 @@ defines an dict with four children named 'vendor', 'model', etc. The
 first three fields use a colon (":") in the definition and are
 consequently required fields; the last uses a question mark ("?") and is
 optional. As defined, no other children may appear in dicts of this
-type. However, one can make the record extensible with:
-
-::
+type. However, one can make the record extensible with::
 
     type cpu = extensible {
       'vendor' : string
@@ -2224,9 +2132,7 @@ type; perhaps we would like to have ``number`` and ``cores`` both
 default to 1 if not specified.
 
 Pan allows type definitions to contain default values. For example, to
-change the three type definitions mentioned above:
-
-::
+change the three type definitions mentioned above::
 
     type cpu = {
       'model' : string
@@ -2266,9 +2172,7 @@ Often there are cases where the legal values of a parameter cannot be
 expressed as a simple range. The pan language allows you to attach
 arbitrary validation code to a type definition. The code is attached to
 the type definition using the ``with`` keyword. Consider the following
-examples:
-
-::
+examples::
 
     type even_positive_long = long(1..) with (SELF % 2 == 0);
 
@@ -2301,9 +2205,7 @@ will raise an error indicating that the value for the tested element is
 invalid.
 
 A validation function that checks that a value is a valid IPv4 address
-could look like:
-
-::
+could look like::
 
     function is_ipv4 = {
       terms = split('\.', ARGV[0]);
@@ -2331,9 +2233,7 @@ on another one that is not defined in the configuration or is not
 active.
 
 The following validation function accomplishes such a check, assuming
-that the components are bound to ``/software/components``:
-
-::
+that the components are bound to ``/software/components``::
 
     function valid_component_list = {
 
@@ -2435,9 +2335,7 @@ Another common situation is the need to validate machine configurations
 against each other. This often arises in client/server situations. For
 NFS, for instance, one would probably like to verify that a network
 share mounted on a client is actually exported by the server. The
-following example will do this:
-
-::
+following example will do this::
 
     # Determine that a given mounted network share is actually
     # exported by the server.
@@ -2506,9 +2404,7 @@ Schemas
 The pan language allows complete configuration schema to be defined.
 Actually, you are capable of doing this already as defining a schema is
 nothing more than defining a type and binding that type to the root
-element. An example of this is:
-
-::
+element. An example of this is::
 
     object template schema_example;
 
@@ -2601,9 +2497,7 @@ template.
       'hardware' : hardware
     };
 
-The main object template then becomes:
-
-::
+The main object template then becomes::
 
     object template nfsserver.example.org;
 
@@ -2676,9 +2570,7 @@ initially independent of the configuration tree itself. For our
 scenario, let us assume that the four machines have identical RAM, CPU,
 and disk configurations; the NIC and location information is different
 for each machine. The following template pulls out the common
-information into a ``structure`` template:
-
-::
+information into a ``structure`` template::
 
     structure template common/machine/ibm-server-model-123;
 
@@ -2822,9 +2714,7 @@ the ``--base-dir`` option if this is not the current directory.
 ``--base-dir`` option must be adjusted so that the template file paths
 specified match the template namespaces, as for compiling the templates.
 
-Below is an example:
-
-::
+Below is an example::
 
     $ panc-annotations \
               --output-dir=annotations \
@@ -2969,7 +2859,7 @@ would result in having the paths ``/build-metadata/number``,
 ``/build-metadata/date`` being set to ``1`` and ``2012-01-01``,
 respectively, in all object templates.
 
-    **Caution**
+.. caution::
 
     Values inserted into the profiles in this way are still subject to
     the usual validation. When inserting values, they must obey the
@@ -2988,15 +2878,11 @@ Use Specific Paths
 ------------------
 
 Whenever possible, use the most specific path and assign a property to
-that path. The code:
-
-::
+that path. The code::
 
     '/path' = dict('a', 1, 'b', 2);
 
-and the block:
-
-::
+and the block::
 
     '/path/a' = 1;
     '/path/b' = 2;
@@ -3008,16 +2894,12 @@ Use Escaped Literal Path Syntax
 -------------------------------
 
 In previous versions of the compiler, it was necessary to use a DML
-block when part of a path needed to be escaped:
-
-::
+block when part of a path needed to be escaped::
 
     '/path' = dict(escape('a/b'), 1);
 
 Newer versions of the compiler provide a literal path syntax in which
-escaped portions can be written explicitly:
-
-::
+escaped portions can be written explicitly::
 
     '/path/{a/b}' = 1;
 
@@ -3089,9 +2971,7 @@ configuration, practically it is often useful to directly embed a
 configuration file directly in the service configuration. In previous
 versions of the compiler, the configuration file was often created
 incrementally in a global variable and then assigned to a path.
-Something like the following was common:
-
-::
+Something like the following was common::
 
     variable USER = 'smith';
     variable QUOTA = 10;
@@ -3110,9 +2990,7 @@ Something like the following was common:
 
     '/cfgfile' = CONTENTS;
 
-This can be improved somewhat by using the ``format`` function:
-
-::
+This can be improved somewhat by using the ``format`` function::
 
     variable USER = 'smith';
     variable QUOTA = 10;
@@ -3129,18 +3007,14 @@ This can be improved somewhat by using the ``format`` function:
 
 This can be further improved by moving the configuration template
 completely out of the pan language file. For instance, create the file
-``cfg-template.txt``:
-
-::
+``cfg-template.txt``::
 
     alpha = 1
     beta = 2
     user = %s
     quota = %d
 
-which can then be used like this:
-
-::
+which can then be used like this::
 
     variable USER = 'smith';
     variable QUOTA = 10;
@@ -3158,9 +3032,7 @@ Extension Templates
 Often sets of templates that are intended for reuse will allow the
 configuration to be extended or modified at particular points by
 including named templates. For example, the following provides
-pre-configuration and post-configuration service hooks:
-
-::
+pre-configuration and post-configuration service hooks::
 
     template my_service/config;
 
@@ -3178,9 +3050,7 @@ Global Variables as Switches
 ----------------------------
 
 Configuration intended for reuse also tends to expose switches for
-common configuration options. The idiom looks like the following:
-
-::
+common configuration options. The idiom looks like the following::
 
     template my_service/config;
 
@@ -3195,9 +3065,7 @@ common configuration options. The idiom looks like the following:
     };
 
 In cases where the path simply should not exist if the option is not
-set, then using a default value of null can be the best option:
-
-::
+set, then using a default value of null can be the best option::
 
     template my_service/config;
 
@@ -3283,9 +3151,7 @@ the section Running the Compiler for how to specify the VM memory.
 
 If the compilation appears to be slow, check that the compiler is not
 thrashing because of a limited amount of memory. With the verbose option
-set, successful compilations will produce a summary like:
-
-::
+set, successful compilations will produce a summary like::
 
     2 templates
     2/2 compiled, 2/2 xml, 0/0 dep
@@ -3344,11 +3210,6 @@ Bug Reporting
 
 The pan compiler, like all software, contains bugs. If the problem your
 experiencing looks to be misbehavior by the compiler, please report the
-problem. Bug reports can be filed in the in the issues area of GitHub.
+problem. Bug reports can be filed in the in the `issues area`_ of GitHub.
 
-::
-
-    https://github.com/quattor/pan/issues
-
-.. |Graph of configuration produced by ``hello_world.pan``.| image:: images/hello.png
-.. |Pan language type hierarchy| image:: images/pan-type-hierarchy-truncated.png
+.. _issues area: https://github.com/quattor/pan/issues

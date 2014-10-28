@@ -1,4 +1,6 @@
 
+.. _running_panc:
+
 ====================
 Running the Compiler
 ====================

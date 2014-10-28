@@ -16,9 +16,7 @@ If the Java compiler class is being directly invoked via the ``java``
 command, then the option ``-Xmx`` must be used to change the VM memory
 available (for any reasonably sized compilation). For example to start
 ``java`` with 1024 MB of memory, the following command and options can
-be used:
-
-::
+be used::
 
     java -Xmx1024M org.quattor.pan.Compiler [options...]
 
@@ -36,16 +34,13 @@ need to configure maven for that repository. A maven archetype is also
 provided that can be used to generate a working skeleton that
 demonstrates the pan maven plugin.
 
-    **Warning**
-
+.. warning::
     The options of the plug-in have changed from the previous version.
     They mirror those of the ``panc`` script. Details for the options
     are given below.
 
 To generate a skeleton maven project from the archetype use the
-following command (use the latest version of the archetype):
-
-::
+following command (use the latest version of the archetype)::
 
     $ mvn archetype:generate \
       -DarchetypeArtifactId=panc-maven-archetype \
@@ -81,9 +76,7 @@ the project that you want to create. The process should end with a
 example, the subdirectory (and artifactId) are named "mysite".
 
 Within this subdirectory ("mysite"), you can then invoke the entire
-build process by doing the following:
-
-::
+build process by doing the following::
 
     $ cd mysite/
     $ mvn clean install
@@ -106,9 +99,7 @@ build process by doing the following:
 
 Again, this should end with a "BUILD SUCCESS". It will have generated
 the machine profile in the ``target/profiles/node.example.org.xml``
-file:
-
-::
+file::
 
     $ cat target/profiles/node.example.org.xml
 
@@ -130,9 +121,7 @@ file:
 
 The ``pom.xml`` file in the skeleton provides a good example on how to
 run the plug-in. You can also obtain more detailed help via the maven
-help system:
-
-::
+help system::
 
     $ mvn help:describe -Dplugin=panc -Ddetail=true
 
@@ -191,9 +180,7 @@ Ant
 Using an ant task to invoke the compiler allows the compiler to be
 easily integrated with other machine management tasks. To use the pan
 compiler within an ant build file, the pan compiler tasks must be
-defined. This can be done with a task definition element like:
-
-::
+defined. This can be done with a task definition element like::
 
     <target name="define.panc.task">
 
@@ -224,9 +211,7 @@ There are four tasks defined:
 ``panc-version``
     Displays the pan compiler version.
 
-Running the compiler can be done with tasks like the following:
-
-::
+Running the compiler can be done with tasks like the following::
 
     <target name="compile.cluster.profiles">
 
@@ -366,9 +351,7 @@ Invocation Inside Eclipse
 
 If you use the default VM to run the pan compiler ant task, then you
 will need to increase the memory when starting eclipse. From the command
-line you can add the VM arguments like:
-
-::
+line you can add the VM arguments like::
 
     eclipse -vmargs -Xmx<memory size>
 

@@ -88,6 +88,10 @@ drop and drag them into place or just select them with the chooser.
 Provide a title and description for the release and then click on the 
 "Publish" button.
 
+For the documentation, log into ReadTheDocs.org and add the tag for the
+release.  Once added it will build automatically.  You can then select
+the latest release as the default version to show.
+
 To finish up, create a new milestone in the pan repository for the 
 next release.
 

@@ -54,32 +54,6 @@
       </plugin>
 
       <plugin>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-documentation</id>
-            <phase>prepare-package</phase>
-            <configuration>
-              <artifactItems>
-
-                <artifactItem>
-                  <groupId>org.quattor.pan</groupId>
-                  <artifactId>panc-docs</artifactId>
-                  <classifier>bundle</classifier>
-                  <type>zip</type>
-                  <outputDirectory>${project.build.directory}/docs</outputDirectory>
-                </artifactItem>
-
-              </artifactItems>
-            </configuration>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>javacc-maven-plugin</artifactId>
         <executions>
@@ -263,15 +237,6 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.quattor.pan</groupId>
-      <artifactId>panc-docs</artifactId>
-      <version>${project.version}</version>
-      <classifier>bundle</classifier>
-      <type>zip</type>
-      <scope>provided</scope>
     </dependency>
 
     <dependency>

@@ -87,30 +87,6 @@
 	      </sources>
 	    </mapping>
 
-	    <mapping>
-	      <directory>/usr/share/doc/panc-${project.version}</directory>
-	      <filemode>655</filemode>
-	      <username>root</username>
-	      <groupname>root</groupname>
-	      <sources>
-		<source>
-		  <location>target/contents/docs</location>
-		</source>
-	      </sources>
-	    </mapping>
-
-	    <mapping>
-	      <directory>/usr/man</directory>
-	      <filemode>655</filemode>
-	      <username>root</username>
-	      <groupname>root</groupname>
-	      <sources>
-		<source>
-		  <location>target/contents/man</location>
-		</source>
-	      </sources>
-	    </mapping>
-
 	  </mappings>
 	</configuration>
 
@@ -128,15 +104,6 @@
   </build>
 
   <dependencies>
-
-    <dependency>
-      <groupId>org.quattor.pan</groupId>
-      <artifactId>panc-docs</artifactId>
-      <classifier>bundle</classifier>
-      <version>${project.version}</version>
-      <type>zip</type>
-      <scope>runtime</scope>
-    </dependency>
 
     <dependency>
       <groupId>org.quattor.pan</groupId>

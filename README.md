@@ -70,10 +70,26 @@ logged in:
 You have now successfully released all of the artifacts into the central
 maven repository.
 
-You must also create the release in GitHub.
+You must also create the release in GitHub.  Collect all of the 
+files you will distribute as part of the release.  The list includes:
+  * Jar file with dependencies,
+  * Tar archive,
+  * Zip archive, and
+  * RPM package
+Put them on the machine you'll use to access the GitHub web interface.
 
+Visit the [pan releases page](https://github.com/quattor/pan/releases).
+You should see a tag that corresponds to the release that you've just
+created.  Click on the tag link on this page and then on the "Edit Tag" 
+button.
 
+Now use the interface to upload the packages to GitHub.  You can either
+drop and drag them into place or just select them with the chooser.
+Provide a title and description for the release and then click on the 
+"Publish" button.
 
+To finish up, create a new milestone in the pan repository for the 
+next release.
 
 License
 -------

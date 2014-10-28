@@ -50,6 +50,30 @@ $ mvn clean
 $ mvn release:prepare
 $ mvn release:perform
 ```
+During the preparation phase you will be asked about the versions to 
+tag and for your GPG key password.  You will also be asked about the
+GPG key password during the perform stage.
+
+If all worked without errors, then the packages will have been 
+successfully staged to the
+[OSS maven repository](https://oss.sonatype.org/).  You will need to
+log into the repository to promote and release the artifacts.  Once
+logged in:
+  * Click on "Staging Repositories" in left panel.
+  * Select the "orgquattor" repository in the list.
+  * Click on "Close" at the top below the tabs, give a message and
+    confirm the action.
+  * Wait for the action to finish.  You can click on "Refresh" to 
+    update the status.
+  * Finish the release by clicking "Release" at the top below the
+    tabs.
+You have now successfully released all of the artifacts into the central
+maven repository.
+
+You must also create the release in GitHub.
+
+
+
 
 License
 -------

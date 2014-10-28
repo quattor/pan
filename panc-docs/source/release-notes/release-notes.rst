@@ -15,20 +15,25 @@ Support
 =======
 
 The v10 series is in active development; the v9 series is frozen.  Both of
-these series are supported.  The old v8 series of releases is no longer
-supported.  Migration from v8 to a more recent release is very strongly
-recommended.
+these series are supported.
 
-Migration Issues
+**The old v8 series of releases is no longer supported.**  Migration from v8
+to a more recent release is very strongly recommended.
+
+Upcoming Changes
 ================
 
-Deprecated Features
--------------------
+The following upcoming and potentially breaking changes are scheduled for
+the next major pan compiler release (v11):
 
-All of the deprecated features in the v8 series of the compilers has
-been removed from the v9 and v10 series. Ensure that your configuration
-compiles with the deprecation warnings activated with the v8 compiler
-before migrating to the v9 or v10 series.
+- Support for the file extension '.tpl' is deprecated and will be removed
+  in the v11 series of the compiler.  Rename your pan source files from
+  '*.tpl' to '*.pan'.
+
+- The path '/panc' will be reserved by the compiler.  Values under this path
+  will be used to transmit information about the pan compiler version and
+  compilation flags to downstream tools.  Avoid putting configuration
+  information in the '/panc' part of the configuration tree.
 
 Change Log
 ==========

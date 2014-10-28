@@ -8,6 +8,49 @@ compiler translates this high-level site configuration to a
 machine-readable representation, which other tools can then use to
 enact the desired configuration changes.
 
+Documentation
+-------------
+
+All of the pan language and pan language compiler documentation is now
+hosted on the [ReadTheDocs service](https://quattor-pan.readthedocs.org).
+Via that service, you can also download PDF and EPUB versions of the
+documentation.
+
+Release Procedure
+-----------------
+
+To generate all supported packages, the release build must be performed
+on a CentOS (or compatible) machine with the `rpmbuild` command installed.
+Ensure also that a recent, certified version of the JVM (1.6+) and maven
+(3.0.3+) are installed.
+
+Before doing anything else, ensure that the release notes and the change
+log for the release are up to date and complete.  The source is in the 
+`panc-docs/source/release-notes/release-notes.rst` file.  The change log
+should list all of the issues resolved in the release.
+
+Clone this repository to your build machine and then verify that the full
+build runs correctly.  Run the following command from the top-level of the
+cloned repository:
+```
+$ mvn clean install
+```
+If this doesn't end with a "BUILD SUCCESS" message, then correct the 
+problems before going any farther with the release.
+
+To perform the release you must have:
+  * A registered GPG key installed on your build machine.
+  * Write access to this repository (for tagging).
+  * Access to the Sonatype OSS maven repository as a Quattor member.
+
+If this is the case, then use the normal maven procedures for preparing
+and performing a release:
+```
+$ mvn clean
+$ mvn release:prepare
+$ mvn release:perform
+```
+
 License
 -------
 

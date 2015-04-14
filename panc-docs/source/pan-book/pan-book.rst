@@ -1945,7 +1945,7 @@ arguments is even and are all numbers::
         error('number of arguments must be even');
       };
 
-      foreach (k, v, ARGV) {
+      foreach (k; v; ARGV) {
         if (! is_number(v)) {
           error('non-numeric argument found');
         };

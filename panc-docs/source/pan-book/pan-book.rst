@@ -99,7 +99,7 @@ Java Virtual Machine.
 To use the compiler from the command line, you must make it accessible
 from the path.
 
-::
+.. code-block:: sh
 
     $ export PANC_HOME=/panc/location
     $ export PATH=$PANC_HOME/bin:$PATH
@@ -113,7 +113,9 @@ Validating the Installation
 ---------------------------
 
 Once you have installed the compiler, make sure that it is working
-correctly by using the command::
+correctly by using the command
+
+.. code-block:: sh
 
     $ panc --help
 
@@ -124,7 +126,9 @@ Invoking the Pan Compiler
 -------------------------
 
 Now create a file (called a "template") named ``hello_world.pan`` that
-contains the following::
+contains the following
+
+::
 
     object template hello_world;
     '/message' = 'Hello World!';
@@ -132,7 +136,7 @@ contains the following::
 Compile this template into the default XML representation and look at
 the output.
 
-::
+.. code-block:: sh
 
     $ panc hello_world.pan
 
@@ -154,7 +158,7 @@ The pan compiler can generate output in three additional formats: json,
 text, and dot. The following shows the output for the json format that
 was written to the ``hello_world.json`` file.
 
-::
+.. code-block:: sh
 
     $ panc --formats json hello_world.pan
 
@@ -167,7 +171,7 @@ In this book, the most convenient representation is the text format.
 This provides a clean representation of the configuration tree in plain
 text.
 
-::
+.. code-block:: sh
 
     $ panc --formats text hello_world.pan
 
@@ -180,7 +184,7 @@ information as the other formats, but is easier to read.
 
 The last style is the "dot" format.
 
-::
+.. code-block:: sh
 
     $ panc --formats dot hello_world.pan
 
@@ -298,14 +302,14 @@ This is part of the cluster controlled by the server
 
 These templates can be compiled with the following command:
 
-::
+.. code-block:: pan
 
     $ panc --formats text *.pan
 
 which then produces the files ``server.example.org.txt`` and
 ``worker01.example.org.txt``:
 
-::
+.. code-block:: none
 
     +-profile
       +-batch
@@ -321,7 +325,7 @@ which then produces the files ``server.example.org.txt`` and
             +-default
               $ maxCpuHours : (long) '1'
 
-::
+.. code-block:: none
 
     +-profile
       +-batch
@@ -399,7 +403,7 @@ listing the services included on the machine.
 
 The command to compile these object templates is slightly different:
 
-::
+.. code-block:: sh
 
     $ panc --formats text profiles/*.pan
 
@@ -2715,7 +2719,9 @@ the ``--base-dir`` option if this is not the current directory.
 ``--base-dir`` option must be adjusted so that the template file paths
 specified match the template namespaces, as for compiling the templates.
 
-Below is an example::
+Below is an example
+
+.. code-block:: sh
 
     $ panc-annotations \
               --output-dir=annotations \
@@ -2728,7 +2734,7 @@ indentation added for clarity) in the file
 template file ``example.pan`` located in subdirectory
 ``templates/mysite`` of current directory.
 
-::
+.. code-block:: xml
 
     <?xml version="1.0" encoding="UTF-8"?>
     <template xmlns="http://quattor.org/pan/annotations"
@@ -3152,7 +3158,9 @@ the section Running the Compiler for how to specify the VM memory.
 
 If the compilation appears to be slow, check that the compiler is not
 thrashing because of a limited amount of memory. With the verbose option
-set, successful compilations will produce a summary like::
+set, successful compilations will produce a summary like
+
+.. code-block:: none
 
     2 templates
     2/2 compiled, 2/2 xml, 0/0 dep

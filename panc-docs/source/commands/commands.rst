@@ -232,7 +232,7 @@ then the following R script will do a simple analysis of the results.
 This will provide statistical results on the various build phases and
 show histograms of the distributions.
 
-::
+.. code-block:: r
 
     # R-script for simple analysis of build report
     bstats <- read.table("build.txt")
@@ -317,7 +317,7 @@ information. This graph shows a vertical line for each compilation,
 where the horizontal location is related to the start time and the
 height of the line the duration.
 
-::
+.. code-block:: r
 
     # R-script for simple analysis of compile report
     cstats <- read.table("compile.txt")
@@ -363,7 +363,7 @@ If the output from the command is written to the file ``memory.txt``,
 then the following R script will create a plot of the memory utilization
 as a function of time.
 
-::
+.. code-block:: r
 
     # R-script for simple analysis of memory report
     mstats <- read.table("memory.txt")
@@ -447,7 +447,7 @@ If the output from the command is written to the file ``thread.txt``,
 then the following R script will create a plot showing the duration of
 the activity on each thread.
 
-::
+.. code-block:: r
 
     # R-script for simple analysis of thread report
     tstats <- read.table("threads.txt")

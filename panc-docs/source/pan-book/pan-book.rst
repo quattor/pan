@@ -139,8 +139,12 @@ the output.
 .. code-block:: sh
 
     $ panc hello_world.pan
-
     $ cat hello_world.xml
+
+Should give the following:
+
+.. code-block:: xml
+
     <?xml version="1.0" encoding="UTF-8"?>
     <nlist format="pan" name="profile">
         <string name="message">Hello World!</string>
@@ -161,8 +165,12 @@ was written to the ``hello_world.json`` file.
 .. code-block:: sh
 
     $ panc --formats json hello_world.pan
-
     $ cat hello_world.json
+
+Should give the following:
+
+.. code-block:: js
+
     {
       "message": "Hello World!"
     }
@@ -174,8 +182,12 @@ text.
 .. code-block:: sh
 
     $ panc --formats text hello_world.pan
-
     $ cat hello_world.txt
+
+Should give the following:
+
+.. code-block:: none
+
     +-profile
       $ message : (string) 'hello'
 
@@ -187,8 +199,12 @@ The last style is the "dot" format.
 .. code-block:: sh
 
     $ panc --formats dot hello_world.pan
-
     $ cat hello_world.dot
+
+Should give the following:
+
+.. code-block:: none
+
     digraph "profile" {
     bgcolor = beige
     node [ color = black, shape = box, fontname=Helvetica ]

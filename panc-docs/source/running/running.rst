@@ -16,7 +16,9 @@ If the Java compiler class is being directly invoked via the ``java``
 command, then the option ``-Xmx`` must be used to change the VM memory
 available (for any reasonably sized compilation). For example to start
 ``java`` with 1024 MB of memory, the following command and options can
-be used::
+be used
+
+.. code-block:: sh
 
     java -Xmx1024M org.quattor.pan.Compiler [options...]
 
@@ -99,9 +101,13 @@ build process by doing the following::
 
 Again, this should end with a "BUILD SUCCESS". It will have generated
 the machine profile in the ``target/profiles/node.example.org.xml``
-file::
+file
+
+.. code-block:: sh
 
     $ cat target/profiles/node.example.org.xml
+
+.. code-block:: xml
 
     <?xml version="1.0" encoding="UTF-8"?>
     <nlist format="pan" name="profile">
@@ -121,7 +127,9 @@ file::
 
 The ``pom.xml`` file in the skeleton provides a good example on how to
 run the plug-in. You can also obtain more detailed help via the maven
-help system::
+help system
+
+.. code-block:: sh
 
     $ mvn help:describe -Dplugin=panc -Ddetail=true
 
@@ -180,7 +188,9 @@ Ant
 Using an ant task to invoke the compiler allows the compiler to be
 easily integrated with other machine management tasks. To use the pan
 compiler within an ant build file, the pan compiler tasks must be
-defined. This can be done with a task definition element like::
+defined. This can be done with a task definition element like
+
+.. code-block:: xml
 
     <target name="define.panc.task">
 
@@ -211,7 +221,9 @@ There are four tasks defined:
 ``panc-version``
     Displays the pan compiler version.
 
-Running the compiler can be done with tasks like the following::
+Running the compiler can be done with tasks like the following
+
+.. code-block:: xml
 
     <target name="compile.cluster.profiles">
 
@@ -220,23 +232,22 @@ Running the compiler can be done with tasks like the following::
         <dirset dir="${basedir}" includes="**/*" />
       </path>
 
-      <panc-check-syntax ...options... >
+      <panc-check-syntax OPTION="VALUE" >
         <fileset dir="${basedir}/profiles" casesensitive="yes" includes="*.pan" />
       </panc-check-syntax>
 
-      <panc ...options... >
+      <panc OPTION="VALUE" >
         <path refid="pan.loadpath" />
         <fileset dir="${basedir}/profiles" casesensitive="yes" includes="*.pan" />
       </panc>
 
-      <panc-annotations ...options... >
+      <panc-annotations OPTION="VALUE" >
         <fileset dir="${basedir}/profiles" casesensitive="yes" includes="*.pan" />
       </panc-annotations>
 
     </target>
 
-
-where ...options... is replaced with valid options (attributes) for the
+where ``OPTION="VALUE"`` is replaced with valid options (attributes) for the
 pan compiler ant tasks. The following tables describe all of the
 attributes supported by the these tasks (task ``panc-version`` accepts
 no option).
@@ -332,13 +343,13 @@ Setting JVM Parameters
 If the compiler is invoked via the pan compiler ant task, then the
 memory option can be added with the ANT\_OPTS environmental variable.
 
-::
+.. code-block:: sh
 
     export ="-Xmx1024M"
 
 or
 
-::
+.. code-block:: sh
 
     setenv  "-Xmx1024M"
 
@@ -351,14 +362,16 @@ Invocation Inside Eclipse
 
 If you use the default VM to run the pan compiler ant task, then you
 will need to increase the memory when starting eclipse. From the command
-line you can add the VM arguments like::
+line you can add the VM arguments like
+
+.. code-block:: sh
 
     eclipse -vmargs -Xmx<memory size>
 
 You may also need to increase the memory in the "permanent" generation
 for a Sun VM with
 
-::
+.. code-block:: sh
 
     eclipse -vmargs -XX:MaxPermSize=<memory size>
 

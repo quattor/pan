@@ -19,7 +19,9 @@ Source
 ======
 
 The source for the pan compiler is managed through a git repository on
-GitHub. The software can be checked out with the following command::
+GitHub. The software can be checked out with the following command
+
+.. code-block:: sh
 
     git clone git://github.com/quattor/pan.git
 
@@ -29,7 +31,9 @@ compiler can be provided via GitHub pull requests.
 The master branch is the main development branch. Although an effort is
 made to ensure that this code functions correctly, there may be times
 when it is broken. Released versions can be found through the named
-branches and tags. Use the git commands::
+branches and tags. Use the git commands
+
+.. code-block:: sh
 
     git branch -r
     git tag -l
@@ -48,18 +52,22 @@ Oracle. Maven can be obtained from the Apache Foundation web site.
 
 The build of the compiler is done via Apache Maven that also depends on
 Java. For Maven to find the correct version of the compiler, the
-environment variable JAVA\_HOME should be defined::
+environment variable JAVA\_HOME should be defined
+
+.. code-block:: sh
 
     export JAVA_HOME=<path to java area>
 
 or
 
-::
+.. code-block:: sh
 
     setenv JAVA_HOME <path to java area>
 
 depending on the type of shell that you use. After that, the entire
-build can be accomplished with::
+build can be accomplished with
+
+.. code-block:: sh
 
     mvn clean package
 

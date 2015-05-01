@@ -64,7 +64,7 @@ public class StatementTestUtils {
 		File tmpfile = getTmpdir();
 
 		String fullName = "statement_test_" + name;
-		File tplfile = new File(tmpfile, fullName + ".tpl");
+		File tplfile = new File(tmpfile, fullName + ".pan");
 
 		writeStringToFile("object template " + fullName + ";\n" + statement
 				+ "\n", tplfile);
@@ -108,7 +108,7 @@ public class StatementTestUtils {
 		File tmpfile = getTmpdir();
 
 		String fullName = "statement_test_" + name;
-		File tplfile = new File(tmpfile, fullName + ".tpl");
+		File tplfile = new File(tmpfile, fullName + ".pan");
 
 		writeStringToFile("object template " + fullName + ";\n" + statement
 				+ "\n", tplfile);
@@ -157,8 +157,8 @@ public class StatementTestUtils {
 		File tmpfile = getTmpdir();
 
 		String fullName = "statement_test_" + name;
-		File tplfile = new File(tmpfile, fullName + ".tpl");
-		File incfile = new File(tmpfile, fullName + "_include.tpl");
+		File tplfile = new File(tmpfile, fullName + ".pan");
+		File incfile = new File(tmpfile, fullName + "_include.pan");
 
 		writeStringToFile("object template " + fullName + ";\n" + statement1
 				+ "\n", tplfile);

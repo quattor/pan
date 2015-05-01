@@ -84,7 +84,7 @@ public class CompileTask extends Task<CompileResult> {
             assert (tplfile != null);
             assert (tplfile.isAbsolute());
             // FIXME: Should include *.pan as well.
-            assert (tplfile.getName().endsWith(".tpl"));
+            assert (tplfile.getName().endsWith(".pan"));
 
             this.tplfile = tplfile;
             this.postCompileProcessor = postCompileProcessor;

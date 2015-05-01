@@ -34,22 +34,22 @@ public class SourceFileTest {
 
     @Test
     public void validNullPath() {
-        new SourceFile("valid.tpl", true, null);
+        new SourceFile("valid.pan", true, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void invalidSourceFileName1() {
-        new SourceFile("/illegal-name.tpl", true, null);
+        new SourceFile("/illegal-name.pan", true, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void invalidSourceFileName2() {
-        new SourceFile("path/.illegal-name.tpl", true, null);
+        new SourceFile("path/.illegal-name.pan", true, null);
     }
 
     @Test(expected = CompilerError.class)
     public void invalidRelativePath() {
-        new SourceFile("valid.tpl", true, new File("home/valid.tpl"));
+        new SourceFile("valid.pan", true, new File("home/valid.pan"));
     }
 
     // Force an absolute file to be generated because on windows just a leading
@@ -57,9 +57,9 @@ public class SourceFileTest {
     @Test
     public void matchedNameAndSource() {
         new SourceFile("a/b/name", true,
-                new File("/home/a/b/name.tpl").getAbsoluteFile());
-        new SourceFile("a/b/name.tpl", false,
-                new File("/home/a/b/name.tpl").getAbsoluteFile());
+                new File("/home/a/b/name.pan").getAbsoluteFile());
+        new SourceFile("a/b/name.pan", false,
+                new File("/home/a/b/name.pan").getAbsoluteFile());
         new SourceFile("a/b/name.txt", false,
                 new File("/home/a/b/name.txt").getAbsoluteFile());
     }
@@ -67,13 +67,13 @@ public class SourceFileTest {
     @Test(expected = IllegalArgumentException.class)
     public void mismatchedNameAndSource1() {
         new SourceFile("a/b/name", true,
-                new File("/home/a/c/name.tpl").getAbsoluteFile());
+                new File("/home/a/c/name.pan").getAbsoluteFile());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void mismatchedNameAndSource2() {
-        new SourceFile("a/c/name.tpl", false,
-                new File("/home/a/b/name.tpl").getAbsoluteFile());
+        new SourceFile("a/c/name.pan", false,
+                new File("/home/a/b/name.pan").getAbsoluteFile());
     }
 
 }

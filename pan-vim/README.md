@@ -10,7 +10,8 @@ and download the following file from the quattor website:
 https://quattor.svn.sourceforge.net/svnroot/quattor/trunk/util/vim/ftdetect/pan.vim
 and copy it to the ${HOME}/.vim/ftdetect directory.
 
-=== Syntax Highlighting ===
+Syntax Highlighting
+-------------------
 
 For highlighting PAN keywords, create the syntax directory with the following
 command:
@@ -20,7 +21,8 @@ Then download the following file from the quattor website:
 https://quattor.svn.sourceforge.net/svnroot/quattor/trunk/util/vim/syntax/pan.vim
 and copy it to the ${HOME}/.vim/syntax directory.
 
-=== PAN Code Completion ===
+PAN Code Completion
+-------------------
 
 For enabling code auto-completion, add the following line in your .vimrc file:
 filetype plugin on

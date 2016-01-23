@@ -63,17 +63,14 @@ Usage: panc-annotations [options] files
      :parse-fn parse-directory]
     [nil "--java-opts OPTS" "options for JVM"]
     ["-q" "--quiet" "do not print statistics"
-     :default false
-     :flag true]
+     :default false]
     ["-v" "--verbose" "verbosity level; may be specified multiple times to increase value"
      :default 0
      :assoc-fn (fn [m k _] (update-in m [k] inc))]
     [nil "--version" "show pan compiler version" 
-     :default false
-     :flag true]
+     :default false]
     ["-h" "--help" "print help message"
-     :default false
-     :flag true]])
+     :default false]])
 
 (defn usage
   [options-summary]

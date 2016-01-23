@@ -97,9 +97,9 @@ Please file a bug report including the stack trace.
    [nil "--logging LOG_TYPES" "set logging types"]
    [nil "--log-file FILE" "specify log file"]
    [nil "--warnings FLAG" "off, on, fatal" :default "on"]
-   ["-v" "--verbose" "show statistics and progress" :default false :flag true]
-   [nil "--version" "show pan compiler version" :default false :flag true]
-   ["-h" "--help" "print command help" :default false :flag true]])
+   ["-v" "--verbose" "show statistics and progress" :default false]
+   [nil "--version" "show pan compiler version" :default false]
+   ["-h" "--help" "print command help" :default false]])
 
 (defn banner-and-exit [banner]
   (println (str "\npanc [options] [pan source files...]\n\n" banner))

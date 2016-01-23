@@ -136,6 +136,7 @@ abstract public class PanTxtFormatter extends AbstractFormatter {
 	 * 
 	 * @param n
 	 *            number of tabulations
+         * @return string with the given number of 'spaced' tabs
 	 */
 	public String tabMaker(int n) {
 		StringBuilder buf = new StringBuilder("");

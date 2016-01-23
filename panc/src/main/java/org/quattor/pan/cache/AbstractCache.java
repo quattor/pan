@@ -159,9 +159,9 @@ public abstract class AbstractCache<T extends TaskResult> {
 	 *            name
 	 * @return T the result associated with the given key
 	 * 
-	 * @throws RuntimeException
+	 * @throws RuntimeException if there are any exceptions during evaluation
 	 * 
-	 * @throws ValidationException
+	 * @throws ValidationException if there are any exceptions during validation
 	 * 
 	 */
 	public T waitForResult(String key) throws RuntimeException,

@@ -49,7 +49,7 @@ abstract public class Property extends PersistentElement {
 	 * property. The value should be a basic, immutable java type like Boolean,
 	 * Long, or Double.
 	 * 
-	 * @param value
+	 * @param value value to be used for the property
 	 */
 	protected Property(Object value) {
 		assert (value != null);

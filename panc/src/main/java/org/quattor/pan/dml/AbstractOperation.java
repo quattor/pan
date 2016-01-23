@@ -176,6 +176,7 @@ abstract public class AbstractOperation extends AFn implements Operation {
 
 	/**
 	 * Allow a copy of the raw operations to be retrieved.
+         * @return a copy of the list of given operations
 	 */
 	public Operation[] getOperations() {
 		return ops.clone();

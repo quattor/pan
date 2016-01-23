@@ -13,7 +13,7 @@ public class XMLFormatterUtils {
 	 * href="http://www.w3.org/TR/xml/0sec-common-syn">Common Syntactic
 	 * Constructs section</a> of the XML specification.
 	 *
-	 * @param codepoint
+	 * @param codepoint int value of the code point to check
 	 *
 	 * @return true if the character may appear as the first letter of an XML
 	 *         name; false otherwise
@@ -66,7 +66,7 @@ public class XMLFormatterUtils {
 	 * href="http://www.w3.org/TR/xml/0sec-common-syn">Common Syntactic
 	 * Constructs section</a> of the XML specification.
 	 *
-	 * @param codepoint
+	 * @param codepoint int value of the code point to check
 	 *
 	 * @return true if the character may appear as a non-starting letter of an
 	 *         XML name; false otherwise
@@ -98,7 +98,7 @@ public class XMLFormatterUtils {
 	 * The allowed characters are 0x9, 0xA, 0xD, 0x20-0xD7FF, 0xE000-0xFFFD, and
 	 * 0x100000-0x10FFFF; all other characters may not appear in an XML file.
 	 *
-	 * @param codepoint
+	 * @param codepoint int value of the code point to check
 	 *
 	 * @return true if the character may appear in a valid XML file; false
 	 *         otherwise
@@ -209,7 +209,7 @@ public class XMLFormatterUtils {
 	 *
 	 * @return valid XML name from String
 	 *
-	 * @throws NullPointerException
+	 * @throws NullPointerException if the argument is null
 	 */
 	public static String encodeAsXMLName(String s) {
 

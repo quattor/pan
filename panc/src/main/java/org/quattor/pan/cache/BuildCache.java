@@ -93,7 +93,7 @@ public class BuildCache extends AbstractCache<BuildResult> {
 	 * @param dependencyName
 	 *            name of the object objectName depends on
 	 * 
-	 * @throws EvaluationException
+	 * @throws EvaluationException when an error occurs during the evaluation of the dependency
 	 */
 	synchronized public void setDependency(String objectName,
 			String dependencyName) throws EvaluationException {

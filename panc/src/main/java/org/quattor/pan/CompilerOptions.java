@@ -146,9 +146,9 @@ public class CompilerOptions {
      * @param debugNsExclude
      *            patterns to use to turn off debugging for matching templates
      * @param maxIteration
-     *            maximum number of iterations (<=0 unlimited)
+     *            maximum number of iterations (non-positive value is unlimited)
      * @param maxRecursion
-     *            maximum call depth (<=0 unlimited)
+     *            maximum call depth (non-positive value is unlimited)
      * @param formatters
      *            formats for machine configuration files
      * @param outputDirectory

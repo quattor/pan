@@ -70,7 +70,7 @@ public class FormatterUtils {
 	/**
 	 * Creates parent directories of the given file. The file must be absolute.
 	 *
-	 * @param file
+	 * @param file absolute file to use for creating parent directories
 	 *
 	 * @throws SystemException
 	 *             if directory or directories cannot be created
@@ -94,8 +94,8 @@ public class FormatterUtils {
 	 * Sets the modification time of the given file to the given timestamp.
 	 * Errors are silently ignored.
 	 *
-	 * @param absolutePath
-	 * @param timestamp
+	 * @param absolutePath full path to the file used for the timestamp
+	 * @param timestamp unix timestamp to use for the last modified value
 	 */
 	public static void setOutputTimestamp(File absolutePath, long timestamp) {
 		if (!absolutePath.setLastModified(timestamp)) {

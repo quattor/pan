@@ -92,6 +92,7 @@ public class SetValue extends AbstractOperation {
 	 * 
 	 * @param name
 	 *            variable name to check
+         * @throws SyntaxException when syntax error is detected
 	 */
 	protected void validName(String name) throws SyntaxException {
 		for (String varName : automaticVariables) {

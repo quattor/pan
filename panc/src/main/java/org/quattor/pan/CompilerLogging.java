@@ -179,7 +179,7 @@ public class CompilerLogging {
 	 * logging parameters are global to the JVM. Interference is possible
 	 * between multiple threads.
 	 *
-	 * @param logfile
+	 * @param logfile File indicating the log file to use
 	 */
 	public synchronized static void setLogFile(File logfile) {
 

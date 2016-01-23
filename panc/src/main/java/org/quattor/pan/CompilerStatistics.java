@@ -162,6 +162,7 @@ public class CompilerStatistics {
 	/**
 	 * Generates a terse String representation of the statistics.
 	 * 
+         * @param totalErrors total number of errors that have occurred
 	 * @return statistics as a String value
 	 */
 	public String getResults(long totalErrors) {

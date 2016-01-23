@@ -38,7 +38,7 @@ public class CompilerError extends Error {
 	 * should only be used for problems arising from the use of the message
 	 * resource bundles. All others should use the static create method.
 	 * 
-	 * @param message
+	 * @param message error message to include
 	 */
 	public CompilerError(String message) {
 		super(message);
@@ -49,8 +49,8 @@ public class CompilerError extends Error {
 	 * messages related to the resource bundle itself, this method should be
 	 * used.
 	 * 
-	 * @param msgkey
-	 * @param args
+	 * @param msgkey key for the message to be used
+	 * @param args values to be used in formatting the message
 	 * @return new localized instance of CompilerError
 	 */
 	public static CompilerError create(String msgkey, Object... args) {

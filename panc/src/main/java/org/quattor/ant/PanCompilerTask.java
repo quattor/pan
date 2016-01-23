@@ -334,7 +334,7 @@ public class PanCompilerTask extends Task {
     /**
      * Set the regular expression used to include pan namespaces for debugging.
      *
-     * @param pattern
+     * @param pattern java regular expression for included namespaces
      */
     public void setDebugNsInclude(String pattern) {
         debugNsInclude = Pattern.compile(pattern);
@@ -343,7 +343,7 @@ public class PanCompilerTask extends Task {
     /**
      * Set the regular expression used to exclude pan namespaces for debugging.
      *
-     * @param pattern
+     * @param pattern java regular expression for excluded namespaces
      */
     public void setDebugNsExclude(String pattern) {
         debugNsExclude = Pattern.compile(pattern);
@@ -353,7 +353,7 @@ public class PanCompilerTask extends Task {
      * Provides a dict() with a data structure that will be used to initialize
      * all generated profiles.
      *
-     * @param initialData
+     * @param initialData string with initial pan dict to use for output configuration
      */
     public void setInitialData(String initialData) {
         this.initialData = initialData;
@@ -395,7 +395,7 @@ public class PanCompilerTask extends Task {
     /**
      * Sets the default maximum number of recursions.
      *
-     * @param maxRecursion
+     * @param maxRecursion maximum depth of recursion
      */
     public void setMaxRecursion(int maxRecursion) {
         this.maxRecursion = maxRecursion;
@@ -426,7 +426,7 @@ public class PanCompilerTask extends Task {
      * Determines whether deprecation warnings are emitted and if so, whether to
      * treat them as fatal errors.
      *
-     * @param warnings
+     * @param warnings string value of CompilerOptions.DeprecationWarnings
      */
     public void setWarnings(String warnings) {
         try {
@@ -442,7 +442,7 @@ public class PanCompilerTask extends Task {
      * output. This gives the total number of files which will be processed and
      * statistics coming from the compilation.
      *
-     * @param verbose
+     * @param verbose if true, provide verbose output
      */
     public void setVerbose(boolean verbose) {
         this.verbose = verbose;
@@ -453,7 +453,7 @@ public class PanCompilerTask extends Task {
      * machine profiles which are already up-to-date. Setting this flag allows
      * the dependency checking to minimize the number of files which are built.
      *
-     * @param checkDependencies
+     * @param checkDependencies if true, check that dependencies are current
      */
     public void setCheckDependencies(boolean checkDependencies) {
         this.checkDependencies = checkDependencies;

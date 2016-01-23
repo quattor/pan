@@ -43,7 +43,10 @@ public class ParseException extends RuntimeException {
 	 * true to indicate that this constructor was used to create this object.
 	 * This constructor calls its super class with the empty string to force the
 	 * "toString" method of parent class "Throwable" to print the error message
-	 * in the form: ParseException: <result of getMessage>
+	 * in the form: ParseException: 'result of getMessage'
+         * @param currentTokenVal current token being parsed
+         * @param expectedTokenSequencesVal expected valid tokens
+         * @param tokenImageVal value of the token being parsed
 	 */
 	public ParseException(Token currentTokenVal,
 			int[][] expectedTokenSequencesVal, String[] tokenImageVal) {
@@ -186,6 +189,8 @@ public class ParseException extends RuntimeException {
 	/**
 	 * Used to convert raw characters to their escaped version when these raw
 	 * version cannot be used as part of an ASCII string literal.
+         * @param str String value to escape
+         * @return escaped String value
 	 */
 	protected String add_escapes(String str) {
 		StringBuilder retval = new StringBuilder();

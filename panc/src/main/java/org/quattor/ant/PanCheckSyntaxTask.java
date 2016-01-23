@@ -101,7 +101,7 @@ public class PanCheckSyntaxTask extends Task {
      * output. This gives the total number of files which will be processed and
      * statistics coming from the compilation.
      * 
-     * @param verbose
+     * @param verbose if true, provide perbose output
      */
     public void setVerbose(boolean verbose) {
         this.verbose = verbose;
@@ -111,7 +111,7 @@ public class PanCheckSyntaxTask extends Task {
      * Determines whether deprecation warnings are emitted and if so, whether to
      * treat them as fatal errors.
      * 
-     * @param warnings
+     * @param warnings string value of CompilerOptions.DeprecationWarnings
      */
     public void setWarnings(String warnings) {
         try {

@@ -68,6 +68,7 @@ final public class Add extends AbstractOperation {
 	 *            arguments for this operation
 	 * 
 	 * @return optimized Operation for this Add expression
+         * @throws SyntaxException when a syntax error is detected
 	 */
 	public static Operation newOperation(SourceRange sourceRange,
 			Operation... ops) throws SyntaxException {

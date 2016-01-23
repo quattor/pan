@@ -78,6 +78,7 @@ public interface Element extends Operation {
      * This method indicates if the given Element is protected. A protected element may not be written to and concerns
      * just resources. The default implementation just returns false. This should be sufficient except for protected
      * resources.
+     * @return true if Element is protected
      */
     public boolean isProtected();
 
@@ -109,6 +110,7 @@ public interface Element extends Operation {
      * @param protect    flag to indicate that the return value should be a protected (if value is a resource)
      * @param lookupOnly indicates that only a lookup is required, return null if the element doesn't exist
      * @throws InvalidTermException thrown if an trying to dereference a list with a key or a hash with an index
+     * @return returns the referenced element
      */
     public Element rget(Term[] terms, int index, boolean protect, boolean lookupOnly) throws InvalidTermException;
 
@@ -120,6 +122,7 @@ public interface Element extends Operation {
      * @param terms list of terms to use for dereference
      * @param index the term to use in the given list of term
      * @return writable list
+     * @throws InvalidTermException when list contains an invalid Term
      */
     public ListResource rgetList(Term[] terms, int index) throws InvalidTermException;
 
@@ -127,6 +130,9 @@ public interface Element extends Operation {
      * Add the given child to this resource, creating intermediate resources as necessary. If this Element is not a
      * resource, then this will throw an InvalidTermException. The default implementation of this method throws such an
      * exception. This resource must be a writable resource, otherwise an exception will be thrown.
+     * @param terms list of terms to use for dereference
+     * @param index the term to use in the given list of term
+     * @param value the value to put into the resource
      *
      * @throws InvalidTermException thrown if an trying to dereference a list with a key or a hash with an index
      */

@@ -49,6 +49,7 @@ public class ASTOperation extends SimpleNode {
 
 	/**
 	 * Subclasses should call this method to set the Operation for this node.
+         * @param operationType the operation type to set 
 	 */
 	protected void setOperationType(OperationType operationType) {
 		this.operationType = operationType;
@@ -62,6 +63,7 @@ public class ASTOperation extends SimpleNode {
 	/**
 	 * Return the associated Operation. Subclasses should not need to override
 	 * this method.
+         * @return type of the enclosed Operation
 	 */
 	public OperationType getOperationType() {
 		return operationType;
@@ -69,6 +71,7 @@ public class ASTOperation extends SimpleNode {
 
 	/**
 	 * Subclasses should call this method to set the Operation for this node.
+         * @param operation Operation to put into instance
 	 */
 	protected void setOperation(Operation operation) {
 		this.operation = operation;
@@ -77,6 +80,7 @@ public class ASTOperation extends SimpleNode {
 	/**
 	 * Return the associated Operation. Subclasses should not need to override
 	 * this method.
+         * @return the enclosed Operation
 	 */
 	public Operation getOperation() {
 		return operation;

@@ -59,6 +59,7 @@ public class Token {
 	 * later on by the compiler or interpreter. This attribute value is often
 	 * different from the image. Any subclass of Token that actually wants to
 	 * return a non-null value can override this method as appropriate.
+         * @return value of the Token, default is null unless overridden
 	 */
 	public Object getValue() {
 		return null;
@@ -103,6 +104,9 @@ public class Token {
 	 * 
 	 * to the following switch statement. Then you can cast matchedToken
 	 * variable to the appropriate type and use sit in your lexical actions.
+         * @param ofKind type of token to create
+         * @param image value of the token
+         * @return created Token of the given type and value
 	 */
 	public static Token newToken(int ofKind, String image) {
 		switch (ofKind) {

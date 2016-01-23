@@ -83,7 +83,7 @@ public class PanAnnotationsTask extends Task {
      * output. This gives the total number of files which will be processed and
      * statistics coming from the compilation.
      * 
-     * @param verbose
+     * @param verbose if true, provide verbose output
      */
     public void setVerbose(boolean verbose) {
         this.verbose = verbose;
@@ -91,7 +91,7 @@ public class PanAnnotationsTask extends Task {
     /**
      * Base directory for looking up template files to process
      * 
-     * @param baseDir
+     * @param baseDir base directory
      */
     public void setBaseDir(String baseDir) {
         this.baseDir = new File(baseDir);
@@ -101,7 +101,7 @@ public class PanAnnotationsTask extends Task {
      * Actual directory will be built by appending the template path relative
      * to baseDir
      * 
-     * @param outputDir
+     * @param outputDir output directory
      */
     public void setOutputDir(String outputDir) {
         this.outputDir = new File(outputDir);

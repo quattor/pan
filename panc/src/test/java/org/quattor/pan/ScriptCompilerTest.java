@@ -93,12 +93,12 @@ public class ScriptCompilerTest {
 
 				// Set the root directory and name of the template. In the case
 				// of a directory, the main test template is expected to have
-				// the same name as the directory with ".tpl" appended.
+				// the same name as the directory with ".pan" appended.
 				if (t.isFile()) {
 					tpl = t;
 					rootdir = t.getParentFile();
 				} else if (t.isDirectory()) {
-					tpl = new File(t, t.getName() + ".tpl");
+					tpl = new File(t, t.getName() + ".pan");
 					rootdir = t;
 				}
 

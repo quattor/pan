@@ -162,7 +162,7 @@ public class FileSystemSourceRepositoryTest {
 
         for (int i = 0; i <= SourceDirectory.getLimit(); i++) {
 
-            String name = Integer.toBinaryString(i) + ".tpl";
+            String name = Integer.toBinaryString(i) + ".pan";
 
             SourceFile source = repository.retrieveTxtSource(name);
             SourceDirectory sd = SourceDirectory.valueFromMask(i);
@@ -193,7 +193,7 @@ public class FileSystemSourceRepositoryTest {
 
                 if (sd.isPresent(i)) {
                     File directory = sd.asDirectory(tmpdir);
-                    String fname = Integer.toBinaryString(i) + ".tpl";
+                    String fname = Integer.toBinaryString(i) + ".pan";
 
                     touch(directory, fname);
                 }
@@ -211,7 +211,7 @@ public class FileSystemSourceRepositoryTest {
                     File directory = sd2.asDirectory(tmpdir);
 
                     String tname = "D" + Integer.toBinaryString(sd1.ordinal())
-                            + ".tpl";
+                            + ".pan";
                     touch(directory, tname);
 
                     if (sd1.ordinal() == sd2.ordinal()) {
@@ -220,7 +220,7 @@ public class FileSystemSourceRepositoryTest {
                                 + ".del";
                         touch(directory, dname);
                         dname = "D" + Integer.toBinaryString(sd1.ordinal())
-                                + ".tpl.del";
+                                + ".pan.del";
                         touch(directory, dname);
                     }
                 }

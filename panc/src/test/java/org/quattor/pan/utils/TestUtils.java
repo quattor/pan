@@ -410,7 +410,7 @@ public class TestUtils {
 			for (File f : parent.listFiles()) {
 				if (!f.isHidden()) {
 					if (f.isDirectory()
-							|| (f.isFile() && f.getName().endsWith(".tpl"))) {
+							|| (f.isFile() && f.getName().endsWith(".pan"))) {
 						tests.add(f);
 					}
 				}

@@ -11,7 +11,7 @@ write_file('test-cond-assign', "'/result' ?= 1", $size);
 sub write_file {
     my ($tpl, $statement, $n, $obj) = @_;
     $obj ||= 'object';
-    open TPL, '>', "$tpl.tpl";
+    open TPL, '>', "$tpl.pan";
     print TPL "$obj template $tpl;\n";
     for (my $i=0; $i<$n; $i++) {
 	print TPL "$statement;\n";

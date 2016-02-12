@@ -1,0 +1,287 @@
+#!/usr/bin/env python
+# coding=utf8
+
+import re
+import argparse
+from glob import glob
+from colorama import Fore, Style, init as colorama_init
+from sys import stdout, exit as sys_exit
+from inspect import getmembers, ismethod
+from prettytable import PrettyTable
+
+RS_COMMENT = r'(?:#.*|@{.*})$'
+
+RE_STRING = re.compile(r'''('.*?'|".*?"(?<!\\"))''')
+
+RE_FIRST_LINE = re.compile(r'^(?:(?:declaration|unique|structure|object) )?template (?:(?:[\w-]+/)+)?[\w-]+;$')
+RE_COMMENT_LINE = re.compile(r'^\s*' + RS_COMMENT)
+RE_TRAILING_COMMENT = re.compile(r'\s*' + RS_COMMENT)
+RE_ANNOTATION = re.compile(r'@{(?:.|\n)*?}')
+
+# Simple regular-expression based checks that will be performed against all non-ignored lines
+# Every pattern must provide a single capturing group named "error"
+LINE_PATTERNS = {
+    "Indentation should be a multiple of four spaces" : re.compile(r'^(?!(    )*(\S|$))(?P<error>\s*)'),
+    "Spaces should be used instead of tabs" : re.compile(r'(?P<error>\t+)'),
+    "Trailing whitespace" : re.compile(r'(?P<error>\s+$)'),
+    "Use dict() instead of nlist()" : re.compile(r'(?P<error>nlist)'),
+    "Include statements no longer need curly braces" : re.compile(r'''include\s+(?P<error>{.+})'''),
+    "Line is longer than 159 characters" : re.compile(r'''^.{0,159}(?P<error>.*?)$'''),
+}
+
+DEBUG = False
+
+class LineChecks:
+    """More complex single line checks that require some logic to implement their checks"""
+
+    RE_OPERATOR = re.compile(r'(.)([>=<!?]=|[+*=/-])(.)')
+
+    def whitespace_around_operators(self, line, string_ranges):
+        """Check a line of text to ensure that there is whitespace before and after all operators"""
+        operators = self.RE_OPERATOR.finditer(line)
+
+        passed = True
+        message = set()
+
+        diagnosis = ' ' * len(line)
+
+        for operator in operators:
+            char_before, _, char_after = operator.groups()
+            s, e = operator.span(2)
+
+            if not inside_string(s, e, string_ranges):
+                if char_before not in (' ', '\t'):
+                    passed = False
+                    message.add('before')
+                    s -= 1
+                if char_after not in (' ', '\t'):
+                    passed = False
+                    message.add('after')
+                    e += 1
+
+                if not passed:
+                    diagnosis = diagnosis[:s] + ('^' * (e-s)) + diagnosis[e:]
+
+        message = 'Missing space %s operator' % ' and '.join(message)
+        return (passed, diagnosis, message)
+
+
+def inside_string(i, j, string_ranges):
+    """Returns true if the range described by i and j is contained within a range in the list string_ranges"""
+    for s, e in string_ranges:
+        if i >= s and j <= e:
+            return True
+    return False
+
+
+def print_fileinfo(filename, line_number, message, vi=False):
+    """Returns a formatted string with filename, line_number and message"""
+    if vi:
+        return '%s +%d #%s' % (filename, line_number, message)
+    return '%s:%d: %s' % (filename, line_number, message)
+
+
+def print_line(text):
+    """Return a formatted line of text, replacing tabs with a visible character
+
+    If stdout is a tty, a unicode rightwards arrow (u2192) will be used for tabs, otherwise the rarely used negation character (¬).
+    This keeps the character counts in line with fixed-width columns while still making tabs distinguishable in output.
+    """
+    if stdout.isatty():
+        text = text.replace('\t', u'\u2192')
+    else:
+        text = text.replace('\t', '¬')
+
+    return Fore.GREEN + text.rstrip('\n') + Fore.RESET
+
+
+def merge_diagnoses(args):
+    """Merge lines of diagnosis produced by diagnose()"""
+    if args:
+        args = [a.rstrip() for a in args]
+        result = [' '] * max(map(len, args))
+
+        for text in args:
+            for i, c in enumerate(text):
+                if c != ' ':
+                    result[i] = c
+        return ''.join(result).rstrip()
+    return ''
+
+
+def print_diagnosis(diagnosis):
+    """Format a line of diagnosis produced by diagnose() and/or merge_diagnoses()"""
+    return Fore.BLUE + diagnosis + Fore.RESET
+
+
+def debug_line(line, line_number):
+    """Print debug information for a processed line of an input file"""
+    if DEBUG:
+        label = 'DEBUG: %04d %-12s |' % (line_number, '...')
+        print Style.DIM + Fore.CYAN + label + Style.RESET_ALL + line
+
+
+def debug_ignored_line(line, line_number):
+    """Print debug information for an ignored line of an input file"""
+    if DEBUG:
+        label = 'DEBUG: %04d %-12s |' % (line_number, 'Ignored')
+        print Fore.CYAN + Style.DIM + label + Fore.RESET + line + Style.RESET_ALL
+
+
+def debug_range(start, end, label, problem=False):
+    """Print debug information referring to a range of characters in a single line"""
+    if DEBUG:
+        label = ('DEBUG: ^^^^ %-12s |' % label)
+        diagnosis = diagnose(start, end)
+        color = Fore.CYAN
+        if problem:
+            color = Fore.RED
+        print Style.DIM + Fore.CYAN + label + Style.BRIGHT + color + diagnosis + Style.RESET_ALL
+
+
+def diagnose(start, end):
+    """Format a line of diagnosis markers from a range of character positions"""
+    return (' ' * start) + ('^' * (end - start))
+
+
+def print_report(filename, line_number, line, diagnosis, message, vi=False):
+    """Print a full report of all problems found with a single line of a processed file"""
+    print
+    print print_fileinfo(filename, line_number, message, vi=vi)
+    print print_line(line)
+    print print_diagnosis(diagnosis)
+
+
+def get_string_ranges(line):
+    """Find all ranges of strings within a single line of text"""
+    string_ranges = []
+    strings = RE_STRING.finditer(line)
+
+    if strings:
+        for string in strings:
+            s, e = string.span()
+            debug_range(s, e, 'String Range')
+            string_ranges.append((s, e))
+
+    return string_ranges
+
+
+def filestats_table(problem_stats):
+    """Return a formatted table of problem counts per file"""
+    t = PrettyTable(['Filename', 'Problems'])
+    t.align['Filename'] = 'l'
+    t.align['Problems'] = 'r'
+    for filename, problem_count in problem_stats.iteritems():
+        if problem_count > 0:
+            t.add_row([filename, problem_count])
+    t.sortby = 'Filename'
+    return t
+
+
+def main():
+    """Main function"""
+    parser = argparse.ArgumentParser(description='Linter for the pan language')
+    parser.add_argument('paths', metavar='PATH', type=str, nargs='+', help='Paths of files to check')
+    parser.add_argument('--ide', action='store_true', help='Output machine-readable results for use by IDEs')
+    parser.add_argument('--vi', action='store_true', help='Output line numbers in a vi option style')
+    parser.add_argument('--debug', action='store_true', help='Enable debug output')
+    parser.add_argument('--table', action='store_true', help='Display a table of per-file problem stats')
+    args = parser.parse_args()
+
+    # Only output colors sequences if the output is a terminal
+    colorama_init(strip = (not stdout.isatty()) or args.ide)
+    global DEBUG
+    DEBUG = args.debug and (not args.ide)
+
+    if args.paths:
+        problems_found = 0
+        line_checks = LineChecks()
+
+        reports = []
+        problem_stats = {}
+
+        for path in args.paths:
+            for filename in glob(path):
+                problem_stats[filename] = 0
+
+                f = open(filename)
+                line_number = 0
+                first_line = True
+
+                ignore_lines = []
+
+                # Identidy annotation blocks and exclude them from linting
+                # We will need special linting rules for these
+                raw_text = f.read()
+                annotations = RE_ANNOTATION.finditer(raw_text)
+                for annotation in annotations:
+                    start_char, end_char = annotation.span()
+                    start_line = raw_text[:start_char].count('\n') + 1
+                    end_line = start_line + raw_text[start_char:end_char].count('\n')
+                    for i in range(start_line, end_line + 1):
+                        ignore_lines.append(i)
+
+                f = open(filename)
+                for line in f:
+                    line_number += 1
+                    line = line.rstrip('\n')
+
+                    if line and line_number not in ignore_lines and not RE_COMMENT_LINE.match(line):
+                        debug_line(line, line_number)
+                        if first_line:
+                            first_line = False
+                            if not RE_FIRST_LINE.match(line):
+                                print_fileinfo(filename, line_number, 'First non-comment line must be the template type and name')
+                                print_line(line)
+                                print_diagnosis(diagnose(0, len(line)))
+
+                        else:
+                            messages = []
+                            diagnoses = []
+
+                            line = RE_TRAILING_COMMENT.sub('', line)
+
+                            string_ranges = get_string_ranges(line)
+
+                            for message, pattern in LINE_PATTERNS.iteritems():
+                                m = pattern.search(line)
+                                if m and m.group('error'):
+                                    start, end = m.span('error')
+                                    debug_range(start, end, 'Match', True)
+                                    if not inside_string(start, end, string_ranges):
+                                        diagnoses.append(diagnose(start, end))
+                                        messages.append(message)
+                                        problems_found += 1
+                                        problem_stats[filename] += 1
+
+                            for check_name, check_method in getmembers(line_checks, predicate=ismethod):
+                                passed, diagnosis, message = check_method(line, string_ranges)
+                                if not passed:
+                                    diagnoses.append(diagnosis)
+                                    messages.append(message)
+                                    problems_found += 1
+                                    problem_stats[filename] += 1
+
+                            if messages and diagnoses:
+                                reports.append([filename, line_number, line, merge_diagnoses(diagnoses), ', '.join(messages)])
+                    else:
+                        debug_ignored_line(line, line_number)
+
+
+        for report in reports:
+            print_report(*report, vi=args.vi)
+
+        if args.table:
+            print
+            print 'Problem count per file:'
+            print filestats_table(problem_stats)
+
+        print
+        print '%d problems found in total' % problems_found
+
+        if problems_found:
+            sys_exit(1)
+
+
+if __name__ == '__main__':
+    main()

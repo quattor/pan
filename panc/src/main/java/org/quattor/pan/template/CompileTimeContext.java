@@ -24,6 +24,7 @@ import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_VALIDATION_FUNCTION
 import static org.quattor.pan.utils.MessageUtils.MSG_VALIDATION_FAILED_BECAUSE_OF_EXCEPTION;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -301,7 +302,7 @@ public class CompileTimeContext implements Context {
 	 */
 	public Map<Path, List<FullType>> getBindings() {
 		// This should never be called.
-		return null;
+		return new HashMap<Path, List<FullType>>();
 	}
 
 	/**

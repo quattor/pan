@@ -23,6 +23,7 @@ package org.quattor.pan.output;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -66,7 +67,7 @@ public abstract class AbstractFormatter implements Formatter {
 	}
 
 	protected PrintWriter getPrintWriter(File file) throws Exception {
-        return new PrintWriter(new FileOutputStream(file));
+        return new PrintWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"));
 	}
 
 	protected abstract void write(FinalResult result, PrintWriter ps)

@@ -44,7 +44,7 @@ LINE_PATTERNS = {
     "Spaces should be used instead of tabs" : re.compile(r'(?P<error>\t+)'),
     "Trailing whitespace" : re.compile(r'(?P<error>\s+$)'),
     "Use dict() instead of nlist()" : re.compile(r'(?P<error>nlist)'),
-    "Include statements no longer need curly braces" : re.compile(r'''include\s+(?P<error>{.+})'''),
+    "Include statements no longer need curly braces" : re.compile(r'''include\s+(?P<error>{[^;]+})'''),
     "Line is longer than %s characters" % LINE_LENGTH_LIMIT : re.compile(r'''^.{0,%s}(?P<error>.*?)$''' % LINE_LENGTH_LIMIT),
 }
 

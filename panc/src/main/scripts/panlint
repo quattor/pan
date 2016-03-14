@@ -18,6 +18,8 @@ RE_COMMENT_LINE = re.compile(r'^\s*' + RS_COMMENT)
 RE_TRAILING_COMMENT = re.compile(r'\s*' + RS_COMMENT)
 RE_ANNOTATION = re.compile(r'@{(?:.|\n)*?}')
 
+LINE_LENGTH_LIMIT = 120
+
 # Simple regular-expression based checks that will be performed against all non-ignored lines
 # Every pattern must provide a single capturing group named "error"
 LINE_PATTERNS = {
@@ -26,7 +28,7 @@ LINE_PATTERNS = {
     "Trailing whitespace" : re.compile(r'(?P<error>\s+$)'),
     "Use dict() instead of nlist()" : re.compile(r'(?P<error>nlist)'),
     "Include statements no longer need curly braces" : re.compile(r'''include\s+(?P<error>{.+})'''),
-    "Line is longer than 159 characters" : re.compile(r'''^.{0,159}(?P<error>.*?)$'''),
+    "Line is longer than %s characters" % LINE_LENGTH_LIMIT : re.compile(r'''^.{0,%s}(?P<error>.*?)$''' % LINE_LENGTH_LIMIT),
 }
 
 DEBUG = False

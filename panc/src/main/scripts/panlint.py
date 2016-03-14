@@ -273,7 +273,7 @@ def main():
                                         problems_found += 1
                                         problem_stats[filename] += 1
 
-                            for check_name, check_method in getmembers(line_checks, predicate=ismethod):
+                            for _, check_method in getmembers(line_checks, predicate=ismethod):
                                 passed, diagnosis, message = check_method(line, string_ranges)
                                 if not passed:
                                     diagnoses.append(diagnosis)

@@ -39,7 +39,7 @@ LINE_LENGTH_LIMIT = 120
 # Simple regular-expression based checks that will be performed against all non-ignored lines
 # Every pattern must provide a single capturing group named "error"
 LINE_PATTERNS = {
-    "Indentation should be a multiple of four spaces" : re.compile(r'^(?!(    )*(\S|$))(?P<error>\s*)'),
+    "Indentation should be a multiple of four spaces" : re.compile(r'^(?!( {4})*(\S|$))(?P<error>\s*)'),
     "Spaces should be used instead of tabs" : re.compile(r'(?P<error>\t+)'),
     "Trailing whitespace" : re.compile(r'(?P<error>\s+$)'),
     "Use dict() instead of nlist()" : re.compile(r'(?P<error>nlist)'),

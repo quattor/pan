@@ -33,6 +33,7 @@ RE_FIRST_LINE = re.compile(r'^(?:(?:declaration|unique|structure|object) )?templ
 RE_COMMENT_LINE = re.compile(r'^\s*' + RS_COMMENT)
 RE_TRAILING_COMMENT = re.compile(r'\s*' + RS_COMMENT)
 RE_ANNOTATION = re.compile(r'@{(?:.|\n)*?}')
+RE_OPERATOR = re.compile(r'(.)([>=<!?]=|[+*=/-])(.)')
 
 LINE_LENGTH_LIMIT = 120
 
@@ -52,11 +53,9 @@ DEBUG = False
 class LineChecks:
     """More complex single line checks that require some logic to implement their checks"""
 
-    RE_OPERATOR = re.compile(r'(.)([>=<!?]=|[+*=/-])(.)')
-
     def whitespace_around_operators(self, line, string_ranges):
         """Check a line of text to ensure that there is whitespace before and after all operators"""
-        operators = self.RE_OPERATOR.finditer(line)
+        operators = RE_OPERATOR.finditer(line)
 
         passed = True
         message = set()

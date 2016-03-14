@@ -184,16 +184,17 @@ def main():
     """Main function"""
     parser = argparse.ArgumentParser(description='Linter for the pan language')
     parser.add_argument('paths', metavar='PATH', type=str, nargs='+', help='Paths of files to check')
-    parser.add_argument('--ide', action='store_true', help='Output machine-readable results for use by IDEs')
     parser.add_argument('--vi', action='store_true', help='Output line numbers in a vi option style')
-    parser.add_argument('--debug', action='store_true', help='Enable debug output')
     parser.add_argument('--table', action='store_true', help='Display a table of per-file problem stats')
+    group_output = parser.add_mutually_exclusive_group()
+    group_output.add_argument('--debug', action='store_true', help='Enable debug output')
+    group_output.add_argument('--ide', action='store_true', help='Output machine-readable results for use by IDEs')
     args = parser.parse_args()
 
     # Only output colors sequences if the output is a terminal
     colorama_init(strip = (not stdout.isatty()) or args.ide)
     global DEBUG
-    DEBUG = args.debug and (not args.ide)
+    DEBUG = args.debug
 
     if args.paths:
         problems_found = 0

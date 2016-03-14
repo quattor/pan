@@ -224,7 +224,6 @@ def main():
                 problem_stats[filename] = 0
 
                 f = open(filename)
-                line_number = 0
                 first_line = True
 
                 ignore_lines = []
@@ -241,8 +240,7 @@ def main():
                         ignore_lines.append(i)
 
                 f = open(filename)
-                for line in f:
-                    line_number += 1
+                for line_number, line in enumerate(f, start=1):
                     line = line.rstrip('\n')
 
                     if line and line_number not in ignore_lines and not RE_COMMENT_LINE.match(line):

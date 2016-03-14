@@ -32,7 +32,7 @@ RE_STRING = re.compile(r'''('.*?'|".*?"(?<!\\"))''')
 RE_FIRST_LINE = re.compile(r'^(?:(?:declaration|unique|structure|object) )?template (?:(?:[\w-]+/)+)?[\w-]+;$')
 RE_COMMENT_LINE = re.compile(r'^\s*' + RS_COMMENT)
 RE_TRAILING_COMMENT = re.compile(r'\s*' + RS_COMMENT)
-RE_ANNOTATION = re.compile(r'@{(?:.|\n)*?}')
+RE_ANNOTATION = re.compile(r'@\w*{.*?}', re.S)
 RE_OPERATOR = re.compile(r'(.)([>=<!?]=|[+*=/-])(.)')
 
 LINE_LENGTH_LIMIT = 120

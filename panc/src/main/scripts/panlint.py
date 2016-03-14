@@ -238,8 +238,7 @@ def main():
                     for i in range(start_line, end_line + 1):
                         ignore_lines.append(i)
 
-                f = open(filename)
-                for line_number, line in enumerate(f, start=1):
+                for line_number, line in enumerate(raw_text.splitlines(), start=1):
                     line = line.rstrip('\n')
 
                     if line and line_number not in ignore_lines and not RE_COMMENT_LINE.match(line):

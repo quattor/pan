@@ -139,14 +139,14 @@ def debug_line(line, line_number):
     """Print debug information for a processed line of an input file"""
     if DEBUG:
         label = 'DEBUG: %04d %-12s |' % (line_number, '...')
-        print Style.DIM + Fore.CYAN + label + Style.RESET_ALL + line
+        print Style.DIM + Fore.CYAN + label + Style.RESET_ALL + line.replace('\t', u'\u2192')
 
 
 def debug_ignored_line(line, line_number):
     """Print debug information for an ignored line of an input file"""
     if DEBUG:
         label = 'DEBUG: %04d %-12s |' % (line_number, 'Ignored')
-        print Fore.CYAN + Style.DIM + label + Fore.RESET + line + Style.RESET_ALL
+        print Fore.CYAN + Style.DIM + label + Fore.RESET + line.replace('\t', u'\u2192') + Style.RESET_ALL
 
 
 def debug_range(start, end, label, problem=False):

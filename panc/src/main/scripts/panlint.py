@@ -92,7 +92,11 @@ def inside_string(i, j, string_ranges):
 
 
 def print_fileinfo(filename, line_number, message, vi=False):
-    """Returns a formatted string with filename, line_number and message"""
+    """Return a formatted string with filename, line_number and message.
+
+    Keyword arguments:
+    vi -- output line numbers in a format suitable for passing to editors such as vi (default False)
+    """
     if vi:
         return '%s +%d #%s' % (filename, line_number, message)
     return '%s:%d: %s' % (filename, line_number, message)

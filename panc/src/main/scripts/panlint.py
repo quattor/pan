@@ -223,13 +223,14 @@ def main():
                 problem_stats[filename] = 0
 
                 f = open(filename)
-                first_line = True
+                raw_text = f.read()
+                f.close()
 
+                first_line = True
                 ignore_lines = []
 
                 # Identidy annotation blocks and exclude them from linting
                 # We will need special linting rules for these
-                raw_text = f.read()
                 annotations = RE_ANNOTATION.finditer(raw_text)
                 for annotation in annotations:
                     start_char, end_char = annotation.span()

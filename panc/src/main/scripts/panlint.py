@@ -115,7 +115,7 @@ def print_line(text):
     else:
         text = text.replace('\t', '¬')
 
-    return Fore.GREEN + text.rstrip('\n') + Fore.RESET
+    return ''.join([Fore.GREEN, text.rstrip('\n'), Fore.RESET])
 
 
 def merge_diagnoses(args):
@@ -134,21 +134,21 @@ def merge_diagnoses(args):
 
 def print_diagnosis(diagnosis):
     """Format a line of diagnosis produced by diagnose() and/or merge_diagnoses()"""
-    return Fore.BLUE + diagnosis + Fore.RESET
+    return ''.join([Fore.BLUE, diagnosis, Fore.RESET])
 
 
 def debug_line(line, line_number):
     """Print debug information for a processed line of an input file"""
     if DEBUG:
         label = 'DEBUG: %04d %-12s |' % (line_number, '...')
-        print Style.DIM + Fore.CYAN + label + Style.RESET_ALL + line.replace('\t', TAB_ARROW)
+        print ''.join([Style.DIM, Fore.CYAN, label, Style.RESET_ALL, line.replace('\t', TAB_ARROW)])
 
 
 def debug_ignored_line(line, line_number):
     """Print debug information for an ignored line of an input file"""
     if DEBUG:
         label = 'DEBUG: %04d %-12s |' % (line_number, 'Ignored')
-        print Fore.CYAN + Style.DIM + label + Fore.RESET + line.replace('\t', TAB_ARROW) + Style.RESET_ALL
+        print ''.join([Fore.CYAN, Style.DIM, label, Fore.RESET, line.replace('\t', TAB_ARROW), Style.RESET_ALL])
 
 
 def debug_range(start, end, label, problem=False):
@@ -159,7 +159,7 @@ def debug_range(start, end, label, problem=False):
         color = Fore.CYAN
         if problem:
             color = Fore.RED
-        print Style.DIM + Fore.CYAN + label + Style.BRIGHT + color + diagnosis + Style.RESET_ALL
+        print ''.join([Style.DIM, Fore.CYAN, label, Style.BRIGHT, color, diagnosis, Style.RESET_ALL])
 
 
 def diagnose(start, end):

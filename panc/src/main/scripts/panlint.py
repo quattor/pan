@@ -48,6 +48,8 @@ LINE_PATTERNS = {
     "Line is longer than %s characters" % LINE_LENGTH_LIMIT : re.compile(r'''^.{0,%s}(?P<error>.*?)$''' % LINE_LENGTH_LIMIT),
 }
 
+TAB_ARROW = u'\u2192'
+
 DEBUG = False
 
 class LineChecks:
@@ -109,7 +111,7 @@ def print_line(text):
     This keeps the character counts in line with fixed-width columns while still making tabs distinguishable in output.
     """
     if stdout.isatty():
-        text = text.replace('\t', u'\u2192')
+        text = text.replace('\t', TAB_ARROW)
     else:
         text = text.replace('\t', '¬')
 
@@ -139,14 +141,14 @@ def debug_line(line, line_number):
     """Print debug information for a processed line of an input file"""
     if DEBUG:
         label = 'DEBUG: %04d %-12s |' % (line_number, '...')
-        print Style.DIM + Fore.CYAN + label + Style.RESET_ALL + line.replace('\t', u'\u2192')
+        print Style.DIM + Fore.CYAN + label + Style.RESET_ALL + line.replace('\t', TAB_ARROW)
 
 
 def debug_ignored_line(line, line_number):
     """Print debug information for an ignored line of an input file"""
     if DEBUG:
         label = 'DEBUG: %04d %-12s |' % (line_number, 'Ignored')
-        print Fore.CYAN + Style.DIM + label + Fore.RESET + line.replace('\t', u'\u2192') + Style.RESET_ALL
+        print Fore.CYAN + Style.DIM + label + Fore.RESET + line.replace('\t', TAB_ARROW) + Style.RESET_ALL
 
 
 def debug_range(start, end, label, problem=False):

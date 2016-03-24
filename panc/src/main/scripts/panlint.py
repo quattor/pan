@@ -309,8 +309,8 @@ def main():
         print '%d problems found in total' % problems_found
 
         if problems_found:
-            sys_exit(1)
+            return(1)
 
 
 if __name__ == '__main__':
-    main()
+    sys_exit(main())

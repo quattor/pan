@@ -199,6 +199,73 @@ def filestats_table(problem_stats):
     return t
 
 
+def lint_file(filename):
+    global DEBUG
+    reports = []
+    problem_count = 0
+
+    f = open(filename)
+    raw_text = f.read()
+    f.close()
+
+    first_line = True
+    ignore_lines = []
+
+    # Identidy annotation blocks and exclude them from linting
+    # We will need special linting rules for these
+    annotations = RE_ANNOTATION.finditer(raw_text)
+    for annotation in annotations:
+        start_char, end_char = annotation.span()
+        start_line = raw_text[:start_char].count('\n') + 1
+        end_line = start_line + raw_text[start_char:end_char].count('\n')
+        for i in range(start_line, end_line + 1):
+            ignore_lines.append(i)
+
+    for line_number, line in enumerate(raw_text.splitlines(), start=1):
+        line = line.rstrip('\n')
+
+        if line and line_number not in ignore_lines and not RE_COMMENT_LINE.match(line):
+            debug_line(line, line_number)
+            if first_line:
+                first_line = False
+                if not RE_FIRST_LINE.match(line):
+                    print_fileinfo(filename, line_number, 'First non-comment line must be the template type and name')
+                    print_line(line)
+                    print_diagnosis(diagnose(0, len(line)))
+
+            else:
+                messages = []
+                diagnoses = []
+
+                line = RE_TRAILING_COMMENT.sub('', line)
+
+                string_ranges = get_string_ranges(line)
+
+                for message, pattern in LINE_PATTERNS.iteritems():
+                    m = pattern.search(line)
+                    if m and m.group('error'):
+                        start, end = m.span('error')
+                        debug_range(start, end, 'Match', True)
+                        if not inside_string(start, end, string_ranges):
+                            diagnoses.append(diagnose(start, end))
+                            messages.append(message)
+                            problem_count += 1
+
+                for _, check_method in getmembers(LineChecks(), predicate=ismethod):
+                    passed, diagnosis, message = check_method(line, string_ranges)
+                    if not passed:
+                        diagnoses.append(diagnosis)
+                        messages.append(message)
+                        problem_count += 1
+
+                if messages and diagnoses:
+                    reports.append([filename, line_number, line, merge_diagnoses(diagnoses), ', '.join(messages)])
+        else:
+            debug_ignored_line(line, line_number)
+
+    return (reports, problem_count)
+
+
 def main():
     """Main function"""
     parser = argparse.ArgumentParser(description='Linter for the pan language')
@@ -217,76 +284,16 @@ def main():
 
     if args.paths:
         problems_found = 0
-        line_checks = LineChecks()
 
         reports = []
         problem_stats = {}
 
         for path in args.paths:
             for filename in glob(path):
-                problem_stats[filename] = 0
-
-                f = open(filename)
-                raw_text = f.read()
-                f.close()
-
-                first_line = True
-                ignore_lines = []
-
-                # Identidy annotation blocks and exclude them from linting
-                # We will need special linting rules for these
-                annotations = RE_ANNOTATION.finditer(raw_text)
-                for annotation in annotations:
-                    start_char, end_char = annotation.span()
-                    start_line = raw_text[:start_char].count('\n') + 1
-                    end_line = start_line + raw_text[start_char:end_char].count('\n')
-                    for i in range(start_line, end_line + 1):
-                        ignore_lines.append(i)
-
-                for line_number, line in enumerate(raw_text.splitlines(), start=1):
-                    line = line.rstrip('\n')
-
-                    if line and line_number not in ignore_lines and not RE_COMMENT_LINE.match(line):
-                        debug_line(line, line_number)
-                        if first_line:
-                            first_line = False
-                            if not RE_FIRST_LINE.match(line):
-                                print_fileinfo(filename, line_number, 'First non-comment line must be the template type and name')
-                                print_line(line)
-                                print_diagnosis(diagnose(0, len(line)))
-
-                        else:
-                            messages = []
-                            diagnoses = []
-
-                            line = RE_TRAILING_COMMENT.sub('', line)
-
-                            string_ranges = get_string_ranges(line)
-
-                            for message, pattern in LINE_PATTERNS.iteritems():
-                                m = pattern.search(line)
-                                if m and m.group('error'):
-                                    start, end = m.span('error')
-                                    debug_range(start, end, 'Match', True)
-                                    if not inside_string(start, end, string_ranges):
-                                        diagnoses.append(diagnose(start, end))
-                                        messages.append(message)
-                                        problems_found += 1
-                                        problem_stats[filename] += 1
-
-                            for _, check_method in getmembers(line_checks, predicate=ismethod):
-                                passed, diagnosis, message = check_method(line, string_ranges)
-                                if not passed:
-                                    diagnoses.append(diagnosis)
-                                    messages.append(message)
-                                    problems_found += 1
-                                    problem_stats[filename] += 1
-
-                            if messages and diagnoses:
-                                reports.append([filename, line_number, line, merge_diagnoses(diagnoses), ', '.join(messages)])
-                    else:
-                        debug_ignored_line(line, line_number)
-
+                file_reports, file_problems = lint_file(filename)
+                reports += file_reports
+                problems_found += file_problems
+                problem_stats[filename] = file_problems
 
         for report in reports:
             print_report(*report, vi=args.vi)

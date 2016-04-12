@@ -202,7 +202,11 @@ public class ListResource extends Resource {
 
 	@Override
 	public Resource.Iterator iterator() {
-		return new ListResourceIterator(list);
+		return new ListResourceIterator(list, false);
+	}
+
+	public Resource.Iterator protectedIterator() {
+		return new ListResourceIterator(list, true);
 	}
 
 	@Override
@@ -290,9 +294,12 @@ public class ListResource extends Resource {
 
 		private final List<Element> backingList;
 
-		public ListResourceIterator(List<Element> backingList) {
+		private final boolean isProtected;
+
+		public ListResourceIterator(List<Element> backingList, boolean isProtected) {
 			assert (backingList != null);
 			this.backingList = backingList;
+			this.isProtected = isProtected;
 		}
 
 		public void remove() {
@@ -307,8 +314,14 @@ public class ListResource extends Resource {
 		public Resource.Entry next() {
 			try {
 				int i = index.getAndIncrement();
+
+				Element value = backingList.get(i);
+				if (isProtected && value != null) {
+					value = value.protect();
+				}
+
 				Resource.Entry entry = new ListResourceEntry(LongProperty.getInstance(i),
-						backingList.get(i));
+						value);
 				return entry;
 			} catch (NoSuchElementException nsee) {
 				throw new EvaluationException(MessageUtils

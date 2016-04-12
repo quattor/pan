@@ -25,7 +25,11 @@ public class ProtectedListResource extends ListResource {
 
 	@Override
 	public Element get(Term key) throws InvalidTermException {
-		return baseList.get(key);
+		final Element value = baseList.get(key);
+		if (value != null) {
+			return value.protect();
+		}
+		return value;
 	}
 
 	@Override
@@ -45,7 +49,12 @@ public class ProtectedListResource extends ListResource {
 
 	@Override
 	public Resource.Iterator iterator() {
-		return baseList.iterator();
+		return baseList.protectedIterator();
+	}
+
+	@Override
+	public Resource.Iterator protectedIterator() {
+		return baseList.protectedIterator();
 	}
 
 	@Override

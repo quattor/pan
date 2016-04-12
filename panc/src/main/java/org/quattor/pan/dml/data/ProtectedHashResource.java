@@ -26,7 +26,11 @@ public class ProtectedHashResource extends HashResource {
 
 	@Override
 	public Element get(Term key) throws InvalidTermException {
-		return baseHash.get(key);
+		final Element value = baseHash.get(key);
+		if (value != null) {
+			return value.protect();
+		}
+		return value;
 	}
 
 	@Override
@@ -84,7 +88,12 @@ public class ProtectedHashResource extends HashResource {
 
 	@Override
 	public Resource.Iterator iterator() {
-		return baseHash.iterator();
+		return baseHash.protectedIterator();
+	}
+
+	@Override
+	public Resource.Iterator protectedIterator() {
+		return baseHash.protectedIterator();
 	}
 
 	@Override

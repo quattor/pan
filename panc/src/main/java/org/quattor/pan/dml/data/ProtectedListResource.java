@@ -43,6 +43,16 @@ public class ProtectedListResource extends ListResource {
 	}
 
 	@Override
+	public void append(Element e) {
+		throw CompilerError.create(MSG_ILLEGAL_WRITE_TO_PROTECTED_LIST);
+	}
+
+	@Override
+	public void prepend(Element e) {
+		throw CompilerError.create(MSG_ILLEGAL_WRITE_TO_PROTECTED_LIST);
+	}
+
+	@Override
 	public int size() {
 		return baseList.size();
 	}

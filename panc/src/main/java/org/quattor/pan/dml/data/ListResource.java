@@ -286,7 +286,7 @@ public class ListResource extends Resource {
 
 	private static class ListResourceIterator implements Resource.Iterator {
 
-        private final AtomicInteger index = new AtomicInteger(0);
+	private final AtomicInteger index = new AtomicInteger(0);
 
 		private final List<Element> backingList;
 
@@ -306,10 +306,10 @@ public class ListResource extends Resource {
 
 		public Resource.Entry next() {
 			try {
-                int i = index.getAndIncrement();
+				int i = index.getAndIncrement();
 				Resource.Entry entry = new ListResourceEntry(LongProperty.getInstance(i),
 						backingList.get(i));
-                return entry;
+				return entry;
 			} catch (NoSuchElementException nsee) {
 				throw new EvaluationException(MessageUtils
 						.format(MSG_CONCURRENT_MODIFICATION), null);

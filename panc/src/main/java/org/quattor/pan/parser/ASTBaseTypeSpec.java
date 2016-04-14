@@ -25,9 +25,9 @@ import org.quattor.pan.utils.Range;
 public class ASTBaseTypeSpec extends SimpleNode {
 
 	private Range range = null;
-	
+
 	private boolean extensible = false;
-	
+
 	private String identifier = null;
 
 	public ASTBaseTypeSpec(int id) {
@@ -45,19 +45,19 @@ public class ASTBaseTypeSpec extends SimpleNode {
 	public boolean isExtensible() {
 		return extensible;
 	}
-	
+
 	public void setIdentifier(String identifier) {
 		this.identifier = identifier;
 	}
-	
+
 	public String getIdentifier() {
 		return identifier;
 	}
-	
+
 	public void setRange(Range range) {
 		this.range = range;
 	}
-	
+
 	public Range getRange() {
 		return range;
 	}

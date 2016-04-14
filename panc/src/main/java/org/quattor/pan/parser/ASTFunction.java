@@ -32,11 +32,11 @@ public class ASTFunction extends ASTOperation {
 	public ASTFunction(PanParser p, int id) {
 		super(p, id);
 	}
-	
+
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	public String getName() {
 		return name;
 	}

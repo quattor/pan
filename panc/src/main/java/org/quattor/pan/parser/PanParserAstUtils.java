@@ -206,6 +206,12 @@ public class PanParserAstUtils {
             fc.put("base64_encode",
                     (Base64Encode.class).getDeclaredMethod("getInstance", SourceRange.class, Operation[].class));
 
+            fc.put("json_decode",
+                    (JsonDecode.class).getDeclaredMethod("getInstance", SourceRange.class, Operation[].class));
+
+            fc.put("json_encode",
+                    (JsonEncode.class).getDeclaredMethod("getInstance", SourceRange.class, Operation[].class));
+
             fc.put("escape", (Escape.class).getDeclaredMethod("getInstance", SourceRange.class, Operation[].class));
 
             fc.put("unescape", (Unescape.class).getDeclaredMethod("getInstance", SourceRange.class, Operation[].class));

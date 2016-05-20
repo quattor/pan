@@ -135,7 +135,17 @@ public class MessageUtils {
 
     public final static String MSG_INVALID_KEY_HASH = "MSG_INVALID_KEY_HASH";
 
+    public final static String MSG_INVALID_NO_ARGS_JSON_DECODE = "MSG_INVALID_NO_ARGS_JSON_DECODE";
+
+    public final static String MSG_INVALID_ARGS_JSON_DECODE = "MSG_INVALID_ARGS_JSON_DECODE";
+
+    public final static String MSG_INVALID_NO_ARGS_JSON_ENCODE = "MSG_INVALID_NO_ARGS_JSON_ENCODE";
+
     public final static String MSG_INVALID_JSON_UNDEF = "MSG_INVALID_JSON_UNDEF";
+
+    public final static String MSG_INVALID_JSON_VALUE = "MSG_INVALID_JSON_VALUE";
+
+    public final static String MSG_JSON_INVALID_PAN_PATH = "MSG_JSON_INVALID_PAN_PATH";
 
     public final static String MSG_NONEXISTANT_TYPE = "MSG_NONEXISTANT_TYPE";
 

@@ -1140,6 +1140,55 @@ in lexical order. The first index is 0.
     };
     # /keys will be the string 'blue green red '
 
+.. _json_decode:
+
+json\_decode
+============
+
+Name
+----
+
+json\_decode -- convert a JSON-encoded string to a PAN data structure
+
+Synopsis
+--------
+
+element **json\_decode** (string *encoded*)
+
+Description
+-----------
+
+The ``json_decode`` function parses the JSON-encoded argument into the
+appropriate PAN data structure. The argument can be either a primitive
+JSON type, a list or a JSON object. In case of JSON objects, the names of
+the object's properties must conform to the rules for PAN dictionaries.
+Notably, JSON property names starting with a number are not allowed.
+
+.. _json_encode:
+
+json\_encode
+============
+
+Name
+----
+
+json\_encode -- convert a PAN data structure to a JSON-encoded string
+
+Synopsis
+--------
+
+string **json\_encode** (element *arg*)
+
+Description
+-----------
+
+The ``json_encode`` function returns the JSON representation of the
+argument. It is currently not possible to control the JSON formatting.
+
+Trying to encode ``undef`` either directly or embedded into a resource will
+fail. ``null`` values in lists will appear in the output, but dictionary keys
+with the value being ``null`` will not be serialized.
+
 .. _length:
 
 length

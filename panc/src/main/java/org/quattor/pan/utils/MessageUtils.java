@@ -135,6 +135,8 @@ public class MessageUtils {
 
     public final static String MSG_INVALID_KEY_HASH = "MSG_INVALID_KEY_HASH";
 
+    public final static String MSG_INVALID_JSON_UNDEF = "MSG_INVALID_JSON_UNDEF";
+
     public final static String MSG_NONEXISTANT_TYPE = "MSG_NONEXISTANT_TYPE";
 
     public final static String MSG_NONEXISTANT_REFERENCED_TYPE = "MSG_NONEXISTANT_REFERENCED_TYPE";

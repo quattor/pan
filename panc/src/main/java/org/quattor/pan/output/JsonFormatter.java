@@ -43,7 +43,7 @@ public class JsonFormatter extends AbstractFormatter {
 
 	protected void write(FinalResult result, PrintWriter ps) throws Exception {
 		JsonUtils json = JsonUtils.getInstance();
-		ps.write(json.toJson(result.getRoot()));
+		json.toJson(result.getRoot(), ps);
 		ps.close();
 	}
 

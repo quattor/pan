@@ -124,16 +124,17 @@ def print_line(text):
 
 def merge_diagnoses(args):
     """Merge lines of diagnosis produced by diagnose()"""
-    if args:
-        args = [a.rstrip() for a in args]
-        result = [' '] * max(map(len, args))
+    if not args:
+        return ''
 
-        for text in args:
-            for i, c in enumerate(text):
-                if c != ' ':
-                    result[i] = c
-        return ''.join(result).rstrip()
-    return ''
+    args = [a.rstrip() for a in args]
+    result = [' '] * max(map(len, args))
+
+    for text in args:
+        for i, c in enumerate(text):
+            if c != ' ':
+                result[i] = c
+    return ''.join(result).rstrip()
 
 
 def print_diagnosis(diagnosis):

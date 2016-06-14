@@ -29,7 +29,7 @@ RS_COMMENT = r'(?:#.*|@{.*})$'
 
 RE_STRING = re.compile(r'''('.*?'|".*?"(?<!\\"))''')
 
-RE_FIRST_LINE = re.compile(r'^(?:(?:declaration|unique|structure|object) )?template (?:(?:[\w-]+/)+)?[\w-]+;$')
+RE_FIRST_LINE = re.compile(r'^\s*(?:(?:declaration|unique|structure|object)\s+)?template (?:(?:[\S-]+/)+)?[\S-]+;$')
 RE_COMMENT_LINE = re.compile(r'^\s*' + RS_COMMENT)
 RE_TRAILING_COMMENT = re.compile(r'\s*' + RS_COMMENT)
 RE_ANNOTATION = re.compile(r'@\w*{.*?}', re.S)
@@ -232,19 +232,19 @@ def lint_file(filename):
     for line_number, line in enumerate(raw_text.splitlines(), start=1):
         line = line.rstrip('\n')
 
+        messages = []
+        diagnoses = []
+
         if line and line_number not in ignore_lines and not RE_COMMENT_LINE.match(line):
             debug_line(line, line_number)
             if first_line:
                 first_line = False
                 if not RE_FIRST_LINE.match(line):
-                    print_fileinfo(filename, line_number, 'First non-comment line must be the template type and name')
-                    print_line(line)
-                    print_diagnosis(diagnose(0, len(line)))
+                    messages.append('First non-comment line must be the template type and name')
+                    diagnoses.append(diagnose(0, len(line)))
+                    problem_count += 1
 
             else:
-                messages = []
-                diagnoses = []
-
                 line = RE_TRAILING_COMMENT.sub('', line)
 
                 string_ranges = get_string_ranges(line)
@@ -273,8 +273,8 @@ def lint_file(filename):
                         messages.append(message)
                         problem_count += 1
 
-                if messages and diagnoses:
-                    reports.append([filename, line_number, line, merge_diagnoses(diagnoses), ', '.join(messages)])
+            if messages and diagnoses:
+                reports.append([filename, line_number, line, merge_diagnoses(diagnoses), ', '.join(messages)])
         else:
             debug_ignored_line(line, line_number)
 

@@ -45,6 +45,14 @@ class TestPanlint(unittest.TestCase):
         self.assertEqual(panlint.merge_diagnoses([diag2]), diag2)
         self.assertEqual(panlint.merge_diagnoses([diag1, diag2]), merged)
 
+    def test_files(self):
+        no_errors = ([], 0)
+        self.assertEqual(panlint.lint_file('test_files/test_good_ordinary.pan'), no_errors)
+        self.assertEqual(panlint.lint_file('test_files/test_good_object.pan'), no_errors)
+        self.assertEqual(panlint.lint_file('test_files/test_good_structure.pan'), no_errors)
+        self.assertEqual(panlint.lint_file('test_files/test_good_unique.pan'), no_errors)
+        self.assertEqual(panlint.lint_file('test_files/test_good_declaration.pan'), no_errors)
+
 
 if __name__ == '__main__':
     unittest.main()

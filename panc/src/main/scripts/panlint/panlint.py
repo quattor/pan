@@ -43,17 +43,18 @@ LINE_LENGTH_LIMIT = 120
 # Simple regular-expression based checks that will be performed against all non-ignored lines
 # Every pattern must provide a single capturing group named "error"
 LINE_PATTERNS = {
-    "Indentation should be a multiple of four spaces" : re.compile(r'^(?!( {4})*(\S|$))(?P<error>\s*)'),
-    "Spaces should be used instead of tabs" : re.compile(r'(?P<error>\t+)'),
-    "Trailing whitespace" : re.compile(r'(?P<error>\s+$)'),
-    "Use dict() instead of nlist()" : re.compile(r'\b(?P<error>nlist)\s*\('),
-    "Include statements no longer need curly braces" : re.compile(r'''include\s+(?P<error>{[^;]+})'''),
-    "Line is longer than %s characters" % LINE_LENGTH_LIMIT : re.compile(r'''^.{0,%s}(?P<error>.*?)$''' % LINE_LENGTH_LIMIT),
+    "Indentation should be a multiple of four spaces": re.compile(r'^(?!( {4})*(\S|$))(?P<error>\s*)'),
+    "Spaces should be used instead of tabs": re.compile(r'(?P<error>\t+)'),
+    "Trailing whitespace": re.compile(r'(?P<error>\s+$)'),
+    "Use dict() instead of nlist()": re.compile(r'\b(?P<error>nlist)\s*\('),
+    "Include statements no longer need curly braces": re.compile(r'''include\s+(?P<error>{[^;]+})'''),
+    "Line is longer than %s characters" % LINE_LENGTH_LIMIT: re.compile(r'''^.{0,%s}(?P<error>.*?)$''' % LINE_LENGTH_LIMIT),
 }
 
 TAB_ARROW = u'\u2192'
 
 DEBUG = False
+
 
 class LineChecks:
     """More complex single line checks that require some logic to implement their checks"""
@@ -293,7 +294,7 @@ def main():
     args = parser.parse_args()
 
     # Only output colors sequences if the output is a terminal
-    colorama_init(strip = (not stdout.isatty()) or args.ide)
+    colorama_init(strip=(not stdout.isatty()) or args.ide)
     global DEBUG
     DEBUG = args.debug
 

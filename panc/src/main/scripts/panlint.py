@@ -35,6 +35,9 @@ RE_TRAILING_COMMENT = re.compile(r'\s*' + RS_COMMENT)
 RE_ANNOTATION = re.compile(r'@\w*{.*?}', re.S)
 RE_OPERATOR = re.compile(r'(.)([>=<!?]=|[+*=/-])(.)')
 
+# Find usage and inclusion of components
+RE_COMPONENT_INCLUDE = re.compile(r'^\s*[^#]?\s*include.*components/(?P<name>\w+)/config', re.M)
+RE_COMPONENT_USE = re.compile(r'^\s*[^#]?\s*/software/components/(?P<name>\w+)/')
 LINE_LENGTH_LIMIT = 120
 
 # Simple regular-expression based checks that will be performed against all non-ignored lines
@@ -223,6 +226,9 @@ def lint_file(filename):
         for i in range(start_line, end_line + 1):
             ignore_lines.append(i)
 
+    # Get list of all component configs included in template
+    components_included = RE_COMPONENT_INCLUDE.findall(raw_text)
+
     for line_number, line in enumerate(raw_text.splitlines(), start=1):
         line = line.rstrip('\n')
 
@@ -242,6 +248,13 @@ def lint_file(filename):
                 line = RE_TRAILING_COMMENT.sub('', line)
 
                 string_ranges = get_string_ranges(line)
+
+                for m in RE_COMPONENT_USE.finditer(line):
+                    if m.group('name') not in components_included:
+                        message = 'Component %s in use, but component config has not been included' % m.group('name')
+                        diagnoses.append(diagnose(*m.span('name')))
+                        messages.append(message)
+                        problem_count += 1
 
                 for message, pattern in LINE_PATTERNS.iteritems():
                     m = pattern.search(line)

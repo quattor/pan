@@ -332,6 +332,9 @@ public class PanParserAstUtils {
             fc.put("-suppress-traceback-",
                     (TracebackSuppressed.class).getDeclaredMethod("getInstance", SourceRange.class, Operation[].class));
 
+            fc.put("join",
+                    (Join.class).getDeclaredMethod("getInstance", SourceRange.class, Operation[].class));
+
             // Make the visible map invariant, just to make sure that no one
             // makes unexpected changes.
             functionConstructors = Collections.unmodifiableMap(fc);
@@ -464,6 +467,7 @@ public class PanParserAstUtils {
             statement = AssignmentStatement
                     .createAssignmentStatement(ast.getSourceRange(), path, dml, ast.getConditionalFlag(),
                             !ast.getFinalFlag());
+
         }
 
         return statement;

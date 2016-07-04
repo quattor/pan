@@ -106,7 +106,7 @@ final public class Join extends BuiltInFunction {
 
                     if (!(e instanceof StringProperty)) {
                         throw new EvaluationException(
-                                "in join(), all elements in the list need to be strings",
+                                "all elements in the list need to be strings for join()",
                                 getSourceRange(), context);
                     }
 
@@ -126,9 +126,13 @@ final public class Join extends BuiltInFunction {
             for (int i = 1; i < length; i++) {
                 Element e = ops[i].execute(context);
 
-                if (!(e instanceof StringProperty)) {
+                if (e instanceof ListResource) {
                     throw new EvaluationException(
-                            "in join(), all elements need to be strings",
+                            "join() only accepts a single list as an argument or all the arguments individually",
+                            getSourceRange(), context);
+                } else if (!(e instanceof StringProperty)) {
+                    throw new EvaluationException(
+                            "join() only accepts strings",
                             getSourceRange(), context);
                 }
 

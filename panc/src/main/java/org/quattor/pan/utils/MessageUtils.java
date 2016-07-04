@@ -220,6 +220,8 @@ public class MessageUtils {
 
     public final static String MSG_TWO_ARGS_REQ = "MSG_TWO_ARGS_REQ";
 
+    public final static String MSG_TWO_OR_MORE_ARG_REQ = "MSG_TWO_OR_MORE_ARG_REQ";
+
     public final static String MSG_3_ARGS_REQ = "MSG_3_ARGS_REQ";
 
     public final static String MSG_RESTRICTED_CONTEXT = "MSG_RESTRICTED_CONTEXT";
@@ -249,6 +251,8 @@ public class MessageUtils {
     public final static String MSG_FIRST_ARG_VARIABLE_REF = "MSG_FIRST_ARG_VARIABLE_REF";
 
     public final static String MSG_FIRST_ARG_LIST_OR_VARIABLE_REF = "MSG_FIRST_ARG_LIST_OR_VARIABLE_REF";
+
+    public final static String MSG_SECOND_ARG_LIST_OR_VARIABLE_REF = "MSG_SECOND_ARG_LIST_OR_VARIABLE_REF";
 
     public final static String MSG_DEF_VALUE_NOT_CONSTANT = "MSG_DEF_VALUE_NOT_CONSTANT";
 

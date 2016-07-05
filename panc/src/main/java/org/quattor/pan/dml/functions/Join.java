@@ -122,8 +122,6 @@ final public class Join extends BuiltInFunction {
                             getSourceRange(), context);
                 }
 
-//                StringProperty sp = (StringProperty) e;
-//                result.add(sp.getValue());
                 result.add(((StringProperty) e).getValue());
             }
         }

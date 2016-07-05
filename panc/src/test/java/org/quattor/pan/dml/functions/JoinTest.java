@@ -33,27 +33,26 @@ public class JoinTest extends BuiltInFunctionTestUtils {
         Join.getInstance(null, StringProperty.getInstance(","), Null.getInstance());
     }
 
-    @Test(expected = SyntaxException.class)
-    public void testNullValueArgs() throws SyntaxException {
-        Join.getInstance(null, Null.getInstance(), Null.getInstance());
-    }
-
-    @Test(expected = SyntaxException.class)
+    @Test(expected = EvaluationException.class)
     public void testInvalidFirstArg() throws SyntaxException {
-        runDml(Join.getInstance(null, LongProperty.getInstance(0L),
-                new ListResource()));
+        runDml(Join.getInstance(null, LongProperty.getInstance(0L), new ListResource()));
     }
 
     @Test(expected = SyntaxException.class)
     public void testInvalidSecondArg() throws SyntaxException {
-        runDml(Join.getInstance(null, StringProperty.getInstance("OK"),
-                new HashResource()));
+        runDml(Join.getInstance(null, StringProperty.getInstance(","), new HashResource()));
     }
 
     @Test(expected = EvaluationException.class)
-    public void testInvalidArgs() throws SyntaxException {
+    public void testInvalidArgs1() throws SyntaxException {
         runDml(Join.getInstance(null, StringProperty.getInstance(","),
                 StringProperty.getInstance("First"), LongProperty.getInstance(0L)));
+    }
+
+    @Test(expected = EvaluationException.class)
+    public void testInvalidArgs2() throws SyntaxException {
+        runDml(Join.getInstance(null, StringProperty.getInstance(","),
+                StringProperty.getInstance("a"), new ListResource()));
     }
 
     @Test(expected = EvaluationException.class)
@@ -64,16 +63,14 @@ public class JoinTest extends BuiltInFunctionTestUtils {
                 LongProperty.getInstance(3)
         };
 
-        runDml(Join.getInstance(null, StringProperty.getInstance(","),
-                new ListResource(args)));
+        runDml(Join.getInstance(null, StringProperty.getInstance(","), new ListResource(args)));
     }
 
     @Test(expected = EvaluationException.class)
     public void testNestedElements() throws SyntaxException {
         Element[] args = { new ListResource() };
 
-        runDml(Join.getInstance(null, StringProperty.getInstance("OK"),
-                new ListResource(args)));
+        runDml(Join.getInstance(null, StringProperty.getInstance("OK"), new ListResource(args)));
     }
 
     @Test
@@ -87,8 +84,7 @@ public class JoinTest extends BuiltInFunctionTestUtils {
                 StringProperty.getInstance("c")
         };
 
-        Element e = runDml(Join.getInstance(null, StringProperty.getInstance("-"),
-                new ListResource(args)));
+        Element e = runDml(Join.getInstance(null, StringProperty.getInstance("-"), new ListResource(args)));
 
         // Check result
         assertTrue(e instanceof StringProperty);

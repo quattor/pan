@@ -28,39 +28,26 @@ final public class Join extends BuiltInFunction {
         super("join", sourceRange, operations);
     }
 
-    public static Operation getInstance(SourceRange sourceRange,
-                                        Operation... operations) throws SyntaxException {
+    public static Operation getInstance(SourceRange sourceRange, Operation... operations) throws SyntaxException {
 
         if (operations.length < 2) {
-            throw SyntaxException.create(sourceRange,
-                    MSG_TWO_OR_MORE_ARG_REQ, "join");
+            throw SyntaxException.create(sourceRange, MSG_TWO_OR_MORE_ARG_REQ, "join");
         }
 
         // The first argument can't be null.
         if (operations[0] instanceof Null) {
-            throw SyntaxException.create(sourceRange, MSG_VALUE_CANNOT_BE_NULL,
-                    "join");
-        }
-
-        // The first argument needs to be a string.
-        if (operations[0] instanceof Element) {
-            if (!(operations[0] instanceof StringProperty)) {
-                throw SyntaxException.create(sourceRange, MSG_FIRST_STRING_ARG_REQ,
-                        "join");
-            }
+            throw SyntaxException.create(sourceRange, MSG_VALUE_CANNOT_BE_NULL, "join");
         }
 
         // If there are only two arguments, the second argument can't be null and needs to be a list.
         if (operations.length == 2) {
             if (operations[1] instanceof Null) {
-                throw SyntaxException.create(sourceRange, MSG_VALUE_CANNOT_BE_NULL,
-                        "join");
+                throw SyntaxException.create(sourceRange, MSG_VALUE_CANNOT_BE_NULL, "join");
             }
 
             if (operations[1] instanceof Element) {
                 if (!(operations[1] instanceof ListResource)) {
-                    throw SyntaxException.create(sourceRange,
-                            MSG_SECOND_ARG_LIST_OR_VARIABLE_REF, "join");
+                    throw SyntaxException.create(sourceRange, MSG_SECOND_ARG_LIST_OR_VARIABLE_REF, "join");
                 }
             }
         }
@@ -78,9 +65,7 @@ final public class Join extends BuiltInFunction {
         try {
             delimeter = ((StringProperty) ops[0].execute(context)).getValue();
         } catch (ClassCastException cce) {
-            throw new EvaluationException(
-                    "first argument in join() must be a string",
-                    getSourceRange(), context);
+            throw new EvaluationException("first argument in join() must be a string", getSourceRange(), context);
         }
 
         // Create a list containing all elements we need to join.
@@ -88,6 +73,7 @@ final public class Join extends BuiltInFunction {
 
         // If the second argument is a ListResource, add the strings to the result-list.
         if (ops.length == 2) {
+
             // Double check whether the second argument is actually a list.
             Element list = ops[1].execute(context);
 
@@ -100,13 +86,13 @@ final public class Join extends BuiltInFunction {
 
                     if (e instanceof Resource) {
                         throw new EvaluationException(
-                                "the passed list in join() can't contain nested elements",
+                                "join() doesn't accept nested elements in the passed list",
                                 getSourceRange(), context);
                     }
 
                     if (!(e instanceof StringProperty)) {
                         throw new EvaluationException(
-                                "all elements in the list need to be strings for join()",
+                                "join() only accepts strings or a list of strings as input arguments",
                                 getSourceRange(), context);
                     }
 
@@ -115,7 +101,7 @@ final public class Join extends BuiltInFunction {
 
             } else {
                 throw new EvaluationException(
-                        "the second argument in join() should be a list",
+                        "join() only accepts strings or a list of strings as input arguments",
                         getSourceRange(), context);
             }
 
@@ -132,12 +118,13 @@ final public class Join extends BuiltInFunction {
                             getSourceRange(), context);
                 } else if (!(e instanceof StringProperty)) {
                     throw new EvaluationException(
-                            "join() only accepts strings",
+                            "join() only accepts strings or a list of strings as input arguments",
                             getSourceRange(), context);
                 }
 
-                StringProperty sp = (StringProperty) e;
-                result.add(sp.getValue());
+//                StringProperty sp = (StringProperty) e;
+//                result.add(sp.getValue());
+                result.add(((StringProperty) e).getValue());
             }
         }
 

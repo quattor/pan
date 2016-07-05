@@ -2,6 +2,6 @@
 # @expect=org.quattor.pan.exceptions.EvaluationException
 #
 
-object template join9;
+object template join11;
 
-'/x' = join(1, "a", "b", "c");
+'/x' = join(",", "a", "b", 1);

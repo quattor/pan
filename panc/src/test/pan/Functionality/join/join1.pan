@@ -9,7 +9,7 @@ object template join1;
 '/x2' = join("-", value('/x1'));
 
 '/result' = {
-  x2 = value('/x2');
-  res = "1-2-3";
-  (x2 == res);
+  res = value('/x2');
+  exp = "1-2-3";
+  (exp == res);
 };

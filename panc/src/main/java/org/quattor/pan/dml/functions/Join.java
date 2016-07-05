@@ -34,17 +34,13 @@ final public class Join extends BuiltInFunction {
             throw SyntaxException.create(sourceRange, MSG_TWO_OR_MORE_ARG_REQ, "join");
         }
 
-        // The first argument can't be null.
-        if (operations[0] instanceof Null) {
+        // The first and second argument can't be null.
+        if (operations[0] instanceof Null || operations[1] instanceof Null) {
             throw SyntaxException.create(sourceRange, MSG_VALUE_CANNOT_BE_NULL, "join");
         }
 
-        // If there are only two arguments, the second argument can't be null and needs to be a list.
+        // If there are only two arguments, the second argument needs to be a list.
         if (operations.length == 2) {
-            if (operations[1] instanceof Null) {
-                throw SyntaxException.create(sourceRange, MSG_VALUE_CANNOT_BE_NULL, "join");
-            }
-
             if (operations[1] instanceof Element) {
                 if (!(operations[1] instanceof ListResource)) {
                     throw SyntaxException.create(sourceRange, MSG_SECOND_ARG_LIST_OR_VARIABLE_REF, "join");
@@ -92,7 +88,7 @@ final public class Join extends BuiltInFunction {
 
                     if (!(e instanceof StringProperty)) {
                         throw new EvaluationException(
-                                "join() only accepts strings or a list of strings as input arguments",
+                                "join() only accepts strings as elements in the list",
                                 getSourceRange(), context);
                     }
 

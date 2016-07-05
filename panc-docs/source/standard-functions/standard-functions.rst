@@ -1043,8 +1043,8 @@ string **join** (string *delimeter*, string *arg1*, string *arg2*, ...)
 Description
 -----------
 This function takes a delimeter and a list of strings, or each of the strings
-individually, and joins them with the given delimeter. Only strings can be
-passed as arguments.
+individually, and joins them with the given delimeter. Only (a list of) strings
+can be passed as arguments.
 
 ::
 

@@ -958,21 +958,19 @@ public class PanParserAstUtils {
                 }
             }
 
-            System.out.println("RECORD");
             baseType = new RecordType(source, base.getSourceRange(), base.isExtensible(), base.getRange(), includes,
                     reqFields, optFields);
         } else {
             // This is an alias type.
             if (identifier.equals("choice")) {
                 List<Operation> list = new ArrayList<Operation>();
-                System.out.println("BaseType: " + base.toString());
+
                 for (int i = 0; i < base.jjtGetNumChildren(); i++) {
                     SimpleNode sn = (SimpleNode) base.jjtGetChild(i);
-                    System.out.println(sn.getSubtype().toString());
-                    System.out.println(sn.getId());
                     Operation o = astToOperation(sn);
                     list.add(o);
                 }
+
                 baseType = ChoiceType.getInstance(source, base.getSourceRange(), "string", base.getRange(), list);
             } else {
                 baseType = new AliasType(source, base.getSourceRange(), identifier, base.getRange());

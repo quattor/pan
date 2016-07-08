@@ -95,4 +95,7 @@ final public class Value extends BuiltInFunction {
 		}
 	}
 
+	public String toString() {
+		return "value(" + ops[0].toString() + ")";
+	}
 }

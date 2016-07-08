@@ -52,29 +52,18 @@ public abstract class BaseType extends Type {
 		HashMap<String, FullType> types = new HashMap<String, FullType>();
 
 		// Types based on concrete pan data classes.
-		types.put("boolean", new FullType(new ConcretePrimitiveType("boolean",
-				BooleanProperty.class)));
-		types.put("double", new FullType(new ConcretePrimitiveType("double",
-				DoubleProperty.class)));
-		types.put("element", new FullType(new ConcretePrimitiveType("element",
-				Element.class)));
-		types.put("nlist", new FullType(new ConcretePrimitiveType("nlist",
-				HashResource.class)));
+		types.put("boolean", new FullType(new ConcretePrimitiveType("boolean", BooleanProperty.class)));
+		types.put("double", new FullType(new ConcretePrimitiveType("double", DoubleProperty.class)));
+		types.put("element", new FullType(new ConcretePrimitiveType("element", Element.class)));
+		types.put("nlist", new FullType(new ConcretePrimitiveType("nlist", HashResource.class)));
 		// Alias for the nlist type.
-		types.put("dict", new FullType(new ConcretePrimitiveType("dict",
-		HashResource.class)));
-		types.put("list", new FullType(new ConcretePrimitiveType("list",
-				ListResource.class)));
-		types.put("long", new FullType(new ConcretePrimitiveType("long",
-				LongProperty.class)));
-		types.put("number", new FullType(new ConcretePrimitiveType("number",
-				NumberProperty.class)));
-		types.put("property", new FullType(new ConcretePrimitiveType(
-				"property", Property.class)));
-		types.put("resource", new FullType(new ConcretePrimitiveType(
-				"resource", Resource.class)));
-		types.put("string", new FullType(new ConcretePrimitiveType("string",
-				StringProperty.class)));
+		types.put("dict", new FullType(new ConcretePrimitiveType("dict", HashResource.class)));
+		types.put("list", new FullType(new ConcretePrimitiveType("list", ListResource.class)));
+		types.put("long", new FullType(new ConcretePrimitiveType("long", LongProperty.class)));
+		types.put("number", new FullType(new ConcretePrimitiveType("number", NumberProperty.class)));
+		types.put("property", new FullType(new ConcretePrimitiveType("property", Property.class)));
+		types.put("resource", new FullType(new ConcretePrimitiveType( "resource", Resource.class)));
+		types.put("string", new FullType(new ConcretePrimitiveType("string", StringProperty.class)));
 
 		builtins = Collections.unmodifiableMap(types);
 	}

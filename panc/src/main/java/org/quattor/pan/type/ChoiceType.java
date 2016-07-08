@@ -21,10 +21,12 @@ import static org.quattor.pan.utils.MessageUtils.MSG_ALL_STRING_ARGS_REQ;
 
 /**
  * Created by iliclaey.
+ *
+ * The path needs to have a value contained in the list of possible choices.
  */
 public class ChoiceType extends AliasType {
 
-    private List<Element> choices;
+    private List<Operation> choices;
 
     /**
      * Constructor for AliasType takes the name of the type identifier.
@@ -35,7 +37,7 @@ public class ChoiceType extends AliasType {
      * @param range will alway be null in this case
      * @param choices list of choices
      */
-    public ChoiceType(String source, SourceRange sourceRange, String identifier, Range range, List<Element> choices) {
+    public ChoiceType(String source, SourceRange sourceRange, String identifier, Range range, List<Operation> choices) {
         super(source, sourceRange, identifier, range);
         this.choices = choices;
     }
@@ -43,32 +45,39 @@ public class ChoiceType extends AliasType {
     public static ChoiceType getInstance(String source, SourceRange sourceRange, String identifier,
                                          Range range, List<Operation> choices) throws SyntaxException {
 
-        List<Element> els = new ArrayList<Element>();
-        for (Operation o : choices) {
-            Element e = null;
+//        List<Element> els = new ArrayList<Element>();
+//        for (Operation o : choices) {
+//            Element e = null;
+//
+//            try {
+//                e = (Element) o;
+//            } catch(ClassCastException cce) {
+//                throw SyntaxException.create(sourceRange, MSG_ALL_STRING_ARGS_REQ,
+//                        "choice", e.getTypeAsString());
+//            }
+//
+//            els.add(e);
+//        }
 
-            try {
-                e = (Element) o;
-            } catch(ClassCastException cce) {
-                throw SyntaxException.create(sourceRange, MSG_ALL_STRING_ARGS_REQ,
-                        "choice", e.getTypeAsString());
-            }
-
-            els.add(e);
-        }
-
-        return new ChoiceType(source, sourceRange, identifier, range, els);
+        return new ChoiceType(source, sourceRange, identifier, range, choices);
     }
 
     public Object validate(final Context context, final Element self) {
 
         FullType type = context.getFullType(identifier);
-
         type.validate(context, self);
 
         boolean found = false;
-        for (Element e : choices) {
-            if (e.equals(self)) found = true;
+        for (Operation o : choices) {
+            Element e = o.execute(context);
+
+            if (!(e instanceof StringProperty)) {
+                throw ValidationException.create(MSG_INVALID_CHOICE_TYPE, self.toString());
+            }
+
+            if (((StringProperty) e).getValue().equals(((StringProperty) self).getValue())) {
+                found = true;
+            }
         }
 
         if (!found) {
@@ -79,11 +88,14 @@ public class ChoiceType extends AliasType {
     }
 
     public String toString() {
-        String s = "Choice(";
+        String s = "choice(";
         if (choices != null) {
-            for (Element e: choices) {
-                s += e.toString() + " ";
+            for (Operation o: choices) {
+                s += o.toString() + " ";
             }
+//            for (Element e: choices) {
+//                s += e.toString() + " ";
+//            }
         }
         s += ")";
 

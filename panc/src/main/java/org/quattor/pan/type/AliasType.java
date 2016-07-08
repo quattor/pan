@@ -42,7 +42,7 @@ import org.quattor.pan.utils.Range;
  */
 public class AliasType extends BaseType {
 
-	private final String identifier;
+	protected final String identifier;
 
 	private final Range range;
 
@@ -112,7 +112,7 @@ public class AliasType extends BaseType {
 		try {
 			type.validate(context, self);
 
-			// Check the range if defined.
+			// Check if the range is defined.
 			if (range != null) {
 				self.checkRange(range);
 			}

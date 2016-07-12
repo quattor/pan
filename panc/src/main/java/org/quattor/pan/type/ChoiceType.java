@@ -1,24 +1,16 @@
 package org.quattor.pan.type;
 
-import org.quattor.pan.dml.Operation;
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.StringProperty;
-import org.quattor.pan.exceptions.CompilerError;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.exceptions.ValidationException;
-import org.quattor.pan.template.BuildContext;
-import org.quattor.pan.template.CompileTimeContext;
 import org.quattor.pan.template.Context;
 import org.quattor.pan.template.SourceRange;
-import org.quattor.pan.utils.Range;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import static org.quattor.pan.utils.MessageUtils.MSG_NONEXISTANT_TYPE;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_CHOICE_TYPE;
-import static org.quattor.pan.utils.MessageUtils.MSG_ALL_STRING_ARGS_REQ;
 
 /**
  * Created by iliclaey.

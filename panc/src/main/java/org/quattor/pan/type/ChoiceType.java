@@ -34,7 +34,7 @@ public class ChoiceType extends AdvancedType {
      *
      * @param source      String describing the source containing this definition
      * @param sourceRange
-     * @param choices     list of possible choices
+     * @param choices     List of possible choices
      */
     public ChoiceType(String source, SourceRange sourceRange, List<Element> choices) {
         super(source, sourceRange, "string");
@@ -53,16 +53,14 @@ public class ChoiceType extends AdvancedType {
 
     public Object validate(final Context context, final Element self) {
 
+        // Check if the value is indeed a StringProperty.
         FullType type = context.getFullType(identifier);
         type.validate(context, self);
 
+        // Check whether the value is one of the possible choices.
         String source = ((StringProperty) self).toString();
         boolean found = false;
         for (Element e : choices) {
-            if (!(e instanceof StringProperty)) {
-                throw ValidationException.create(MSG_INVALID_CHOICE_TYPE, self.toString());
-            }
-
             if (((StringProperty) e).getValue().equals(source)) {
                 found = true;
             }
@@ -77,7 +75,7 @@ public class ChoiceType extends AdvancedType {
 
     @Override
     public Element setDefaults(Context context, Element self) throws EvaluationException {
-        // ChoiceType itself does not have a default value. The FullType containing the ChoiceType might.
+        // ChoiceType itself can't have a default value. The FullType containing the ChoiceType might.
         return null;
     }
 

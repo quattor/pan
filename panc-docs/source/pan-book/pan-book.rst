@@ -2140,6 +2140,18 @@ children can be a full type specification and may contain default values
 and/or validation blocks. One can also attach default values or
 validation blocks to the record as a whole.
 
+The choice-type
+~~~~~~~~~~~~~~~
+The choice type is an advanced type that can be used to create user-defined types.
+It takes two or more strings as input arguments. These arguments represent the
+possible choices that can be assigned to a certain path. For example::
+
+    type mychoice = choice("a", "b", "c");
+
+defines a type with only three possible choices. The choice type can be used in
+the same way and in combination with the above explained types.
+
+
 Default Values
 --------------
 

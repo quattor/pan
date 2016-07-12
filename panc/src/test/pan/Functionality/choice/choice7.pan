@@ -1,10 +1,9 @@
-# Test LinkType with ChoiceType
-# @expect="/nlist[@name='profile']/string[@name='x']='/y' and /nlist[@name='profile']/string[@name='y']='a'"
+# Test ListType with ChoiceType
+# @expect="/nlist[@name='profile']/list[@name='x']/*[1]='a' and /nlist[@name='profile']/list[@name='x']/*[2]='c' and /nlist[@name='profile']/list[@name='x']/*[3]='c'"
 #
 
 object template choice7;
 
-type mychoice = choice("a", "b", "c")*;
+type mychoice = choice("a", "b", "c")[];
 bind '/x' = mychoice;
-'/y' = "a";
-'/x' = '/y';
+'/x' = list("a", "c", "c");

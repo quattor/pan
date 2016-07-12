@@ -1,13 +1,9 @@
-#
-# @expect="/nlist[@name='profile']/nlist[@name='x']/string[@name='entry2']='a'"
+# Test HashType with ChoiceType
+# @expect="/nlist[@name='profile']/nlist[@name='x']/string[@name='entry1']='b' and /nlist[@name='profile']/nlist[@name='x']/string[@name='entry2']='c'"
 #
 
 object template choice10;
 
-type mychoice = {
-    'entry1' : string
-    'entry2' : choice("a", "b")
-};
-
+type mychoice = choice("a", "b", "c"){};
 bind '/x' = mychoice;
-'/x' = dict('entry1', "ok", 'entry2', "a");
+'/x' = dict("entry1", "b", "entry2", "c");

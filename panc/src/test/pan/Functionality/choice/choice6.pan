@@ -1,9 +1,8 @@
-# Test ListType with ChoiceType
-# @expect="/nlist[@name='profile']/list[@name='x']/*[1]='a' and /nlist[@name='profile']/list[@name='x']/*[2]='c' and /nlist[@name='profile']/list[@name='x']/*[3]='c'"
+# Test for default value should fail
+# @expect=org.quattor.pan.exceptions.ValidationException
 #
 
 object template choice6;
 
-type mychoice = choice("a", "b", "c")[];
+type mychoice = choice("a", "b", "c") = "d";
 bind '/x' = mychoice;
-'/x' = list("a", "c", "c");

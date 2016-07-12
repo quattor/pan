@@ -36,6 +36,7 @@ public class ChoiceType extends AdvancedType {
     public static ChoiceType getInstance(String source, SourceRange sourceRange, List<Element> choices)
             throws SyntaxException {
 
+        // There need to be at least two possible options to choose from.
         if (choices.size() <= 1) {
             throw new SyntaxException("choice() needs at least two arguments", sourceRange);
         }
@@ -48,9 +49,9 @@ public class ChoiceType extends AdvancedType {
         // Check if the value is indeed a StringProperty.
         FullType type = context.getFullType(identifier);
         type.validate(context, self);
+        String source = ((StringProperty) self).getValue();
 
         // Check whether the value is one of the possible choices.
-        String source = ((StringProperty) self).toString();
         boolean found = false;
         for (Element e : choices) {
             if (((StringProperty) e).getValue().equals(source)) {
@@ -58,6 +59,7 @@ public class ChoiceType extends AdvancedType {
             }
         }
 
+        // If the element is not a possible choice, throw an error.
         if (!found) {
             throw ValidationException.create(MSG_INVALID_CHOICE_TYPE, self.toString());
         }

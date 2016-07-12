@@ -25,6 +25,7 @@ import org.quattor.pan.dml.DML;
 import org.quattor.pan.dml.Operation;
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.Null;
+import org.quattor.pan.dml.data.StringProperty;
 import org.quattor.pan.dml.data.Undef;
 import org.quattor.pan.dml.functions.Append;
 import org.quattor.pan.dml.functions.Base64Decode;
@@ -946,7 +947,7 @@ public class PanParserAstUtils {
             baseType = new RecordType(source, base.getSourceRange(), base.isExtensible(), base.getRange(), includes,
                     reqFields, optFields);
         } else {
-            // This is an alias or advanced type.
+            // This is an alias or an advanced type.
             if (identifier.equals("choice")) {
                 baseType = astToChoiceType(base, source);
             } else {
@@ -983,13 +984,13 @@ public class PanParserAstUtils {
     static private ChoiceType astToChoiceType(ASTBaseTypeSpec node, String source) throws SyntaxException {
         List<Element> list = new ArrayList<Element>();
 
+        // Extract all the possible choices.
         for (int i = 0; i < node.jjtGetNumChildren(); i++) {
             SimpleNode sn = (SimpleNode) node.jjtGetChild(i);
-            Operation o = astToOperation(sn);
-            list.add((Element) o);
+            Element e = (StringProperty) astToOperation(sn);
+            list.add(e);
         }
 
-//        return new ChoiceType(source, node.getSourceRange(), list);
         return ChoiceType.getInstance(source, node.getSourceRange(), list);
     }
 

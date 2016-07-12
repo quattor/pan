@@ -66,7 +66,7 @@ public class HashType extends CompositeType {
 	public Element findDefault(Context context) {
 
 		// The base type for a hash refers to the children's type, not the
-		// hash's type. This it can never have a default value for the type
+		// hash's type. Thus it can never have a default value for the type
 		// which references it. Always return null.
 		return null;
 	}

@@ -42,7 +42,7 @@ import org.quattor.pan.utils.Range;
  */
 public class AliasType extends BaseType {
 
-	protected final String identifier;
+	private final String identifier;
 
 	private final Range range;
 

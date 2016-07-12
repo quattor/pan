@@ -347,7 +347,6 @@ public class PanParserAstUtils {
 
             ASTStatement snode = (ASTStatement) n;
             StatementType stype = snode.getStatementType();
-            System.out.println(snode.toString());
             switch (stype) {
                 case NOOP:
                     // Empty statement. Do nothing.
@@ -449,7 +448,6 @@ public class PanParserAstUtils {
             // This is a normal assignment statement.
             ASTOperation child = (ASTOperation) ast.jjtGetChild(0);
             Operation dml = astToDml(child, true);
-            System.out.println("AssignmentStatement");
             statement = AssignmentStatement
                     .createAssignmentStatement(ast.getSourceRange(), path, dml, ast.getConditionalFlag(),
                             !ast.getFinalFlag());
@@ -488,7 +486,7 @@ public class PanParserAstUtils {
         // Create the assignment statement.
         ASTFullTypeSpec child = (ASTFullTypeSpec) ast.jjtGetChild(0);
         FullType fullType = astToFullType(source, child);
-        System.out.println("Typename: " + tname);
+
         return new TypeStatement(ast.getSourceRange(), tname, fullType);
     }
 
@@ -604,19 +602,6 @@ public class PanParserAstUtils {
     static private Operation astToOperation(SimpleNode node) throws SyntaxException {
 
         Operation op = null;
-        System.out.println(node.toString());
-        if (node.children != null && node.children.length > 0) {
-            for (Node n : node.children) {
-                if (n != null) {
-                    System.out.println(n.toString());
-                } else {
-                    System.out.println("null");
-                }
-
-            }
-        }
-
-
         switch (node.getId()) {
             case PanParserTreeConstants.JJTOPERATION:
                 ASTOperation onode = (ASTOperation) node;
@@ -961,17 +946,9 @@ public class PanParserAstUtils {
             baseType = new RecordType(source, base.getSourceRange(), base.isExtensible(), base.getRange(), includes,
                     reqFields, optFields);
         } else {
-            // This is an alias type.
+            // This is an alias or advanced type.
             if (identifier.equals("choice")) {
-                List<Operation> list = new ArrayList<Operation>();
-
-                for (int i = 0; i < base.jjtGetNumChildren(); i++) {
-                    SimpleNode sn = (SimpleNode) base.jjtGetChild(i);
-                    Operation o = astToOperation(sn);
-                    list.add(o);
-                }
-
-                baseType = ChoiceType.getInstance(source, base.getSourceRange(), "string", base.getRange(), list);
+                baseType = astToChoiceType(base, source);
             } else {
                 baseType = new AliasType(source, base.getSourceRange(), identifier, base.getRange());
             }
@@ -1001,6 +978,19 @@ public class PanParserAstUtils {
         }
 
         return baseType;
+    }
+
+    static private ChoiceType astToChoiceType(ASTBaseTypeSpec node, String source) throws SyntaxException {
+        List<Element> list = new ArrayList<Element>();
+
+        for (int i = 0; i < node.jjtGetNumChildren(); i++) {
+            SimpleNode sn = (SimpleNode) node.jjtGetChild(i);
+            Operation o = astToOperation(sn);
+            list.add((Element) o);
+        }
+
+//        return new ChoiceType(source, node.getSourceRange(), list);
+        return ChoiceType.getInstance(source, node.getSourceRange(), list);
     }
 
     static private Element runDefaultDml(Operation dml) throws SyntaxException {

@@ -21,7 +21,7 @@
 package org.quattor.pan.dml.functions;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_FIRST_STRING_ARG_REQ;
-import static org.quattor.pan.utils.MessageUtils.MSG_FORMAT_REQUIRES_PROPERTIES;
+import static org.quattor.pan.utils.MessageUtils.MSG_FORMAT_REQUIRES_PRIMITIVE;
 import static org.quattor.pan.utils.MessageUtils.MSG_ILLEGAL_FORMAT;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_FIRST_ARG_FORMAT;
 
@@ -30,6 +30,7 @@ import java.util.IllegalFormatException;
 import org.quattor.pan.dml.Operation;
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.Property;
+import org.quattor.pan.dml.data.Resource;
 import org.quattor.pan.dml.data.StringProperty;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
@@ -81,14 +82,16 @@ final public class Format extends BuiltInFunction {
         // Now pull out all of the arguments for formatting.
         Object[] jargs = new Object[args.length - 1];
         for (int i = 1; i < args.length; i++) {
-            Property p = null;
-            try {
-                p = (Property) args[i];
-            } catch (ClassCastException cce) {
+            Element e = args[i].execute(context);
+
+            if (e instanceof Resource) {
+                jargs[i - 1] = e.toString();
+            } else if (e instanceof Property) {
+                jargs[i - 1] = ((Property) e).getValue();
+            } else {
                 throw EvaluationException.create(sourceRange, context,
-                        MSG_FORMAT_REQUIRES_PROPERTIES);
+                        MSG_FORMAT_REQUIRES_PRIMITIVE);
             }
-            jargs[i - 1] = p.getValue();
         }
 
         StringProperty result = null;

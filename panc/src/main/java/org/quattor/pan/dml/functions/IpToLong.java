@@ -17,9 +17,6 @@
 package org.quattor.pan.dml.functions;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_ONE_ARG_REQ;
-import static org.quattor.pan.utils.MessageUtils.MSG_FORMAT_REQUIRES_PROPERTIES;
-import static org.quattor.pan.utils.MessageUtils.MSG_ILLEGAL_FORMAT;
-import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_FIRST_ARG_FORMAT;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_IP4_FORMAT;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_TYPE_IP_TO_LONG;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_IP4_BITMASK;

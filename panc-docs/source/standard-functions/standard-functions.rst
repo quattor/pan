@@ -570,16 +570,17 @@ format -- format a string by replacing references to parameters
 Synopsis
 --------
 
-string **format** (string *fmt*, property *param*, ...)
+string **format** (string *fmt*, element *param*, ...)
 
 Description
 -----------
 
 The ``format`` function will replace all references within the ``fmt``
-string with the values of the referenced properties. This provides
+string with the values of the referenced elements. This provides
 functionality similar to the c-language's ``printf`` function. The
 syntax of the ``fmt`` string follows that provided in the java language;
-see the Formatter entry for full details.
+see the Formatter entry for full details. When passing a resource as an
+argument, the string replacement field should be used.
 
 .. _if_exists:
 

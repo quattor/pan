@@ -1,6 +1,7 @@
 package org.quattor.pan.type;
 
 import org.quattor.pan.dml.data.Element;
+import org.quattor.pan.dml.data.Resource;
 import org.quattor.pan.dml.data.StringProperty;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
@@ -74,12 +75,19 @@ public class ChoiceType extends AdvancedType {
     }
 
     public String toString() {
-        String s = "choice(";
-        for (Element e: choices) {
-            s += ((StringProperty)e).getValue() + " ";
-        }
-        s += ")";
+        StringBuilder sb = new StringBuilder();
 
-        return s;
+        sb.append("choice(");
+
+        String separator = "";
+        for (Element e : choices) {
+            sb.append(separator);
+            sb.append(((StringProperty) e).getValue());
+            separator = ", ";
+        }
+
+        sb.append(")");
+
+        return sb.toString();
     }
 }

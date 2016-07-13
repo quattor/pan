@@ -1,5 +1,5 @@
 #
-# @expect=org.quattor.pan.exceptions.ValidationException
+# @expect=org.quattor.pan.exceptions.ValidationException ".*value \(ddd\) is not a possible choice value.*"
 #
 
 object template choice20;

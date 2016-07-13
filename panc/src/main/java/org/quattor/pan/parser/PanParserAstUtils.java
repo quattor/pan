@@ -991,7 +991,7 @@ public class PanParserAstUtils {
             list.add(e);
         }
 
-        return ChoiceType.getInstance(source, node.getSourceRange(), list);
+        return new ChoiceType(source, node.getSourceRange(), list);
     }
 
     static private Element runDefaultDml(Operation dml) throws SyntaxException {

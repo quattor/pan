@@ -2143,7 +2143,7 @@ validation blocks to the record as a whole.
 The choice-type
 ~~~~~~~~~~~~~~~
 The choice type is an advanced type that can be used to create user-defined types.
-It takes two or more strings as input arguments. These arguments represent the
+It takes one or more strings as input arguments. These arguments represent the
 possible choices that can be assigned to a certain path. For example::
 
     type mychoice = choice("a", "b", "c");

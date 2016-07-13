@@ -6,6 +6,7 @@ import org.quattor.pan.dml.data.LongProperty;
 import org.quattor.pan.dml.data.StringProperty;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.exceptions.ValidationException;
+import org.quattor.pan.parser.ParseException;
 import org.quattor.pan.template.BuildContext;
 import org.quattor.pan.template.Context;
 
@@ -19,14 +20,6 @@ import static org.junit.Assert.assertEquals;
  */
 public class ChoiceTypeTest {
 
-    @Test(expected = SyntaxException.class)
-    public void testInvalidNumberArgs() throws SyntaxException {
-        List<Element> args = new ArrayList<Element>();
-        args.add(StringProperty.getInstance("Exception"));
-
-        ChoiceType.getInstance(null, null, args);
-    }
-
     @Test(expected = ValidationException.class)
     public void testInvalidSelfValidation() throws SyntaxException {
         Context context = new BuildContext();
@@ -35,7 +28,7 @@ public class ChoiceTypeTest {
         args.add(StringProperty.getInstance("A"));
         args.add(StringProperty.getInstance("B"));
 
-        BaseType type = ChoiceType.getInstance(null, null, args);
+        BaseType type = new ChoiceType(null, null, args);
 
         type.validate(context, LongProperty.getInstance(1));
     }
@@ -48,7 +41,7 @@ public class ChoiceTypeTest {
         args.add(StringProperty.getInstance("A"));
         args.add(StringProperty.getInstance("B"));
 
-        BaseType type = ChoiceType.getInstance(null, null, args);
+        BaseType type = new ChoiceType(null, null, args);
 
         type.validate(context, StringProperty.getInstance("C"));
     }
@@ -61,7 +54,7 @@ public class ChoiceTypeTest {
         args.add(StringProperty.getInstance("A"));
         args.add(StringProperty.getInstance("B"));
 
-        BaseType type = ChoiceType.getInstance(null, null, args);
+        BaseType type = new ChoiceType(null, null, args);
 
         Object o = type.validate(context, StringProperty.getInstance("A"));
 

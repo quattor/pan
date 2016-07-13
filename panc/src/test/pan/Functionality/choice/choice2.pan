@@ -1,7 +1,7 @@
 #
-# @expect=org.quattor.pan.exceptions.SyntaxException
+# @expect=org.quattor.pan.parser.ParseException
 #
 
 object template choice2;
 
-type mychoice = choice("a");
+type mychoice = choice();

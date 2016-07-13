@@ -1,5 +1,5 @@
 #
-# @expect=org.quattor.pan.exceptions.ValidationException
+# @expect=org.quattor.pan.exceptions.ValidationException ".*user-defined validation failed.*"
 #
 
 object template choice19;

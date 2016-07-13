@@ -94,8 +94,4 @@ final public class Value extends BuiltInFunction {
 					+ ") doesn't exist", getSourceRange(), context);
 		}
 	}
-
-	public String toString() {
-		return "value(" + ops[0].toString() + ")";
-	}
 }

@@ -20,11 +20,6 @@
 
 package org.quattor.pan.dml.functions;
 
-import static org.quattor.pan.utils.MessageUtils.MSG_ONE_STRING_ARG_REQ;
-import static org.quattor.pan.utils.MessageUtils.MSG_RESTRICTED_CONTEXT;
-import static org.quattor.pan.utils.MessageUtils.MSG_USER_INITIATED_ERROR;
-import static org.quattor.pan.utils.MessageUtils.MSG_USER_INITIATED_ERROR_WITHOUT_STRING;
-
 import org.quattor.pan.dml.Operation;
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.StringProperty;
@@ -33,14 +28,16 @@ import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.template.Context;
 import org.quattor.pan.template.SourceRange;
 
+import static org.quattor.pan.utils.MessageUtils.*;
+
 /**
- * Implements the <code>error</code> function that prints its argument to the
- * standard error stream and then aborts the compilation of the object profile.
+ * Implements the <code>error</code> function that prints its (formatted) argument(s)
+ * to the standard error stream and then aborts the compilation of the object profile.
  * 
  * @author loomis
  * 
  */
-final public class ErrorMessage extends BuiltInFunction {
+final public class ErrorMessage extends Formatter {
 
 	private ErrorMessage(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
@@ -50,12 +47,9 @@ final public class ErrorMessage extends BuiltInFunction {
 	public static Operation getInstance(SourceRange sourceRange,
 			Operation... operations) throws SyntaxException {
 
-		// Ensure that there is exactly one argument. Since the parser does
-		// little argument checking for function calls, this explicit check is
-		// needed.
-		if (operations.length != 1) {
-			throw SyntaxException.create(sourceRange, MSG_ONE_STRING_ARG_REQ,
-					"error");
+		// ErrorMessage requires one or more arguments.
+		if (operations.length == 0) {
+			throw SyntaxException.create(sourceRange, MSG_ONE_OR_MORE_ARG_REQ, "error");
 		}
 
 		return new ErrorMessage(sourceRange, operations);
@@ -64,19 +58,24 @@ final public class ErrorMessage extends BuiltInFunction {
 	@Override
 	public Element execute(Context context) {
 
-		assert (ops.length == 1);
+		assert (ops.length >= 1);
 
-		Element result = ops[0].execute(context);
+		StringProperty sp = null;
+		if (ops.length == 1) {
+			Element result = ops[0].execute(context);
 
-		try {
-			StringProperty sp = (StringProperty) result;
-			throw EvaluationException.create(getSourceRange(), context,
-					MSG_USER_INITIATED_ERROR, context.getObjectName(),
-					sp.getValue());
-		} catch (ClassCastException cce) {
-			throw EvaluationException.create(getSourceRange(),
-					MSG_USER_INITIATED_ERROR_WITHOUT_STRING);
+			try {
+				sp = (StringProperty) result;
+			} catch (ClassCastException cce) {
+				throw EvaluationException.create(getSourceRange(),
+						MSG_USER_INITIATED_ERROR_WITHOUT_STRING);
+			}
+		} else {
+			sp = format(context);
 		}
+
+		throw EvaluationException.create(sourceRange, context,
+				MSG_USER_INITIATED_ERROR, context.getObjectName(), sp.getValue());
 	}
 
 	@Override

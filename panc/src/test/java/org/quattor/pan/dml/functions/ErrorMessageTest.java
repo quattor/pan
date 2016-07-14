@@ -21,6 +21,7 @@
 package org.quattor.pan.dml.functions;
 
 import org.junit.Test;
+import org.quattor.pan.exceptions.SyntaxException;
 
 public class ErrorMessageTest extends BuiltInFunctionTestUtils {
 
@@ -29,4 +30,8 @@ public class ErrorMessageTest extends BuiltInFunctionTestUtils {
 		checkClassRequirements(ErrorMessage.class);
 	}
 
+	@Test(expected = SyntaxException.class)
+	public void checkTooFewArguments() throws SyntaxException {
+		ErrorMessage.getInstance(null);
+	}
 }

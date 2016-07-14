@@ -9,6 +9,7 @@ import org.quattor.pan.exceptions.ValidationException;
 import org.quattor.pan.template.Context;
 import org.quattor.pan.template.SourceRange;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_CHOICE_TYPE;
@@ -40,6 +41,8 @@ public class ChoiceType extends AdvancedType {
         FullType type = context.getFullType(identifier);
         type.validate(context, self);
 
+        System.out.println(this.toString());
+
         // Check whether the value is one of the possible choices.
         boolean found = choices.contains(self);
 
@@ -59,19 +62,12 @@ public class ChoiceType extends AdvancedType {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        List<String> list = new ArrayList<String>();
 
-        sb.append("choice(");
-
-        String separator = "";
         for (Element e : choices) {
-            sb.append(separator);
-            sb.append(((StringProperty) e).getValue());
-            separator = ", ";
+            list.add(((StringProperty) e).getValue());
         }
 
-        sb.append(")");
-
-        return sb.toString();
+        return "choice(" + String.join(", ", list) + ")";
     }
 }

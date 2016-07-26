@@ -1782,6 +1782,38 @@ This function replaces escaped characters in the given string ``str`` to
 get back the original string. This is the inverse of the ``escape``
 function.
 
+.. _validate:
+
+validate
+========
+
+Name
+----
+
+validate -- checks if an element meets the requirements of a certain type
+
+Synopsis
+--------
+
+boolean **validate** (element *arg*)
+
+Description
+-----------
+
+This function checks whether a certain element meets the requirements of
+a certain type. The argument can be a variable, a path or an operation, since
+these eventually will lead to a certain value. The function can be used as
+follows:
+
+::
+
+    type mytype = string(2..);
+    variable X = "Message";
+
+    '/result' = validate(mytype, X);
+
+In this case ``'/result'`` will hold ``true`` as a value.
+
 .. _value:
 
 value

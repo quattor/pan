@@ -2,7 +2,7 @@
 # @expect="/nlist[@name='profile']/boolean[@name='res']='false'"
 #
 
-object template validate16;
+object template is_valid16;
 
 type mytype = {
   'entry1': string(3..)
@@ -11,4 +11,4 @@ type mytype = {
 
 variable X = dict('entry1', "Ha", 'entry2', 1);
 
-'/res' = validate(mytype, X);
+'/res' = is_valid(mytype, X);

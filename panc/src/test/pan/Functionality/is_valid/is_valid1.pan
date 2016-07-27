@@ -2,9 +2,9 @@
 # @expect="/nlist[@name='profile']/boolean[@name='res']='true'"
 #
 
-object template validate1;
+object template is_valid1;
 
 type mystring = string(2..);
 variable X = "message";
 
-'/res' = validate(mystring, X);
+'/res' = is_valid(mystring, X);

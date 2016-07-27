@@ -17,27 +17,27 @@ import org.quattor.pan.template.Context;
 /**
  * Created by iliclaey.
  */
-public class ValidateTest extends BuiltInFunctionTestUtils {
+public class IsValidTest extends BuiltInFunctionTestUtils {
 
     @Test
     public void checkGetInstance() {
-        checkClassRequirements(Validate.class);
+        checkClassRequirements(IsValid.class);
     }
 
     @Test(expected = SyntaxException.class)
     public void testTooFewArguments() throws SyntaxException {
-        Validate.getInstance(null);
+        IsValid.getInstance(null);
     }
 
     @Test(expected = SyntaxException.class)
     public void testTooManyArguments() throws SyntaxException {
-        Validate.getInstance(null, SimpleVariable.getInstance(null, "type"),
+        IsValid.getInstance(null, SimpleVariable.getInstance(null, "type"),
                 null, StringProperty.getInstance("message"));
     }
 
     @Test(expected = SyntaxException.class)
     public void testWrongFirstArgument() throws SyntaxException {
-        Validate.getInstance(null, StringProperty.getInstance("Not ok"),
+        IsValid.getInstance(null, StringProperty.getInstance("Not ok"),
                 StringProperty.getInstance("message"));
     }
 
@@ -45,7 +45,7 @@ public class ValidateTest extends BuiltInFunctionTestUtils {
     public void testCompileTimeContext() throws SyntaxException {
 
         Context context = new CompileTimeContext();
-        Operation dml = Validate.getInstance(null, SimpleVariable.getInstance(null, "type"),
+        Operation dml = IsValid.getInstance(null, SimpleVariable.getInstance(null, "type"),
                 StringProperty.getInstance("message"));
 
         context.executeDmlBlock(dml);
@@ -58,7 +58,7 @@ public class ValidateTest extends BuiltInFunctionTestUtils {
         NestedVariable nv = (NestedVariable) NestedVariable.getInstance(null, "type",
                 StringProperty.getInstance("message"));
 
-        Operation dml = Validate.getInstance(null, nv, StringProperty.getInstance("message"));
+        Operation dml = IsValid.getInstance(null, nv, StringProperty.getInstance("message"));
 
         context.executeDmlBlock(dml);
     }
@@ -67,7 +67,7 @@ public class ValidateTest extends BuiltInFunctionTestUtils {
     public void testNoFullTypeDefined() throws SyntaxException {
 
         Context context = new BuildContext();
-        Operation dml = Validate.getInstance(null, SimpleVariable.getInstance(null, "type"),
+        Operation dml = IsValid.getInstance(null, SimpleVariable.getInstance(null, "type"),
                 StringProperty.getInstance("message"));
 
         context.executeDmlBlock(dml);

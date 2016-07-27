@@ -1023,6 +1023,39 @@ Description
 The ``is_string`` function will return ``true`` if the argument is a
 string value; it will return ``false`` otherwise.
 
+.. _is_valid:
+
+is_valid
+========
+
+Name
+----
+
+is_valid -- checks if an element meets the requirements of a certain type
+
+Synopsis
+--------
+
+boolean **is_valid** (type, *type*, element *el*)
+
+Description
+-----------
+
+This function checks whether a certain element meets the requirements of
+a certain type. The argument can be a variable or an operation, since
+these eventually will lead to a certain value. The function can be used as
+follows:
+
+::
+
+    type mytype = string(2..);
+    variable X = "Message";
+
+    '/result' = is_valid(mytype, X);
+
+
+In this case ``'/result'`` will be of type boolean and hold ``true`` as a value.
+
 .. _key:
 
 key
@@ -1781,38 +1814,6 @@ Description
 This function replaces escaped characters in the given string ``str`` to
 get back the original string. This is the inverse of the ``escape``
 function.
-
-.. _validate:
-
-validate
-========
-
-Name
-----
-
-validate -- checks if an element meets the requirements of a certain type
-
-Synopsis
---------
-
-boolean **validate** (element *arg*)
-
-Description
------------
-
-This function checks whether a certain element meets the requirements of
-a certain type. The argument can be a variable, a path or an operation, since
-these eventually will lead to a certain value. The function can be used as
-follows:
-
-::
-
-    type mytype = string(2..);
-    variable X = "Message";
-
-    '/result' = validate(mytype, X);
-
-In this case ``'/result'`` will hold ``true`` as a value.
 
 .. _value:
 

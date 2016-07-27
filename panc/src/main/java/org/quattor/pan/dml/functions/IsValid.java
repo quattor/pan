@@ -17,27 +17,27 @@ import static org.quattor.pan.utils.MessageUtils.*;
 /**
  * Created by iliclaey.
  *
- * Function to check whether a path conforms to a certain type.
+ * Function to check whether an element meets the requirements of a certain type.
  */
-public final class Validate extends BuiltInFunction {
+public final class IsValid extends BuiltInFunction {
 
-    protected Validate(SourceRange sourceRange, Operation... operations) {
-        super("validate", sourceRange, operations);
+    protected IsValid(SourceRange sourceRange, Operation... operations) {
+        super("is_valid", sourceRange, operations);
     }
 
     public static Operation getInstance(SourceRange sourceRange, Operation... operations) throws SyntaxException {
 
-        // IsType requires two arguments.
+        // IsValid requires two arguments.
         if (operations.length != 2) {
-            throw SyntaxException.create(sourceRange, MSG_TWO_ARGS_REQ, "validate");
+            throw SyntaxException.create(sourceRange, MSG_TWO_ARGS_REQ, "is_valid");
         }
 
-        // The first argument should be the type-name, which will be contained in a SimpleVariable.
+        // The first argument should be the type, which will be contained in a SimpleVariable.
         if (!(operations[0] instanceof Variable)) {
-            throw SyntaxException.create(sourceRange, MSG_FIRST_ARG_TYPE_REQ, "validate");
+            throw SyntaxException.create(sourceRange, MSG_FIRST_ARG_TYPE_REQ, "is_valid");
         }
 
-        return new Validate(sourceRange, operations);
+        return new IsValid(sourceRange, operations);
     }
 
     @Override
@@ -50,7 +50,7 @@ public final class Validate extends BuiltInFunction {
         try {
             type = (SimpleVariable) ops[0];
         } catch (ClassCastException cce) {
-            throw EvaluationException.create(sourceRange, MSG_FIRST_ARG_TYPE_REQ, "validate");
+            throw EvaluationException.create(sourceRange, MSG_FIRST_ARG_TYPE_REQ, "is_valid");
         }
 
         // Get the element and type to validate.

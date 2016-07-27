@@ -29,7 +29,7 @@
    :deprecationWarnings CompilerOptions$DeprecationWarnings/OFF
    :annotationDirectory nil
    :annotationBaseDirectory nil
-   :rootElement nil
+   :initial-data nil
    :nthread 0})
 
 (def ^:dynamic *settings* (defaults))

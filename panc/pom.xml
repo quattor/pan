@@ -145,7 +145,7 @@
                 </manifest>
               </archive>
               <descriptors>
-                <descriptor>src/main/assembly/assembly.xml</descriptor>
+                <descriptor>src/main/assembly/assembly-fat.xml</descriptor>
               </descriptors>
 
               <finalName>panc-${project.version}-fat-jar</finalName>

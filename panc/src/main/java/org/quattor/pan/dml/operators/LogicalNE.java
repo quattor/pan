@@ -37,7 +37,7 @@ import org.quattor.pan.template.SourceRange;
 import org.quattor.pan.utils.MessageUtils;
 
 /**
- * Implements a not-equal operation for longs, doubles, and strings.
+ * Implements a not-equal operation for longs, doubles, booleans and strings.
  * 
  * @author loomis
  * 
@@ -111,6 +111,13 @@ final public class LogicalNE extends AbstractOperation {
 			String s2 = (String) b.getValue();
 
 			result = BooleanProperty.getInstance(!s1.equals(s2));
+
+		} else if ((a instanceof BooleanProperty) && (b instanceof BooleanProperty)) {
+
+			Boolean b1 = (Boolean) a.getValue();
+			Boolean b2 = (Boolean) b.getValue();
+
+			result = BooleanProperty.getInstance(!b1.equals(b2));
 
 		} else {
 			throw new EvaluationException(MessageUtils

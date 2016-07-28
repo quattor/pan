@@ -133,6 +133,26 @@
         <executions>
 
           <execution>
+            <id>test-jar</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <archive>
+                <manifest>
+                  <mainClass>org.quattor.pan.PanTest</mainClass>
+                </manifest>
+              </archive>
+              <descriptors>
+                <descriptor>src/main/assembly/assembly.xml</descriptor>
+              </descriptors>
+
+              <finalName>panc-${project.version}-fat-jar</finalName>
+            </configuration>
+          </execution>
+
+          <execution>
             <id>jar-with-dependencies</id>
             <goals>
               <goal>single</goal>

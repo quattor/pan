@@ -209,7 +209,11 @@ public class HashResource extends Resource {
 
 	@Override
 	public Resource.Iterator iterator() {
-		return new HashResourceIterator(map);
+		return new HashResourceIterator(map, false);
+	}
+
+	public Resource.Iterator protectedIterator() {
+		return new HashResourceIterator(map, true);
 	}
 
 	private static class HashResourceIterator implements Resource.Iterator {
@@ -218,9 +222,12 @@ public class HashResource extends Resource {
 
 		private final Map<String, Element> backingHash;
 
-		public HashResourceIterator(Map<String, Element> backingHash) {
+		private final boolean isProtected;
+
+		public HashResourceIterator(Map<String, Element> backingHash, boolean isProtected) {
 			assert (backingHash != null);
 			this.backingHash = backingHash;
+			this.isProtected = isProtected;
 			iterator = backingHash.keySet().iterator();
 		}
 
@@ -243,6 +250,9 @@ public class HashResource extends Resource {
 					throw new EvaluationException(
 							MessageUtils.format(MSG_CONCURRENT_MODIFICATION),
 							null);
+				}
+				if (isProtected) {
+					value = value.protect();
 				}
 				entry = new HashResourceEntry(key, value);
 			} catch (NoSuchElementException nsee) {

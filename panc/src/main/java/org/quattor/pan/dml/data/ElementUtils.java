@@ -37,7 +37,7 @@ public class ElementUtils {
             Resource r = (Resource) e;
             for (Resource.Entry entry : r) {
                 String rpath = locateUndefinedElement(entry.getValue());
-                String term = entry.getValue().toString();
+                String term = entry.getKey().toString();
                 if (rpath != null) {
                     return (!"".equals(rpath)) ? term + "/" + rpath : term;
                 }

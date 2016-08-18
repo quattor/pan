@@ -71,6 +71,24 @@ class TestPanlint(unittest.TestCase):
         self.assertEqual(panlint.strip_trailing_comments(annotation_in_string, panlint.get_string_ranges(annotation_in_string)), annotation_in_string)
         self.assertEqual(panlint.strip_trailing_comments(annotation_mixed, panlint.get_string_ranges(annotation_mixed)), '''words = '@{Not a trailing annotation}';''')
 
+    def test_whitespace_around_operators(self):
+        good = 'variable a = 5 + 3;'
+
+        bad_before = 'variable b = 8* 1;'
+        dgn_before = '             ^^   '
+
+        bad_after = 'variable b = 16 /2;'
+        dgn_after = '                ^^ '
+
+        bad_both = 'variable d = 10-2;'
+        dgn_both = '              ^^^ '
+
+        lc = panlint.LineChecks()
+
+        self.assertEqual(lc.whitespace_around_operators(good, []), (True, ' '*len(good), ''))
+        self.assertEqual(lc.whitespace_around_operators(bad_before, []), (False, dgn_before, 'Missing space before operator'))
+        self.assertEqual(lc.whitespace_around_operators(bad_after, []), (False, dgn_after, 'Missing space after operator'))
+        self.assertEqual(lc.whitespace_around_operators(bad_both, []), (False, dgn_both, 'Missing space before and after operator'))
 
 if __name__ == '__main__':
     unittest.main()

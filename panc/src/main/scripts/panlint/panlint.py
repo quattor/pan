@@ -64,7 +64,8 @@ class LineChecks:
         operators = RE_OPERATOR.finditer(line)
 
         passed = True
-        message = set()
+        message = ''
+        messages = set()
 
         diagnosis = ' ' * len(line)
 
@@ -76,11 +77,11 @@ class LineChecks:
                 valid = True
                 if char_before not in (' ', '\t'):
                     valid = False
-                    message.add('before')
+                    messages.add('before')
                     s -= 1
                 if char_after not in (' ', '\t'):
                     valid = False
-                    message.add('after')
+                    messages.add('after')
                     e += 1
 
                 if not valid:
@@ -89,7 +90,10 @@ class LineChecks:
 
                 passed &= valid
 
-        message = 'Missing space %s operator' % ' and '.join(message)
+        if not passed:
+            messages = list(messages)
+            messages.sort(None, None, True)
+            message = 'Missing space %s operator' % ' and '.join(messages)
         return (passed, diagnosis, message)
 
 

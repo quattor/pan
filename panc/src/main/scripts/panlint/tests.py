@@ -42,6 +42,7 @@ class TestPanlint(unittest.TestCase):
         diag1 = ' ^'
         diag2 = '       ^^^'
         merged = ' ^     ^^^'
+        self.assertEqual(panlint.merge_diagnoses([]), '')
         self.assertEqual(panlint.merge_diagnoses([diag1]), diag1)
         self.assertEqual(panlint.merge_diagnoses([diag2]), diag2)
         self.assertEqual(panlint.merge_diagnoses([diag1, diag2]), merged)

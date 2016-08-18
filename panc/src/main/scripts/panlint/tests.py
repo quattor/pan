@@ -54,6 +54,23 @@ class TestPanlint(unittest.TestCase):
         self.assertEqual(panlint.lint_file('test_files/test_good_unique.pan'), no_errors)
         self.assertEqual(panlint.lint_file('test_files/test_good_declaration.pan'), no_errors)
 
+    def test_strip_trailing_comments(self):
+        comment_plain = '''Words; # This is a trailing comment'''
+        comment_in_string = '''words = '# Not a trailing comment' + pictures;'''
+        comment_mixed = '''words = '# Not a trailing comment';#But this is'''
+
+        annotation_plain = '''Words; @{This is a trailing annotation}'''
+        annotation_in_string = '''words = '@{Not a trailing annotation}' + pictures;'''
+        annotation_mixed = '''words = '@{Not a trailing annotation}';@{But this is}'''
+
+        self.assertEqual(panlint.strip_trailing_comments(comment_plain, []), 'Words;')
+        self.assertEqual(panlint.strip_trailing_comments(comment_in_string, panlint.get_string_ranges(comment_in_string)), comment_in_string)
+        self.assertEqual(panlint.strip_trailing_comments(comment_mixed, panlint.get_string_ranges(comment_mixed)), '''words = '# Not a trailing comment';''')
+
+        self.assertEqual(panlint.strip_trailing_comments(annotation_plain, []), 'Words;')
+        self.assertEqual(panlint.strip_trailing_comments(annotation_in_string, panlint.get_string_ranges(annotation_in_string)), annotation_in_string)
+        self.assertEqual(panlint.strip_trailing_comments(annotation_mixed, panlint.get_string_ranges(annotation_mixed)), '''words = '@{Not a trailing annotation}';''')
+
 
 if __name__ == '__main__':
     unittest.main()

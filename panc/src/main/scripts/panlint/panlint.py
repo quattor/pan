@@ -25,13 +25,13 @@ from sys import stdout, exit as sys_exit
 from inspect import getmembers, ismethod
 from prettytable import PrettyTable
 
-RS_COMMENT = r'(?:#.*|@{.*})$'
+RS_COMMENT = r'(?:#|@{.*?})'
 
 RE_STRING = re.compile(r'''('.*?'|".*?"(?<!\\"))''')
 
 RE_FIRST_LINE = re.compile(r'^\s*(?:(?:declaration|unique|structure|object)\s+)?template (?:(?:[\S-]+/)+)?[\S-]+;$')
-RE_COMMENT_LINE = re.compile(r'^\s*' + RS_COMMENT)
-RE_TRAILING_COMMENT = re.compile(r'\s*' + RS_COMMENT)
+RE_COMMENT = re.compile(RS_COMMENT)
+RE_COMMENT_LINE = re.compile(r'^\s*' + RS_COMMENT + '.*$')
 RE_ANNOTATION = re.compile(r'@\w*{.*?}', re.S)
 RE_OPERATOR = re.compile(r'(.)([>=<!?]=|[+*=/-])(.)')
 
@@ -224,13 +224,13 @@ def find_annotation_blocks(text):
 
 
 def strip_trailing_comments(line, string_ranges):
-    for comment in RE_TRAILING_COMMENT.finditer(line):
+    for comment in RE_COMMENT.finditer(line):
         # Does the candidate comment start inside a string?
         # If so, it's not really a comment.
         if not inside_string(comment.start(), comment.start()+1, string_ranges):
             debug_range(comment.start(), comment.end(), 'Comment', False)
             line = line[:comment.start()]
-    return line
+    return line.rstrip()
 
 
 def lint_line(line, line_number, components_included, first_line=False):

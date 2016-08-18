@@ -299,32 +299,31 @@ def main():
     global DEBUG
     DEBUG = args.debug
 
-    if args.paths:
-        problems_found = 0
+    problems_found = 0
 
-        reports = []
-        problem_stats = {}
+    reports = []
+    problem_stats = {}
 
-        for path in args.paths:
-            for filename in glob(path):
-                file_reports, file_problems = lint_file(filename)
-                reports += file_reports
-                problems_found += file_problems
-                problem_stats[filename] = file_problems
+    for path in args.paths:
+        for filename in glob(path):
+            file_reports, file_problems = lint_file(filename)
+            reports += file_reports
+            problems_found += file_problems
+            problem_stats[filename] = file_problems
 
-        for report in reports:
-            print_report(*report, vi=args.vi)
+    for report in reports:
+        print_report(*report, vi=args.vi)
 
-        if args.table:
-            print
-            print 'Problem count per file:'
-            print filestats_table(problem_stats)
-
+    if args.table:
         print
-        print '%d problems found in total' % problems_found
+        print 'Problem count per file:'
+        print filestats_table(problem_stats)
 
-        if problems_found:
-            return(1)
+    print
+    print '%d problems found in total' % problems_found
+
+    if problems_found:
+        return(1)
 
 
 if __name__ == '__main__':

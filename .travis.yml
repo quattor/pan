@@ -4,7 +4,7 @@ python:
 
 install: "pip install prettytable colorama coverage coveralls"
 
-script: coverage run --source=panc/src/main/scripts/panlint panc/src/main/scripts/panlint/tests.py
+script: coverage run --source=panc/src/main/scripts/panlint --omit panc/src/main/scripts/panlint/tests.py panc/src/main/scripts/panlint/tests.py
 
 after_success: coveralls
 

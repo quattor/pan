@@ -1,8 +1,9 @@
 engines:
-  radon: 
+  radon:
     enabled: true
-    config: 
+    config:
       python_version: 2
+      threshold: "C"
   duplication:
     enabled: true
     config:

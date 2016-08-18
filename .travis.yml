@@ -1,0 +1,11 @@
+language: python
+python:
+- 2.7
+
+install: "pip install prettytable coverage coveralls"
+
+script: coverage run --source=panc/src/main/scripts/panlint panc/src/main/scripts/panlint/tests.py
+
+after_success: coveralls
+
+sudo: false

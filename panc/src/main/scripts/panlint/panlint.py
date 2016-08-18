@@ -73,17 +73,21 @@ class LineChecks:
             s, e = operator.span(2)
 
             if not inside_string(s, e, string_ranges):
+                valid = True
                 if char_before not in (' ', '\t'):
-                    passed = False
+                    valid = False
                     message.add('before')
                     s -= 1
                 if char_after not in (' ', '\t'):
-                    passed = False
+                    valid = False
                     message.add('after')
                     e += 1
 
-                if not passed:
+                if not valid:
+                    debug_range(s, e, 'WS Operator', True)
                     diagnosis = diagnosis[:s] + ('^' * (e-s)) + diagnosis[e:]
+
+                passed &= valid
 
         message = 'Missing space %s operator' % ' and '.join(message)
         return (passed, diagnosis, message)
@@ -219,10 +223,65 @@ def find_annotation_blocks(text):
     return result
 
 
+def strip_trailing_comments(line, string_ranges):
+    for comment in RE_TRAILING_COMMENT.finditer(line):
+        # Does the candidate comment start inside a string?
+        # If so, it's not really a comment.
+        if not inside_string(comment.start(), comment.start()+1, string_ranges):
+            debug_range(comment.start(), comment.end(), 'Comment', False)
+            line = line[:comment.start()]
+    return line
+
+
+def lint_line(line, line_number, components_included, first_line=False):
+    debug_line(line, line_number)
+
+    messages = []
+    diagnoses = []
+    problem_count = 0
+
+    if first_line:
+        first_line = False
+        if not RE_FIRST_LINE.match(line):
+            messages.append('First non-comment line must be the template type and name')
+            diagnoses.append(diagnose(0, len(line)))
+            problem_count += 1
+
+    else:
+        string_ranges = get_string_ranges(line)
+        line = strip_trailing_comments(line, string_ranges)
+
+        for m in RE_COMPONENT_USE.finditer(line):
+            if m.group('name') not in components_included:
+                message = 'Component %s in use, but component config has not been included' % m.group('name')
+                diagnoses.append(diagnose(*m.span('name')))
+                messages.append(message)
+                problem_count += 1
+
+        for message, pattern in LINE_PATTERNS.iteritems():
+            m = pattern.search(line)
+            if m and m.group('error'):
+                start, end = m.span('error')
+                debug_range(start, end, 'Match', True)
+                if not inside_string(start, end, string_ranges):
+                    diagnoses.append(diagnose(start, end))
+                    messages.append(message)
+                    problem_count += 1
+
+        for _, check_method in getmembers(LineChecks(), predicate=ismethod):
+            passed, diagnosis, message = check_method(line, string_ranges)
+            if not passed:
+                diagnoses.append(diagnosis)
+                messages.append(message)
+                problem_count += 1
+
+    return (diagnoses, messages, problem_count, first_line)
+
+
 def lint_file(filename):
     global DEBUG
     reports = []
-    problem_count = 0
+    file_problem_count = 0
 
     f = open(filename)
     raw_text = f.read()
@@ -241,53 +300,16 @@ def lint_file(filename):
     for line_number, line in enumerate(raw_text.splitlines(), start=1):
         line = line.rstrip('\n')
 
-        messages = []
-        diagnoses = []
-
         if line and line_number not in ignore_lines and not RE_COMMENT_LINE.match(line):
-            debug_line(line, line_number)
-            if first_line:
-                first_line = False
-                if not RE_FIRST_LINE.match(line):
-                    messages.append('First non-comment line must be the template type and name')
-                    diagnoses.append(diagnose(0, len(line)))
-                    problem_count += 1
-
-            else:
-                line = RE_TRAILING_COMMENT.sub('', line)
-
-                string_ranges = get_string_ranges(line)
-
-                for m in RE_COMPONENT_USE.finditer(line):
-                    if m.group('name') not in components_included:
-                        message = 'Component %s in use, but component config has not been included' % m.group('name')
-                        diagnoses.append(diagnose(*m.span('name')))
-                        messages.append(message)
-                        problem_count += 1
-
-                for message, pattern in LINE_PATTERNS.iteritems():
-                    m = pattern.search(line)
-                    if m and m.group('error'):
-                        start, end = m.span('error')
-                        debug_range(start, end, 'Match', True)
-                        if not inside_string(start, end, string_ranges):
-                            diagnoses.append(diagnose(start, end))
-                            messages.append(message)
-                            problem_count += 1
-
-                for _, check_method in getmembers(LineChecks(), predicate=ismethod):
-                    passed, diagnosis, message = check_method(line, string_ranges)
-                    if not passed:
-                        diagnoses.append(diagnosis)
-                        messages.append(message)
-                        problem_count += 1
+            diagnoses, messages, line_problem_count, first_line = lint_line(line, line_number, components_included, first_line)
+            file_problem_count += line_problem_count
 
             if messages and diagnoses:
                 reports.append([filename, line_number, line, merge_diagnoses(diagnoses), ', '.join(messages)])
         else:
             debug_ignored_line(line, line_number)
 
-    return (reports, problem_count)
+    return (reports, file_problem_count)
 
 
 def main():

@@ -206,6 +206,19 @@ def filestats_table(problem_stats):
     return t
 
 
+def find_annotation_blocks(text):
+    """Find multi-line annotation blocks in a block of text"""
+    result = []
+    annotations = RE_ANNOTATION.finditer(text)
+    for annotation in annotations:
+        start_char, end_char = annotation.span()
+        start_line = text[:start_char].count('\n') + 1
+        end_line = start_line + text[start_char:end_char].count('\n')
+        for i in range(start_line, end_line + 1):
+            result.append(i)
+    return result
+
+
 def lint_file(filename):
     global DEBUG
     reports = []
@@ -218,15 +231,9 @@ def lint_file(filename):
     first_line = True
     ignore_lines = []
 
-    # Identidy annotation blocks and exclude them from linting
+    # Identify annotation blocks and exclude them from linting
     # We will need special linting rules for these
-    annotations = RE_ANNOTATION.finditer(raw_text)
-    for annotation in annotations:
-        start_char, end_char = annotation.span()
-        start_line = raw_text[:start_char].count('\n') + 1
-        end_line = start_line + raw_text[start_char:end_char].count('\n')
-        for i in range(start_line, end_line + 1):
-            ignore_lines.append(i)
+    ignore_lines += find_annotation_blocks(raw_text)
 
     # Get list of all component configs included in template
     components_included = RE_COMPONENT_INCLUDE.findall(raw_text)

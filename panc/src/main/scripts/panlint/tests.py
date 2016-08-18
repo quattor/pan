@@ -91,5 +91,18 @@ class TestPanlint(unittest.TestCase):
         self.assertEqual(lc.whitespace_around_operators(bad_after, []), (False, dgn_after, 'Missing space after operator'))
         self.assertEqual(lc.whitespace_around_operators(bad_both, []), (False, dgn_both, 'Missing space before and after operator'))
 
+    def test_lint_line(self):
+        good_first = 'structure template foo.bar;'
+        bad_first = 'variable foo = "bar";'
+
+        # Test first line checking
+        self.assertEqual(panlint.lint_line(good_first, 1, [], True), ([], [], 0, False))
+
+        diagnoses, _, problem_count, first_line = panlint.lint_line(bad_first, 1, [], True)
+        self.assertEqual(diagnoses, ['^'*len(bad_first)])
+        self.assertEqual(problem_count, 1)
+        self.assertEqual(first_line, False)
+
+
 if __name__ == '__main__':
     unittest.main()

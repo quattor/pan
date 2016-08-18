@@ -16,6 +16,8 @@
 # limitations under the License.
 
 import unittest
+from sys import argv
+from os.path import dirname, join
 
 import panlint
 
@@ -49,11 +51,12 @@ class TestPanlint(unittest.TestCase):
 
     def test_files(self):
         no_errors = ([], 0)
-        self.assertEqual(panlint.lint_file('test_files/test_good_ordinary.pan'), no_errors)
-        self.assertEqual(panlint.lint_file('test_files/test_good_object.pan'), no_errors)
-        self.assertEqual(panlint.lint_file('test_files/test_good_structure.pan'), no_errors)
-        self.assertEqual(panlint.lint_file('test_files/test_good_unique.pan'), no_errors)
-        self.assertEqual(panlint.lint_file('test_files/test_good_declaration.pan'), no_errors)
+        dir_base = join(dirname(argv[0]), 'test_files')
+        self.assertEqual(panlint.lint_file(join(dir_base, 'test_good_ordinary.pan')), no_errors)
+        self.assertEqual(panlint.lint_file(join(dir_base, 'test_good_object.pan')), no_errors)
+        self.assertEqual(panlint.lint_file(join(dir_base, 'test_good_structure.pan')), no_errors)
+        self.assertEqual(panlint.lint_file(join(dir_base, 'test_good_unique.pan')), no_errors)
+        self.assertEqual(panlint.lint_file(join(dir_base, 'test_good_declaration.pan')), no_errors)
 
     def test_strip_trailing_comments(self):
         comment_plain = '''Words; # This is a trailing comment'''

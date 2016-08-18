@@ -2,7 +2,7 @@ language: python
 python:
 - 2.7
 
-install: "pip install prettytable coverage coveralls"
+install: "pip install prettytable colorama coverage coveralls"
 
 script: coverage run --source=panc/src/main/scripts/panlint panc/src/main/scripts/panlint/tests.py
 

@@ -135,5 +135,20 @@ class TestPanlint(unittest.TestCase):
         self.assertEqual(problem_count, 3)
         self.assertEqual(first_line, False)
 
+    def test_find_annotation_blocks(self):
+        test_text = '''structure template awesome;
+        @{ desc = what is the point of this template? }
+
+        'foo' : string
+        'bar' ? long
+
+        @{ This stuff on line seven is not code, things like x=x+1 should be ignored here... }
+        'simon' : string = 'says';
+        '''
+
+        self.assertItemsEqual(panlint.find_annotation_blocks(test_text), [2, 7])
+        self.assertEqual(panlint.find_annotation_blocks('template garbage;\n\n# Nothing to see here.\n\n'), [])
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -79,17 +79,17 @@ class TestPanlint(unittest.TestCase):
         good = 'variable a = 5 + 3;'
 
         bad_before = 'variable b = 8* 1;'
-        dgn_before = '             ^^   '
+        dgn_before = '             ^^'
 
         bad_after = 'variable b = 16 /2;'
-        dgn_after = '                ^^ '
+        dgn_after = '                ^^'
 
         bad_both = 'variable d = 10-2;'
-        dgn_both = '              ^^^ '
+        dgn_both = '              ^^^'
 
         lc = panlint.LineChecks()
 
-        self.assertEqual(lc.whitespace_around_operators(good, []), (True, ' '*len(good), ''))
+        self.assertEqual(lc.whitespace_around_operators(good, []), (True, '', ''))
         self.assertEqual(lc.whitespace_around_operators(bad_before, []), (False, dgn_before, 'Missing space before operator'))
         self.assertEqual(lc.whitespace_around_operators(bad_after, []), (False, dgn_after, 'Missing space after operator'))
         self.assertEqual(lc.whitespace_around_operators(bad_both, []), (False, dgn_both, 'Missing space before and after operator'))
@@ -101,11 +101,39 @@ class TestPanlint(unittest.TestCase):
         # Test first line checking
         self.assertEqual(panlint.lint_line(good_first, 1, [], True), ([], [], 0, False))
 
-        diagnoses, _, problem_count, first_line = panlint.lint_line(bad_first, 1, [], True)
+        diagnoses, messages, problem_count, first_line = panlint.lint_line(bad_first, 1, [], True)
         self.assertEqual(diagnoses, ['^'*len(bad_first)])
+        self.assertNotEqual(messages, [])
         self.assertEqual(problem_count, 1)
         self.assertEqual(first_line, False)
 
+        # Test component inclusion check
+        diagnoses, messages, problem_count, first_line = panlint.lint_line('"/software/components/foo/bar" = 42;', 7, [], False)
+        self.assertEqual(diagnoses, ['                      ^^^'])
+        self.assertNotEqual(messages, [])
+        self.assertEqual(problem_count, 1)
+        self.assertEqual(first_line, False)
+
+        # Test pattern based checking
+        diagnoses, messages, problem_count, first_line = panlint.lint_line('   x = x + 1; # Bad Indentation', 7, [], False)
+        self.assertEqual(diagnoses, ['^^^'])
+        self.assertNotEqual(messages, [])
+        self.assertEqual(problem_count, 1)
+        self.assertEqual(first_line, False)
+
+        # Test method based checking
+        diagnoses, messages, problem_count, first_line = panlint.lint_line('x = x+1; # Missing space', 7, [], False)
+        self.assertEqual(diagnoses, ['    ^^^'])
+        self.assertNotEqual(messages, [])
+        self.assertEqual(problem_count, 1)
+        self.assertEqual(first_line, False)
+
+        # Test that all three check types co-exist
+        diagnoses, messages, problem_count, first_line = panlint.lint_line('  "/software/components/foo/bar" = 42+7;', 7, [], False)
+        self.assertItemsEqual(diagnoses, ['^^', '                        ^^^', '                                    ^^^'])
+        self.assertNotEqual(messages, [])
+        self.assertEqual(problem_count, 3)
+        self.assertEqual(first_line, False)
 
 if __name__ == '__main__':
     unittest.main()

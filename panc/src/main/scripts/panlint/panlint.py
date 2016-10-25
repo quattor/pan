@@ -94,7 +94,7 @@ class LineChecks:
             messages = list(messages)
             messages.sort(None, None, True)
             message = 'Missing space %s operator' % ' and '.join(messages)
-        return (passed, diagnosis, message)
+        return (passed, diagnosis.rstrip(), message)
 
 
 def inside_string(i, j, string_ranges):
@@ -237,6 +237,54 @@ def strip_trailing_comments(line, string_ranges):
     return line.rstrip()
 
 
+def check_line_component_use(line, components_included):
+    diagnoses = []
+    messages = []
+    problem_count = 0
+
+    for m in RE_COMPONENT_USE.finditer(line):
+        if m.group('name') not in components_included:
+            message = 'Component %s in use, but component config has not been included' % m.group('name')
+            diagnoses.append(diagnose(*m.span('name')))
+            messages.append(message)
+            problem_count += 1
+
+    return diagnoses, messages, problem_count
+
+
+def check_line_patterns(line, string_ranges):
+    diagnoses = []
+    messages = []
+    problem_count = 0
+
+    for message, pattern in LINE_PATTERNS.iteritems():
+        m = pattern.search(line)
+        if m and m.group('error'):
+            start, end = m.span('error')
+            debug_range(start, end, 'Match', True)
+            if not inside_string(start, end, string_ranges):
+                diagnoses.append(diagnose(start, end))
+                messages.append(message)
+                problem_count += 1
+
+    return diagnoses, messages, problem_count
+
+
+def check_line_methods(line, string_ranges):
+    diagnoses = []
+    messages = []
+    problem_count = 0
+
+    for _, check_method in getmembers(LineChecks(), predicate=ismethod):
+        passed, diagnosis, message = check_method(line, string_ranges)
+        if not passed:
+            diagnoses.append(diagnosis)
+            messages.append(message)
+            problem_count += 1
+
+    return diagnoses, messages, problem_count
+
+
 def lint_line(line, line_number, components_included, first_line=False):
     debug_line(line, line_number)
 
@@ -255,29 +303,20 @@ def lint_line(line, line_number, components_included, first_line=False):
         string_ranges = get_string_ranges(line)
         line = strip_trailing_comments(line, string_ranges)
 
-        for m in RE_COMPONENT_USE.finditer(line):
-            if m.group('name') not in components_included:
-                message = 'Component %s in use, but component config has not been included' % m.group('name')
-                diagnoses.append(diagnose(*m.span('name')))
-                messages.append(message)
-                problem_count += 1
+        d, m, p = check_line_component_use(line, components_included)
+        diagnoses += d
+        messages += m
+        problem_count += p
 
-        for message, pattern in LINE_PATTERNS.iteritems():
-            m = pattern.search(line)
-            if m and m.group('error'):
-                start, end = m.span('error')
-                debug_range(start, end, 'Match', True)
-                if not inside_string(start, end, string_ranges):
-                    diagnoses.append(diagnose(start, end))
-                    messages.append(message)
-                    problem_count += 1
+        d, m, p = check_line_patterns(line, string_ranges)
+        diagnoses += d
+        messages += m
+        problem_count += p
 
-        for _, check_method in getmembers(LineChecks(), predicate=ismethod):
-            passed, diagnosis, message = check_method(line, string_ranges)
-            if not passed:
-                diagnoses.append(diagnosis)
-                messages.append(message)
-                problem_count += 1
+        d, m, p = check_line_methods(line, string_ranges)
+        diagnoses += d
+        messages += m
+        problem_count += p
 
     return (diagnoses, messages, problem_count, first_line)
 

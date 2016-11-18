@@ -49,6 +49,7 @@ LINE_PATTERNS = {
     "Use dict() instead of nlist()": re.compile(r'\b(?P<error>nlist)\s*\('),
     "Include statements no longer need curly braces": re.compile(r'''include\s+(?P<error>{[^;]+})'''),
     "Line is longer than %s characters" % LINE_LENGTH_LIMIT: re.compile(r'''^.{0,%s}(?P<error>.*?)$''' % LINE_LENGTH_LIMIT),
+    "Commas should be followed by exactly one space": re.compile(r'(?P<error>,(?:\S|\s{2,}))'),
 }
 
 TAB_ARROW = u'\u2192'

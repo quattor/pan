@@ -50,6 +50,7 @@ LINE_PATTERNS = {
     "Include statements no longer need curly braces": re.compile(r'''include\s+(?P<error>{[^;]+})'''),
     "Line is longer than %s characters" % LINE_LENGTH_LIMIT: re.compile(r'''^.{0,%s}(?P<error>.*?)$''' % LINE_LENGTH_LIMIT),
     "Commas should be followed by exactly one space": re.compile(r'(?P<error>,(?:\S|\s{2,}))'),
+    "Whitespace before semicolon": re.compile(r'(?P<error>\s+;)'),
 }
 
 TAB_ARROW = u'\u2192'

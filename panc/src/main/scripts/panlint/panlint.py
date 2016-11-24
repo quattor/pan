@@ -230,6 +230,7 @@ def find_annotation_blocks(text):
 
 
 def strip_trailing_comments(line, string_ranges):
+    """Remove comments from the end of a line, ignoring anything within specified string ranges"""
     for comment in RE_COMMENT.finditer(line):
         # Does the candidate comment start inside a string?
         # If so, it's not really a comment.
@@ -240,6 +241,7 @@ def strip_trailing_comments(line, string_ranges):
 
 
 def check_line_component_use(line, components_included):
+    """Check a line for usage of a component, flag a problem if any component is not in the list of included components."""
     diagnoses = []
     messages = []
     problem_count = 0
@@ -255,6 +257,7 @@ def check_line_component_use(line, components_included):
 
 
 def check_line_patterns(line, string_ranges):
+    """Check line against regular expressions in LINE_PATTERNS, ignoring code within specified string ranges."""
     diagnoses = []
     messages = []
     problem_count = 0
@@ -273,6 +276,7 @@ def check_line_patterns(line, string_ranges):
 
 
 def check_line_methods(line, string_ranges):
+    """Run checks defined as methods of LineChecks against line, ignoring code within specified string ranges."""
     diagnoses = []
     messages = []
     problem_count = 0
@@ -288,6 +292,7 @@ def check_line_methods(line, string_ranges):
 
 
 def lint_line(line, line_number, components_included, first_line=False):
+    """Run all lint checks against line and return any problems found."""
     debug_line(line, line_number)
 
     messages = []
@@ -324,6 +329,7 @@ def lint_line(line, line_number, components_included, first_line=False):
 
 
 def lint_file(filename):
+    """Run lint checks against all lines of a file."""
     global DEBUG
     reports = []
     file_problem_count = 0

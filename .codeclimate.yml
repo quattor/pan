@@ -1,0 +1,20 @@
+engines:
+  radon:
+    enabled: true
+    config:
+      python_version: 2
+      threshold: "C"
+  duplication:
+    enabled: true
+    config:
+      languages:
+      - python
+  pep8:
+    enabled: true
+    checks:
+      E501:
+        enabled: false
+
+ratings:
+   paths:
+   - "**.py"

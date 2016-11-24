@@ -60,6 +60,10 @@ public class SimpleVariable extends Variable {
 		return result;
 	}
 
+	public String getIdentifier() {
+		return identifier;
+	}
+
 	@Override
 	public String toString() {
 		return this.getClass().getSimpleName() + "(" + identifier + ","

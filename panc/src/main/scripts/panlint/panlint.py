@@ -334,9 +334,7 @@ def lint_file(filename):
     reports = []
     file_problem_count = 0
 
-    f = open(filename)
-    raw_text = f.read()
-    f.close()
+    raw_text = open(filename).read()
 
     first_line = True
     ignore_lines = []

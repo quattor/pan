@@ -73,22 +73,22 @@ class LineChecks:
 
         for operator in operators:
             char_before, _, char_after = operator.groups()
-            s, e = operator.span(2)
+            start, end = operator.span(2)
 
-            if not inside_string(s, e, string_ranges):
+            if not inside_string(start, end, string_ranges):
                 valid = True
                 if char_before not in (' ', '\t'):
                     valid = False
                     messages.add('before')
-                    s -= 1
+                    start -= 1
                 if char_after not in (' ', '\t'):
                     valid = False
                     messages.add('after')
-                    e += 1
+                    end += 1
 
                 if not valid:
-                    debug_range(s, e, 'WS Operator', True)
-                    diagnosis = diagnosis[:s] + ('^' * (e-s)) + diagnosis[e:]
+                    debug_range(start, end, 'WS Operator', True)
+                    diagnosis = diagnosis[:start] + ('^' * (end-start)) + diagnosis[end:]
 
                 passed &= valid
 

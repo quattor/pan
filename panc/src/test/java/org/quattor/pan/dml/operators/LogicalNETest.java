@@ -70,6 +70,21 @@ public class LogicalNETest extends AbstractOperationTestUtils {
 	}
 
 	@Test
+	public void testBooleans() throws SyntaxException {
+
+		Boolean va = true;
+		Boolean vb = false;
+
+		Operation lne = LogicalNE.newOperation(null, BooleanProperty.
+				getInstance(va), BooleanProperty.getInstance(vb));
+
+		assertTrue(lne instanceof BooleanProperty);
+		BooleanProperty result = (BooleanProperty) lne;
+		boolean bvalue = result.getValue().booleanValue();
+		assertTrue((va != vb) == bvalue);
+	}
+
+	@Test
 	public void testMixed() throws SyntaxException {
 
 		long va = 1;

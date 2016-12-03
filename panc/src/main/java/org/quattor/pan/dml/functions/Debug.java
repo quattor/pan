@@ -54,12 +54,10 @@ final public class Debug extends Formatter {
 		}
 
 		// Ensure that if there is exactly one argument, it is a string.
-		if (operations.length == 1) {
-			if (operations[0] instanceof Element) {
-				if (!(operations[0] instanceof StringProperty)) {
+		if (operations.length == 1
+				&& operations[0] instanceof Element
+				&& !(operations[0] instanceof StringProperty)) {
 					throw SyntaxException.create(sourceRange, MSG_ONE_STRING_ARG_REQ, "debug");
-				}
-			}
 		}
 
 		return new Debug(sourceRange, operations);

@@ -133,7 +133,7 @@ public interface Context {
 	 * Set the name of the object template. Define the necessary variables.
 	 */
 	public void setObjectAndLoadpath();
-	
+
 	/**
 	 * Get the name of the object template.
 	 */

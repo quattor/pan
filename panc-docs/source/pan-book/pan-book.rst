@@ -1517,9 +1517,13 @@ Table: Unary DML Operators
 +-----------+--------------------+-----------------------------------------------+
 | ==        | number             | equal                                         |
 +-----------+--------------------+-----------------------------------------------+
+| ==        | boolean            | equal                                         |
++-----------+--------------------+-----------------------------------------------+
 | ==        | string             | lexical equal                                 |
 +-----------+--------------------+-----------------------------------------------+
 | !=        | number             | not equal                                     |
++-----------+--------------------+-----------------------------------------------+
+| !=        | boolean            | not equal                                     |
 +-----------+--------------------+-----------------------------------------------+
 | !=        | string             | lexical not equal                             |
 +-----------+--------------------+-----------------------------------------------+
@@ -1911,6 +1915,9 @@ Table: Type Conversion Functions
 | :ref:`if_exists`   | For a given template name, return the template name if it |
 |                    | exists or undef if it does not. This can be used with the |
 |                    | include statement for a conditional include.              |
++--------------------+-----------------------------------------------------------+
+| :ref:`is_valid`    | This function checks whether a certain element meets the  |
+|                    | requirements of a certain type.                           |
 +--------------------+-----------------------------------------------------------+
 | :ref:`return`      | Interrupt the normal flow of processing and return the    |
 |                    | given value as the result of the current frame (either a  |

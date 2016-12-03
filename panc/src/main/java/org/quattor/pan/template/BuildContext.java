@@ -459,7 +459,7 @@ public class BuildContext implements Context {
 		setGlobalVariable("OBJECT", sname, true);
 		setGlobalVariable("LOADPATH", new ListResource(), false);
 	}
-	
+
 	public String getObjectName() {
 		return (objectTemplate != null) ? objectTemplate.name : "unknown";
 	}

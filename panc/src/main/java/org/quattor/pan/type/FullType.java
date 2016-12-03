@@ -65,7 +65,11 @@ public class FullType extends Type {
 		assert (baseType != null);
 
 		this.baseType = baseType;
-		this.defaultValue = defaultValue;
+		if (defaultValue != null) {
+			this.defaultValue = defaultValue.protect();
+		} else {
+			this.defaultValue = null;
+		}
 		this.dml = dml;
 	}
 

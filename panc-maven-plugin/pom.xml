@@ -10,7 +10,7 @@
   <parent>
     <artifactId>pan</artifactId>
     <groupId>org.quattor.pan</groupId>
-    <version>10.3-SNAPSHOT</version>
+    <version>10.4-SNAPSHOT</version>
   </parent>
 
   <dependencies>

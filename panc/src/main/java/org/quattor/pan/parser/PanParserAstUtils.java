@@ -178,6 +178,8 @@ public class PanParserAstUtils {
             fc.put("is_string",
                     (IsString.class).getDeclaredMethod("getInstance", SourceRange.class, Operation[].class));
 
+            fc.put("is_valid", (IsValid.class).getDeclaredMethod("getInstance", SourceRange.class, Operation[].class));
+
             fc.put("value", (Value.class).getDeclaredMethod("getInstance", SourceRange.class, Operation[].class));
 
             fc.put("error",

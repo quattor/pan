@@ -16,6 +16,8 @@ object template operator1;
 "/t/6" = "abc" > "ab";
 "/t/7" = "abc" < "x";
 "/t/8" = "9" > "10";
+"/t/9" = true == true;
+"/t/10" = true != false;
 
 "/f/0" = 0 != 0.0;
 "/f/1" = "foo" != "foo";
@@ -26,3 +28,5 @@ object template operator1;
 "/f/6" = "abc" <= "ab";
 "/f/7" = "abc" >= "x";
 "/f/8" = "9" <= "10";
+"/f/9" = true == false;
+"/f/10" = true != true;

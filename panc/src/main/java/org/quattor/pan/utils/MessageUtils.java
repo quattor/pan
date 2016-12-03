@@ -470,6 +470,8 @@ public class MessageUtils {
 
     public final static String MSG_INVALID_CHOICE_TYPE = "MSG_INVALID_CHOICE_TYPE";
 
+    public final static String MSG_FIRST_ARG_TYPE_REQ = "MSG_FIRST_ARG_TYPE_REQ";
+
     // Name of the resource bundle to use for compiler messages.
     private final static String bundleName = "org.quattor.pan.Messages";
 

@@ -70,6 +70,21 @@ public class LogicalEQTest extends AbstractOperationTestUtils {
 	}
 
 	@Test
+	public void testBooleans() throws SyntaxException {
+
+		Boolean va = true;
+		Boolean vb = false;
+
+		Operation leq = LogicalEQ.newOperation(null, BooleanProperty.
+				getInstance(va), BooleanProperty.getInstance(vb));
+
+		assertTrue(leq instanceof BooleanProperty);
+		BooleanProperty result = (BooleanProperty) leq;
+		boolean bvalue = result.getValue().booleanValue();
+		assertTrue((va == vb) == bvalue);
+	}
+
+	@Test
 	public void testMixed() throws SyntaxException {
 
 		long va = 1;

@@ -1030,6 +1030,7 @@ Description
 The ``is_string`` function will return ``true`` if the argument is a
 string value; it will return ``false`` otherwise.
 
+
 .. _is_valid:
 
 is_valid
@@ -1043,7 +1044,7 @@ is_valid -- checks if an element meets the requirements of a certain type
 Synopsis
 --------
 
-boolean **is_valid** (type, *type*, element *el*)
+boolean **is_valid** (type *type*, element *el*)
 
 Description
 -----------
@@ -1062,6 +1063,39 @@ follows:
 
 
 In this case ``'/result'`` will be of type boolean and hold ``true`` as a value.
+
+.. _join:
+
+join
+====
+
+Name
+----
+
+join -- joins the passed arguments
+
+Synposis
+--------
+
+string **join** (string *delimeter*, list *resource*)
+
+string **join** (string *delimeter*, string *arg1*, string *arg2*, ...)
+
+Description
+-----------
+This function takes a delimeter and a list of strings, or each of the strings
+individually, and joins them with the given delimeter. Only (a list of) strings
+can be passed as arguments.
+
+::
+
+    # joining a list
+    '/x' = list("a", "b", "c");
+    '/rx' = join("-", value('/x')); # This will return "a-b-c"
+
+    # joining individual arguments
+    '/rx' = join("-", "a", "b", "c"); # This will also return "a-b-c"
+
 
 .. _key:
 

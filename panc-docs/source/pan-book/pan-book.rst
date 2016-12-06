@@ -1906,6 +1906,9 @@ Table: Type Conversion Functions
 |                    | can either be a variable reference, path, or template     |
 |                    | name.                                                     |
 +--------------------+-----------------------------------------------------------+
+| :ref:`join`        | Returns a string with the arguments joined, using the     |
+|                    | the passed delimeter.                                     |
++--------------------+-----------------------------------------------------------+
 | :ref:`path_exists` | Return true if the given path exists. The argument must   |
 |                    | be an absolute or external path.                          |
 +--------------------+-----------------------------------------------------------+

@@ -59,6 +59,8 @@ import org.xml.sax.InputSource;
 
 public class JavaCompilerTest {
 
+	public JavaCompilerTest() {}
+
 	protected Compiler getDefaultCompiler(File tplfile, File dir,
 			Formatter formatter) throws SyntaxException {
 		List<File> path = new LinkedList<File>();

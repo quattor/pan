@@ -38,12 +38,6 @@ public class DebugTest extends BuiltInFunctionTestUtils {
 	}
 
 	@Test(expected = SyntaxException.class)
-	public void checkTooManyArguments() throws SyntaxException {
-		Debug.getInstance(null, StringProperty.getInstance("OK"),
-				StringProperty.getInstance("BAD"));
-	}
-
-	@Test(expected = SyntaxException.class)
 	public void checkInvalidArgument() throws SyntaxException {
 		Debug.getInstance(null, LongProperty.getInstance(0L));
 	}

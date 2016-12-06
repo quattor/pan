@@ -424,7 +424,7 @@ public class MessageUtils {
 
     public final static String MSG_ILLEGAL_FORMAT = "MSG_ILLEGAL_FORMAT";
 
-    public final static String MSG_FORMAT_REQUIRES_PROPERTIES = "MSG_FORMAT_REQUIRES_PROPERTIES";
+    public final static String MSG_FORMAT_REQUIRES_PRIMITIVE = "MSG_FORMAT_REQUIRES_PRIMITIVE";
 
     public final static String MSG_INVALID_FIRST_ARG_FORMAT = "MSG_INVALID_FIRST_ARG_FORMAT";
 

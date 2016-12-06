@@ -21,17 +21,10 @@
 package org.quattor.pan.dml.functions;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_FIRST_STRING_ARG_REQ;
-import static org.quattor.pan.utils.MessageUtils.MSG_FORMAT_REQUIRES_PROPERTIES;
-import static org.quattor.pan.utils.MessageUtils.MSG_ILLEGAL_FORMAT;
-import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_FIRST_ARG_FORMAT;
-
-import java.util.IllegalFormatException;
 
 import org.quattor.pan.dml.Operation;
 import org.quattor.pan.dml.data.Element;
-import org.quattor.pan.dml.data.Property;
 import org.quattor.pan.dml.data.StringProperty;
-import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.template.Context;
 import org.quattor.pan.template.SourceRange;
@@ -43,7 +36,7 @@ import org.quattor.pan.template.SourceRange;
  * @author loomis
  * 
  */
-final public class Format extends BuiltInFunction {
+final public class Format extends Formatter {
 
     private Format(SourceRange sourceRange, Operation... operations)
             throws SyntaxException {
@@ -66,38 +59,7 @@ final public class Format extends BuiltInFunction {
 
         assert (ops.length > 0);
 
-        // Calculate arguments.
-        Element[] args = calculateArgs(context);
-
-        // Pull out the format string.
-        String format = null;
-        try {
-            format = ((StringProperty) args[0]).getValue();
-        } catch (ClassCastException cce) {
-            throw EvaluationException.create(sourceRange, context,
-                    MSG_INVALID_FIRST_ARG_FORMAT);
-        }
-
-        // Now pull out all of the arguments for formatting.
-        Object[] jargs = new Object[args.length - 1];
-        for (int i = 1; i < args.length; i++) {
-            Property p = null;
-            try {
-                p = (Property) args[i];
-            } catch (ClassCastException cce) {
-                throw EvaluationException.create(sourceRange, context,
-                        MSG_FORMAT_REQUIRES_PROPERTIES);
-            }
-            jargs[i - 1] = p.getValue();
-        }
-
-        StringProperty result = null;
-        try {
-            result = StringProperty.getInstance(String.format(format, jargs));
-        } catch (IllegalFormatException ife) {
-            throw EvaluationException.create(sourceRange, context,
-                    MSG_ILLEGAL_FORMAT, ife.getLocalizedMessage());
-        }
+        StringProperty result = format(context);
 
         // Return the value. It should never be null if we reach this part of
         // the code.

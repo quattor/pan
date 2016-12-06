@@ -20,6 +20,7 @@
 package org.quattor.pan.dml.functions;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_ONE_STRING_ARG_REQ;
+import static org.quattor.pan.utils.MessageUtils.MSG_ONE_OR_MORE_ARG_REQ;
 
 import org.quattor.pan.dml.Operation;
 import org.quattor.pan.dml.data.Element;
@@ -32,12 +33,12 @@ import org.quattor.pan.template.SourceRange;
 /**
  * Prints the argument to the standard error stream. This function must be
  * explicitly enabled when invoking the compiler. If the function is enabled,
- * the result of this function is the argument; otherwise it is undef.
+ * the result of this function is a (formatted) string; otherwise it is undef.
  * 
  * @author loomis
  * 
  */
-final public class Debug extends BuiltInFunction {
+final public class Debug extends Formatter {
 
 	private Debug(SourceRange sourceRange, Operation... operations)
 			throws SyntaxException {
@@ -47,18 +48,16 @@ final public class Debug extends BuiltInFunction {
 	public static Operation getInstance(SourceRange sourceRange,
 			Operation... operations) throws SyntaxException {
 
-		// Ensure that there is exactly one argument. Since the parser does
-		// little argument checking for function calls, this explicit check is
-		// needed.
-		if (operations.length != 1) {
-			throw SyntaxException.create(sourceRange, MSG_ONE_STRING_ARG_REQ,
-					"debug");
+		// Debug requires one or more arguments.
+		if (operations.length == 0) {
+			throw SyntaxException.create(sourceRange, MSG_ONE_OR_MORE_ARG_REQ, "debug");
 		}
-		if (operations[0] instanceof Element) {
-			if (!(operations[0] instanceof StringProperty)) {
-				throw SyntaxException.create(sourceRange,
-						MSG_ONE_STRING_ARG_REQ, "debug");
-			}
+
+		// Ensure that if there is exactly one argument, it is a string.
+		if (operations.length == 1
+				&& operations[0] instanceof Element
+				&& !(operations[0] instanceof StringProperty)) {
+					throw SyntaxException.create(sourceRange, MSG_ONE_STRING_ARG_REQ, "debug");
 		}
 
 		return new Debug(sourceRange, operations);
@@ -67,26 +66,32 @@ final public class Debug extends BuiltInFunction {
 	@Override
 	public Element execute(Context context) {
 
-		assert (ops.length == 1);
+		assert (ops.length >= 1);
 
 		// Do not allow debug to be used in a compile time context to avoid
 		// it being optimized away.
 		throwExceptionIfCompileTimeContext(context);
 
+		// If there's only one argument, get its value. Otherwise perform formatting.
+		Element result = null;
+		if (ops.length == 1) {
+			result = ops[0].execute(context);
+		} else {
+			result = format(context);
+		}
+
 		// Always print the debugging output. If the debugging was turned
 		// off, then the parser generated a different function call.
-		Element result = ops[0].execute(context);
 		try {
 			StringProperty sp = (StringProperty) result;
 			String objectName = context.getObjectName();
 			String msg = String.format("[%s] %s", objectName, sp.getValue());
 			System.err.println(msg);
 		} catch (ClassCastException cce) {
-			throw EvaluationException.create(sourceRange, context,
-					MSG_ONE_STRING_ARG_REQ, name);
+			throw EvaluationException.create(sourceRange, context, MSG_ONE_STRING_ARG_REQ, name);
 		}
-		return result;
 
+		return result;
 	}
 
 }

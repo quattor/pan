@@ -213,11 +213,14 @@ Synopsis
 
 string **debug** (string *msg*)
 
+string **debug** (string *fmt*, element *param*, ...)
+
 Description
 -----------
 
 This function will print the given string to the console (on stdout) and
-return the message as the result. The string has '[object] ' prepended
+return the message as the result. The function also accepts format strings,
+similar to the ``format`` function. The string has '[object] ' prepended
 to it, where 'object' is the name of the object template. This
 functionality must be activated either from the command line or via a
 compiler option (see compiler manual for details). If this is not
@@ -352,14 +355,17 @@ Synopsis
 
 void **error** (string *msg*)
 
+void **error** (string *fmt*, element *param*, ...)
+
 Description
 -----------
 
 This function prints the given message to the console (stderr) and
-aborts the compilation. The message has '[object ]' prepended to it as a
-convenience. This function cannot appear neither in variable subscripts
-nor in function arguments; a fatal error will occur if found in either
-place.
+aborts the compilation. The function also accepts format strings,
+similar to the ``format`` function. The message has '[object ]' prepended
+to it as a convenience. This function cannot appear neither in variable
+subscripts nor in function arguments; a fatal error will occur if found
+in either place.
 
 ::
 
@@ -570,16 +576,17 @@ format -- format a string by replacing references to parameters
 Synopsis
 --------
 
-string **format** (string *fmt*, property *param*, ...)
+string **format** (string *fmt*, element *param*, ...)
 
 Description
 -----------
 
 The ``format`` function will replace all references within the ``fmt``
-string with the values of the referenced properties. This provides
+string with the values of the referenced elements. This provides
 functionality similar to the c-language's ``printf`` function. The
 syntax of the ``fmt`` string follows that provided in the java language;
-see the Formatter entry for full details.
+see the Formatter entry for full details. When passing a resource as an
+argument, the string replacement field should be used.
 
 .. _if_exists:
 

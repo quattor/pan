@@ -112,7 +112,7 @@ public class AliasType extends BaseType {
 		try {
 			type.validate(context, self);
 
-			// Check the range if defined.
+			// Check if the range is defined.
 			if (range != null) {
 				self.checkRange(range);
 			}

@@ -1,7 +1,7 @@
 #
 # sample file to test checking of property types shifted
 # to the end of processing (all type checking is performed
-# and the end)
+# at the end)
 #
 # @expect="count(/nlist[@name='profile']/*)=3"
 # @format=pan

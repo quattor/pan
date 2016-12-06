@@ -25,6 +25,7 @@ import org.quattor.pan.dml.DML;
 import org.quattor.pan.dml.Operation;
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.Null;
+import org.quattor.pan.dml.data.StringProperty;
 import org.quattor.pan.dml.data.Undef;
 import org.quattor.pan.dml.functions.*;
 import org.quattor.pan.dml.functions.Deprecated;
@@ -71,13 +72,7 @@ import org.quattor.pan.template.CompileTimeContext;
 import org.quattor.pan.template.Context;
 import org.quattor.pan.template.SourceRange;
 import org.quattor.pan.template.Template;
-import org.quattor.pan.type.AliasType;
-import org.quattor.pan.type.BaseType;
-import org.quattor.pan.type.FullType;
-import org.quattor.pan.type.HashType;
-import org.quattor.pan.type.LinkType;
-import org.quattor.pan.type.ListType;
-import org.quattor.pan.type.RecordType;
+import org.quattor.pan.type.*;
 import org.quattor.pan.utils.MessageUtils;
 import org.quattor.pan.utils.Path;
 import org.quattor.pan.utils.Term;
@@ -85,14 +80,8 @@ import org.quattor.pan.utils.Term;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_ASSIGNMENT_HAS_NON_VARIABLE_CHILD;
 import static org.quattor.pan.utils.MessageUtils.MSG_CANNOT_CREATE_FUNCTION_TABLE;
@@ -445,6 +434,7 @@ public class PanParserAstUtils {
         // Create the assignment statement.
         ASTFullTypeSpec child = (ASTFullTypeSpec) ast.jjtGetChild(0);
         FullType fullType = astToFullType(source, child);
+
         return new TypeStatement(ast.getSourceRange(), tname, fullType);
     }
 
@@ -560,7 +550,6 @@ public class PanParserAstUtils {
     static private Operation astToOperation(SimpleNode node) throws SyntaxException {
 
         Operation op = null;
-
         switch (node.getId()) {
             case PanParserTreeConstants.JJTOPERATION:
                 ASTOperation onode = (ASTOperation) node;
@@ -905,8 +894,12 @@ public class PanParserAstUtils {
             baseType = new RecordType(source, base.getSourceRange(), base.isExtensible(), base.getRange(), includes,
                     reqFields, optFields);
         } else {
-            // This is an alias type.
-            baseType = new AliasType(source, base.getSourceRange(), identifier, base.getRange());
+            // This is an alias or an advanced type.
+            if (identifier.equals("choice")) {
+                baseType = astToChoiceType(base, source);
+            } else {
+                baseType = new AliasType(source, base.getSourceRange(), identifier, base.getRange());
+            }
         }
 
         // Loop over all remaining children. They must all be type clauses.
@@ -933,6 +926,19 @@ public class PanParserAstUtils {
         }
 
         return baseType;
+    }
+
+    static private ChoiceType astToChoiceType(ASTBaseTypeSpec node, String source) throws SyntaxException {
+        List<Element> list = new ArrayList<Element>();
+
+        // Extract all the possible choices.
+        for (int i = 0; i < node.jjtGetNumChildren(); i++) {
+            SimpleNode sn = (SimpleNode) node.jjtGetChild(i);
+            Element e = (StringProperty) astToOperation(sn);
+            list.add(e);
+        }
+
+        return new ChoiceType(source, node.getSourceRange(), list);
     }
 
     static private Element runDefaultDml(Operation dml) throws SyntaxException {

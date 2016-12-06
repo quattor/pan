@@ -34,7 +34,7 @@ Please file a bug report including the stack trace.
                 warnings
                 annotationDirectory
                 annotationBaseDirectory
-                rootElement
+                initial-data
                 nthread]} settings/*settings*]
     (CompilerOptions. debug-ns-include
                       debug-ns-exclude
@@ -46,7 +46,7 @@ Please file a bug report including the stack trace.
                       warnings
                       annotationDirectory
                       annotationBaseDirectory
-                      rootElement
+                      initial-data
                       nthread)))
 
 (defn default-compiler-options []
@@ -60,7 +60,7 @@ Please file a bug report including the stack trace.
                 warnings
                 annotationDirectory
                 annotationBaseDirectory
-                rootElement
+                initial-data
                 nthread]} (settings/defaults)]
     (CompilerOptions. debug-ns-include
                       debug-ns-exclude
@@ -72,7 +72,7 @@ Please file a bug report including the stack trace.
                       warnings
                       annotationDirectory
                       annotationBaseDirectory
-                      rootElement
+                      initial-data
                       nthread)))
 
 (defn parse-int

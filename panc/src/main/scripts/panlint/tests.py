@@ -116,6 +116,43 @@ class TestPanlint(unittest.TestCase):
             (dgn_2, set(msg_2), 2, False)
         )
 
+    def test_profilepath_trailing_slash(self):
+        good_line_1 = '"/system/hostname" = "foo.example.org";'
+        self.assertEqual(
+            panlint.lint_line(good_line_1, 148, [], False),
+            ([], set(), 0, False)
+        )
+
+        good_line_2 = "prefix '/software/components/metaconfig/services/{/etc/sysconfig/fetch-crl}';"
+        self.assertEqual(
+            panlint.lint_line(good_line_2, 151, [], False),
+            ([], set(), 0, False)
+        )
+
+        bad_line_1 = '"/system/hostname/" = "bar.example.org";'
+        bad_diag_1 = ['                 ^']
+        bad_msg_1 = ['Unnecessary trailing slash at end of profile path']
+        self.assertEqual(
+            panlint.lint_line(bad_line_1, 22, [], False),
+            (bad_diag_1, set(bad_msg_1), 1, False)
+        )
+
+        bad_line_2 = '"/system/hostname////////" = "bob.example.org";'
+        bad_diag_2 = ['                 ^^^^^^^^']
+        bad_msg_2 = ['Unnecessary trailing slash at end of profile path']
+        self.assertEqual(
+            panlint.lint_line(bad_line_2, 77, [], False),
+            (bad_diag_2, set(bad_msg_2), 1, False)
+        )
+
+        bad_line_3 = "prefix '/software/components/filecopy/services/{/etc/strange/service.conf}/';"
+        bad_diag_3 = ['                                                                          ^']
+        bad_msg_3 = ['Unnecessary trailing slash at end of profile path']
+        self.assertEqual(
+            panlint.lint_line(bad_line_3, 182, [], False),
+            (bad_diag_3, set(bad_msg_3), 1, False)
+        )
+
     def test_lint_line(self):
         good_first = 'structure template foo.bar;'
         bad_first = 'variable foo = "bar";'

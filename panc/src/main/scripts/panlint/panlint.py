@@ -28,6 +28,7 @@ from prettytable import PrettyTable
 RS_COMMENT = r'(?:#|@{.*?})'
 
 RE_STRING = re.compile(r'''('.*?'|".*?"(?<!\\"))''')
+RE_PATH = re.compile(r'''^\s*(?:prefix)?\s*(?P<path>'\S+'|"\S+")''')
 
 RE_FIRST_LINE = re.compile(r'^\s*(?:(?:declaration|unique|structure|object)\s+)?template (?:(?:[\S-]+/)+)?[\S-]+;$')
 RE_MVN_TEMPLATE = re.compile(r'\$\{\S+\}')
@@ -53,6 +54,13 @@ LINE_PATTERNS = {
     "Commas should be followed by exactly one space": re.compile(r'(?P<error>,(?:\S|\s{2,}))'),
     "Whitespace before semicolon": re.compile(r'(?P<error>\s+;)'),
     "Semicolons should be followed exactly one space or end-of-line": re.compile(r';(?P<error>(?:\S|\s{2,}))'),
+}
+
+# Simple regular-expression based checks that will be performed against
+# all strings on non-ignored lines that appear to be profile paths
+# Every pattern must provide a single capturing group named "error"
+PATH_PATTERNS = {
+    "Unnecessary trailing slash at end of profile path": re.compile(r'''(?P<error>/+)$'''),
 }
 
 TAB_ARROW = u'\u2192'
@@ -278,6 +286,35 @@ def check_line_patterns(line, string_ranges):
     return diagnoses, messages, problem_count
 
 
+def check_line_paths(line):
+    """
+    If a line contains a profile path on the left hand side,
+    check code within it against regular expressions in PATH_PATTERNS.
+    """
+    diagnoses = []
+    messages = set()
+    problem_count = 0
+
+    path_match = RE_PATH.match(line)
+    if path_match:
+        path_start, path_end = path_match.span('path')
+        path_string = line[path_start+1:path_end-1]
+        debug_range(path_start, path_end, 'Path String', False)
+        for message, pattern in PATH_PATTERNS.iteritems():
+            matches = pattern.finditer(path_string)
+            for match in matches:
+                if match and match.group('error'):
+                    start, end = match.span('error')
+                    start += path_start + 1
+                    end += path_start + 1
+                    debug_range(start, end, 'PathRE Match', True)
+                    diagnoses.append(diagnose(start, end))
+                    messages.add(message)
+                    problem_count += 1
+
+    return diagnoses, messages, problem_count
+
+
 def check_line_methods(line, string_ranges):
     """Run checks defined as methods of LineChecks against line, ignoring code within specified string ranges."""
     diagnoses = []
@@ -320,6 +357,11 @@ def lint_line(line, line_number, components_included, first_line=False, allow_mv
         problem_count += p
 
         d, m, p = check_line_patterns(line, string_ranges)
+        diagnoses += d
+        messages.update(m)
+        problem_count += p
+
+        d, m, p = check_line_paths(line)
         diagnoses += d
         messages.update(m)
         problem_count += p

@@ -269,7 +269,7 @@ def check_line_patterns(line, string_ranges):
         for match in matches:
             if match and match.group('error'):
                 start, end = match.span('error')
-                debug_range(start, end, 'Match', True)
+                debug_range(start, end, 'LineRE Match', True)
                 if not inside_string(start, end, string_ranges):
                     diagnoses.append(diagnose(start, end))
                     messages.add(message)

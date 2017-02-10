@@ -30,6 +30,7 @@ RS_COMMENT = r'(?:#|@{.*?})'
 RE_STRING = re.compile(r'''('.*?'|".*?"(?<!\\"))''')
 
 RE_FIRST_LINE = re.compile(r'^\s*(?:(?:declaration|unique|structure|object)\s+)?template (?:(?:[\S-]+/)+)?[\S-]+;$')
+RE_MVN_TEMPLATE = re.compile(r'\$\{\S+\}')
 RE_COMMENT = re.compile(RS_COMMENT)
 RE_COMMENT_LINE = re.compile(r'^\s*' + RS_COMMENT + '.*$')
 RE_ANNOTATION = re.compile(r'@\w*{.*?}', re.S)
@@ -51,6 +52,7 @@ LINE_PATTERNS = {
     "Line is longer than %s characters" % LINE_LENGTH_LIMIT: re.compile(r'''^.{0,%s}(?P<error>.*?)$''' % LINE_LENGTH_LIMIT),
     "Commas should be followed by exactly one space": re.compile(r'(?P<error>,(?:\S|\s{2,}))'),
     "Whitespace before semicolon": re.compile(r'(?P<error>\s+;)'),
+    "Semicolons should be followed exactly one space or end-of-line": re.compile(r'(?P<error>;(?:\S|\s{2,}))'),
 }
 
 TAB_ARROW = u'\u2192'
@@ -291,7 +293,7 @@ def check_line_methods(line, string_ranges):
     return diagnoses, messages, problem_count
 
 
-def lint_line(line, line_number, components_included, first_line=False):
+def lint_line(line, line_number, components_included, first_line=False, allow_mvn_templates=False):
     """Run all lint checks against line and return any problems found."""
     debug_line(line, line_number)
 
@@ -302,9 +304,10 @@ def lint_line(line, line_number, components_included, first_line=False):
     if first_line:
         first_line = False
         if not RE_FIRST_LINE.match(line):
-            messages.append('First non-comment line must be the template type and name')
-            diagnoses.append(diagnose(0, len(line)))
-            problem_count += 1
+            if not (RE_MVN_TEMPLATE.match(line) and allow_mvn_templates):
+                messages.append('First non-comment line must be the template type and name')
+                diagnoses.append(diagnose(0, len(line)))
+                problem_count += 1
 
     else:
         string_ranges = get_string_ranges(line)
@@ -328,7 +331,7 @@ def lint_line(line, line_number, components_included, first_line=False):
     return (diagnoses, messages, problem_count, first_line)
 
 
-def lint_file(filename):
+def lint_file(filename, allow_mvn_templates=False):
     """Run lint checks against all lines of a file."""
     global DEBUG
     reports = []
@@ -350,7 +353,7 @@ def lint_file(filename):
         line = line.rstrip('\n')
 
         if line and line_number not in ignore_lines and not RE_COMMENT_LINE.match(line):
-            diagnoses, messages, line_problem_count, first_line = lint_line(line, line_number, components_included, first_line)
+            diagnoses, messages, line_problem_count, first_line = lint_line(line, line_number, components_included, first_line, allow_mvn_templates)
             file_problem_count += line_problem_count
 
             if messages and diagnoses:
@@ -367,6 +370,7 @@ def main():
     parser.add_argument('paths', metavar='PATH', type=str, nargs='+', help='Paths of files to check')
     parser.add_argument('--vi', action='store_true', help='Output line numbers in a vi option style')
     parser.add_argument('--table', action='store_true', help='Display a table of per-file problem stats')
+    parser.add_argument('--allow_mvn_templates', action='store_true', help='Allow use of maven templates')
     group_output = parser.add_mutually_exclusive_group()
     group_output.add_argument('--debug', action='store_true', help='Enable debug output')
     group_output.add_argument('--ide', action='store_true', help='Output machine-readable results for use by IDEs')
@@ -384,7 +388,7 @@ def main():
 
     for path in args.paths:
         for filename in glob(path):
-            file_reports, file_problems = lint_file(filename)
+            file_reports, file_problems = lint_file(filename, args.allow_mvn_templates)
             reports += file_reports
             problems_found += file_problems
             problem_stats[filename] = file_problems

@@ -261,18 +261,19 @@ def check_line_component_use(line, components_included):
 def check_line_patterns(line, string_ranges):
     """Check line against regular expressions in LINE_PATTERNS, ignoring code within specified string ranges."""
     diagnoses = []
-    messages = []
+    messages = set()
     problem_count = 0
 
     for message, pattern in LINE_PATTERNS.iteritems():
-        m = pattern.search(line)
-        if m and m.group('error'):
-            start, end = m.span('error')
-            debug_range(start, end, 'Match', True)
-            if not inside_string(start, end, string_ranges):
-                diagnoses.append(diagnose(start, end))
-                messages.append(message)
-                problem_count += 1
+        matches = pattern.finditer(line)
+        for match in matches:
+            if match and match.group('error'):
+                start, end = match.span('error')
+                debug_range(start, end, 'Match', True)
+                if not inside_string(start, end, string_ranges):
+                    diagnoses.append(diagnose(start, end))
+                    messages.add(message)
+                    problem_count += 1
 
     return diagnoses, messages, problem_count
 
@@ -280,14 +281,14 @@ def check_line_patterns(line, string_ranges):
 def check_line_methods(line, string_ranges):
     """Run checks defined as methods of LineChecks against line, ignoring code within specified string ranges."""
     diagnoses = []
-    messages = []
+    messages = set()
     problem_count = 0
 
     for _, check_method in getmembers(LineChecks(), predicate=ismethod):
         passed, diagnosis, message = check_method(line, string_ranges)
         if not passed:
             diagnoses.append(diagnosis)
-            messages.append(message)
+            messages.add(message)
             problem_count += 1
 
     return diagnoses, messages, problem_count
@@ -297,7 +298,7 @@ def lint_line(line, line_number, components_included, first_line=False, allow_mv
     """Run all lint checks against line and return any problems found."""
     debug_line(line, line_number)
 
-    messages = []
+    messages = set()
     diagnoses = []
     problem_count = 0
 
@@ -305,7 +306,7 @@ def lint_line(line, line_number, components_included, first_line=False, allow_mv
         first_line = False
         if not RE_FIRST_LINE.match(line):
             if not (RE_MVN_TEMPLATE.match(line) and allow_mvn_templates):
-                messages.append('First non-comment line must be the template type and name')
+                messages.add('First non-comment line must be the template type and name')
                 diagnoses.append(diagnose(0, len(line)))
                 problem_count += 1
 
@@ -315,17 +316,17 @@ def lint_line(line, line_number, components_included, first_line=False, allow_mv
 
         d, m, p = check_line_component_use(line, components_included)
         diagnoses += d
-        messages += m
+        messages.update(m)
         problem_count += p
 
         d, m, p = check_line_patterns(line, string_ranges)
         diagnoses += d
-        messages += m
+        messages.update(m)
         problem_count += p
 
         d, m, p = check_line_methods(line, string_ranges)
         diagnoses += d
-        messages += m
+        messages.update(m)
         problem_count += p
 
     return (diagnoses, messages, problem_count, first_line)

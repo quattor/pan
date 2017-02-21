@@ -131,13 +131,14 @@ def print_fileinfo(filename, line_number, message, vi=False):
 def print_line(text):
     """Return a formatted line of text, replacing tabs with a visible character
 
-    If stdout is a tty, a unicode rightwards arrow (u2192) will be used for tabs, otherwise the rarely used negation character (¬).
+    If stdout is a tty and claims to support UTF-8 encoding, a unicode rightwards arrow (u2192) will be used for tabs,
+    otherwise a space character ( ) will be used.
     This keeps the character counts in line with fixed-width columns while still making tabs distinguishable in output.
     """
-    if stdout.isatty():
+    if stdout.isatty() and stdout.encoding == 'UTF-8':
         text = text.replace('\t', TAB_ARROW)
     else:
-        text = text.replace('\t', '¬')
+        text = text.replace('\t', ' ')
 
     return ''.join([Fore.GREEN, text.rstrip('\n'), Fore.RESET])
 

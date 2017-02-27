@@ -48,7 +48,7 @@ LINE_PATTERNS = {
     "Indentation should be a multiple of four spaces": re.compile(r'^(?!( {4})*(\S|$))(?P<error>\s*)'),
     "Spaces should be used instead of tabs": re.compile(r'(?P<error>\t+)'),
     "Trailing whitespace": re.compile(r'(?P<error>\s+$)'),
-    "Use dict() instead of nlist()": re.compile(r'\b(?P<error>nlist)\s*\('),
+    "Use dicts instead of nlists": re.compile(r'\b(?P<error>(?:is_)?nlist)\s*\('),
     "Include statements no longer need curly braces": re.compile(r'''include\s+(?P<error>{[^;]+})'''),
     "Line is longer than %s characters" % LINE_LENGTH_LIMIT: re.compile(r'''^.{0,%s}(?P<error>.*?)$''' % LINE_LENGTH_LIMIT),
     "Commas should be followed by exactly one space": re.compile(r'(?P<error>,(?:\S|\s{2,}))'),

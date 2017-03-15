@@ -278,8 +278,8 @@ def strip_trailing_comments(line, string_ranges):
         # If so, it's not really a comment.
         if not inside_string(comment.start(), comment.start()+1, string_ranges):
             debug_range(comment.start(), comment.end(), 'Comment', False)
-            line = line[:comment.start()]
-    return line.rstrip()
+            line = line[:comment.start()].rstrip()
+    return line
 
 
 def check_line_component_use(line, components_included):

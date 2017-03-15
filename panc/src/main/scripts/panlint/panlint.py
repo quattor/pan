@@ -411,7 +411,7 @@ def lint_file(filename, allow_mvn_templates=False):
 def main():
     """Main function"""
     parser = argparse.ArgumentParser(description='Linter for the pan language')
-    parser.add_argument('paths', metavar='PATH', type=str, nargs='+', help='Paths of files to check')
+    parser.add_argument('paths', metavar='PATH', type=str, nargs='*', help='Paths of files to check')
     parser.add_argument('--vi', action='store_true', help='Output line numbers in a vi option style')
     parser.add_argument('--table', action='store_true', help='Display a table of per-file problem stats')
     parser.add_argument('--allow_mvn_templates', action='store_true', help='Allow use of maven templates')
@@ -429,6 +429,10 @@ def main():
 
     reports = []
     problem_stats = {}
+
+    if not args.paths:
+        print 'No files were provided, not doing anything'
+        sys_exit(0)
 
     for path in args.paths:
         for filename in glob(path):

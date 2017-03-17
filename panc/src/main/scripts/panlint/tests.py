@@ -92,12 +92,26 @@ class TestPanlint(unittest.TestCase):
         bad_both = 'variable d = 10-2;'
         dgn_both = '              ^^^'
 
+        good_square_brackets = 'variable x = b[c-1];'
+        bad_square_brackets = 'variable x = b[c + 1];'
+        dgn_square_brackets = '                ^'
+
+        good_negative = 'variable x = -1;'
+        bad_negative = 'variable x = - 1;'
+        dgn_negative = '             ^^^'
+
         lc = panlint.LineChecks()
 
         self.assertEqual(lc.whitespace_around_operators(good, []), (True, '', ''))
+        self.assertEqual(lc.whitespace_around_operators(good_square_brackets, []), (True, '', ''))
+        self.assertEqual(lc.whitespace_around_operators(good_negative, []), (True, '', ''))
         self.assertEqual(lc.whitespace_around_operators(bad_before, []), (False, dgn_before, 'Missing space before operator'))
         self.assertEqual(lc.whitespace_around_operators(bad_after, []), (False, dgn_after, 'Missing space after operator'))
         self.assertEqual(lc.whitespace_around_operators(bad_both, []), (False, dgn_both, 'Missing space before and after operator'))
+        self.assertEqual(lc.whitespace_around_operators(bad_square_brackets, []),
+                         (False, dgn_square_brackets, 'Unwanted space in simple expression in square brackets'))
+        self.assertEqual(lc.whitespace_around_operators(bad_negative, []),
+                         (False, dgn_negative, 'Unwanted space after minus sign (not operator)'))
 
     def test_whitespace_after_semicolons(self):
         bad_1 = 'foreach(k; v;  things) {'

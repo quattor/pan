@@ -35,7 +35,7 @@ RE_MVN_TEMPLATE = re.compile(r'\$\{\S+\}')
 RE_COMMENT = re.compile(RS_COMMENT)
 RE_COMMENT_LINE = re.compile(r'^\s*' + RS_COMMENT + '.*$')
 RE_ANNOTATION = re.compile(r'@\w*{.*?}', re.S)
-RE_OPERATOR = re.compile(r'(.)([>=<!?]=|[+*=/-])(.)')
+RE_OPERATOR = re.compile(r'([>=<!?]=|[+*=/-])')
 
 # Find usage and inclusion of components
 RE_COMPONENT_INCLUDE = re.compile(r'^\s*[^#]?\s*include.*components/(?P<name>\w+)/config', re.M)
@@ -82,30 +82,61 @@ class LineChecks:
         diagnosis = ' ' * len(line)
 
         for operator in operators:
-            char_before, _, char_after = operator.groups()
-            start, end = operator.span(2)
+            op = operator.group(1)
+            # end: not in match
+            start, end = operator.span(1)
 
-            if not inside_string(start, end, string_ranges):
-                valid = True
-                if char_before not in (' ', '\t'):
+            chars_before = line[:start]
+            chars_after = line[end:]
+
+            # simple statement text in square brackets; if any
+            # the "simple" pattern: letters, digtis, +/- operator, minus sign
+            #    also whitespace, those are invalid
+            sqb_simple = '\s\w\d+-'
+
+            sqb_before = re.search(r'[[]([' + sqb_simple + ']*)$', chars_before)
+            sqb_after = re.search(r'^([' + sqb_simple + ']*)[]]', chars_after)
+
+            valid = True
+            if op == '-' and \
+               re.search('\W\s*$', chars_before) and \
+               re.search('^\s*\d+\s*\W', chars_after):
+                # -\d not preceded or followed by eg variable name
+                if re.search('^\s', chars_after):
+                    valid = False
+                    message = 'Unwanted space after minus sign (not operator)'
+                    end += 2
+            elif op in ('-', '+', ) and sqb_before and sqb_after:
+                # something simple in square brackets
+                in_brackets = sqb_before.group(1) + op + sqb_after.group(1)
+                reg = re.search(r'\s', in_brackets)
+                if reg:
+                    valid = False
+                    message = 'Unwanted space in simple expression in square brackets'
+                    start = sqb_before.start(1) + reg.start(0)
+                    end = start + 1
+
+            elif not inside_string(start, end, string_ranges):
+                reason = 'Missing'
+                if chars_before[-1] not in (' ', '\t'):
                     valid = False
                     messages.add('before')
                     start -= 1
-                if char_after not in (' ', '\t'):
+                if chars_after[0] not in (' ', '\t'):
                     valid = False
                     messages.add('after')
                     end += 1
 
-                if not valid:
-                    debug_range(start, end, 'WS Operator', True)
-                    diagnosis = diagnosis[:start] + ('^' * (end-start)) + diagnosis[end:]
+            if not valid:
+                debug_range(start, end, 'WS Operator', True)
+                diagnosis = diagnosis[:start] + ('^' * (end-start)) + diagnosis[end:]
 
-                passed &= valid
+            passed &= valid
 
-        if not passed:
+        if not passed and messages:
             messages = list(messages)
             messages.sort(None, None, True)
-            message = 'Missing space %s operator' % ' and '.join(messages)
+            message = '%s space %s operator' % (reason, ' and '.join(messages))
         return (passed, diagnosis.rstrip(), message)
 
 

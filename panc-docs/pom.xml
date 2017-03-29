@@ -1,18 +1,15 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <artifactId>panc-docs</artifactId>
   <packaging>jar</packaging>
   <name>panc-docs</name>
   <description>Pan Language and Pan Compiler Documentation</description>
-
   <parent>
     <groupId>org.quattor.pan</groupId>
     <artifactId>pan</artifactId>
     <version>10.4-SNAPSHOT</version>
   </parent>
-
   <licenses>
     <license>
       <name>Creative Commons Attribution 3.0 Unported</name>
@@ -21,7 +18,6 @@
       <comments>Copyright (c) 2010-2014, Centre National de la Recherche Scientifique (CNRS)</comments>
     </license>
   </licenses>
-
   <developers>
     <developer>
       <id>loomisc</id>
@@ -30,15 +26,12 @@
       <organization>CNRS/LAL</organization>
       <organizationUrl>http://www.lal.in2p3.fr/</organizationUrl>
       <roles>
-	<role>maintainer</role>
+        <role>maintainer</role>
       </roles>
     </developer>
   </developers>
-
   <build>
-
     <plugins>
-
       <plugin>
         <groupId>org.tomdz.maven</groupId>
         <artifactId>sphinx-maven-plugin</artifactId>
@@ -60,9 +53,6 @@
           </execution>
         </executions>
       </plugin>
-
     </plugins>
-
   </build>
-
 </project>

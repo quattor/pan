@@ -1,62 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
   <modelVersion>4.0.0</modelVersion>
-
   <artifactId>panc-maven-archetype</artifactId>
-
   <name>panc maven archetype</name>
-
   <parent>
     <groupId>org.quattor.pan</groupId>
     <artifactId>pan</artifactId>
     <version>10.4-SNAPSHOT</version>
   </parent>
-
   <build>
     <plugins>
-
       <plugin>
-	
-	<groupId>org.apache.maven.plugins</groupId>
-	<artifactId>maven-resources-plugin</artifactId>
-	
-	<executions>
-	  
-	  <execution>
-	    <id>filter-archetype-resources</id>
-	    <goals>
-	      <goal>copy-resources</goal>
-	    </goals>
-	    <phase>process-resources</phase>
-	    <configuration>
-	      <encoding>UTF-8</encoding>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>filter-archetype-resources</id>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <phase>process-resources</phase>
+            <configuration>
+              <encoding>UTF-8</encoding>
               <escapeString>\</escapeString>
               <outputDirectory>${project.build.outputDirectory}</outputDirectory>
-	      <resources>
-		<resource>
-		  <directory>src/main/resources</directory>
-		  <filtering>true</filtering>
+              <resources>
+                <resource>
+                  <directory>src/main/resources</directory>
+                  <filtering>true</filtering>
                   <includes>
                     <include>archetype-resources/pom.xml</include>
                   </includes>
-		</resource>
-		<resource>
-		  <directory>src/main/resources</directory>
-		  <filtering>false</filtering>
+                </resource>
+                <resource>
+                  <directory>src/main/resources</directory>
+                  <filtering>false</filtering>
                   <excludes>
                     <excludes>archetype-resources/pom.xml</excludes>
                   </excludes>
-		</resource>
-	      </resources>
-	    </configuration> 
-	  </execution>
-	  
-	</executions>
-	
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
-      
     </plugins>
   </build>
-
 </project>

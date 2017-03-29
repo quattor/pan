@@ -1,30 +1,23 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
   <modelVersion>4.0.0</modelVersion>
-
   <artifactId>panc</artifactId>
   <name>panc</name>
   <description>Pan Language Compiler</description>
   <packaging>jar</packaging>
-
   <parent>
     <groupId>org.quattor.pan</groupId>
     <artifactId>pan</artifactId>
     <version>10.4-SNAPSHOT</version>
   </parent>
-
   <build>
-
     <resources>
       <resource>
         <directory>src/main/resources</directory>
         <filtering>true</filtering>
       </resource>
     </resources>
-
     <plugins>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
@@ -44,7 +37,6 @@
           </execution>
         </executions>
       </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
@@ -58,7 +50,6 @@
           </execution>
         </executions>
       </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
@@ -72,7 +63,6 @@
           </execution>
         </executions>
       </plugin>
-
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>javacc-maven-plugin</artifactId>
@@ -85,7 +75,6 @@
           </execution>
         </executions>
       </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -93,7 +82,7 @@
           <systemPropertyVariables>
             <panc.tmpdir>${project.build.directory}/test-tmp/tmpdir</panc.tmpdir>
             <panc.testdir>${basedir}/src/test/pan</panc.testdir>
-            <buildDirectory />
+            <buildDirectory/>
           </systemPropertyVariables>
           <excludes>
             <exclude>**/TestUtils.java</exclude>
@@ -101,7 +90,6 @@
           </excludes>
         </configuration>
       </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
@@ -115,7 +103,6 @@
           </archive>
         </configuration>
       </plugin>
-
       <plugin>
         <groupId>com.theoryinpractise</groupId>
         <artifactId>clojure-maven-plugin</artifactId>
@@ -145,13 +132,10 @@
           </execution>
         </executions>
       </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
-
         <executions>
-
           <execution>
             <id>test-jar</id>
             <phase>package</phase>
@@ -167,11 +151,9 @@
               <descriptors>
                 <descriptor>src/main/assembly/assembly-fat.xml</descriptor>
               </descriptors>
-
               <finalName>panc-${project.version}-fat-jar</finalName>
             </configuration>
           </execution>
-
           <execution>
             <id>jar-with-dependencies</id>
             <goals>
@@ -190,7 +172,6 @@
               <appendAssemblyId>true</appendAssemblyId>
             </configuration>
           </execution>
-
           <execution>
             <id>bundle</id>
             <goals>
@@ -204,11 +185,8 @@
               <appendAssemblyId>false</appendAssemblyId>
             </configuration>
           </execution>
-
         </executions>
-
       </plugin>
-
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
@@ -228,14 +206,10 @@
           </execution>
         </executions>
       </plugin>
-
     </plugins>
-
   </build>
-
   <reporting>
     <plugins>
-
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>findbugs-maven-plugin</artifactId>
@@ -243,77 +217,62 @@
           <excludeFilterFile>${basedir}/src/test/findbugs/findbugs-exclude.xml</excludeFilterFile>
         </configuration>
       </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
 	</configuration>
       </plugin>
-
     </plugins>
   </reporting>
-
   <dependencies>
-
     <dependency>
       <groupId>net.jcip</groupId>
       <artifactId>jcip-annotations</artifactId>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
     </dependency>
-
     <dependency>
       <groupId>org.apache.ant</groupId>
       <artifactId>ant</artifactId>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
     </dependency>
-
     <dependency>
       <groupId>reply</groupId>
       <artifactId>reply</artifactId>
       <scope>provided</scope>
     </dependency>
-    
     <dependency>
       <groupId>jline</groupId>
       <artifactId>jline</artifactId>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>clojure</artifactId>
     </dependency>
-    
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>tools.cli</artifactId>
     </dependency>
-
     <dependency>
       <groupId>autodoc</groupId>
       <artifactId>autodoc</artifactId>
       <scope>test</scope>
     </dependency>
-
   </dependencies>
-
   <licenses>
     <license>
       <name>Apache 2.0</name>
@@ -322,7 +281,6 @@
       <comments>Copyright (c) 2010, Centre National de la Recherche Scientifique (CNRS)</comments>
     </license>
   </licenses>
-
   <developers>
     <developer>
       <id>loomisc</id>
@@ -331,20 +289,18 @@
       <organization>CNRS/LAL</organization>
       <organizationUrl>http://www.lal.in2p3.fr/</organizationUrl>
       <roles>
-	<role>maintainer</role>
+        <role>maintainer</role>
       </roles>
     </developer>
   </developers>
-
   <contributors>
     <contributor>
       <name>Cedric DUPRILOT</name>
       <organization>CNRS/LAL</organization>
       <organizationUrl>http://www.lal.in2p3.fr/</organizationUrl>
       <roles>
-	<role>developer</role>
+        <role>developer</role>
       </roles>
     </contributor>
   </contributors>
-
 </project>

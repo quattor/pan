@@ -1,110 +1,90 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <artifactId>panc-rpm</artifactId>
   <packaging>rpm</packaging>
   <name>panc-rpm</name>
-
   <parent>
     <groupId>org.quattor.pan</groupId>
     <artifactId>pan</artifactId>
     <version>10.4-SNAPSHOT</version>
   </parent>
-
   <build>
-
     <plugins>
-
       <plugin>
-	<artifactId>maven-dependency-plugin</artifactId>
-	<executions>
-
-	  <execution>
-	    <id>copy-code</id>
-	    <phase>prepare-package</phase>
-	    <configuration>
-	      <artifactItems>
-
-		<artifactItem>
-		  <groupId>org.quattor.pan</groupId>
-		  <artifactId>panc</artifactId>
-		  <version>${project.version}</version>
-		  <type>zip</type>
-		  <outputDirectory>${project.build.directory}/contents</outputDirectory>
-		</artifactItem>
-
-	      </artifactItems>
-	    </configuration>
-	    <goals>
-	      <goal>unpack</goal>
-	    </goals>
-	  </execution>
-
-	</executions>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-code</id>
+            <phase>prepare-package</phase>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.quattor.pan</groupId>
+                  <artifactId>panc</artifactId>
+                  <version>${project.version}</version>
+                  <type>zip</type>
+                  <outputDirectory>${project.build.directory}/contents</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
-
       <plugin>
-
-	<groupId>org.codehaus.mojo</groupId>
-	<artifactId>rpm-maven-plugin</artifactId>
-	<extensions>true</extensions>
-
-	<configuration>
-	  <name>panc</name>
-	  <vendor>CNRS</vendor>
-	  <copyright>Apache2</copyright>
-	  <distribution>Quattor</distribution>
-	  <group>Quattor</group>
-	  <packager>Quattor</packager>
-	  <changelogFile>src/changelog</changelogFile>
-	  <buildarch>noarch</buildarch>
-	  <mappings>
-
-	    <mapping>
-	      <directory>/usr/lib</directory>
-	      <filemode>755</filemode>
-	      <username>root</username>
-	      <groupname>root</groupname>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>rpm-maven-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <name>panc</name>
+          <vendor>CNRS</vendor>
+          <copyright>Apache2</copyright>
+          <distribution>Quattor</distribution>
+          <group>Quattor</group>
+          <packager>Quattor</packager>
+          <changelogFile>src/changelog</changelogFile>
+          <buildarch>noarch</buildarch>
+          <mappings>
+            <mapping>
+              <directory>/usr/lib</directory>
+              <filemode>755</filemode>
+              <username>root</username>
+              <groupname>root</groupname>
               <directoryIncluded>false</directoryIncluded>
-	      <sources>
-		<source>
-		  <location>target/contents/lib</location>
-		</source>
-	      </sources>
-	    </mapping>
-
-	    <mapping>
-	      <directory>/usr/bin</directory>
-	      <filemode>755</filemode>
-	      <username>root</username>
-	      <groupname>root</groupname>
+              <sources>
+                <source>
+                  <location>target/contents/lib</location>
+                </source>
+              </sources>
+            </mapping>
+            <mapping>
+              <directory>/usr/bin</directory>
+              <filemode>755</filemode>
+              <username>root</username>
+              <groupname>root</groupname>
               <directoryIncluded>false</directoryIncluded>
-	      <sources>
-		<source>
-		  <location>target/contents/bin</location>
-		</source>
-	      </sources>
-	    </mapping>
-
-	  </mappings>
-	</configuration>
-
-	<executions>
-	  <execution>
-	    <goals>
-	      <goal>rpm</goal>
-	    </goals>
-	  </execution>
-	</executions>
+              <sources>
+                <source>
+                  <location>target/contents/bin</location>
+                </source>
+              </sources>
+            </mapping>
+          </mappings>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>rpm</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
-
     </plugins>
-
   </build>
-
   <dependencies>
-
     <dependency>
       <groupId>org.quattor.pan</groupId>
       <artifactId>panc</artifactId>
@@ -112,7 +92,5 @@
       <type>zip</type>
       <scope>runtime</scope>
     </dependency>
-
   </dependencies>
-
 </project>

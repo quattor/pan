@@ -1,12 +1,10 @@
+<?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  
   <groupId>\${groupId}</groupId>
   <artifactId>\${artifactId}</artifactId>
   <version>\${version}</version>
-
   <packaging>pom</packaging>
-
   <dependencies>
     <dependency>
       <groupId>org.quattor.pan</groupId>
@@ -15,9 +13,7 @@
       <classifier>jar-with-dependencies</classifier>
     </dependency>
   </dependencies>
-
   <build>
-
     <pluginManagement>
       <plugins>
         <plugin>
@@ -27,20 +23,17 @@
         </plugin>
       </plugins>
     </pluginManagement>
-
     <plugins>
       <plugin>
         <groupId>org.quattor.pan</groupId>
         <artifactId>panc-maven-plugin</artifactId>
         <executions>
-
           <execution>
             <id>check-syntax</id>
             <goals>
               <goal>check-syntax</goal>
             </goals>
           </execution>
-
           <execution>
             <id>build</id>
             <goals>
@@ -50,11 +43,8 @@
               <formats>pan,json,json.gz,dep</formats>
             </configuration>
           </execution>
-
         </executions>
       </plugin>
     </plugins>
-
   </build>
-
 </project>

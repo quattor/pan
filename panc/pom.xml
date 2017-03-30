@@ -8,7 +8,7 @@
   <parent>
     <groupId>org.quattor.pan</groupId>
     <artifactId>pan</artifactId>
-    <version>10.4-SNAPSHOT</version>
+    <version>10.4-rc1</version>
   </parent>
   <build>
     <resources>
@@ -82,7 +82,7 @@
           <systemPropertyVariables>
             <panc.tmpdir>${project.build.directory}/test-tmp/tmpdir</panc.tmpdir>
             <panc.testdir>${basedir}/src/test/pan</panc.testdir>
-            <buildDirectory/>
+            <buildDirectory />
           </systemPropertyVariables>
           <excludes>
             <exclude>**/TestUtils.java</exclude>

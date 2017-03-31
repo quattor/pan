@@ -113,6 +113,10 @@ class TestPanlint(unittest.TestCase):
         self.assertEqual(lc.whitespace_around_operators(bad_negative, []),
                          (False, dgn_negative, 'Unwanted space after minus sign (not operator)'))
 
+        # Handling lines that start or end with an operator (i.e. are part of a multi-line expression) should be allowed
+        self.assertEqual(lc.whitespace_around_operators('+ 42;', []), (True, '', ''))
+        self.assertEqual(lc.whitespace_around_operators('variable x = 42 +', []), (True, '', ''))
+
     def test_whitespace_after_semicolons(self):
         bad_1 = 'foreach(k; v;  things) {'
         dgn_1 = ['             ^^']

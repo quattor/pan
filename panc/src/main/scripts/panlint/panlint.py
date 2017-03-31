@@ -118,11 +118,11 @@ class LineChecks:
 
             elif not inside_string(start, end, string_ranges):
                 reason = 'Missing'
-                if chars_before[-1] not in (' ', '\t'):
+                if chars_before and chars_before[-1] not in (' ', '\t'):
                     valid = False
                     messages.add('before')
                     start -= 1
-                if chars_after[0] not in (' ', '\t'):
+                if chars_after and chars_after[0] not in (' ', '\t'):
                     valid = False
                     messages.add('after')
                     end += 1

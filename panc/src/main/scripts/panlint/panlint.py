@@ -118,11 +118,11 @@ class LineChecks:
 
             elif not inside_string(start, end, string_ranges):
                 reason = 'Missing'
-                if chars_before[-1] not in (' ', '\t'):
+                if chars_before and chars_before[-1] not in (' ', '\t'):
                     valid = False
                     messages.add('before')
                     start -= 1
-                if chars_after[0] not in (' ', '\t'):
+                if chars_after and chars_after[0] not in (' ', '\t'):
                     valid = False
                     messages.add('after')
                     end += 1
@@ -278,8 +278,8 @@ def strip_trailing_comments(line, string_ranges):
         # If so, it's not really a comment.
         if not inside_string(comment.start(), comment.start()+1, string_ranges):
             debug_range(comment.start(), comment.end(), 'Comment', False)
-            line = line[:comment.start()]
-    return line.rstrip()
+            line = line[:comment.start()].rstrip()
+    return line
 
 
 def check_line_component_use(line, components_included):

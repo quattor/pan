@@ -484,7 +484,7 @@ def main():
     print '%d problems found in total' % problems_found
 
     if problems_found:
-        return(1)
+        return 1
 
 
 if __name__ == '__main__':

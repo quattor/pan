@@ -180,7 +180,7 @@ def merge_diagnoses(args):
         return ''
 
     args = [a.rstrip() for a in args]
-    result = [' '] * max(map(len, args))
+    result = [' '] * max([len(a) for a in args])
 
     for text in args:
         for i, c in enumerate(text):

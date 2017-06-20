@@ -92,17 +92,17 @@ class LineChecks:
             # simple statement text in square brackets; if any
             # the "simple" pattern: letters, digtis, +/- operator, minus sign
             #    also whitespace, those are invalid
-            sqb_simple = '\s\w\d+-'
+            sqb_simple = r'\s\w\d+-'
 
             sqb_before = re.search(r'[[]([' + sqb_simple + ']*)$', chars_before)
             sqb_after = re.search(r'^([' + sqb_simple + ']*)[]]', chars_after)
 
             valid = True
             if op == '-' and \
-               re.search('\W\s*$', chars_before) and \
-               re.search('^\s*\d+\s*\W', chars_after):
+               re.search(r'\W\s*$', chars_before) and \
+               re.search(r'^\s*\d+\s*\W', chars_after):
                 # -\d not preceded or followed by eg variable name
-                if re.search('^\s', chars_after):
+                if re.search(r'^\s', chars_after):
                     valid = False
                     message = 'Unwanted space after minus sign (not operator)'
                     end += 2

@@ -25,7 +25,7 @@ Ensure also that a recent, certified version of the JVM (1.6+) and maven
 (3.0.3+) are installed.
 
 Before doing anything else, ensure that the release notes and the change
-log for the release are up to date and complete.  The source is in the
+log for the release are up to date and complete.  The source is in the 
 `panc-docs/source/release-notes/release-notes.rst` file.  The change log
 should list all of the issues resolved in the release.
 
@@ -35,7 +35,7 @@ cloned repository:
 ```
 $ mvn clean install
 ```
-If this doesn't end with a "BUILD SUCCESS" message, then correct the
+If this doesn't end with a "BUILD SUCCESS" message, then correct the 
 problems before going any farther with the release.
 
 To perform the release you must have:
@@ -50,11 +50,11 @@ $ mvn clean
 $ mvn release:prepare
 $ mvn release:perform
 ```
-During the preparation phase you will be asked about the versions to
+During the preparation phase you will be asked about the versions to 
 tag and for your GPG key password.  You will also be asked about the
 GPG key password during the perform stage.
 
-If all worked without errors, then the packages will have been
+If all worked without errors, then the packages will have been 
 successfully staged to the
 [OSS maven repository](https://oss.sonatype.org/).  You will need to
 log into the repository to promote and release the artifacts.  Once
@@ -63,14 +63,14 @@ logged in:
   * Select the "orgquattor" repository in the list.
   * Click on "Close" at the top below the tabs, give a message and
     confirm the action.
-  * Wait for the action to finish.  You can click on "Refresh" to
+  * Wait for the action to finish.  You can click on "Refresh" to 
     update the status.
   * Finish the release by clicking "Release" at the top below the
     tabs.
 You have now successfully released all of the artifacts into the central
 maven repository.
 
-You must also create the release in GitHub.  Collect all of the
+You must also create the release in GitHub.  Collect all of the 
 files you will distribute as part of the release.  The list includes:
   * Jar file with dependencies,
   * Tar archive,
@@ -80,12 +80,12 @@ Put them on the machine you'll use to access the GitHub web interface.
 
 Visit the [pan releases page](https://github.com/quattor/pan/releases).
 You should see a tag that corresponds to the release that you've just
-created.  Click on the tag link on this page and then on the "Edit Tag"
+created.  Click on the tag link on this page and then on the "Edit Tag" 
 button.
 
 Now use the interface to upload the packages to GitHub.  You can either
 drop and drag them into place or just select them with the chooser.
-Provide a title and description for the release and then click on the
+Provide a title and description for the release and then click on the 
 "Publish" button.
 
 For the documentation, log into ReadTheDocs.org and add the tag for the

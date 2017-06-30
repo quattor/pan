@@ -39,7 +39,7 @@ RE_OPERATOR = re.compile(r'([>=<!?]=|[+*=/-])')
 
 # Find usage and inclusion of components
 RE_COMPONENT_INCLUDE = re.compile(r'^\s*[^#]?\s*include.*components/(?P<name>\w+)/config', re.M)
-RE_COMPONENT_USE = re.compile(r'^\s*[^#]?\s*/software/components/(?P<name>\w+)/')
+RE_COMPONENT_USE = re.compile(r'/software/components/(?P<name>\w+)/')
 LINE_LENGTH_LIMIT = 120
 
 # Simple regular-expression based checks that will be performed against all non-ignored lines
@@ -288,10 +288,12 @@ def check_line_component_use(line, components_included):
     messages = []
     problem_count = 0
 
-    for m in RE_COMPONENT_USE.finditer(line):
-        if m.group('name') not in components_included:
-            message = 'Component %s in use, but component config has not been included' % m.group('name')
-            diagnoses.append(diagnose(*m.span('name')))
+    for match in RE_COMPONENT_USE.finditer(line):
+        if match.group('name') not in components_included:
+            start, end = match.span('name')
+            debug_range(start, end, 'ComponentUse', True)
+            message = 'Component %s in use, but component config has not been included' % match.group('name')
+            diagnoses.append(diagnose(*match.span('name')))
             messages.append(message)
             problem_count += 1
 

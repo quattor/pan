@@ -39,7 +39,7 @@ RE_OPERATOR = re.compile(r'([>=<!?]=|[+*=/-])')
 
 # Find usage and inclusion of components
 RE_COMPONENT_INCLUDE = re.compile(r'^\s*[^#]?\s*include.*components/(?P<name>\w+)/config', re.M)
-RE_COMPONENT_USE = re.compile(r'^\s*[^#]?\s*/software/components/(?P<name>\w+)/')
+RE_COMPONENT_USE = re.compile(r'/software/components/(?P<name>\w+)/')
 LINE_LENGTH_LIMIT = 120
 
 # Simple regular-expression based checks that will be performed against all non-ignored lines
@@ -92,17 +92,17 @@ class LineChecks:
             # simple statement text in square brackets; if any
             # the "simple" pattern: letters, digtis, +/- operator, minus sign
             #    also whitespace, those are invalid
-            sqb_simple = '\s\w\d+-'
+            sqb_simple = r'\s\w\d+-'
 
             sqb_before = re.search(r'[[]([' + sqb_simple + ']*)$', chars_before)
             sqb_after = re.search(r'^([' + sqb_simple + ']*)[]]', chars_after)
 
             valid = True
             if op == '-' and \
-               re.search('\W\s*$', chars_before) and \
-               re.search('^\s*\d+\s*\W', chars_after):
+               re.search(r'\W\s*$', chars_before) and \
+               re.search(r'^\s*\d+\s*\W', chars_after):
                 # -\d not preceded or followed by eg variable name
-                if re.search('^\s', chars_after):
+                if re.search(r'^\s', chars_after):
                     valid = False
                     message = 'Unwanted space after minus sign (not operator)'
                     end += 2
@@ -180,7 +180,7 @@ def merge_diagnoses(args):
         return ''
 
     args = [a.rstrip() for a in args]
-    result = [' '] * max(map(len, args))
+    result = [' '] * max([len(a) for a in args])
 
     for text in args:
         for i, c in enumerate(text):
@@ -288,10 +288,12 @@ def check_line_component_use(line, components_included):
     messages = []
     problem_count = 0
 
-    for m in RE_COMPONENT_USE.finditer(line):
-        if m.group('name') not in components_included:
-            message = 'Component %s in use, but component config has not been included' % m.group('name')
-            diagnoses.append(diagnose(*m.span('name')))
+    for match in RE_COMPONENT_USE.finditer(line):
+        if match.group('name') not in components_included:
+            start, end = match.span('name')
+            debug_range(start, end, 'ComponentUse', True)
+            message = 'Component %s in use, but component config has not been included' % match.group('name')
+            diagnoses.append(diagnose(*match.span('name')))
             messages.append(message)
             problem_count += 1
 
@@ -484,7 +486,7 @@ def main():
     print '%d problems found in total' % problems_found
 
     if problems_found:
-        return(1)
+        return 1
 
 
 if __name__ == '__main__':

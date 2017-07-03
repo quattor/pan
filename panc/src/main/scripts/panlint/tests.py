@@ -141,7 +141,7 @@ class TestPanlint(unittest.TestCase):
             ([], set(), 0, False)
         )
 
-        good_line_2 = "prefix '/software/components/metaconfig/services/{/etc/sysconfig/fetch-crl}';"
+        good_line_2 = "prefix '/system/network/interfaces/eth0';"
         self.assertEqual(
             panlint.lint_line(good_line_2, 151, [], False),
             ([], set(), 0, False)
@@ -163,8 +163,8 @@ class TestPanlint(unittest.TestCase):
             (bad_diag_2, set(bad_msg_2), 1, False)
         )
 
-        bad_line_3 = "prefix '/software/components/filecopy/services/{/etc/strange/service.conf}/';"
-        bad_diag_3 = ['                                                                          ^']
+        bad_line_3 = "prefix '/system/aii/osinstall/ks/';"
+        bad_diag_3 = ['                                ^']
         bad_msg_3 = ['Unnecessary trailing slash at end of profile path']
         self.assertEqual(
             panlint.lint_line(bad_line_3, 182, [], False),
@@ -226,6 +226,44 @@ class TestPanlint(unittest.TestCase):
         self.assertItemsEqual(panlint.find_annotation_blocks(test_text), [2, 7])
         self.assertEqual(panlint.find_annotation_blocks('template garbage;\n\n# Nothing to see here.\n\n'), [])
 
+    def test_component_use(self):
+        # Test a line containing a standard path assignment
+        line_standard = "'/software/components/chkconfig/service/rdma' = dict("
+        diag_standard = "                      ^^^^^^^^^"
+
+        # Test a line setting a path prefix
+        line_prefix = "prefix '/software/components/metaconfig/services/{/etc/sysconfig/fetch-crl}';"
+        diag_prefix = "                             ^^^^^^^^^^"
+
+        # Test both lines with components listed as included
+        self.assertEqual(
+            panlint.lint_line(line_standard, 100, ['chkconfig'], False),
+            ([], set(), 0, False)
+        )
+        self.assertEqual(
+            panlint.lint_line(line_prefix, 200, ['metaconfig'], False),
+            ([], set(), 0, False)
+        )
+
+        # Test both lines without components listed as included
+        self.assertEqual(
+            panlint.lint_line(line_standard, 100, [], False),
+            ([diag_standard], set(['Component chkconfig in use, but component config has not been included']), 1, False)
+        )
+        self.assertEqual(
+            panlint.lint_line(line_prefix, 200, [], False),
+            ([diag_prefix], set(['Component metaconfig in use, but component config has not been included']), 1, False)
+        )
+
+        # Test both lines without components listed as included but commented out
+        self.assertEqual(
+            panlint.lint_line('# ' + line_standard, 100, [], False),
+            ([], set(), 0, False)
+        )
+        self.assertEqual(
+            panlint.lint_line('    #' + line_prefix, 200, [], False),
+            ([], set(), 0, False)
+        )
 
 if __name__ == '__main__':
     unittest.main()

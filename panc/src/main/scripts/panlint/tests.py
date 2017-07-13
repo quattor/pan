@@ -30,11 +30,12 @@ class TestPanlint(unittest.TestCase):
         self.longMessage = True
 
     def test_diagnose(self):
-        self.assertEqual(panlint.diagnose(0, 0), '')
-        self.assertEqual(panlint.diagnose(0, 4), '^^^^')
-        self.assertEqual(panlint.diagnose(2, 8), '  ^^^^^^')
-        self.assertEqual(panlint.diagnose(7, 7), '       ')
-        self.assertEqual(panlint.diagnose(3, -2), '   ')
+        dummy_message = ''
+        self.assertEqual(panlint.Problem(0, 0, dummy_message).diagnose(), '')
+        self.assertEqual(panlint.Problem(0, 4, dummy_message).diagnose(), '^^^^')
+        self.assertEqual(panlint.Problem(2, 8, dummy_message).diagnose(), '  ^^^^^^')
+        self.assertEqual(panlint.Problem(7, 7, dummy_message).diagnose(), '       ')
+        self.assertEqual(panlint.Problem(3, -2, dummy_message).diagnose(), '   ')
 
     def test_print_diagnosis(self):
         FORMAT = '\x1b[34m%s\x1b[39m'
@@ -145,21 +146,21 @@ class TestPanlint(unittest.TestCase):
 
         lc = panlint.LineChecks()
 
-        for i, (_, line) in enumerate(good.items()):
-            passed, _, message = lc.whitespace_around_operators(panlint.Line('', i, line), [])
+        for i, (s, line) in enumerate(good.items()):
+            passed, problems = lc.whitespace_around_operators(panlint.Line('%s.pan' % s, i, line), [])
             self.assertTrue(passed)
-            self.assertEqual(message, '')
+            self.assertEqual(len(problems), 0)
 
         for bad_test, bad_message, bad_diag in bad_tests:
-            passed, diag, message = lc.whitespace_around_operators(bad_test, [])
+            passed, problems = lc.whitespace_around_operators(bad_test, [])
             self.assertFalse(passed)
-            self.assertEqual(message, bad_message)
-            self.assertEqual(diag, bad_diag)
+            self.assertEqual(len(problems), 1)
+            self.assertEqual(problems[0].message, bad_message)
+            self.assertEqual(problems[0].diagnose(), bad_diag)
 
         # Handling lines that start or end with an operator (i.e. are part of a multi-line expression) should be allowed
-        self.assertEqual(lc.whitespace_around_operators(panlint.Line('', 9216, '+ 42;'), []), (True, '', ''))
-        self.assertEqual(lc.whitespace_around_operators(panlint.Line('', 10240, 'variable x = 42 +'), []),
-                         (True, '', ''))
+        self.assertEqual(lc.whitespace_around_operators(panlint.Line('', 9216, '+ 42;'), []), (True, []))
+        self.assertEqual(lc.whitespace_around_operators(panlint.Line('', 10240, 'variable x = 42 +'), []), (True, []))
 
     def test_whitespace_after_semicolons(self):
         bad_1 = panlint.Line('', 1, 'foreach(k; v;  things) {')
@@ -405,8 +406,12 @@ class TestPanlint(unittest.TestCase):
         for text, messages in lines:
             line = panlint.Line('patterns.pan', 0, text)
             messages = set(messages)
-            m = panlint.check_line_patterns(line, [])[1]
-            self.assertEqual(m, messages)
+            problems = panlint.check_line_patterns(line, [])
+
+            self.assertIsInstance(problems, list)
+            for p in problems:
+                self.assertIsInstance(p, panlint.Problem)
+            self.assertEqual(set([p.message for p in problems]), messages)
 
 
 if __name__ == '__main__':

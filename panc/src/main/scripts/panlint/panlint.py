@@ -33,6 +33,18 @@ class Line(object):
         self.filename = str(filename)
         self.number = int(number)
         self.text = str(text)
+        self.problems = []
+
+
+class Problem(object):
+    def __init__(self, start, end, message):
+        self.start = int(start)
+        self.end = int(end)
+        self.message = str(message)
+
+    def diagnose(self):
+        """Format a line of diagnosis markers from a range of character positions"""
+        return (' ' * self.start) + ('^' * (self.end - self.start))
 
 
 RS_COMMENT = r'(?:#|@{.*?})'
@@ -95,10 +107,7 @@ class LineChecks:
         operators = RE_OPERATOR.finditer(line.text)
 
         passed = True
-        message = ''
-        messages = set()
-
-        diagnosis = ' ' * len(line.text)
+        problems = []
 
         for operator in operators:
             op = operator.group(1)
@@ -150,6 +159,7 @@ class LineChecks:
 
             else:
                 reason = 'Missing'
+                messages = set()
                 if chars_before and chars_before[-1] not in (' ', '\t'):
                     valid = False
                     messages.add('before')
@@ -158,17 +168,17 @@ class LineChecks:
                     valid = False
                     messages.add('after')
                     end += 1
+                messages = list(messages)
+                messages = sorted(list(messages), key=None, reverse=True)
+                message = '%s space %s operator' % (reason, ' and '.join(messages))
 
             if not valid:
                 debug_range(start, end, 'WS Operator', True)
-                diagnosis = diagnosis[:start] + ('^' * (end - start)) + diagnosis[end:]
+                problems.append(Problem(start, end, message))
 
             passed &= valid
 
-        if not passed and messages:
-            messages = sorted(list(messages), key=None, reverse=True)
-            message = '%s space %s operator' % (reason, ' and '.join(messages))
-        return (passed, diagnosis.rstrip(), message)
+        return (passed, problems)
 
 
 def inside_string(i, j, string_ranges):
@@ -332,27 +342,20 @@ def check_line_component_use(line, components_included):
     Check a line for usage of a component, flag a problem if any component
     is not in the list of included components.
     """
-    diagnoses = []
-    messages = []
-    problem_count = 0
+    problems = []
 
     for match in RE_COMPONENT_USE.finditer(line.text):
         if match.group('name') not in components_included:
             start, end = match.span('name')
             debug_range(start, end, 'ComponentUse', True)
             message = 'Component %s in use, but component config has not been included' % match.group('name')
-            diagnoses.append(diagnose(*match.span('name')))
-            messages.append(message)
-            problem_count += 1
-
-    return diagnoses, messages, problem_count
+            problems.append(Problem(start, end, message))
+    return problems
 
 
 def check_line_patterns(line, string_ranges):
     """Check line against regular expressions in LINE_PATTERNS, ignoring code within specified string ranges."""
-    diagnoses = []
-    messages = set()
-    problem_count = 0
+    problems = []
 
     for message, pattern in six.iteritems(LINE_PATTERNS):
         matches = pattern.finditer(line.text)
@@ -361,11 +364,8 @@ def check_line_patterns(line, string_ranges):
                 start, end = match.span('error')
                 debug_range(start, end, 'LineRE Match', True)
                 if not inside_string(start, end, string_ranges):
-                    diagnoses.append(diagnose(start, end))
-                    messages.add(message)
-                    problem_count += 1
-
-    return diagnoses, messages, problem_count
+                    problems.append(Problem(start, end, message))
+    return problems
 
 
 def check_line_paths(line):
@@ -373,9 +373,7 @@ def check_line_paths(line):
     If a line contains a profile path on the left hand side,
     check code within it against regular expressions in PATH_PATTERNS.
     """
-    diagnoses = []
-    messages = set()
-    problem_count = 0
+    problems = []
 
     path_match = RE_PATH.match(line.text)
     if path_match:
@@ -390,27 +388,21 @@ def check_line_paths(line):
                     start += path_start + 1
                     end += path_start + 1
                     debug_range(start, end, 'PathRE Match', True)
-                    diagnoses.append(diagnose(start, end))
-                    messages.add(message)
-                    problem_count += 1
+                    problems.append(Problem(start, end, message))
 
-    return diagnoses, messages, problem_count
+    return problems
 
 
 def check_line_methods(line, string_ranges):
     """Run checks defined as methods of LineChecks against line, ignoring code within specified string ranges."""
-    diagnoses = []
-    messages = set()
-    problem_count = 0
+    problems = []
 
     for _, check_method in getmembers(LineChecks(), predicate=ismethod):
-        passed, diagnosis, message = check_method(line, string_ranges)
+        passed, check_problems = check_method(line, string_ranges)
         if not passed:
-            diagnoses.append(diagnosis)
-            messages.add(message)
-            problem_count += 1
+            problems += check_problems
 
-    return diagnoses, messages, problem_count
+    return problems
 
 
 def lint_line(line, components_included, first_line=False, allow_mvn_templates=False):
@@ -433,25 +425,14 @@ def lint_line(line, components_included, first_line=False, allow_mvn_templates=F
         string_ranges = get_string_ranges(line)
         line = strip_trailing_comments(line, string_ranges)
 
-        d, m, p = check_line_component_use(line, components_included)
-        diagnoses += d
-        messages.update(m)
-        problem_count += p
+        problems = check_line_component_use(line, components_included)
+        problems += check_line_patterns(line, string_ranges)
+        problems += check_line_paths(line)
+        problems += check_line_methods(line, string_ranges)
 
-        d, m, p = check_line_patterns(line, string_ranges)
-        diagnoses += d
-        messages.update(m)
-        problem_count += p
-
-        d, m, p = check_line_paths(line)
-        diagnoses += d
-        messages.update(m)
-        problem_count += p
-
-        d, m, p = check_line_methods(line, string_ranges)
-        diagnoses += d
-        messages.update(m)
-        problem_count += p
+        diagnoses = [p.diagnose() for p in problems]
+        messages = set([p.message for p in problems])
+        problem_count = len(problems)
 
     return (diagnoses, messages, problem_count, first_line)
 

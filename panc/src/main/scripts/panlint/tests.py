@@ -299,5 +299,24 @@ class TestPanlint(unittest.TestCase):
             ([], set(), 0, False)
         )
 
+
+    def test_check_line_patterns(self):
+        lines = [
+            ('variable UNIVERSAL_TRUTH = 42;', []),
+            ('variable BAD = -1;', ['Global variables should be five or more characters']),
+            ('variable bad_long = ":-(";', ['Global variables should be uppercase']),
+            ('variable bad = "all lower";', ['Global variables should be uppercase', 'Global variables should be five or more characters']),
+            ('variable tricky_onE = "Uhoh";', ['Global variables should be uppercase']),
+            ('variable camelCase = "camels!";', ['Global variables should be uppercase']),
+            ('variable TitleCase ?= -3;', ['Global variables should be uppercase']),
+            ('variable NoSpacesHere?=True;', ['Global variables should be uppercase']),
+        ]
+
+        for text, messages in lines:
+            messages = set(messages)
+            m = panlint.check_line_patterns(text, [])[1]
+            self.assertEqual(m, messages)
+
+
 if __name__ == '__main__':
     unittest.main()

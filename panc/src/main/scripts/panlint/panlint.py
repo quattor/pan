@@ -448,6 +448,7 @@ def main():
     parser.add_argument('--vi', action='store_true', help='Output line numbers in a vi option style')
     parser.add_argument('--table', action='store_true', help='Display a table of per-file problem stats')
     parser.add_argument('--allow_mvn_templates', action='store_true', help='Allow use of maven templates')
+    parser.add_argument('--always_exit_success', action='store_true', help='Always exit cleanly even if problems are found')
     group_output = parser.add_mutually_exclusive_group()
     group_output.add_argument('--debug', action='store_true', help='Enable debug output')
     group_output.add_argument('--ide', action='store_true', help='Output machine-readable results for use by IDEs')
@@ -465,7 +466,7 @@ def main():
 
     if not args.paths:
         print 'No files were provided, not doing anything'
-        sys_exit(0)
+        return 0
 
     for path in args.paths:
         for filename in glob(path):
@@ -484,6 +485,9 @@ def main():
 
     print
     print '%d problems found in total' % problems_found
+
+    if args.always_exit_success:
+        return 0
 
     if problems_found:
         return 1

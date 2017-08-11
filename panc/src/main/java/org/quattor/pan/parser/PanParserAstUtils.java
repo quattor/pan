@@ -285,8 +285,16 @@ public class PanParserAstUtils {
         // Create a list containing all of the statements.
         LinkedList<Statement> statements = new LinkedList<Statement>();
 
-        // By default the prefix for paths is empty.
-        Path prefix = null;
+        // Prefixes list:
+        //    1st element is the active prefix
+        //        updated when new absolute prefix is defined
+        //        or when relative prefix is defined
+        //        (updated with absolute prefix in 2nd element prepended with relative prefix)
+        //    2nd element the most recent absolute prefix
+        //        updated when a new absolute prefix is defined)
+        //    See convertAstToPrefixStatement
+        // By default the prefix and absprefix for paths are empty.
+        Path[] prefixes = {null, null};
 
         // Loop over all of the children, convert them to Statements, and add
         // them to the list.
@@ -306,7 +314,7 @@ public class PanParserAstUtils {
                     statements.add(convertAstToBindStatement(file.getAbsolutePath(), snode));
                     break;
                 case ASSIGN:
-                    statements.add(convertAstToAssignStatement(snode, prefix));
+                    statements.add(convertAstToAssignStatement(snode, prefixes[0]));
                     break;
                 case VARIABLE:
                     statements.add(convertAstToVariableStatement(snode));
@@ -324,7 +332,7 @@ public class PanParserAstUtils {
                     }
                     break;
                 case PREFIX:
-                    prefix = convertAstToPrefixStatement(snode);
+                    prefixes = convertAstToPrefixStatement(snode, prefixes[1]);
                     break;
                 default:
                     assert (false);
@@ -475,27 +483,40 @@ public class PanParserAstUtils {
 
     }
 
-    static private Path convertAstToPrefixStatement(ASTStatement ast) throws SyntaxException {
+    static private Path[] convertAstToPrefixStatement(ASTStatement ast, Path absprefix) throws SyntaxException {
 
         // Sanity check.
         assert (ast.getStatementType() == StatementType.PREFIX);
 
+        // Default empty path was given so just return null to indicate there is no prefix.
+        Path path = null;
+
         if (!"".equals(ast.getIdentifier())) {
 
-            // Normal path was given check that it is absolute.
-            Path path = createPathFromIdentifier(ast);
-            if (!path.isAbsolute()) {
-                throw SyntaxException
-                        .create(ast.getSourceRange(), MessageUtils.MSG_PREFIX_MUST_BE_ABSOLUTE_PATH, path.toString());
+            path = createPathFromIdentifier(ast);
+            if (path.isAbsolute()) {
+                // Normal path was given is absolute.
+                // This is both the new/next absolute prefix and the current prefix
+                absprefix = path;
+            } else {
+                // Normal path was given is relative.
+                if (absprefix == null) {
+                    // Error if absprefix does not exist
+                    throw SyntaxException
+                        .create(ast.getSourceRange(), MessageUtils.MSG_RELATIVE_PREFIX_REQUIRES_ABSOLUTE_PREFIX, path.toString());
+                } else if (absprefix.isAbsolute()) {
+                    // Do not update absprefix
+                    // Relative prefix is always relative to latest absolute prefix
+                    path = Path.resolve(absprefix, path);
+                } else {
+                    throw SyntaxException
+                        .create(ast.getSourceRange(), MessageUtils.MSG_ABSOLUTE_PREFIX_REQUIRES_ABSOLUTE_PATH, path.toString(), absprefix.toString());
+                }
             }
-            return path;
 
-        } else {
-
-            // Empty path was given so just return null to indicate there is no
-            // prefix.
-            return null;
         }
+
+        return new Path[] {path, absprefix};
 
     }
 

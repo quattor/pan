@@ -815,6 +815,27 @@ included templates. Although multiple ``prefix`` statements can be used
 in a template, it is best practice to use only one near the beginning of
 the template.
 
+The ``prefix`` statement itself also supports a relative path. In that case,
+a previously defined ``prefix`` statement with an absolute path is required,
+and the relative prefix is relative to the (last) absolute prefix.
+This is very useful when dealing with very large paths and a complex
+schema.
+
+The previous example could be rewritten using relative prefixes as follows
+
+::
+
+    ...
+
+    prefix '/batch/server/nodes';
+
+    prefix 'worker01.example.org';
+    'capabilities' = list('sw-license', 'fast-network');
+
+    prefix 'worker02.example.org';
+    'capabilities' = list();
+
+
 Core Syntax
 ===========
 

@@ -25,6 +25,7 @@ import static org.quattor.pan.utils.MessageUtils.MSG_MISMATCHED_TYPES;
 
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.ListResource;
+import org.quattor.pan.dml.data.Undef;
 import org.quattor.pan.exceptions.CompilerError;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.InvalidTermException;
@@ -85,6 +86,25 @@ public class ListType extends CompositeType {
 			for (int i = 0; i < list.size(); i++) {
 				Term t = TermFactory.create(i);
 				Element child = list.get(t);
+
+                // See also similar code in RecordType
+                // If the child has an 'undef' value, then replace it
+                // with the given default.
+                // Make sure we run setDefaults on the defaults
+                if (child instanceof Undef) {
+                    Element defaultValue = baseType.findDefault(context);
+                    if (defaultValue != null) {
+                        // to run setDefaults on the default value
+                        child = defaultValue;
+                        if (replacement == null) {
+                            replacement = (ListResource) list.writableCopy();
+                        }
+                        // add it here, in case setDefaults() on defaultValue
+                        // requires no changes and returns newValue=null below
+                        replacement.put(t, defaultValue);
+                    }
+                }
+
 				Element newValue = baseType.setDefaults(context, child);
 
 				// If there is a replacement value, then add it to the current

@@ -25,6 +25,7 @@ import static org.quattor.pan.utils.MessageUtils.MSG_MISMATCHED_TYPES;
 
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.HashResource;
+import org.quattor.pan.dml.data.Undef;
 import org.quattor.pan.exceptions.CompilerError;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.InvalidTermException;
@@ -87,6 +88,25 @@ public class HashType extends CompositeType {
 			// Loop over all of the children and apply the base type validation.
 			for (Term t : dict.keySet()) {
 				Element child = dict.get(t);
+
+                // See also similar code in RecordType
+                // If the child has an 'undef' value, then replace it
+                // with the given default.
+                // Make sure we run setDefaults on the defaults
+                if (child instanceof Undef) {
+                    Element defaultValue = baseType.findDefault(context);
+                    if (defaultValue != null) {
+                        // to run setDefaults on the default value
+                        child = defaultValue;
+                        if (replacement == null) {
+                            replacement = (HashResource) dict.writableCopy();
+                        }
+                        // add it here, in case setDefaults() on defaultValue
+                        // requires no changes and returns newValue=null below
+                        replacement.put(t, defaultValue);
+                    }
+                }
+
 				Element newValue = baseType.setDefaults(context, child);
 
 				// If there is a replacement value, then add it to the current

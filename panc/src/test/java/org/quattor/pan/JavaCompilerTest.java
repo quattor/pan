@@ -406,7 +406,8 @@ public class JavaCompilerTest {
 				Boolean ok = (Boolean) xp.evaluate(source,
 						XPathConstants.BOOLEAN);
 				if (!ok.booleanValue()) {
-					return "XPath expression evaluated to false";
+					return String.format("XPath expression evaluated to false (xml %s)",
+                                         xml.toString());
 				}
 
 			} catch (ClassCastException cce) {

@@ -20,11 +20,12 @@
 
 package org.quattor.pan.dml.functions;
 
-import static org.quattor.pan.utils.MessageUtils.MSG_ONE_STRING_ARG_REQ;
+import static org.quattor.pan.utils.MessageUtils.MSG_ONE_OR_TWO_ARGS_REQ;
 
 import org.quattor.pan.dml.Operation;
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.StringProperty;
+import org.quattor.pan.dml.data.Undef;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.template.Context;
@@ -33,9 +34,9 @@ import org.quattor.pan.utils.Path;
 
 /**
  * Extract a value from the configuration tree based on a given path.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 final public class Value extends BuiltInFunction {
 
@@ -47,13 +48,12 @@ final public class Value extends BuiltInFunction {
 	public static Operation getInstance(SourceRange sourceRange,
 			Operation... operations) throws SyntaxException {
 
-		// Ensure that there is exactly one argument. Since the parser does
-		// little argument checking for function calls, this explicit check is
-		// needed.
-		if (operations.length != 1) {
-			throw SyntaxException.create(sourceRange, MSG_ONE_STRING_ARG_REQ,
+		// This must have either one or two arguments.
+		if (operations.length < 1 || operations.length > 2) {
+			throw SyntaxException.create(sourceRange, MSG_ONE_OR_TWO_ARGS_REQ,
 					"value");
 		}
+		assert (operations.length == 1 || operations.length == 2);
 
 		return new Value(sourceRange, operations);
 	}
@@ -61,37 +61,48 @@ final public class Value extends BuiltInFunction {
 	@Override
 	public Element execute(Context context) {
 
-		assert (ops.length == 1);
+		// Retrieve the values of the arguments.
+		Element[] args = calculateArgs(context);
+
+		assert (ops.length == 1 || ops.length == 2);
 
 		throwExceptionIfCompileTimeContext(context);
 
 		Element result = null;
 		Path p = null;
 		try {
-			String s = ((StringProperty) ops[0].execute(context)).getValue();
+			String s = ((StringProperty) args[0]).getValue();
 			try {
 				p = new Path(s);
-				result = context.getElement(p);
+                // errorIfNotFound=false; missing path is handled w optional default below
+				result = context.getElement(p, false);
 			} catch (SyntaxException se) {
 				throw new EvaluationException(se.getSimpleMessage(),
 						sourceRange, context);
 			}
 		} catch (ClassCastException cce) {
-			Element element = ops[0].execute(context);
 			throw new EvaluationException(
 					"value() requires one string argument; "
-							+ element.getTypeAsString() + " found",
+							+ args[0].getTypeAsString() + " found",
 					getSourceRange(), context);
 		}
+
+
+        if (result == null) {
+            if (ops.length == 2) {
+                // 2nd arg is default value
+                result = args[1];
+            } else {
+                throw new EvaluationException("referenced path (" + p
+                                              + ") doesn't exist", getSourceRange(), context);
+            }
+        } else if (result instanceof Undef && ops.length == 2) {
+            result = args[1];
+        }
 
 		// Return the result. ALWAYS duplicate the value to ensure that any
 		// changes to returned resources do not inadvertently change the
 		// referenced part of the configuration.
-		if (result != null) {
-			return result.duplicate();
-		} else {
-			throw new EvaluationException("referenced path (" + p
-					+ ") doesn't exist", getSourceRange(), context);
-		}
+        return result.duplicate();
 	}
 }

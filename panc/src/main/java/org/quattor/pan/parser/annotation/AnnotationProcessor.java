@@ -16,7 +16,7 @@ import org.quattor.pan.utils.MessageUtils;
 public class AnnotationProcessor {
 
 	private static final Pattern isKeyPairSyntax = Pattern.compile(
-			"^(\\s*)([^=\\n\\r\\f]*)=(.*)", Pattern.DOTALL);
+			"^(\\s*)([^=\\n\\r\\f\\s]*)\\s*=(.*)", Pattern.DOTALL);
 
 	private static final Pattern isAnnotationSyntax = Pattern
 			.compile(

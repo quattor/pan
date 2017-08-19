@@ -22,6 +22,7 @@ package org.quattor.pan.utils;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_INDEX_CANNOT_BE_NEGATIVE;
 import static org.quattor.pan.utils.MessageUtils.MSG_INDEX_EXCEEDS_MAXIMUM;
+import static org.quattor.pan.utils.MessageUtils.MSG_INDEX_BELOW_MINIMUM;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_ELEMENT_FOR_INDEX;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_LEADING_ZEROS_INDEX;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_KEY;
@@ -47,14 +48,14 @@ public class TermFactory {
 
 	/**
 	 * This regular expression identifies strings which might be a list index. (That
-	 * is, they are digits only.)
+	 * is, they are digits only (and optional minus sign.)
 	 */
-	private static final Pattern isIndexPattern = Pattern.compile("^\\d+$"); //$NON-NLS-1$
+	private static final Pattern isIndexPattern = Pattern.compile("^-?\\d+$"); //$NON-NLS-1$
 
 	/**
-	 * This regular expression identifies indicies with leading zeros.
+	 * This regular expression identifies indicies with leading zeros (incl optional minus sign).
 	 */
-	private static final Pattern isIndexLeadingZerosPattern = Pattern.compile("^0\\d+$"); //$NON-NLS-1$
+	private static final Pattern isIndexLeadingZerosPattern = Pattern.compile("^-?0\\d+$"); //$NON-NLS-1$
 
 	/**
 	 * This regular expression identifies valid dict keys.
@@ -72,9 +73,9 @@ public class TermFactory {
 	// This code creates all of the cached indexes.
 	static {
 		int size = 100;
-		Term[] terms = new Term[size];
-		for (int i = 0; i < size; i++) {
-			terms[i] = LongProperty.getInstance((long) i);
+		Term[] terms = new Term[2*size];
+		for (int i = -size; i < size; i++) {
+			terms[i+size] = LongProperty.getInstance((long) i);
 		}
 		indexCache = terms;
 	}
@@ -93,9 +94,9 @@ public class TermFactory {
 		if (index > Integer.MAX_VALUE) {
 			throw EvaluationException.create(MSG_INDEX_EXCEEDS_MAXIMUM, index,
 					Integer.MAX_VALUE);
-		} else if (index < 0) {
-			throw EvaluationException.create(MSG_INDEX_CANNOT_BE_NEGATIVE,
-					index);
+		} else if (index < Integer.MIN_VALUE) {
+			throw EvaluationException.create(MSG_INDEX_BELOW_MINIMUM, index,
+					Integer.MIN_VALUE);
 		}
 	}
 
@@ -106,11 +107,12 @@ public class TermFactory {
 	 * @param term
 	 * @return validated term as Integer or String
 	 */
-	private static long checkStringIndex(String term) {
+	private static long[] checkStringIndex(String term) {
 
 		assert (term != null);
 
-		long result = 0L;
+        // If second element is < 0, this is a dict key
+		long[] result = {0L, 1L};
 
 		// Empty strings are not allowed.
 		if ("".equals(term)) { //$NON-NLS-1$
@@ -124,8 +126,8 @@ public class TermFactory {
             } else {
                 // This is digits only, so try to convert it to a long.
                 try {
-                    result = Long.decode(term).longValue();
-                    checkNumericIndex(result);
+                    result[0] = Long.decode(term).longValue();
+                    checkNumericIndex(result[0]);
                 } catch (NumberFormatException nfe) {
                     throw EvaluationException.create(
 						MSG_KEY_CANNOT_BEGIN_WITH_DIGIT, term);
@@ -135,7 +137,7 @@ public class TermFactory {
 
 			// Return a negative number to indicate that this is an OK key
 			// value.
-			result = -1L;
+			result[1] = -1L;
 
 		} else {
 
@@ -151,11 +153,11 @@ public class TermFactory {
 	 * correct syntax, an IllegalArgumentException will be thrown.
 	 */
 	public static Term create(String term) {
-		long value = checkStringIndex(term);
-		if (value < 0L) {
+		long[] value = checkStringIndex(term);
+		if (value[1] < 0L) {
 			return StringProperty.getInstance(term);
 		} else {
-			return create(value);
+			return create(value[0]);
 		}
 	}
 
@@ -168,13 +170,13 @@ public class TermFactory {
 	public static Term create(long index) {
 
 		checkNumericIndex(index);
+		long size = indexCache.length / 2;
 
-		// Decide whether to use a cached value or not. Negative indexes are
-		// removed by the check above, so there is no need to check again.
-		if (index < indexCache.length) {
+		// Decide whether to use a cached value or not.
+        if (index < size && index >= -size) {
 
 			// Use cached value.
-			return indexCache[(int) index];
+			return indexCache[(int) (index + size)];
 
 		} else {
 
@@ -192,11 +194,11 @@ public class TermFactory {
 	 */
 	public static Term create(Element element) {
 		if (element instanceof StringProperty) {
-			long value = checkStringIndex(((StringProperty) element).getValue());
-			if (value < 0L) {
+			long[] value = checkStringIndex(((StringProperty) element).getValue());
+			if (value[1] < 0L) {
 				return (Term) element;
 			} else {
-				return LongProperty.getInstance(value);
+				return LongProperty.getInstance(value[0]);
 			}
 		} else if (element instanceof LongProperty) {
 			checkNumericIndex(((LongProperty) element).getValue());

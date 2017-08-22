@@ -78,6 +78,7 @@ final public class LongProperty extends NumberProperty implements Term {
 		return "long";
 	}
 
+    // should not be overridden by child, unless compareTo is also overridden
 	public boolean isKey() {
 		return false;
 	}
@@ -90,8 +91,35 @@ final public class LongProperty extends NumberProperty implements Term {
 		throw new InvalidTermException(getIndex().toString());
 	}
 
-	public int compareTo(Term o) {
-		return TermFactory.compare((Term) this, (Term) o);
+	public int compareTo(Term other) {
+        // TermFactory.compare((Term) this, (Term) o) is way too expensive
+        // Main use case is TreeMap<Term, ..> access, so optimise for that
+
+		// Sanity check.
+		if (other == null) {
+			throw new NullPointerException();
+		}
+
+        // no self==other, equals() is expensive
+        // and this is very unlikely to happen anyway
+
+        // Other type
+        if (other.isKey()){
+            return -1;
+        }
+
+		// Compare the underlying values.
+		try {
+            return getIndex().compareTo(other.getIndex());
+		} catch (InvalidTermException consumed) {
+			// This statement can never be reached because both objects are
+			// either keys or indexes. This try/catch block is only here to make
+			// the compiler happy.
+			assert (false);
+			return 0;
+		}
+
+
 	}
 
 }

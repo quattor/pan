@@ -18,7 +18,9 @@ import org.quattor.pan.exceptions.CompilerError;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.exceptions.SystemException;
+import org.quattor.pan.dml.Operation;
 import org.quattor.pan.parser.ASTStatement.StatementType;
+import org.quattor.pan.parser.ASTOperation.OperationType;
 import org.quattor.pan.template.SourceRange;
 import org.quattor.pan.utils.MessageUtils;
 import org.quattor.pan.utils.XmlUtils;
@@ -189,6 +191,22 @@ public class PanParserAnnotationUtils {
             addAttribute(atts, "extensible", node.isExtensible());
             addAttribute(atts, "range", node.getRange());
 
+        } else if (ast instanceof ASTOperation) {
+            ASTOperation node = (ASTOperation) ast;
+            if (ast.jjtGetParent() instanceof ASTOperation) {
+                ASTOperation parent = (ASTOperation) ast.jjtGetParent();
+                if (parent.getOperationType() == OperationType.DML &&
+                    parent.jjtGetParent() instanceof ASTOperation) {
+                    ASTOperation grandparent = (ASTOperation) parent.jjtGetParent();
+                    if (grandparent.getOperationType() == OperationType.DEFAULT) {
+                        if (node.getOperation() != null) {
+                            elementName = "default";
+                            addSourceRangeAttribute(atts, node);
+                            addAttribute(atts, "text", node.getOperation().toString());
+                        }
+                    }
+                }
+            }
         }
 
         return elementName;

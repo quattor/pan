@@ -23,6 +23,7 @@ package org.quattor.pan.utils;
 import static org.quattor.pan.utils.MessageUtils.MSG_INDEX_CANNOT_BE_NEGATIVE;
 import static org.quattor.pan.utils.MessageUtils.MSG_INDEX_EXCEEDS_MAXIMUM;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_ELEMENT_FOR_INDEX;
+import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_LEADING_ZEROS_INDEX;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_KEY;
 import static org.quattor.pan.utils.MessageUtils.MSG_KEY_CANNOT_BEGIN_WITH_DIGIT;
 import static org.quattor.pan.utils.MessageUtils.MSG_KEY_CANNOT_BE_EMPTY_STRING;
@@ -38,23 +39,28 @@ import org.quattor.pan.exceptions.InvalidTermException;
 /**
  * A factory to generate Term objects. The produced objects are just standard
  * StringProperty and LongProperty instances.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 public class TermFactory {
 
 	/**
-	 * This regular expression identifies strings which are a list index. (That
-	 * is, they start with a digit.)
+	 * This regular expression identifies strings which might be a list index. (That
+	 * is, they are digits only.)
 	 */
-	private static final Pattern isIndexPattern = Pattern.compile("^\\d.*$"); //$NON-NLS-1$
+	private static final Pattern isIndexPattern = Pattern.compile("^\\d+$"); //$NON-NLS-1$
+
+	/**
+	 * This regular expression identifies indicies with leading zeros.
+	 */
+	private static final Pattern isIndexLeadingZerosPattern = Pattern.compile("^0\\d+$"); //$NON-NLS-1$
 
 	/**
 	 * This regular expression identifies valid dict keys.
 	 */
 	private static final Pattern isKeyPattern = Pattern
-			.compile("^[a-zA-Z_][\\w\\+\\-\\.]*$"); //$NON-NLS-1$
+			.compile("^\\w[\\w\\+\\-\\.]*$"); //$NON-NLS-1$
 
 	/**
 	 * This array contains a cache of the most frequently used indexes. It
@@ -79,7 +85,7 @@ public class TermFactory {
 	/**
 	 * An internal method to check that a numeric index is valid. It must be a
 	 * non-negative integer.
-	 * 
+	 *
 	 * @param index
 	 * @return validated index as an Integer
 	 */
@@ -96,7 +102,7 @@ public class TermFactory {
 	/**
 	 * An internal method to check that a string value is valid. It can either
 	 * be an Integer or String which is returned.
-	 * 
+	 *
 	 * @param term
 	 * @return validated term as Integer or String
 	 */
@@ -112,16 +118,19 @@ public class TermFactory {
 		}
 
 		if (isIndexPattern.matcher(term).matches()) {
-
-			// This starts with a number, so try to convert it to an integer.
-			try {
-				result = Long.decode(term).longValue();
-				checkNumericIndex(result);
-			} catch (NumberFormatException nfe) {
+            if (isIndexLeadingZerosPattern.matcher(term).matches()) {
 				throw EvaluationException.create(
+						MSG_INVALID_LEADING_ZEROS_INDEX, term);
+            } else {
+                // This is digits only, so try to convert it to a long.
+                try {
+                    result = Long.decode(term).longValue();
+                    checkNumericIndex(result);
+                } catch (NumberFormatException nfe) {
+                    throw EvaluationException.create(
 						MSG_KEY_CANNOT_BEGIN_WITH_DIGIT, term);
-			}
-
+                }
+            }
 		} else if (isKeyPattern.matcher(term).matches()) {
 
 			// Return a negative number to indicate that this is an OK key
@@ -152,7 +161,7 @@ public class TermFactory {
 
 	/**
 	 * Create a term directly from a long index.
-	 * 
+	 *
 	 * @param index
 	 *            the index to use for this term
 	 */
@@ -177,7 +186,7 @@ public class TermFactory {
 
 	/**
 	 * Create a term from a given element.
-	 * 
+	 *
 	 * @param element
 	 *            the element to create the term from
 	 */

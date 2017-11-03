@@ -1383,17 +1383,21 @@ same children from one compilation to the next.
 
 Within a given path, lists and dicts can be distinguished by the names
 of their children. Lists always have children whose names are valid long
-literals. In the following example, ``/mylist`` is a list with three
-children::
+literals. In the following example, ``/mylist`` is a list with one
+child::
 
     object template mylist;
 
     '/mylist/0' = 'decimal index';
-    '/mylist/01' = 'octal index';
-    '/mylist/0x2' = 'hexadecimal index';
 
-The indices can be specified in decimal, octal, or hexadecimal. The
-names of children in an dict must begin with a letter or underscore.
+
+The indices can be specified in decimal (digits only).
+Leading ``0``(s) (e.g. octal notation) are considered ambiguous
+and as such invalid.
+The names of children in an dict can be any string that has at
+least one non-digit character, starts with a so-called ``word``-character
+(``a-zA-Z0-9_``) and is followed by (zero or more) word-characters
+or ``+-.``.
 
 Special Types
 -------------

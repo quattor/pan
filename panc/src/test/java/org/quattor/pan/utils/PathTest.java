@@ -116,8 +116,7 @@ public class PathTest {
 	@Test
 	public void testInvalidFirstTerm() {
 		List<String> paths = Arrays.asList("alpha:/0/a",
-				"alpha:0/a", "/0/a", "0/a", "alpha:/0xf/a",
-				"alpha:0xf/a", "/0xf/a", "0xf/a");
+				"alpha:0/a", "/0/a", "0/a");
 		for (String s : paths) {
 			try {
 				new Path(s);

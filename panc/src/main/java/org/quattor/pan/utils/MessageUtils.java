@@ -312,6 +312,8 @@ public class MessageUtils {
 
     public final static String MSG_CANNOT_LOCATE_OBJECT_TEMPLATE = "MSG_CANNOT_LOCATE_OBJECT_TEMPLATE";
 
+    public final static String MSG_INVALID_LEADING_ZEROS_INDEX = "MSG_INVALID_LEADING_ZEROS_INDEX";
+
     public final static String MSG_INDEX_EXCEEDS_MAXIMUM = "MSG_INDEX_EXCEEDS_MAXIMUM";
 
     public final static String MSG_INDEX_CANNOT_BE_NEGATIVE = "MSG_INDEX_CANNOT_BE_NEGATIVE";

@@ -22,7 +22,6 @@ package org.quattor.pan.statement;
 
 import org.quattor.pan.dml.Operation;
 import org.quattor.pan.dml.data.Element;
-import org.quattor.pan.dml.data.Null;
 import org.quattor.pan.dml.data.Undef;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
@@ -82,8 +81,7 @@ public class ComputedVariableStatement extends VariableStatement {
 			Element currentValue = variable.getValue();
 			assert (currentValue != null);
 
-			if (!conditional || currentValue instanceof Undef
-					|| currentValue instanceof Null) {
+			if (!conditional || currentValue instanceof Undef) {
 
 				Element result = context.executeDmlBlock(dml);
 

@@ -1411,8 +1411,8 @@ built-in functions will report a fatal error when processing it. It can
 be used to mark an element that must be overwritten during the
 processing.
 
-The ``null`` value deletes the path or global variable to which it is
-assigned. Most operations and functions will report an error if this
+The ``null`` value deletes the path to which it is assigned.
+Most operations and functions will report an error if this
 value is processed directly.
 
 Data Manipulation Language (DML)

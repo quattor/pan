@@ -20,10 +20,11 @@
 import re
 import argparse
 from glob import glob
-from colorama import Fore, Style, init as colorama_init
 from sys import stdout, exit as sys_exit
 from inspect import getmembers, ismethod
 from prettytable import PrettyTable
+from colorama import Fore, Style, init as colorama_init
+
 
 RS_COMMENT = r'(?:#|@{.*?})'
 

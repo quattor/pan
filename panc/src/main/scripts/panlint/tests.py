@@ -83,6 +83,23 @@ class TestPanlint(unittest.TestCase):
         unique_pattern_ids.sort()
         self.assertEqual(unique_pattern_ids, all_pattern_ids)
 
+    def test_message_ids(self):
+        line_pattern_ids = [m.id for m in panlint.LINE_PATTERNS.keys()]
+        line_pattern_ids.sort()
+        for p in line_pattern_ids:
+            self.assertRegex(p, r'LP\d{3}', f'Format of line pattern message ID {p}')
+
+        path_pattern_ids = [m.id for m in panlint.PATH_PATTERNS.keys()]
+        path_pattern_ids.sort()
+        for p in path_pattern_ids:
+            self.assertRegex(p, r'PP\d{3}', f'Format of path pattern message ID {p}')
+
+        all_pattern_ids = line_pattern_ids + path_pattern_ids
+        all_pattern_ids.sort()
+        unique_pattern_ids = list(set(all_pattern_ids))
+        unique_pattern_ids.sort()
+        self.assertEqual(unique_pattern_ids, all_pattern_ids)
+
     def test_diagnose(self):
         dummy_message = panlint.Message('', 0, '')
         self.assertEqual(panlint.Problem(0, 0, dummy_message).diagnose(), '')

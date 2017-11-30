@@ -49,11 +49,11 @@ class Problem(object):
         Parameters:
             start (int): Position of the first character of the problem
             end (int): Position of the last character of the problem
-            message (str): A description of the problem
+            message (Message): A Message object describing the problem
         """
         self.start = int(start)
         self.end = int(end)
-        self.message = str(message)
+        self.message = message
 
     def diagnose(self):
         """Format a line of diagnosis markers from a range of character positions
@@ -61,6 +61,23 @@ class Problem(object):
             str: A line of marker characers aligned with the position of the problem
         """
         return (' ' * self.start) + ('^' * (self.end - self.start))
+
+
+class Message:
+    """A class representing a message describing one issue with a line of code."""
+    def __init__(self, message_id, severity, text):
+        """
+        Parameters:
+            id (str): A unique five character identifier for the specific issue
+            severity (int): How serious the issue is from 1-3 (least serious - most serious)
+            text (str): A description of what the issue is
+        """
+        self.id = str(message_id)
+        self.severity = int(severity)
+        self.text = str(text)
+
+    def __str__(self):
+        return '%s: %s' % (SEVERITY_TEXT[self.severity], self.text)
 
 
 RS_COMMENT = r'(?:#|@{.*?})'
@@ -88,29 +105,64 @@ RE_FEATURE_INCLUDE = re.compile(r'^\s*[^#]?\s*include.*(?P<name>features/\S+\w)'
 
 LINE_LENGTH_LIMIT = 120
 
+SEV_ADVICE = 1
+SEV_WARNING = 2
+SEV_ERROR = 3
+
+SEVERITY_TEXT = {
+    SEV_ADVICE: 'Advice',
+    SEV_WARNING: 'Warning',
+    SEV_ERROR: 'Error',
+}
+
+SEVERITY_VALUE_MAP = dict(zip(SEVERITY_TEXT.values(), SEVERITY_TEXT.keys()))
+
 # Simple regular-expression based checks that will be performed against all non-ignored lines
 # Every pattern must provide a single capturing group named "error"
 LINE_PATTERNS = {
-    "Indentation should be a multiple of four spaces": re.compile(r'^(?!( {4})*(\S|$))(?P<error>\s*)'),
-    "Spaces should be used instead of tabs": re.compile(r'(?P<error>\t+)'),
-    "Trailing whitespace": re.compile(r'(?P<error>\s+$)'),
-    "Use dicts instead of nlists": re.compile(r'\b(?P<error>(?:is_)?nlist)\s*\('),
-    "Include statements no longer need curly braces": re.compile(r'''include\s+(?P<error>{[^;]+})'''),
-    "Line is longer than %s characters" % LINE_LENGTH_LIMIT:
-    re.compile(r'''^(?!bind ).{0,%s}(?P<error>.*?)$''' % LINE_LENGTH_LIMIT),
-    "Commas should be followed by exactly one space": re.compile(r'(?P<error>,(?:\S|\s{2,}))'),
-    "Whitespace before semicolon": re.compile(r'(?P<error>\s+;)'),
-    "Semicolons should be followed exactly one space or end-of-line": re.compile(r';(?P<error>(?:\S|\s{2,}))'),
-    "Global variables should be uppercase": re.compile(r'variable\s+(?P<error>[\w]+)(?<=\S[a-z]\S)'),
-    "Global variables should be five or more characters": re.compile(r'variable\s+(?P<error>\w{1,4})\b'),
-    "Redundant use of format within error or debug call": re.compile(r'(?:error|debug)\s*\(\s*(?P<error>format)\s*\('),
+    Message("LP001", SEV_ADVICE, "Indentation should be a multiple of four spaces"):
+        re.compile(r'^(?!( {4})*(\S|$))(?P<error>\s*)'),
+
+    Message("LP002", SEV_ADVICE, "Spaces should be used instead of tabs"):
+        re.compile(r'(?P<error>\t+)'),
+
+    Message("LP003", SEV_ADVICE, "Trailing whitespace"):
+        re.compile(r'(?P<error>\s+$)'),
+
+    Message("LP004", SEV_WARNING, "Use dicts instead of nlists"):
+        re.compile(r'\b(?P<error>(?:is_)?nlist)\s*\('),
+
+    Message("LP005", SEV_ADVICE, "Include statements no longer need curly braces"):
+        re.compile(r'''include\s+(?P<error>{[^;]+})'''),
+
+    Message("LP006", SEV_ADVICE, f"Line is longer than {LINE_LENGTH_LIMIT} characters"):
+        re.compile(r'''^(?!bind ).{0,%s}(?P<error>.*?)$''' % LINE_LENGTH_LIMIT),
+
+    Message("LP007", SEV_ADVICE, "Commas should be followed by exactly one space"):
+        re.compile(r'(?P<error>,(?:\S|\s{2,}))'),
+
+    Message("LP008", SEV_ADVICE, "Whitespace before semicolon"):
+        re.compile(r'(?P<error>\s+;)'),
+
+    Message("LP009", SEV_ADVICE, "Semicolons should be followed exactly one space or end-of-line"):
+        re.compile(r';(?P<error>(?:\S|\s{2,}))'),
+
+    Message("LP010", SEV_ADVICE, "Global variables should be uppercase"):
+        re.compile(r'variable\s+(?P<error>[\w]+)(?<=\S[a-z]\S)'),
+
+    Message("LP011", SEV_ADVICE, "Global variables should be five or more characters"):
+        re.compile(r'variable\s+(?P<error>\w{1,4})\b'),
+
+    Message("LP012", SEV_WARNING, "Redundant use of format within error or debug call"):
+        re.compile(r'(?:error|debug)\s*\(\s*(?P<error>format)\s*\('),
 }
 
 # Simple regular-expression based checks that will be performed against
 # all strings on non-ignored lines that appear to be profile paths
 # Every pattern must provide a single capturing group named "error"
 PATH_PATTERNS = {
-    "Unnecessary trailing slash at end of profile path": re.compile(r'''.(?P<error>/+)$'''),
+    Message("PP001", SEV_ADVICE, "Unnecessary trailing slash at end of profile path"):
+        re.compile(r'''.(?P<error>/+)$''')
 }
 TAB_ARROW = u'\u2192'
 
@@ -189,7 +241,8 @@ class LineChecks:
 
             if not valid:
                 debug_range(start, end, 'WS Operator', True)
-                line.problems.append(Problem(start, end, message_text))
+                message = Message('LC001', SEV_ADVICE, message_text)
+                line.problems.append(Problem(start, end, message))
 
         return line
 
@@ -310,7 +363,7 @@ def diagnose(start, end):
 def print_report(line, vi=False):
     """Print a full report of all problems found with a single line of a processed file"""
     print(u'')
-    messages = ', '.join(set([p.message for p in line.problems]))
+    messages = ', '.join(set([p.message.text for p in line.problems]))
     print(print_fileinfo(line.filename, line.number, messages, vi=vi))
     print(print_line(line.text))
     print(print_diagnosis(merge_diagnoses([p.diagnose() for p in line.problems])))
@@ -391,7 +444,8 @@ def check_line_component_use(line, components_included):
         if match.group('name') not in components_included:
             start, end = match.span('name')
             debug_range(start, end, 'ComponentUse', True)
-            message = 'Component %s in use, but component config has not been included' % match.group('name')
+            message_text = 'Component %s in use, but component config has not been included' % match.group('name')
+            message = Message('CU001', SEV_WARNING, message_text)
             problems.append(Problem(start, end, message))
     return problems
 
@@ -453,7 +507,11 @@ def lint_line(line, components_included, first_line=False, allow_mvn_templates=F
         if not RE_FIRST_LINE.match(line.text):
             if not (RE_MVN_TEMPLATE.match(line.text) and allow_mvn_templates):
                 line.problems.append(
-                    Problem(0, len(line.text), 'First non-comment line must be the template type and name')
+                    Problem(0, len(line.text), Message(
+                        'FL001',
+                        SEV_ERROR,
+                        'First non-comment line must be the template type and name',
+                    ))
                 )
     else:
         string_ranges = get_string_ranges(line)

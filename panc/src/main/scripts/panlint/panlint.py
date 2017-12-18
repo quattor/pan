@@ -521,7 +521,7 @@ def lint_line(line, components_included, first_line=False, allow_mvn_templates=F
                     Problem(0, len(line.text), Message(
                         'FL001',
                         SEV_ERROR,
-                        'First non-comment line must be the template type and name',
+                        'First non-blank, non-comment line must be the template type and name',
                     ))
                 )
     else:

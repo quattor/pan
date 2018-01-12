@@ -226,6 +226,21 @@ class TestPanlint(unittest.TestCase):
         self.assertItemsEqual(panlint.find_annotation_blocks(test_text), [2, 7])
         self.assertEqual(panlint.find_annotation_blocks('template garbage;\n\n# Nothing to see here.\n\n'), [])
 
+    def test_find_heredoc_blocks(self):
+        test_text = '''unique template awesome;
+        "/something" = 1;
+        "/a/b/c" = <<EOFF;
+        "/a/" = 1+1;
+        EOFF
+        "/very" = 1;
+        "/more" = <<EOFF;
+        hello
+        EOFF
+        '''
+
+        self.assertItemsEqual(panlint.find_heredoc_blocks(test_text), [4, 5, 8, 9])
+        self.assertEqual(panlint.find_heredoc_blocks('template garbage;\n\n# Nothing to see here.\n\n'), [])
+
     def test_component_use(self):
         # Test a line containing a standard path assignment
         line_standard = "'/software/components/chkconfig/service/rdma' = dict("

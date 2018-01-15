@@ -38,6 +38,24 @@ the next major pan compiler release (v11):
 Change Log
 ==========
 
+Version 10.4
+------------
+
+-  (GitHub Issue #118) Built-in join function.
+
+-  (GitHub Issue #121) Implement choice type.
+
+-  (GitHub Issue #122) Formatting.
+
+-  (GitHub Issue #123) Implement built-in validate function to check type.
+
+-  (GitHub Issue #124) Working initial-data command line option.
+
+-  (GitHub Issue #125) Standalone pan tests.
+
+-  (GitHub Issue #126) Support booleans with (in)equality operator.
+
+
 Version 10.3
 ------------
 

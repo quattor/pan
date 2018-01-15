@@ -38,6 +38,14 @@ the next major pan compiler release (v11):
 Change Log
 ==========
 
+Version 10.3
+------------
+
+-  (GitHub Issue #105) Resource protection should be deep, not shallow.
+
+-  (GitHub Issue #107) Fix error message for undefined values.
+
+
 Version 10.2
 ------------
 

@@ -20,8 +20,6 @@
 
 package org.quattor.pan.dml.functions;
 
-import static org.quattor.pan.utils.MessageUtils.MSG_ONE_STRING_ARG_REQ;
-
 import org.quattor.pan.dml.Operation;
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.StringProperty;
@@ -30,14 +28,16 @@ import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.template.Context;
 import org.quattor.pan.template.SourceRange;
 
+import static org.quattor.pan.utils.MessageUtils.*;
+
 /**
  * This is a suppressed debug() function call. This will be called when a
- * debug() function call is encountered, but the given debug patter does not
+ * debug() function call is encountered, but the given debug pattern does not
  * match the name of the containing template. This simply replaces the call with
  * an undef value.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 final public class DebugSuppressed extends BuiltInFunction {
 
@@ -51,15 +51,18 @@ final public class DebugSuppressed extends BuiltInFunction {
 
 		// Even though the call will be deleted, do error checking on the
 		// argument.
-		if (operations.length != 1) {
-			throw SyntaxException.create(sourceRange, MSG_ONE_STRING_ARG_REQ,
-					"debug");
+        // Use same checks as in Debug.java
+
+		// Debug requires one or more arguments.
+		if (operations.length == 0) {
+			throw SyntaxException.create(sourceRange, MSG_ONE_OR_MORE_ARG_REQ, "debug");
 		}
-		if (operations[0] instanceof Element) {
-			if (!(operations[0] instanceof StringProperty)) {
-				throw SyntaxException.create(sourceRange,
-						MSG_ONE_STRING_ARG_REQ, "debug");
-			}
+
+		// Ensure that if there is exactly one argument, it is a string.
+		if (operations.length == 1
+				&& operations[0] instanceof Element
+				&& !(operations[0] instanceof StringProperty)) {
+					throw SyntaxException.create(sourceRange, MSG_ONE_STRING_ARG_REQ, "debug");
 		}
 
 		return Undef.VALUE;

@@ -43,6 +43,7 @@ import org.quattor.pan.exceptions.ConfigurationException;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.output.DepFormatter;
+import org.quattor.pan.output.DepGzipFormatter;
 import org.quattor.pan.output.DotFormatter;
 import org.quattor.pan.output.Formatter;
 import org.quattor.pan.output.JsonFormatter;
@@ -484,6 +485,8 @@ public class CompilerOptions {
                 formatters.add(XmlGzipFormatter.getInstance());
             } else if ("dep".equals(fname)) {
                 formatters.add(DepFormatter.getInstance());
+            } else if ("dep.gz".equals(fname)) {
+                formatters.add(DepGzipFormatter.getInstance());
             } else if ("null".equals(fname)) {
                 formatters.add(NullFormatter.getInstance());
             } else if ("none".equals(fname)) {

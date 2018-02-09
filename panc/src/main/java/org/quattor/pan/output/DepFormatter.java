@@ -33,6 +33,10 @@ public class DepFormatter extends AbstractFormatter {
 		super("dep", "dep");
 	}
 
+	protected DepFormatter(String suffix, String key) {
+		super(suffix, key);
+	}
+
 	public static DepFormatter getInstance() {
 		return instance;
 	}

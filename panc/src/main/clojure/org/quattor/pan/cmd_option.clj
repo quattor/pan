@@ -11,6 +11,7 @@
             XmlFormatter
             XmlGzipFormatter
             DepFormatter
+            DepGzipFormatter
             NullFormatter]
            [org.quattor.pan CompilerOptions$DeprecationWarnings]
            [clojure.lang ExceptionInfo]))
@@ -37,6 +38,7 @@
             "xml" (conj v (XmlFormatter/getInstance))
             "xml.gz" (conj v (XmlGzipFormatter/getInstance))
             "dep" (conj v (DepFormatter/getInstance))
+            "dep.gz" (conj v (DepGzipFormatter/getInstance))
             "null" (conj v (NullFormatter/getInstance))
             "none" v
             (let [msg (str "unknown formatter: " name)]

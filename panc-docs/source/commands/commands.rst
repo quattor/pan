@@ -75,7 +75,7 @@ reorganized and simplified options, replaces the older ``panc`` command.
 
 ``--formats=``
     A comma separated list of desired output formats. Allowed values are
-    "pan", "pan.gz", "xml", "xml.gz", "json", "json.gz", "txt", "dep"
+    "pan", "pan.gz", "xml", "xml.gz", "json", "json.gz", "txt", "dep", "dep.gz"
     and "dot". The default is value is "pan,dep".
 
 ``--java-opts=``

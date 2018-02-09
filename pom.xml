@@ -26,8 +26,8 @@
   <modules>
     <module>panc</module>
     <module>panc-docs</module>
-    <!--<module>panc-maven-plugin</module>
-    <module>panc-maven-archetype</module>-->
+    <module>panc-maven-plugin</module>
+    <module>panc-maven-archetype</module>
   </modules>
   <organization>
     <name>Quattor</name>

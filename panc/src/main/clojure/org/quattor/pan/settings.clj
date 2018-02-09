@@ -25,7 +25,6 @@
    :formatter #{(PanFormatter/getInstance), (DepFormatter/getInstance)}
    :output-dir (absolute-file)
    :include-path [(absolute-file)]
-   :gzipOutput false
    :deprecationWarnings CompilerOptions$DeprecationWarnings/OFF
    :annotationDirectory nil
    :annotationBaseDirectory nil

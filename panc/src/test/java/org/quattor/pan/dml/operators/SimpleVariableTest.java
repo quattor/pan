@@ -32,8 +32,8 @@ import org.quattor.pan.dml.data.LongProperty;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.InvalidTermException;
 import org.quattor.pan.exceptions.SyntaxException;
-import org.quattor.pan.template.CompileTimeContext;
-import org.quattor.pan.template.Context;
+import org.quattor.pan.ttemplate.CompileTimeContext;
+import org.quattor.pan.ttemplate.Context;
 
 public class SimpleVariableTest extends AbstractOperationTestUtils {
 

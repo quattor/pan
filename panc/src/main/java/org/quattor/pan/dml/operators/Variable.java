@@ -22,7 +22,7 @@ package org.quattor.pan.dml.operators;
 
 import org.quattor.pan.dml.AbstractOperation;
 import org.quattor.pan.dml.Operation;
-import org.quattor.pan.template.SourceRange;
+import org.quattor.pan.ttemplate.SourceRange;
 
 /**
  * Looks up and potentially dereferences a variable in the execution context.

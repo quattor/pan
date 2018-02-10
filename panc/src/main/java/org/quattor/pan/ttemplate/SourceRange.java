@@ -18,7 +18,7 @@
  $Id: SourceRange.java 1339 2007-02-16 23:14:24Z loomis $
  */
 
-package org.quattor.pan.template;
+package org.quattor.pan.ttemplate;
 
 /**
  * Defines a range of characters within a source pan template that is used to

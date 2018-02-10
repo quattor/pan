@@ -32,11 +32,11 @@ import org.quattor.pan.dml.data.StringProperty;
 import org.quattor.pan.dml.data.Undef;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
-import org.quattor.pan.template.CompileTimeContext;
-import org.quattor.pan.template.Context;
-import org.quattor.pan.template.SourceRange;
-import org.quattor.pan.template.Template;
-import org.quattor.pan.template.Template.TemplateType;
+import org.quattor.pan.ttemplate.CompileTimeContext;
+import org.quattor.pan.ttemplate.Context;
+import org.quattor.pan.ttemplate.SourceRange;
+import org.quattor.pan.ttemplate.Template;
+import org.quattor.pan.ttemplate.Template.TemplateType;
 
 /**
  * Executes another referenced template whose name is either a constant or

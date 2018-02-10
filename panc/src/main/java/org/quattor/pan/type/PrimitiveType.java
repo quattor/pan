@@ -22,9 +22,9 @@ package org.quattor.pan.type;
 
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.exceptions.EvaluationException;
-import org.quattor.pan.template.Context;
-import org.quattor.pan.template.SourceRange;
-import org.quattor.pan.template.TypeMap;
+import org.quattor.pan.ttemplate.Context;
+import org.quattor.pan.ttemplate.SourceRange;
+import org.quattor.pan.ttemplate.TypeMap;
 
 /**
  * Superclass of all pan language primitive types; these include all simple,

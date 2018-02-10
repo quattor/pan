@@ -18,7 +18,7 @@
  $Id: Context.java 3598 2008-08-17 09:19:06Z loomis $
  */
 
-package org.quattor.pan.template;
+package org.quattor.pan.ttemplate;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_VALIDATION_FUNCTION_RETURN_TYPE;
 import static org.quattor.pan.utils.MessageUtils.MSG_VALIDATION_FAILED_BECAUSE_OF_EXCEPTION;
@@ -49,7 +49,7 @@ import org.quattor.pan.exceptions.ReturnValueException;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.exceptions.ValidationException;
 import org.quattor.pan.repository.SourceFile;
-import org.quattor.pan.template.Template.TemplateType;
+import org.quattor.pan.ttemplate.Template.TemplateType;
 import org.quattor.pan.type.FullType;
 import org.quattor.pan.utils.FunctionDefinition;
 import org.quattor.pan.utils.GlobalVariable;

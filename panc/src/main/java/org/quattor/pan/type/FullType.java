@@ -28,9 +28,9 @@ import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.Property;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.ValidationException;
-import org.quattor.pan.template.Context;
-import org.quattor.pan.template.SourceRange;
-import org.quattor.pan.template.TypeMap;
+import org.quattor.pan.ttemplate.Context;
+import org.quattor.pan.ttemplate.SourceRange;
+import org.quattor.pan.ttemplate.TypeMap;
 
 /**
  * Represents a complete type specification in the pan language, which can have

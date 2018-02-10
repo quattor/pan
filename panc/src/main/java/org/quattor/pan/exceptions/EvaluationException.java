@@ -22,9 +22,9 @@ package org.quattor.pan.exceptions;
 
 import java.io.File;
 
-import org.quattor.pan.template.Context;
-import org.quattor.pan.template.SourceRange;
-import org.quattor.pan.template.Template;
+import org.quattor.pan.ttemplate.Context;
+import org.quattor.pan.ttemplate.SourceRange;
+import org.quattor.pan.ttemplate.Template;
 import org.quattor.pan.utils.MessageUtils;
 
 /**

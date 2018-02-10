@@ -26,8 +26,8 @@ import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_SELF_REF_IN_INCLUDE
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
-import org.quattor.pan.template.Context;
-import org.quattor.pan.template.SourceRange;
+import org.quattor.pan.ttemplate.Context;
+import org.quattor.pan.ttemplate.SourceRange;
 
 /**
  * Looks up a simple variable in the execution context.

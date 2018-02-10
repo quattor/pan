@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
 
 import org.quattor.pan.exceptions.CompilerError;
 import org.quattor.pan.exceptions.SyntaxException;
-import org.quattor.pan.template.Template;
+import org.quattor.pan.ttemplate.Template;
 
 /**
  * This immutable class represents a pan path. The paths can be either absolute

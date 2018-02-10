@@ -26,8 +26,8 @@ import org.quattor.pan.dml.AbstractOperation;
 import org.quattor.pan.dml.Operation;
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.exceptions.CompilerError;
-import org.quattor.pan.template.Context;
-import org.quattor.pan.template.SourceRange;
+import org.quattor.pan.ttemplate.Context;
+import org.quattor.pan.ttemplate.SourceRange;
 
 /**
  * Implements the assignment operation within a DML block. This operation

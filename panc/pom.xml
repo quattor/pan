@@ -66,6 +66,11 @@
       <plugin>
         <groupId>com.helger.maven</groupId>
         <artifactId>ph-javacc-maven-plugin</artifactId>
+        <!-- Version 3.0.0 uses JavaCC 7.0.3,
+             more recent version use a fork of JavaCC.
+             3.0.0 and 4.0.1 were tested and compared, No real differences.
+        -->
+        <version>4.0.1</version>
         <executions>
           <execution>
             <id>javacc</id>
@@ -206,6 +211,13 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+            <source>1.8</source>
+            <target>1.8</target>
+        </configuration>
+    </plugin>
     </plugins>
   </build>
   <reporting>

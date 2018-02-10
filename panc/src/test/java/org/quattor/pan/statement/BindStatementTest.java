@@ -24,7 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.quattor.pan.exceptions.SyntaxException;
-import org.quattor.pan.template.Context;
+import org.quattor.pan.ttemplate.Context;
 import org.quattor.pan.utils.Path;
 
 public class BindStatementTest extends StatementTestUtils {

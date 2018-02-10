@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.quattor.pan.template.SourceRange;
+import org.quattor.pan.ttemplate.SourceRange;
 
 public class SimpleNode implements Node {
 	protected Node parent;

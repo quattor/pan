@@ -34,8 +34,8 @@ import org.quattor.pan.tasks.Task;
 import org.quattor.pan.tasks.TaskResult;
 import org.quattor.pan.tasks.WriteAnnotationTask;
 import org.quattor.pan.tasks.WriteOutputTask;
-import org.quattor.pan.template.Template;
-import org.quattor.pan.template.Template.TemplateType;
+import org.quattor.pan.ttemplate.Template;
+import org.quattor.pan.ttemplate.Template.TemplateType;
 import org.quattor.pan.utils.FileUtils;
 
 /**

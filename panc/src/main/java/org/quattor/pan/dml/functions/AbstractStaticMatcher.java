@@ -31,7 +31,7 @@ import org.quattor.pan.dml.data.StringProperty;
 import org.quattor.pan.exceptions.CompilerError;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
-import org.quattor.pan.template.SourceRange;
+import org.quattor.pan.ttemplate.SourceRange;
 
 /**
  * Determine whether a string matches a given regular expression, using optional

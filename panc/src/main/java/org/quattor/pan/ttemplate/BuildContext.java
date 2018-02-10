@@ -18,7 +18,7 @@
  $Id: Context.java 3598 2008-08-17 09:19:06Z loomis $
  */
 
-package org.quattor.pan.template;
+package org.quattor.pan.ttemplate;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_CANNOT_LOCATE_TEMPLATE;
 import static org.quattor.pan.utils.MessageUtils.MSG_CANNOT_MODIFY_GLOBAL_VARIABLE_FROM_DML;
@@ -66,7 +66,7 @@ import org.quattor.pan.repository.SourceFile;
 import org.quattor.pan.repository.SourceRepository;
 import org.quattor.pan.tasks.BuildResult;
 import org.quattor.pan.tasks.CompileResult;
-import org.quattor.pan.template.Template.TemplateType;
+import org.quattor.pan.ttemplate.Template.TemplateType;
 import org.quattor.pan.type.FullType;
 import org.quattor.pan.utils.FinalFlags;
 import org.quattor.pan.utils.FunctionDefinition;

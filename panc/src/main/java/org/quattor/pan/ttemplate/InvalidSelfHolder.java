@@ -1,4 +1,4 @@
-package org.quattor.pan.template;
+package org.quattor.pan.ttemplate;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_SELF_REF_IN_INCLUDE;
 

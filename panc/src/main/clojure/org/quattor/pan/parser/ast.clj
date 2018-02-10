@@ -13,7 +13,7 @@
             ASTDivOperation
             ASTAddOperation
             ASTMulOperation]
-           [org.quattor.pan.template
+           [org.quattor.pan.ttemplate
             Template
             Template$TemplateType]))
 
@@ -24,7 +24,7 @@
             options (default-compiler-options)]
         (.setFile parser pan-source-file)
         (.setCompilerOptions parser options)
-        (.template parser)))))
+        (.ttemplate parser)))))
 
 (declare convert)
 
@@ -32,7 +32,7 @@
   (for [i (range (.jjtGetNumChildren ast))]
     (let [child (.jjtGetChild ast i)]
       (convert child))))
-  
+
 (defmulti convert
   (fn [^SimpleNode ast] [(class ast) (.getSubtype ast)]))
 
@@ -42,13 +42,13 @@
 
 (defmethod convert [ASTTemplate Template$TemplateType/OBJECT]
   [^ASTTemplate ast]
-  (concat 
+  (concat
     (list `template (.getIdentifier ast))
     (convert-children ast)))
 
 (defmethod convert [ASTStatement ASTStatement$StatementType/ASSIGN]
   [^ASTStatement ast]
-  (list 
+  (list
     (.getStatementType ast)
     (.getIdentifier ast)
     (.getConditionalFlag ast)

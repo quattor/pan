@@ -30,10 +30,10 @@ import org.quattor.pan.dml.data.StringProperty;
 import org.quattor.pan.dml.data.Undef;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
-import org.quattor.pan.template.BuildContext;
-import org.quattor.pan.template.CompileTimeContext;
-import org.quattor.pan.template.Context;
-import org.quattor.pan.template.ReadOnlySelfHolder;
+import org.quattor.pan.ttemplate.BuildContext;
+import org.quattor.pan.ttemplate.CompileTimeContext;
+import org.quattor.pan.ttemplate.Context;
+import org.quattor.pan.ttemplate.ReadOnlySelfHolder;
 
 public class SelfNestedVariableTest extends AbstractOperationTestUtils {
 

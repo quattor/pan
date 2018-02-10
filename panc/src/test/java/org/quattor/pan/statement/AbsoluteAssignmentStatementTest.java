@@ -24,7 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.quattor.pan.dml.data.LongProperty;
-import org.quattor.pan.template.Context;
+import org.quattor.pan.ttemplate.Context;
 import org.quattor.pan.utils.Path;
 
 public class AbsoluteAssignmentStatementTest extends StatementTestUtils {

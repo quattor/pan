@@ -25,6 +25,11 @@ options {
   MULTI = true;
   UNICODE_INPUT = true;
   JDK_VERSION = "1.8";
+  // Uncomment (and recompile) to debug parsing
+  // This is very very very verbose
+  //DEBUG_TOKEN_MANAGER = true;
+  //DEBUG_PARSER = true;
+  //DEBUG_LOOKAHEAD = true;
 }
 
 PARSER_BEGIN(PanParser)
@@ -525,7 +530,7 @@ Template syntax.  Just a template declaration followed by a series of
 statements.
 *************************************************************************/
 
-ASTTemplate template() #Template :
+ASTTemplate ttemplate() #Template :
 { Token f=null, k, n, b, e; }
 {
 
@@ -657,16 +662,16 @@ Type declarations.
 /* Type specification possibly with attached validation code and
    description. */
 ASTFullTypeSpec fullTypeSpec() #FullTypeSpec :
-{ org.quattor.pan.template.SourceRange t, d = null, w = null; }
+{ org.quattor.pan.ttemplate.SourceRange t, d = null, w = null; }
 {
   t=typeSpec() [ d=defaultValue() ] [ w=with() ]
   {
-    jjtThis.setSourceRange(org.quattor.pan.template.SourceRange.combineSourceRanges(t,d,w));
+    jjtThis.setSourceRange(org.quattor.pan.ttemplate.SourceRange.combineSourceRanges(t,d,w));
     return jjtThis;
   }
 }
 
-org.quattor.pan.template.SourceRange defaultValue() #Operation :
+org.quattor.pan.ttemplate.SourceRange defaultValue() #Operation :
 { Token t=null; }
 {
   t=<ASSIGN> dml()
@@ -677,7 +682,7 @@ org.quattor.pan.template.SourceRange defaultValue() #Operation :
   }
 }
 
-org.quattor.pan.template.SourceRange with() #Operation :
+org.quattor.pan.ttemplate.SourceRange with() #Operation :
 { Token t=null; }
 {
   t=<WITH> dml()
@@ -689,12 +694,12 @@ org.quattor.pan.template.SourceRange with() #Operation :
 }
 
 /* Type definition. */
-org.quattor.pan.template.SourceRange typeSpec() #TypeSpec :
-{ org.quattor.pan.template.SourceRange b = null; org.quattor.pan.template.SourceRange e = null; }
+org.quattor.pan.ttemplate.SourceRange typeSpec() #TypeSpec :
+{ org.quattor.pan.ttemplate.SourceRange b = null; org.quattor.pan.ttemplate.SourceRange e = null; }
 {
   b=baseTypeSpec() ( e=listClause() | e=hashClause() | e=linkClause() )*
   {
-    jjtThis.setSourceRange(org.quattor.pan.template.SourceRange.combineSourceRanges(b,e));
+    jjtThis.setSourceRange(org.quattor.pan.ttemplate.SourceRange.combineSourceRanges(b,e));
     return jjtThis.getSourceRange();
   }
 }
@@ -705,7 +710,7 @@ org.quattor.pan.template.SourceRange typeSpec() #TypeSpec :
 
    A limits clause is also permissible after a record statement.  This
    was not permitted in previous versions of the pan grammar. */
-org.quattor.pan.template.SourceRange baseTypeSpec() #BaseTypeSpec :
+org.quattor.pan.ttemplate.SourceRange baseTypeSpec() #BaseTypeSpec :
 { Token t = null, b=null, e=null; org.quattor.pan.utils.Range r = null; }
 {
   t=<CHOICE> <LPAREN> stringLiteral() (<COMMA> stringLiteral())* e=<RPAREN>
@@ -749,7 +754,7 @@ void fieldSpec() #FieldSpec :
   }
 }
 
-org.quattor.pan.template.SourceRange linkClause() #TypeClause :
+org.quattor.pan.ttemplate.SourceRange linkClause() #TypeClause :
 { Token t; }
 {
   t=<ASTERISK>
@@ -760,7 +765,7 @@ org.quattor.pan.template.SourceRange linkClause() #TypeClause :
   }
 }
 
-org.quattor.pan.template.SourceRange listClause() #TypeClause:
+org.quattor.pan.ttemplate.SourceRange listClause() #TypeClause:
 { Token b,e; org.quattor.pan.utils.Range r = null; }
 {
   b=<LBRACKET> [ r=range() ] e=<RBRACKET>
@@ -771,7 +776,7 @@ org.quattor.pan.template.SourceRange listClause() #TypeClause:
   }
 }
 
-org.quattor.pan.template.SourceRange hashClause() #TypeClause :
+org.quattor.pan.ttemplate.SourceRange hashClause() #TypeClause :
 { Token b,e; org.quattor.pan.utils.Range r = null; }
 {
   b=<LBRACE> [ r=range() ] e=<RBRACE>

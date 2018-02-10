@@ -25,7 +25,7 @@ import static org.quattor.pan.utils.MessageUtils.MSG_ONE_ARG_REQ;
 import org.quattor.pan.dml.Operation;
 import org.quattor.pan.dml.operators.Variable;
 import org.quattor.pan.exceptions.SyntaxException;
-import org.quattor.pan.template.SourceRange;
+import org.quattor.pan.ttemplate.SourceRange;
 
 /**
  * Tests whether the variable referenced in the function's argument exists.

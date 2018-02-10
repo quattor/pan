@@ -17,15 +17,28 @@ public class AnnotationToken extends Token {
     public AnnotationToken(int kind, String image) {
         super(kind, image);
 
-        try {
-            value = AnnotationProcessor.process(image);
-        } catch (org.quattor.pan.parser.annotation.ParseException e) {
-            value = e;
+        if (image != null) {
+            // Would throw a NullPointerException
+            // Also, recent javacc generated code doesn't call the init wit the image
+            //    but sets the attribute in the newToken call
+            try {
+                value = AnnotationProcessor.process(image);
+            } catch (org.quattor.pan.parser.annotation.ParseException e) {
+                value = e;
+            }
         }
     }
 
     @Override
     public Object getValue() {
+        if (value == null && this.image != null) {
+            // See remark on recet javacc in the init
+            try {
+                value = AnnotationProcessor.process(this.image);
+            } catch (org.quattor.pan.parser.annotation.ParseException e) {
+                value = e;
+            }
+        }
         return value;
     }
 

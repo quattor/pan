@@ -32,8 +32,8 @@ import org.quattor.pan.dml.operators.ListVariable;
 import org.quattor.pan.dml.operators.Variable;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
-import org.quattor.pan.template.Context;
-import org.quattor.pan.template.SourceRange;
+import org.quattor.pan.ttemplate.Context;
+import org.quattor.pan.ttemplate.SourceRange;
 
 /**
  * Will prepend a value to the beginning of a list. It will create the

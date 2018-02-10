@@ -26,10 +26,10 @@ import org.quattor.pan.dml.data.Null;
 import org.quattor.pan.dml.data.Undef;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
-import org.quattor.pan.template.Context;
-import org.quattor.pan.template.SelfHolder;
-import org.quattor.pan.template.SourceRange;
-import org.quattor.pan.template.VariableSelfHolder;
+import org.quattor.pan.ttemplate.Context;
+import org.quattor.pan.ttemplate.SelfHolder;
+import org.quattor.pan.ttemplate.SourceRange;
+import org.quattor.pan.ttemplate.VariableSelfHolder;
 import org.quattor.pan.utils.GlobalVariable;
 
 /**

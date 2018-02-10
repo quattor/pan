@@ -33,8 +33,8 @@ import org.quattor.pan.dml.data.Undef;
 import org.quattor.pan.exceptions.CompilerError;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
-import org.quattor.pan.template.Context;
-import org.quattor.pan.template.SourceRange;
+import org.quattor.pan.ttemplate.Context;
+import org.quattor.pan.ttemplate.SourceRange;
 
 /**
  * Looks up a simple variable in the execution context.

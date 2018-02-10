@@ -29,8 +29,8 @@ import org.quattor.pan.dml.data.Undef;
 import org.quattor.pan.dml.operators.SetValue;
 import org.quattor.pan.dml.operators.Variable;
 import org.quattor.pan.exceptions.SyntaxException;
-import org.quattor.pan.template.Context;
-import org.quattor.pan.template.SourceRange;
+import org.quattor.pan.ttemplate.Context;
+import org.quattor.pan.ttemplate.SourceRange;
 
 /**
  * Deletes the variable referenced in the function's argument.

@@ -30,8 +30,8 @@ import org.quattor.pan.dml.data.LongProperty;
 import org.quattor.pan.dml.data.NumberProperty;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
-import org.quattor.pan.template.Context;
-import org.quattor.pan.template.SourceRange;
+import org.quattor.pan.ttemplate.Context;
+import org.quattor.pan.ttemplate.SourceRange;
 import org.quattor.pan.utils.MessageUtils;
 
 /**

@@ -38,7 +38,7 @@ import org.quattor.pan.parser.PanParser;
 import org.quattor.pan.parser.ASTTemplate;
 import org.quattor.pan.parser.PanParserAstUtils;
 import org.quattor.pan.parser.ParseException;
-import org.quattor.pan.template.Template;
+import org.quattor.pan.ttemplate.Template;
 
 /**
  * Wraps the <code>CompileCallable</code> as a <code>Task</code>. This wrapping
@@ -162,7 +162,7 @@ public class CompileTask extends Task<CompileResult> {
                 PanParser parser = new PanParser(reader);
                 parser.setFile(tplfile);
                 parser.setCompilerOptions(compilerOptions);
-                ast = parser.template();
+                ast = parser.ttemplate();
 
             } catch (ParseException pe) {
                 pe.file = tplfile;

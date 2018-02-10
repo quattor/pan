@@ -30,9 +30,9 @@ import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.exceptions.CompilerError;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.ValidationException;
-import org.quattor.pan.template.Context;
-import org.quattor.pan.template.SourceRange;
-import org.quattor.pan.template.TypeMap;
+import org.quattor.pan.ttemplate.Context;
+import org.quattor.pan.ttemplate.SourceRange;
+import org.quattor.pan.ttemplate.TypeMap;
 
 import java.util.concurrent.atomic.AtomicReference;
 

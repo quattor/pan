@@ -25,7 +25,7 @@ import static org.quattor.pan.utils.MessageUtils.MSG_MISMATCHED_TYPES;
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.Property;
 import org.quattor.pan.exceptions.ValidationException;
-import org.quattor.pan.template.Context;
+import org.quattor.pan.ttemplate.Context;
 
 /**
  * Concrete implementations of primitive types like booleans, longs, etc. The

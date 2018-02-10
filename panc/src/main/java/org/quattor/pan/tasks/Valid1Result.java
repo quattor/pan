@@ -21,7 +21,7 @@
 package org.quattor.pan.tasks;
 
 import org.quattor.pan.dml.data.Element;
-import org.quattor.pan.template.Context;
+import org.quattor.pan.ttemplate.Context;
 
 /**
  * Encapsulates the results of the first validation phase.

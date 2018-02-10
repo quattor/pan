@@ -27,7 +27,7 @@ import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.StringProperty;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
-import org.quattor.pan.template.SourceRange;
+import org.quattor.pan.ttemplate.SourceRange;
 
 /**
  * Abstract class to bring together checks done for both match() and matches().

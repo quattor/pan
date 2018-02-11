@@ -6,7 +6,9 @@ import static org.quattor.pan.utils.MessageUtils.MSG_NON_DIRECTORY_IN_INCLUDE_DI
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.quattor.pan.exceptions.EvaluationException;
 
@@ -39,6 +41,12 @@ abstract public class FileSystemSourceRepository implements SourceRepository {
 
         sourceFileExtensions = Collections.unmodifiableList(extensions);
     };
+
+    // ConcurrentHashMap is ok for retrieveCache with loadpath
+    //  2 threads will get the same result,
+    //  so it's not an issue if they add the file
+    // No static Map, due to eg include directories
+    protected Map<String, SourceFile> retrieveCacheLoadpath = new ConcurrentHashMap<String, SourceFile>(1000);
 
     protected FileSystemSourceRepository() {
     }
@@ -74,9 +82,21 @@ abstract public class FileSystemSourceRepository implements SourceRepository {
         return createPanSourceFile(name, file);
     }
 
+    // Optimised due to lots of calls and slow lookupSource
     public SourceFile retrievePanSource(String name, List<String> loadpath) {
-        File file = lookupSource(name, loadpath);
-        return createPanSourceFile(name, file);
+
+        String cacheKey = name + ((String) " ") + String.join(":", loadpath);
+
+        // containsKey uses get
+        SourceFile cachedResult = retrieveCacheLoadpath.get(cacheKey);
+        if (cachedResult != null) {
+            return cachedResult;
+        } else {
+            File file = lookupSource(name, loadpath);
+            SourceFile result = createPanSourceFile(name, file);
+            retrieveCacheLoadpath.put(cacheKey, result);
+            return result;
+        }
     }
 
     public SourceFile retrieveTxtSource(String name) {

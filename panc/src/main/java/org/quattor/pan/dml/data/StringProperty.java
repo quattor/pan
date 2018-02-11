@@ -32,9 +32,9 @@ import org.quattor.pan.utils.TermFactory;
 /**
  * Represents a string value. This class implements the <code>Term</code>
  * interface; instances of this class can be used to dereference Resources.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 @Immutable
 public class StringProperty extends Property implements Term {
@@ -65,6 +65,7 @@ public class StringProperty extends Property implements Term {
 		return "string";
 	}
 
+    // should not be overridden by child, unless compareTo is also overridden
 	public boolean isKey() {
 		return true;
 	}
@@ -77,8 +78,33 @@ public class StringProperty extends Property implements Term {
 		return getValue();
 	}
 
-	public int compareTo(Term o) {
-		return TermFactory.compare((Term) this, (Term) o);
+	public int compareTo(Term other) {
+        // TermFactory.compare((Term) this, (Term) o) is way too expensive
+        // Main use case is TreeMap<Term, ..> access, so optimise for that
+
+		// Sanity check.
+		if (other == null) {
+			throw new NullPointerException();
+		}
+
+        // no self==other, equals() is expensive
+        // and this is very unlikely to happen anyway
+
+        // Other type
+        if (!other.isKey()){
+            return 1;
+        }
+
+		// Compare the underlying values.
+		try {
+            return getKey().compareTo(other.getKey());
+		} catch (InvalidTermException consumed) {
+			// This statement can never be reached because both objects are
+			// either keys or indexes. This try/catch block is only here to make
+			// the compiler happy.
+			assert (false);
+			return 0;
+		}
 	}
 
 }

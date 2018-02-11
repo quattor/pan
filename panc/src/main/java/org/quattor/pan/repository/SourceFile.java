@@ -144,8 +144,8 @@ public class SourceFile implements Comparable<SourceFile> {
 
     @Override
     public String toString() {
-        String uri = (location != null) ? location.toURI().toASCIIString() : "";
-        return String.format("%s %s %s", name, type, uri);
+        String uri = (location == null) ? "" : location.toURI().toASCIIString();
+        return (name + " " + type.toString() + " " + uri);
     }
 
     private String getFileExtension(File path) {

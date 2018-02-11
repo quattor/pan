@@ -28,7 +28,10 @@ import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_KEY;
 import static org.quattor.pan.utils.MessageUtils.MSG_KEY_CANNOT_BEGIN_WITH_DIGIT;
 import static org.quattor.pan.utils.MessageUtils.MSG_KEY_CANNOT_BE_EMPTY_STRING;
 
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.LongProperty;
@@ -49,18 +52,36 @@ public class TermFactory {
 	 * This regular expression identifies strings which might be a list index. (That
 	 * is, they are digits only.)
 	 */
-	private static final Pattern isIndexPattern = Pattern.compile("^\\d+$"); //$NON-NLS-1$
+	private static final ThreadLocal<Matcher> isIndexPattern =
+        new ThreadLocal<Matcher>() {
+            @Override protected Matcher initialValue() {
+                // all digits
+                return Pattern.compile("^\\d+$").matcher(""); //$NON-NLS-1$
+            }
+        };
 
 	/**
 	 * This regular expression identifies indicies with leading zeros.
 	 */
-	private static final Pattern isIndexLeadingZerosPattern = Pattern.compile("^0\\d+$"); //$NON-NLS-1$
+	private static final ThreadLocal<Matcher> isIndexLeadingZerosPattern =
+        new ThreadLocal<Matcher>() {
+            @Override protected Matcher initialValue() {
+                // starts with 0 (and followed by at least one other digit),
+                //   to be run on all digits match (so use lookingAt).
+                return Pattern.compile("0\\d").matcher(""); //$NON-NLS-1$
+            }
+        };
+
 
 	/**
 	 * This regular expression identifies valid dict keys.
 	 */
-	private static final Pattern isKeyPattern = Pattern
-			.compile("^\\w[\\w\\+\\-\\.]*$"); //$NON-NLS-1$
+	private static final ThreadLocal<Matcher> isKeyPattern =
+        new ThreadLocal<Matcher>() {
+            @Override protected Matcher initialValue() {
+                return Pattern.compile("^\\w[\\w\\+\\-\\.]*$").matcher(""); //$NON-NLS-1$
+            }
+        };
 
 	/**
 	 * This array contains a cache of the most frequently used indexes. It
@@ -78,6 +99,11 @@ public class TermFactory {
 		}
 		indexCache = terms;
 	}
+
+    // ConcurrentHashMap is ok for checkStringIndex
+    //  2 threads will get the same result,
+    //  so it's not an issue if they add the element
+    private static Map<String, Long> checkStringIndexCache = new ConcurrentHashMap<String, Long>(1000);
 
 	private TermFactory() {
 	}
@@ -110,6 +136,13 @@ public class TermFactory {
 
 		assert (term != null);
 
+        // containsKey uses get
+        Long cachedResult = checkStringIndexCache.get(term);
+        if (cachedResult != null) {
+            return (long) cachedResult;
+        }
+
+        // default: result is list index 0
 		long result = 0L;
 
 		// Empty strings are not allowed.
@@ -117,8 +150,9 @@ public class TermFactory {
 			throw EvaluationException.create(MSG_KEY_CANNOT_BE_EMPTY_STRING);
 		}
 
-		if (isIndexPattern.matcher(term).matches()) {
-            if (isIndexLeadingZerosPattern.matcher(term).matches()) {
+		if (isIndexPattern.get().reset(term).matches()) {
+            // faster than matches
+            if (isIndexLeadingZerosPattern.get().reset(term).lookingAt()) {
 				throw EvaluationException.create(
 						MSG_INVALID_LEADING_ZEROS_INDEX, term);
             } else {
@@ -130,8 +164,8 @@ public class TermFactory {
                     throw EvaluationException.create(
 						MSG_KEY_CANNOT_BEGIN_WITH_DIGIT, term);
                 }
-            }
-		} else if (isKeyPattern.matcher(term).matches()) {
+			}
+		} else if (isKeyPattern.get().reset(term).matches()) {
 
 			// Return a negative number to indicate that this is an OK key
 			// value.
@@ -143,7 +177,9 @@ public class TermFactory {
 			throw EvaluationException.create(MSG_INVALID_KEY, term);
 		}
 
-		return result;
+        // update cache
+        checkStringIndexCache.put(term, (Long) result);
+        return result;
 	}
 
 	/**

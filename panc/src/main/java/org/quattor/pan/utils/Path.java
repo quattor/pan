@@ -79,12 +79,23 @@ public class Path implements Comparable<Path> {
     private static Pattern extractAuthority = Pattern.compile("([^:]*):/?(.*)"); //$NON-NLS-1$
 
     /**
+     * Make a pattern to split a string on escape sequence chars
+     * (only single char split is faster via String.split)
+     */
+    private static Pattern splitEscapeSequences = Pattern.compile("[\\{\\}]"); //$NON-NLS-1$
+
+    /**
      * This regular expression will determine if the Path contains proper escape
      * sequences. The escape sequences cannot be nested and each must contain
      * both an opening and closing brace.
      */
-    private static Pattern validEscapeSequences = Pattern
-            .compile("^([^\\{\\}]*+(\\{[^\\{\\}]*\\})?)*$"); //$NON-NLS-1$
+    private static final ThreadLocal<Matcher> validEscapeSequences =
+        new ThreadLocal<Matcher>() {
+            @Override protected Matcher initialValue() {
+                // *+: possessive (greedy without any backtracking)
+                return Pattern.compile("^(?:[^\\{\\}]*+(?:\\{[^\\{\\}]*\\})?)*$").matcher(""); //$NON-NLS-1$
+            }
+        };
 
     /**
      * Constructor of a path from a String. If the path does not have the
@@ -94,28 +105,29 @@ public class Path implements Comparable<Path> {
 
         assert (path != null);
 
-        // Check that the string contains matched pairs of braces and that those
-        // are not nested.
-        Matcher matcher = validEscapeSequences.matcher(path);
-        if (!matcher.matches()) {
-            throw SyntaxException.create(null, MSG_PATH_INVALID_BRACES, path);
-        }
-
-        // Escape the strings within braces and re-create the path with those.
-        // Splitting on all of the braces will return a list of substrings where
-        // all of the ones with odd indices need to be escaped.
-        StringBuilder sb = new StringBuilder();
-        String[] substrings = path.split("[\\{\\}]", -1); //$NON-NLS-1$
-        for (int i = 0; i < substrings.length; i++) {
-            if (i % 2 == 0) {
-                sb.append(substrings[i]);
-            } else {
-                sb.append(EscapeUtils.escape(substrings[i]));
+        if (path.contains("{") || path.contains("}")) {
+            // Check that the string contains matched pairs of braces and that those
+            // are not nested.
+            if (!validEscapeSequences.get().reset(path).matches()) {
+                throw SyntaxException.create(null, MSG_PATH_INVALID_BRACES, path);
             }
-        }
 
-        // Reset the path variable to the unescaped value.
-        path = sb.toString();
+            // Escape the strings within braces and re-create the path with those.
+            // Splitting on all of the braces will return a list of substrings where
+            // all of the ones with odd indices need to be escaped.
+            StringBuilder sb = new StringBuilder();
+            String[] substrings = splitEscapeSequences.split(path, -1); //$NON-NLS-1$
+            for (int i = 0; i < substrings.length; i++) {
+                if (i % 2 == 0) {
+                    sb.append(substrings[i]);
+                } else {
+                    sb.append(EscapeUtils.escape(substrings[i]));
+                }
+            }
+
+            // Reset the path variable to the unescaped value.
+            path = sb.toString();
+        }
 
         // Assume that it is a relative path to start.
         String s = path;

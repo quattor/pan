@@ -26,35 +26,32 @@ import java.io.IOException;
  * Property represents a simple primitive type (boolean, long, or string) in the
  * pan language. All properties descend from PersistentElement which marks them
  * as being valid elements for a final machine configuration.
- * 
+ *
  * All Property instances must be immutable. This allows properties to be shared
  * between threads and between machine configurations consequently reducing
  * duplication and memory consumption.
- * 
+ *
  * The constructors of all Property classes should be protected or private. All
  * subclasses must implement a getInstance() method which returns an instance
  * (possibly cached) of the Property.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 abstract public class Property extends PersistentElement {
 
 	private final Object value;
 
-	private volatile int hashcode;
-
 	/**
 	 * This constructor should be used by subclasses to set the value of the
 	 * property. The value should be a basic, immutable java type like Boolean,
 	 * Long, or Double.
-	 * 
+	 *
 	 * @param value value to be used for the property
 	 */
 	protected Property(Object value) {
 		assert (value != null);
 		this.value = value;
-		hashcode = value.hashCode();
 	}
 
 	/**
@@ -62,7 +59,7 @@ abstract public class Property extends PersistentElement {
 	 * this method to provide a more specific return type. Subclasses will have
 	 * to call this method to obtain the value because the value itself is
 	 * private.
-	 * 
+	 *
 	 * @return value of this property as an Object
 	 */
 	public Object getValue() {
@@ -71,32 +68,15 @@ abstract public class Property extends PersistentElement {
 
 	@Override
 	public int hashCode() {
-		return hashcode;
+        return value.hashCode();
 	}
 
 	@Override
 	public boolean equals(Object o) {
-		if (o != null && hashcode == o.hashCode()) {
-			if (o instanceof Property) {
-				return value.equals(((Property) o).value);
-			}
+        if (o != null && o instanceof Property) {
+            return value.equals(((Property) o).getValue());
 		}
 		return false;
-	}
-
-	/**
-	 * This method is used to restore the volatile hashcode value when
-	 * deserializing a Property object.
-	 * 
-	 * @param in
-	 * @throws IOException
-	 * @throws ClassNotFoundException
-	 */
-	private void readObject(java.io.ObjectInputStream in) throws IOException,
-			ClassNotFoundException {
-
-		in.defaultReadObject();
-		hashcode = value.hashCode();
 	}
 
 	@Override

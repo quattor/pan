@@ -29,6 +29,8 @@ import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_KEY;
 import static org.quattor.pan.utils.MessageUtils.MSG_KEY_CANNOT_BEGIN_WITH_DIGIT;
 import static org.quattor.pan.utils.MessageUtils.MSG_KEY_CANNOT_BE_EMPTY_STRING;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 import org.quattor.pan.dml.data.Element;
@@ -63,22 +65,12 @@ public class TermFactory {
 	private static final Pattern isKeyPattern = Pattern
 			.compile("^\\w[\\w\\+\\-\\.]*$"); //$NON-NLS-1$
 
-	/**
-	 * This array contains a cache of the most frequently used indexes. It
-	 * avoids having to create new LongProperties as Term objects when not
-	 * necessary.
-	 */
-	private static final Term[] indexCache;
+    // ConcurrentHashMap is ok for checkStringIndex
+    //  2 threads will get the same result,
+    //  so it's not an issue if they add the element
+    private static Map<String, Term> createStringCache = new ConcurrentHashMap<String, Term>(50000);
 
-	// This code creates all of the cached indexes.
-	static {
-		int size = 100;
-		Term[] terms = new Term[2*size];
-		for (int i = -size; i < size; i++) {
-			terms[i+size] = LongProperty.getInstance((long) i);
-		}
-		indexCache = terms;
-	}
+    private static Map<Long, Term> createLongCache = new ConcurrentHashMap<Long, Term>(1000);
 
 	private TermFactory() {
 	}
@@ -153,12 +145,20 @@ public class TermFactory {
 	 * correct syntax, an IllegalArgumentException will be thrown.
 	 */
 	public static Term create(String term) {
-		long[] value = checkStringIndex(term);
-		if (value[1] < 0L) {
-			return StringProperty.getInstance(term);
-		} else {
-			return create(value[0]);
-		}
+        Term res = createStringCache.get(term);
+
+        if (res == null) {
+            long[] value = checkStringIndex(term);
+            if (value[1] < 0L) {
+                res = (Term) StringProperty.getInstance(term);
+            } else {
+                res = (Term) create(value[0]);
+            }
+            createStringCache.put(term, res);
+        }
+
+        // no clone/copy needed for cached result
+        return res;
 	}
 
 	/**
@@ -168,22 +168,18 @@ public class TermFactory {
 	 *            the index to use for this term
 	 */
 	public static Term create(long index) {
+        Term res = createLongCache.get(index);
+        if (res == null) {
+            checkNumericIndex(index);
 
-		checkNumericIndex(index);
-		long size = indexCache.length / 2;
+            // Generate a new property.
+            res = (Term) LongProperty.getInstance(index);
+            createLongCache.put(index, res);
+            return res;
+        }
 
-		// Decide whether to use a cached value or not.
-        if (index < size && index >= -size) {
-
-			// Use cached value.
-			return indexCache[(int) (index + size)];
-
-		} else {
-
-			// Generate a new property.
-			return LongProperty.getInstance(index);
-
-		}
+        // no clone/copy needed for cached result
+        return res;
 	}
 
 	/**
@@ -194,15 +190,9 @@ public class TermFactory {
 	 */
 	public static Term create(Element element) {
 		if (element instanceof StringProperty) {
-			long[] value = checkStringIndex(((StringProperty) element).getValue());
-			if (value[1] < 0L) {
-				return (Term) element;
-			} else {
-				return LongProperty.getInstance(value[0]);
-			}
+            return create(((StringProperty) element).getValue());
 		} else if (element instanceof LongProperty) {
-			checkNumericIndex(((LongProperty) element).getValue());
-			return (Term) element;
+			return create(((LongProperty) element).getValue().longValue());
 		} else {
 			throw EvaluationException.create(MSG_INVALID_ELEMENT_FOR_INDEX,
 					element.getTypeAsString());

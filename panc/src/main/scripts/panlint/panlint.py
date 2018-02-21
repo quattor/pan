@@ -93,6 +93,7 @@ RE_MVN_TEMPLATE = re.compile(r'\$\{\S+\}')
 RE_COMMENT = re.compile(RS_COMMENT)
 RE_COMMENT_LINE = re.compile(r'^\s*' + RS_COMMENT + '.*$')
 RE_ANNOTATION = re.compile(r'@\w*\s*{.*?}', re.S)
+RE_MAGIC_LINE = re.compile(r'^\s*#\s+panlint\s+disable=(?P<id>(?:[A-Z]{2}[0-9]{3},?)+)$')
 # Deal with heredoc as fake operator incl tag (so no bitshift). Will ignore it in the code.
 #   The order here is important: the < at the end must remain at the end or linting heredocs will fail.
 RE_OPERATOR = re.compile(r'([>=<!?]=|[>+*=/-]|<<\w+(?!;)|<)')
@@ -588,21 +589,41 @@ def lint_file(filename, allow_mvn_templates=False, ignore_components=None, suppr
     # If so, regard the component config as being included
     components_included.union(get_components_from_filename(filename))
 
+    # Start out with no check suppression
+    suppressors = set()
+
     for line_number, line_text in enumerate(raw_text.splitlines(), start=1):
         line = Line(filename, line_number, line_text.rstrip('\n'))
 
-        if line.text and line.number not in ignore_lines and not RE_COMMENT_LINE.match(line.text):
-            line, first_line = lint_line(
-                line,
-                components_included,
-                first_line,
-                allow_mvn_templates,
-                suppress,
-            )
+        if line.text and line.number not in ignore_lines:
+            magic = RE_MAGIC_LINE.match(line_text)
+            comment = RE_COMMENT_LINE.match(line_text)
 
-            if line.problems:
-                problem_lines.append(line)
-                file_problem_count += len(line.problems)
+            if magic:
+                debug_line(line)
+                debug_range(magic.start('id'), magic.end('id'), 'Magic String', line)
+                # Currently the only supported magic is to suppress certain checks for the next line of real Pan
+                suppressors = set(magic.group('id').split(','))
+
+            elif not comment:
+                # Not magic, not a comment, so must be real code... lint it!
+                line, first_line = lint_line(
+                    line,
+                    components_included,
+                    first_line,
+                    allow_mvn_templates,
+                    suppress,
+                )
+
+                # Filter out any suppressed problems
+                line.problems = [p for p in line.problems if p.message.id not in suppressors]
+
+                if line.problems:
+                    problem_lines.append(line)
+                    file_problem_count += len(line.problems)
+
+                # We've just processed a real line, so wipe out any suppression
+                suppressors = set()
         else:
             debug_ignored_line(line)
 

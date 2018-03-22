@@ -15,9 +15,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import glob
 import unittest
 from sys import argv
-from os.path import dirname, join
+from os.path import basename, dirname, join
 
 import panlint
 
@@ -50,13 +51,17 @@ class TestPanlint(unittest.TestCase):
         self.assertEqual(panlint.merge_diagnoses([diag1, diag2]), merged)
 
     def test_files(self):
+        """
+        Test all files in test_files that start with test_*.pan using lint_file
+        """
         no_errors = ([], 0)
         dir_base = join(dirname(argv[0]), 'test_files')
-        self.assertEqual(panlint.lint_file(join(dir_base, 'test_good_ordinary.pan')), no_errors)
-        self.assertEqual(panlint.lint_file(join(dir_base, 'test_good_object.pan')), no_errors)
-        self.assertEqual(panlint.lint_file(join(dir_base, 'test_good_structure.pan')), no_errors)
-        self.assertEqual(panlint.lint_file(join(dir_base, 'test_good_unique.pan')), no_errors)
-        self.assertEqual(panlint.lint_file(join(dir_base, 'test_good_declaration.pan')), no_errors)
+        for afn in glob.glob(join(dir_base, '/test_*.pan')):
+            fn = basename(afn)
+            if fn.startswith('test_good'):
+                self.assertEqual(panlint.lint_file(afn), no_errors)
+            else:
+                self.assertTrue(False, 'test_files: unknown testfile ' + afn)
 
     def test_mvn_templates(self):
         dir_base = join(dirname(argv[0]), 'test_files')

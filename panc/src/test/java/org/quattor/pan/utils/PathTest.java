@@ -129,6 +129,34 @@ public class PathTest {
 	}
 
 	@Test
+	public void testValidFirstTermAllowRelative() {
+		List<String> paths = Arrays.asList("0/a");
+		for (String s : paths) {
+			try {
+				new Path(s, true);
+			} catch (SyntaxException se) {
+				fail("valid first with allow_relative term did not throw an exception (" + s
+						+ ")");
+			}
+		}
+	}
+
+	@Test
+	public void testInvalidFirstTermAllowRelative() {
+		List<String> paths = Arrays.asList("alpha:/0/a",
+				"alpha:0/a", "/0/a");
+		for (String s : paths) {
+			try {
+				new Path(s, true);
+				fail("illegal first term with allow_relative did not throw an exception (" + s
+						+ ")");
+			} catch (SyntaxException se) {
+				// OK.
+			}
+		}
+	}
+
+	@Test
 	public void testValidEscapedValues() {
 		List<String> paths = Arrays.asList("{}", "{a}", "{a/b}", "a/{b}",
 				"/{b}/c", "a/{b}/c", "a/{b/c}/d");

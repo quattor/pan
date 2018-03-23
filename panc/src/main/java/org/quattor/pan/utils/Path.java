@@ -87,11 +87,20 @@ public class Path implements Comparable<Path> {
             .compile("^([^\\{\\}]*+(\\{[^\\{\\}]*\\})?)*$"); //$NON-NLS-1$
 
     /**
-     * Constructor of a path from a String. If the path does not have the
-     * correct syntax, an EvaluationException will be thrown.
+     * Constructor of a path from a String.
+     * If the path does not have the correct syntax, a SyntaxException will be thrown.
      */
     public Path(String path) throws SyntaxException {
+        this(path, false);
+    }
 
+    /**
+     * Constructor of a path from a String.
+     * allow_all_relative is a boolean indicating that all relative paths are allowed
+     * (e.g. in case of an assigmnent with a prefix).
+     * If the path does not have the correct syntax, a SyntaxException will be thrown.
+     */
+    public Path(String path, boolean allow_all_relative) throws SyntaxException {
         assert (path != null);
 
         // Check that the string contains matched pairs of braces and that those
@@ -174,9 +183,11 @@ public class Path implements Comparable<Path> {
             throw SyntaxException.create(null, MSG_PATH_MISSING_TERM);
         }
 
-        // The first term in a path must always be a key. If not, throw an
-        // exception.
-        if (xt.size() > 0 && !xt.get(0).isKey()) {
+        // The first term in a path must always be a key, unless allow_all_relative is true
+        // and the path is relative. If not, throw an exception.
+        if (xt.size() > 0 &&
+            !(type == PathType.RELATIVE && allow_all_relative) &&
+            !xt.get(0).isKey()) {
             throw SyntaxException.create(null, MSG_PATH_INVALID_FIRST_TERM);
         }
 
@@ -253,6 +264,13 @@ public class Path implements Comparable<Path> {
         } else {
             return relative;
         }
+    }
+
+    /**
+     * Return the number of terms in the path
+     */
+    public int getLength() {
+        return terms.length;
     }
 
     /**

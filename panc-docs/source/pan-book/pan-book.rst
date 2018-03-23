@@ -1,4 +1,4 @@
-.. highlight:: pan
+. highlight:: pan
 Getting Started
 ===============
 
@@ -1353,13 +1353,22 @@ the absolute paths.
 Terms may consist of letters, digits, underscores, hyphens, and pluses.
 Terms beginning with a digit must be a valid long literal. Terms that
 contain other characters must be escaped, either by using the ``escape``
-function within a DML block or by enclosing the term within braces for a
-path literal. For example, the following creates an absolute path with
+function within a DML block or by enclosing the term within curly braces.
+For example, the following creates an absolute path with
 three terms::
 
     /alpha/{a/b}/gamma
 
 The second term is equivalent to ``escape``\ ('a/b').
+
+Another example with a DML block::
+
+    "/alpha" = dict("{a/b}", "delta");
+
+This is is equivalent to::
+
+    "/alpha" = dict(escape("a/b"), "delta");
+
 
 Link
 ~~~~

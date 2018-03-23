@@ -38,7 +38,8 @@ public class TermTest {
 	@Test
 	public void testLegalTerms() {
 		List<String> paths = Arrays.asList("a", "_", "_0", "_1", "a+", "a-",
-				"a.", "0", "1", "10", "17", "0xff", "0XFF");
+                                           "a.", "0", "1", "10", "17", "0xff", "0XFF",
+                                           "{/a}", "{0}", "{a}", "{}");
 		for (String s : paths) {
 			try {
 				TermFactory.create(s);
@@ -82,7 +83,7 @@ public class TermTest {
 	public void testIllegalTerms() {
         /* 06: valid octal, 09: invalid octal, 00 and 017: previous valid in testLegalTerms */
 		List<String> paths = Arrays.asList("", "06", "09", "00", "017", "-", "+",
-				".", "-a", "+a", ".a");
+                                           ".", "-a", "+a", ".a", "/a", "{", "}");
 		for (String s : paths) {
 			try {
 				TermFactory.create(s);

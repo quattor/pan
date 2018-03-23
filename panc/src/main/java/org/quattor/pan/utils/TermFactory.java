@@ -148,6 +148,11 @@ public class TermFactory {
         Term res = createStringCache.get(term);
 
         if (res == null) {
+            if (term != null && term.length() >= 2 &&
+                term.charAt(0) == '{' && term.charAt(term.length() - 1) == '}') {
+                term = EscapeUtils.escape(term.substring(1, term.length() - 1));
+            }
+
             long[] value = checkStringIndex(term);
             if (value[1] < 0L) {
                 res = (Term) StringProperty.getInstance(term);

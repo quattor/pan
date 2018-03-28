@@ -36,6 +36,7 @@ RE_COMMENT = re.compile(RS_COMMENT)
 RE_COMMENT_LINE = re.compile(r'^\s*' + RS_COMMENT + '.*$')
 RE_ANNOTATION = re.compile(r'@\w*{.*?}', re.S)
 RE_OPERATOR = re.compile(r'([>=<!?]=|[+*=/-])')
+RE_HEREDOC = re.compile(r'<<(\w+);\s*$.*?\1$', re.S | re.M)
 
 # Find usage and inclusion of components
 RE_COMPONENT_INCLUDE = re.compile(r'^\s*[^#]?\s*include.*components/(?P<name>\w+)/config', re.M)
@@ -266,8 +267,22 @@ def find_annotation_blocks(text):
         start_char, end_char = annotation.span()
         start_line = text[:start_char].count('\n') + 1
         end_line = start_line + text[start_char:end_char].count('\n')
-        for i in range(start_line, end_line + 1):
-            result.append(i)
+        result += range(start_line, end_line + 1)
+    return result
+
+
+def find_heredoc_blocks(text):
+    """Find multi-line heredoc blocks in a block of text"""
+    result = []
+    heredocs = RE_HEREDOC.finditer(text)
+    for heredoc in heredocs:
+        start_char, end_char = heredoc.span()
+        start_line = text[:start_char].count('\n') + 1
+        end_line = start_line + text[start_char:end_char].count('\n')
+        # start_line incl the line with the <<
+        # but we want to validate that line (eg for assignment), so another +1
+        # the +1 for end_line is the usual range-does-not-incl-end
+        result += range(start_line + 1, end_line + 1)
     return result
 
 
@@ -422,6 +437,9 @@ def lint_file(filename, allow_mvn_templates=False):
     # Identify annotation blocks and exclude them from linting
     # We will need special linting rules for these
     ignore_lines += find_annotation_blocks(raw_text)
+
+    # Identify heredoc blocks and exclude them from linting
+    ignore_lines += find_heredoc_blocks(raw_text)
 
     # Get list of all component configs included in template
     components_included = RE_COMPONENT_INCLUDE.findall(raw_text)

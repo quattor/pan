@@ -15,14 +15,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import glob
 import unittest
 from sys import argv
-from os.path import dirname, join
+from os.path import basename, dirname, join
 
 import panlint
 
 
 class TestPanlint(unittest.TestCase):
+    def setUp(self):
+        self.maxDiff = None
+        self.longMessage = True
 
     def test_diagnose(self):
         self.assertEqual(panlint.diagnose(0, 0), '')
@@ -50,13 +54,17 @@ class TestPanlint(unittest.TestCase):
         self.assertEqual(panlint.merge_diagnoses([diag1, diag2]), merged)
 
     def test_files(self):
+        """
+        Test all files in test_files that start with test_*.pan using lint_file
+        """
         no_errors = ([], 0)
         dir_base = join(dirname(argv[0]), 'test_files')
-        self.assertEqual(panlint.lint_file(join(dir_base, 'test_good_ordinary.pan')), no_errors)
-        self.assertEqual(panlint.lint_file(join(dir_base, 'test_good_object.pan')), no_errors)
-        self.assertEqual(panlint.lint_file(join(dir_base, 'test_good_structure.pan')), no_errors)
-        self.assertEqual(panlint.lint_file(join(dir_base, 'test_good_unique.pan')), no_errors)
-        self.assertEqual(panlint.lint_file(join(dir_base, 'test_good_declaration.pan')), no_errors)
+        for afn in glob.glob(join(dir_base, '/test_*.pan')):
+            fn = basename(afn)
+            if fn.startswith('test_good'):
+                self.assertEqual(panlint.lint_file(afn), no_errors)
+            else:
+                self.assertTrue(False, 'test_files: unknown testfile ' + afn)
 
     def test_mvn_templates(self):
         dir_base = join(dirname(argv[0]), 'test_files')
@@ -81,7 +89,17 @@ class TestPanlint(unittest.TestCase):
         self.assertEqual(panlint.strip_trailing_comments(annotation_mixed, panlint.get_string_ranges(annotation_mixed)), '''words = '@{Not a trailing annotation}';''')
 
     def test_whitespace_around_operators(self):
-        good = 'variable a = 5 + 3;'
+        good = {
+            'simple': 'variable a = 5 + 3;',
+            'fn': 'variable a = afunction() + 3;',
+            'fn2': 'variable a = afunction() + 31;',
+            'for': 'for (idx = 31; idx >= 0; idx = idx - 1) {',
+            'square_brackets': 'variable x = b[c-1];',
+            'negative':  'variable x = -1;',
+            # lines that start or end with an operator (i.e. are part of a multi-line expression) should be allowed
+            'line_cont': '+ 42;',
+            'line_to_be_cont': 'variable x = 42 +',
+        }
 
         bad_before = 'variable b = 8* 1;'
         dgn_before = '             ^^'
@@ -92,19 +110,17 @@ class TestPanlint(unittest.TestCase):
         bad_both = 'variable d = 10-2;'
         dgn_both = '              ^^^'
 
-        good_square_brackets = 'variable x = b[c-1];'
         bad_square_brackets = 'variable x = b[c + 1];'
         dgn_square_brackets = '                ^'
 
-        good_negative = 'variable x = -1;'
         bad_negative = 'variable x = - 1;'
         dgn_negative = '             ^^^'
 
         lc = panlint.LineChecks()
 
-        self.assertEqual(lc.whitespace_around_operators(good, []), (True, '', ''))
-        self.assertEqual(lc.whitespace_around_operators(good_square_brackets, []), (True, '', ''))
-        self.assertEqual(lc.whitespace_around_operators(good_negative, []), (True, '', ''))
+        for (name, line) in good.items():
+            self.assertEqual(lc.whitespace_around_operators(line, []), (True, '', ''), "good %s line:'%s'" % (name, line))
+
         self.assertEqual(lc.whitespace_around_operators(bad_before, []), (False, dgn_before, 'Missing space before operator'))
         self.assertEqual(lc.whitespace_around_operators(bad_after, []), (False, dgn_after, 'Missing space after operator'))
         self.assertEqual(lc.whitespace_around_operators(bad_both, []), (False, dgn_both, 'Missing space before and after operator'))
@@ -113,9 +129,6 @@ class TestPanlint(unittest.TestCase):
         self.assertEqual(lc.whitespace_around_operators(bad_negative, []),
                          (False, dgn_negative, 'Unwanted space after minus sign (not operator)'))
 
-        # Handling lines that start or end with an operator (i.e. are part of a multi-line expression) should be allowed
-        self.assertEqual(lc.whitespace_around_operators('+ 42;', []), (True, '', ''))
-        self.assertEqual(lc.whitespace_around_operators('variable x = 42 +', []), (True, '', ''))
 
     def test_whitespace_after_semicolons(self):
         bad_1 = 'foreach(k; v;  things) {'

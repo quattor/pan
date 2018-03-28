@@ -99,10 +99,27 @@ class LineChecks:
             sqb_after = re.search(r'^([' + sqb_simple + ']*)[]]', chars_after)
 
             valid = True
-            if op == '-' and \
-               re.search(r'\W\s*$', chars_before) and \
-               re.search(r'^\s*\d+\s*\W', chars_after):
+            if op == '-' and (
+                    (
+                        re.search(r'[^\w\s)=]\s*$', chars_before)
+                        and
+                        re.search(r'^\s*\d+\s*[^\w\s]', chars_after)
+                    )
+                    or
+                    (
+                        re.search(r'=\s*$', chars_before)
+                        and
+                        re.search(r'^\s*\d+', chars_after)
+                    )
+            ):
                 # -\d not preceded or followed by eg variable name
+                # first or:
+                #   use [^\w\s] instead of \W to avoid backtracking winning from greedy *
+                #   search(r'\W\s*$', "x ") gives a match
+                #     chars_before: allow ')': end of cuntion call
+                #                   = handled in second or
+                # second or:
+                #   no space directly after assignment
                 if re.search(r'^\s', chars_after):
                     valid = False
                     message = 'Unwanted space after minus sign (not operator)'

@@ -5,8 +5,8 @@
 # @format=pan
 #
 
-object template path2;
+object template path2b;
 
-'/x' = dict(escape('a/b'), 'OK');
+'/x' = dict('{a/b}', 'OK');
 '/result' = value('/x/{a/b}');
 

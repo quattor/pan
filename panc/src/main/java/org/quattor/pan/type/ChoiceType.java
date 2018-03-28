@@ -41,8 +41,6 @@ public class ChoiceType extends AdvancedType {
         FullType type = context.getFullType(identifier);
         type.validate(context, self);
 
-        System.out.println(this.toString());
-
         // Check whether the value is one of the possible choices.
         boolean found = choices.contains(self);
 

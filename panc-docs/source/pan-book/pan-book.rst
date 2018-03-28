@@ -1762,6 +1762,10 @@ Table: Debugging Functions
 +----------------------+-----------------------------------------------------------+
 | :ref:`unescape`      | Transform an escaped string into its original form.       |
 +----------------------+-----------------------------------------------------------+
+| :ref:`json_decode`   | Convert a JSON-encoded string to a PAN data structure.    |
++----------------------+-----------------------------------------------------------+
+| :ref:`json_encode`   | Convert a PAN data structure to a JSON-encoded string.    |
++----------------------+-----------------------------------------------------------+
 
 Table: Encoding and Decoding Functions
 

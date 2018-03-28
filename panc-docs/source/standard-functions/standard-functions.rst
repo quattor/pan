@@ -1870,15 +1870,28 @@ Synopsis
 --------
 
 element **value** (string *path*)
+element **value** (string *path*, element *default*)
 
 Description
 -----------
 
 This function returns the element identified by the given path, which
-can be an external path. An error occurs if there is no such element.
+can be an external path. An error occurs if there is no such element
+and no (optional) default is provided.
+If a `default` element is defined as second argument,
+and either there is no element for the given path or
+the (current) element of the given path is `undef`,
+the default element is returned.
 
 ::
 
     # /y will be 200
     '/x' = 100;
     '/y' = 2 * value('/x');
+
+    # /z will be (the default) 10
+    '/z' = value('/nopath', 10);
+
+    # /v will be (the default) 5
+    '/u' = undef;
+    '/v' = value('/u', 5);

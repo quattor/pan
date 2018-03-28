@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.quattor.pan</groupId>
   <artifactId>pan</artifactId>
-  <version>10.6-SNAPSHOT</version>
+  <version>10.7-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>pan</name>
   <description>Pan Language Tools</description>
@@ -26,8 +26,8 @@
   <modules>
     <module>panc</module>
     <module>panc-docs</module>
-    <!--<module>panc-maven-plugin</module>
-    <module>panc-maven-archetype</module>-->
+    <module>panc-maven-plugin</module>
+    <module>panc-maven-archetype</module>
   </modules>
   <organization>
     <name>Quattor</name>
@@ -147,12 +147,12 @@
       <dependency>
         <groupId>org.quattor.pan</groupId>
         <artifactId>panc-docs</artifactId>
-        <version>10.6-SNAPSHOT</version>
+        <version>10.7-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.quattor.pan</groupId>
         <artifactId>panc</artifactId>
-        <version>10.6-SNAPSHOT</version>
+        <version>10.7-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.clojure</groupId>

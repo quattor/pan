@@ -22,6 +22,7 @@ package org.quattor.pan.dml.data;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_CONCURRENT_MODIFICATION;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_LIST_INDEX;
+import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_NEGATIVE_LIST_INDEX;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_REPLACEMENT;
 import static org.quattor.pan.utils.MessageUtils.MSG_LIST_SIZE_OUTSIDE_RANGE;
 import static org.quattor.pan.utils.MessageUtils.MSG_NONEXISTANT_LIST_ELEMENT;
@@ -107,6 +108,9 @@ public class ListResource extends Resource {
 		int index = 0;
 		try {
 			index = term.getIndex().intValue();
+            if (index < 0) {
+                index += list.size();
+            }
 			value = list.get(index);
 		} catch (IndexOutOfBoundsException ioobe) {
 			// OK, just return a null value.
@@ -137,14 +141,21 @@ public class ListResource extends Resource {
 
 		Element oldValue = null;
 
+        int size = list.size();
+
 		if (index < 0) {
-			throw new EvaluationException(MessageUtils.format(
-					MSG_INVALID_LIST_INDEX, Integer.toString(index)));
+            if (index < -size) {
+                // negative indices do not auto-prepend
+                // (asopposed to positive ones that grow the list by appending undef)
+                throw new EvaluationException(MessageUtils.format(
+                    MSG_INVALID_NEGATIVE_LIST_INDEX, Integer.toString(index), size));
+            } else {
+                index += size;
+            }
 		}
 
 		try {
 			if ((newValue != null) && !(newValue instanceof Null)) {
-				int size = list.size();
 				if (index >= size) {
 					for (int i = 0; i < index - size; i++) {
 						list.add(Undef.VALUE);

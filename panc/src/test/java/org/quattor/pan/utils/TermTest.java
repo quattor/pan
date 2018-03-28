@@ -95,7 +95,7 @@ public class TermTest {
 
 	@Test
 	public void testIllegalNumericTerms() {
-		List<Long> paths = Arrays.asList(-1L, ((long) Integer.MAX_VALUE) + 1L);
+		List<Long> paths = Arrays.asList(((long) Integer.MIN_VALUE) - 1, ((long) Integer.MAX_VALUE) + 1L);
 		for (Long s : paths) {
 			try {
 				TermFactory.create(s);
@@ -109,10 +109,11 @@ public class TermTest {
 
 	@Test
 	public void testIllegalElementTerms() {
-		List<Element> paths = Arrays.asList((Element) StringProperty
-				.getInstance("invalid/path"), StringProperty.getInstance("-1"),
-				new ListResource(), LongProperty
-						.getInstance(((long) Integer.MAX_VALUE) + 1));
+		List<Element> paths = Arrays.asList(
+            (Element) StringProperty.getInstance("invalid/path"),
+            new ListResource(),
+            LongProperty.getInstance(((long) Integer.MIN_VALUE) - 1),
+            LongProperty.getInstance(((long) Integer.MAX_VALUE) + 1));
 		for (Element s : paths) {
 			try {
 				TermFactory.create(s);

@@ -274,6 +274,8 @@ public class MessageUtils {
 
     public final static String MSG_VARIABLE_REF_OR_UNDEF = "MSG_VARIABLE_REF_OR_UNDEF";
 
+    public final static String MSG_INVALID_COMPRESS_NAME = "MSG_INVALID_COMPRESS_NAME";
+
     public final static String MSG_INVALID_TPL_NAME = "MSG_INVALID_TPL_NAME";
 
     public final static String MSG_MISNAMED_TPL = "MSG_MISNAMED_TPL";

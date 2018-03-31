@@ -39,7 +39,7 @@ public class FileContentsTest extends BuiltInFunctionTestUtils {
 	@Test(expected = SyntaxException.class)
 	public void testTooManyArguments() throws SyntaxException {
 		FileContents.getInstance(null, StringProperty.getInstance("OK"),
-				StringProperty.getInstance("OK"));
+                                 StringProperty.getInstance("OK"), StringProperty.getInstance("gzip"));
 	}
 
 	@Test(expected = SyntaxException.class)

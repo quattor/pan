@@ -374,12 +374,19 @@ public class PanParserAstUtils {
         return BindStatement.getInstance(ast.getSourceRange(), ast.getIdentifier(), fullType);
     }
 
-    private static Path createPathFromIdentifier(ASTStatement ast) throws SyntaxException {
+    private static Path createPathFromIdentifier(ASTStatement ast, Path prefix) throws SyntaxException {
 
         try {
             String pathname = ast.getIdentifier();
             assert (pathname != null);
-            return new Path(pathname);
+
+            // Do not allow all relative paths when prefix is /
+            Path path = new Path(pathname, prefix != null && prefix.getLength() > 0);
+            if (prefix != null) {
+                path = Path.resolve(prefix, path);
+            }
+
+            return path;
         } catch (EvaluationException ee) {
             throw SyntaxException.create(ast.getSourceRange(), ee);
         } catch (SyntaxException se) {
@@ -396,8 +403,7 @@ public class PanParserAstUtils {
 
         // Get the identifier and create the path. Resolve this against the
         // prefix if the given path is relative.
-        Path path = createPathFromIdentifier(ast);
-        path = Path.resolve(prefix, path);
+        Path path = createPathFromIdentifier(ast, prefix);
 
         // Create the assignment statement.
         assert (ast.jjtGetNumChildren() <= 1);
@@ -498,8 +504,7 @@ public class PanParserAstUtils {
         Path path = null;
 
         if (!"".equals(ast.getIdentifier())) {
-
-            path = createPathFromIdentifier(ast);
+            path = createPathFromIdentifier(ast, null);
             if (path.isAbsolute()) {
                 // Normal path was given is absolute.
                 // This is both the new/next absolute prefix and the current prefix

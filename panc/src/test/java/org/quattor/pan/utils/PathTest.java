@@ -129,6 +129,32 @@ public class PathTest {
 	}
 
 	@Test
+	public void testValidFirstTermAllowRelative() {
+		List<String> paths = Arrays.asList("0/a");
+		for (String s : paths) {
+			try {
+				new Path(s, true);
+			} catch (SyntaxException se) {
+				fail("valid first with allow_relative term did not throw an exception (" + s + ")");
+			}
+		}
+	}
+
+	@Test
+	public void testInvalidFirstTermAllowRelative() {
+		List<String> paths = Arrays.asList("alpha:/0/a",
+				"alpha:0/a", "/0/a");
+		for (String s : paths) {
+			try {
+				new Path(s, true);
+				fail("illegal first term with allow_relative did not throw an exception (" + s + ")");
+			} catch (SyntaxException se) {
+				// OK.
+			}
+		}
+	}
+
+	@Test
 	public void testValidEscapedValues() {
 		List<String> paths = Arrays.asList("{}", "{a}", "{a/b}", "a/{b}",
 				"/{b}/c", "a/{b}/c", "a/{b/c}/d");
@@ -150,8 +176,7 @@ public class PathTest {
 		for (String s : paths) {
 			try {
 				new Path(s);
-				fail("invalid escaped path did not throw an exception (" + s
-						+ ")");
+				fail("invalid escaped path did not throw an exception (" + s + ")");
 			} catch (SyntaxException se) {
 				// OK.
 			}
@@ -166,8 +191,7 @@ public class PathTest {
 		for (int i = 0; i < paths.length; i++) {
 			Path p = new Path(paths[i]);
 			if (!results[i].equals(p.toString())) {
-				fail("incorrect escaping: " + paths[i] + " " + results[i] + " "
-						+ p.toString());
+				fail("incorrect escaping: " + paths[i] + " " + results[i] + " "	+ p.toString());
 			}
 		}
 	}
@@ -220,8 +244,7 @@ public class PathTest {
 				assertTrue(correct.equals(p.toList()));
 				assertTrue(p.isExternal());
 
-				fail("illegal combination did not throw an exception (" + s
-						+ ")");
+				fail("illegal combination did not throw an exception (" + s + ")");
 			} catch (SyntaxException se) {
 				// OK.
 			}
@@ -248,52 +271,40 @@ public class PathTest {
 	public void testToString() throws SyntaxException {
 
 		Path p = new Path("alpha:/");
-		assertEquals("incorrect path string representation: " + p, "alpha:/", p
-				.toString());
+		assertEquals("incorrect path string representation: " + p, "alpha:/", p.toString());
 
 		p = new Path("alpha:");
-		assertEquals("incorrect path string representation: " + p, "alpha:/", p
-				.toString());
+		assertEquals("incorrect path string representation: " + p, "alpha:/", p.toString());
 
 		p = new Path("/");
-		assertEquals("incorrect path string representation: " + p, "/", p
-				.toString());
+		assertEquals("incorrect path string representation: " + p, "/", p.toString());
 
 		p = new Path("alpha:/beta");
-		assertEquals("incorrect path string representation: " + p,
-				"alpha:/beta", p.toString());
+		assertEquals("incorrect path string representation: " + p, "alpha:/beta", p.toString());
 
 		p = new Path("alpha:beta");
-		assertEquals("incorrect path string representation: " + p,
-				"alpha:/beta", p.toString());
+		assertEquals("incorrect path string representation: " + p, "alpha:/beta", p.toString());
 
 		p = new Path("/absolute");
-		assertEquals("incorrect path string representation: " + p, "/absolute",
-				p.toString());
+		assertEquals("incorrect path string representation: " + p, "/absolute", p.toString());
 
 		p = new Path("/absolute");
-		assertEquals("incorrect path string representation: " + p, "/absolute",
-				p.toString());
+		assertEquals("incorrect path string representation: " + p, "/absolute", p.toString());
 
 		p = new Path("/absolute/beta");
-		assertEquals("incorrect path string representation: " + p,
-				"/absolute/beta", p.toString());
+		assertEquals("incorrect path string representation: " + p, "/absolute/beta", p.toString());
 
 		p = new Path("relative/");
-		assertEquals("incorrect path string representation: " + p, "relative",
-				p.toString());
+		assertEquals("incorrect path string representation: " + p, "relative", p.toString());
 
 		p = new Path("relative");
-		assertEquals("incorrect path string representation: " + p, "relative",
-				p.toString());
+		assertEquals("incorrect path string representation: " + p, "relative", p.toString());
 
 		p = new Path("relative/beta");
-		assertEquals("incorrect path string representation: " + p,
-				"relative/beta", p.toString());
+		assertEquals("incorrect path string representation: " + p, "relative/beta", p.toString());
 
 		p = new Path("relative/beta/gamma");
-		assertEquals("incorrect path string representation: " + p,
-				"relative/beta/gamma", p.toString());
+		assertEquals("incorrect path string representation: " + p, "relative/beta/gamma", p.toString());
 	}
 
 	@Test

@@ -61,7 +61,7 @@ LINE_PATTERNS = {
 # all strings on non-ignored lines that appear to be profile paths
 # Every pattern must provide a single capturing group named "error"
 PATH_PATTERNS = {
-    "Unnecessary trailing slash at end of profile path": re.compile(r'''(?P<error>/+)$'''),
+    "Unnecessary trailing slash at end of profile path": re.compile(r'''.(?P<error>/+)$'''),
 }
 
 TAB_ARROW = u'\u2192'

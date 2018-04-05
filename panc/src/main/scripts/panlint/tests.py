@@ -160,6 +160,12 @@ class TestPanlint(unittest.TestCase):
             ([], set(), 0, False)
         )
 
+        good_line_3 = "'/' = dict();"
+        self.assertEqual(
+            panlint.lint_line(good_line_3, 151, [], False),
+            ([], set(), 0, False)
+        )
+
         bad_line_1 = '"/system/hostname/" = "bar.example.org";'
         bad_diag_1 = ['                 ^']
         bad_msg_1 = ['Unnecessary trailing slash at end of profile path']

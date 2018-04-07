@@ -10,12 +10,12 @@ object template exists9;
 
 # In particular, this returned false for v7 and returns true
 # for v8.
-variable X ?= exists(X);
+variable X = exists(X);
 
 variable Y = undef;
-variable Y ?= exists(Y);
+variable Y = exists(Y);
 
 variable Z = null;
-variable Z ?= exists(Z);
+variable Z = exists(Z);
 
 '/result' = X && Y && Z;

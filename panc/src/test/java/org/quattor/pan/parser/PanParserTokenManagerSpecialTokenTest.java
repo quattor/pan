@@ -69,12 +69,12 @@ public class PanParserTokenManagerSpecialTokenTest {
 	@Test
 	public void testEmptyAnnotation() {
 
-		ArrayList<Token> tokens = parseSpecialTokens("@()");
+		ArrayList<Token> tokens = parseSpecialTokens("@{}");
 		assertEquals(1, tokens.size());
 
 		Token token = tokens.get(0);
 		assertEquals(PanParserConstants.ANNOTATION, token.kind);
-		assertEquals("@()", token.image);
+		assertEquals("@{}", token.image);
 	}
 
 	@Test

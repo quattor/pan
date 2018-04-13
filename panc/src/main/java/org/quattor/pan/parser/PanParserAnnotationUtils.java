@@ -21,7 +21,7 @@ import org.quattor.pan.exceptions.SystemException;
 import org.quattor.pan.dml.Operation;
 import org.quattor.pan.parser.ASTStatement.StatementType;
 import org.quattor.pan.parser.ASTOperation.OperationType;
-import org.quattor.pan.template.SourceRange;
+import org.quattor.pan.ttemplate.SourceRange;
 import org.quattor.pan.utils.MessageUtils;
 import org.quattor.pan.utils.XmlUtils;
 import org.xml.sax.SAXException;

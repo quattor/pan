@@ -29,8 +29,8 @@ import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.operators.Variable;
 import org.quattor.pan.exceptions.CompilerError;
 import org.quattor.pan.exceptions.SyntaxException;
-import org.quattor.pan.template.Context;
-import org.quattor.pan.template.SourceRange;
+import org.quattor.pan.ttemplate.Context;
+import org.quattor.pan.ttemplate.SourceRange;
 
 /**
  * Tests whether the given value (may be a calculated value via a DML block) is

@@ -22,7 +22,7 @@ package org.quattor.pan.parser;
 
 import java.io.File;
 
-import org.quattor.pan.template.SourceRange;
+import org.quattor.pan.ttemplate.SourceRange;
 
 /**
  * This exception is thrown when parse errors are encountered. You can

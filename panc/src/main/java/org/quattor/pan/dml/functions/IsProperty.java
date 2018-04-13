@@ -23,7 +23,7 @@ package org.quattor.pan.dml.functions;
 import org.quattor.pan.dml.Operation;
 import org.quattor.pan.dml.data.Property;
 import org.quattor.pan.exceptions.SyntaxException;
-import org.quattor.pan.template.SourceRange;
+import org.quattor.pan.ttemplate.SourceRange;
 
 /**
  * Wrapper that creates an is_property function call from the IsOfType class.

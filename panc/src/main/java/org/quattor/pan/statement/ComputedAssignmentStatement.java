@@ -22,7 +22,7 @@ package org.quattor.pan.statement;
 
 import org.quattor.pan.dml.Operation;
 import org.quattor.pan.exceptions.SyntaxException;
-import org.quattor.pan.template.SourceRange;
+import org.quattor.pan.ttemplate.SourceRange;
 import org.quattor.pan.utils.Path;
 
 /**

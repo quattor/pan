@@ -24,7 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.quattor.pan.exceptions.EvaluationException;
-import org.quattor.pan.template.Context;
+import org.quattor.pan.ttemplate.Context;
 
 public class ComputedIncludeStatementTest extends StatementTestUtils {
 

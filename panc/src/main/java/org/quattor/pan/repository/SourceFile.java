@@ -18,7 +18,7 @@ import java.net.URISyntaxException;
 import net.jcip.annotations.Immutable;
 
 import org.quattor.pan.exceptions.CompilerError;
-import org.quattor.pan.template.Template;
+import org.quattor.pan.ttemplate.Template;
 import org.quattor.pan.utils.MessageUtils;
 
 @Immutable

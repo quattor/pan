@@ -7,8 +7,8 @@ import org.quattor.pan.dml.data.StringProperty;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.exceptions.ValidationException;
 import org.quattor.pan.parser.ParseException;
-import org.quattor.pan.template.BuildContext;
-import org.quattor.pan.template.Context;
+import org.quattor.pan.ttemplate.BuildContext;
+import org.quattor.pan.ttemplate.Context;
 
 import java.util.ArrayList;
 import java.util.List;

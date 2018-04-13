@@ -34,8 +34,8 @@ import org.quattor.pan.dml.data.Undef;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.InvalidTermException;
 import org.quattor.pan.exceptions.SyntaxException;
-import org.quattor.pan.template.BuildContext;
-import org.quattor.pan.template.Context;
+import org.quattor.pan.ttemplate.BuildContext;
+import org.quattor.pan.ttemplate.Context;
 import org.quattor.pan.utils.TermFactory;
 
 public class SimpleListVariableTest extends AbstractOperationTestUtils {

@@ -20,7 +20,7 @@ import org.quattor.pan.dml.Operation;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.InvalidTermException;
 import org.quattor.pan.exceptions.ValidationException;
-import org.quattor.pan.template.Context;
+import org.quattor.pan.ttemplate.Context;
 import org.quattor.pan.utils.Range;
 import org.quattor.pan.utils.Term;
 

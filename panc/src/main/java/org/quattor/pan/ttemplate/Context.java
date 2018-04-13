@@ -18,7 +18,7 @@
  $Id: Context.java 3927 2008-11-20 16:47:35Z loomis $
  */
 
-package org.quattor.pan.template;
+package org.quattor.pan.ttemplate;
 
 import java.util.List;
 import java.util.Map;

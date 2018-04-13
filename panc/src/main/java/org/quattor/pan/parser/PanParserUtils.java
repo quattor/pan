@@ -26,7 +26,7 @@ import org.quattor.pan.dml.Operation;
 import org.quattor.pan.dml.data.LongProperty;
 import org.quattor.pan.dml.data.StringProperty;
 import org.quattor.pan.parser.ASTOperation.OperationType;
-import org.quattor.pan.template.SourceRange;
+import org.quattor.pan.ttemplate.SourceRange;
 
 public class PanParserUtils {
 

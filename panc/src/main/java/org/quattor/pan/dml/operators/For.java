@@ -28,8 +28,8 @@ import org.quattor.pan.dml.Operation;
 import org.quattor.pan.dml.data.BooleanProperty;
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.exceptions.EvaluationException;
-import org.quattor.pan.template.Context;
-import org.quattor.pan.template.SourceRange;
+import org.quattor.pan.ttemplate.Context;
+import org.quattor.pan.ttemplate.SourceRange;
 import org.quattor.pan.utils.MessageUtils;
 
 /**

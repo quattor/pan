@@ -36,10 +36,10 @@ import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.Undef;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.repository.SourceFile;
-import org.quattor.pan.template.BuildContext;
-import org.quattor.pan.template.Context;
-import org.quattor.pan.template.SourceRange;
-import org.quattor.pan.template.Template;
+import org.quattor.pan.ttemplate.BuildContext;
+import org.quattor.pan.ttemplate.Context;
+import org.quattor.pan.ttemplate.SourceRange;
+import org.quattor.pan.ttemplate.Template;
 import org.quattor.pan.type.FullType;
 import org.quattor.pan.utils.Path;
 

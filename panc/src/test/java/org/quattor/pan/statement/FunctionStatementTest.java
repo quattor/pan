@@ -23,7 +23,7 @@ package org.quattor.pan.statement;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.quattor.pan.template.Context;
+import org.quattor.pan.ttemplate.Context;
 
 public class FunctionStatementTest extends StatementTestUtils {
 

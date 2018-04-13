@@ -34,7 +34,7 @@ import org.quattor.pan.CompilerLogging.LoggingType;
 import org.quattor.pan.cache.Valid1Cache;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.ValidationException;
-import org.quattor.pan.template.Context;
+import org.quattor.pan.ttemplate.Context;
 
 /**
  * Wraps the <code>Valid2Callable</code> as a <code>Task</code>. This wrapping

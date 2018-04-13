@@ -36,7 +36,7 @@ import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.ElementUtils;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.ValidationException;
-import org.quattor.pan.template.Context;
+import org.quattor.pan.ttemplate.Context;
 import org.quattor.pan.type.FullType;
 import org.quattor.pan.utils.Path;
 

@@ -20,7 +20,7 @@
 
 package org.quattor.pan.parser;
 
-import org.quattor.pan.template.Template.TemplateType;
+import org.quattor.pan.ttemplate.Template.TemplateType;
 
 public class ASTTemplate extends SimpleNode {
 

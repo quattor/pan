@@ -25,8 +25,8 @@ import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.StringProperty;
 import org.quattor.pan.dml.data.Undef;
 import org.quattor.pan.exceptions.SyntaxException;
-import org.quattor.pan.template.Context;
-import org.quattor.pan.template.SourceRange;
+import org.quattor.pan.ttemplate.Context;
+import org.quattor.pan.ttemplate.SourceRange;
 
 import static org.quattor.pan.utils.MessageUtils.*;
 

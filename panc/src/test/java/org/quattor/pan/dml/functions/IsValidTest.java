@@ -10,9 +10,9 @@ import org.quattor.pan.dml.operators.SimpleVariable;
 import org.quattor.pan.dml.operators.Variable;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
-import org.quattor.pan.template.BuildContext;
-import org.quattor.pan.template.CompileTimeContext;
-import org.quattor.pan.template.Context;
+import org.quattor.pan.ttemplate.BuildContext;
+import org.quattor.pan.ttemplate.CompileTimeContext;
+import org.quattor.pan.ttemplate.Context;
 
 /**
  * Created by iliclaey.

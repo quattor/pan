@@ -18,7 +18,7 @@
  $Id: ObjectContextTest.java 3550 2008-08-02 14:54:26Z loomis $
  */
 
-package org.quattor.pan.template;
+package org.quattor.pan.ttemplate;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;

@@ -28,7 +28,7 @@ import java.lang.reflect.Modifier;
 
 import org.quattor.pan.dml.AbstractOperationTestUtils;
 import org.quattor.pan.dml.Operation;
-import org.quattor.pan.template.SourceRange;
+import org.quattor.pan.ttemplate.SourceRange;
 
 public class BuiltInFunctionTestUtils extends AbstractOperationTestUtils {
 

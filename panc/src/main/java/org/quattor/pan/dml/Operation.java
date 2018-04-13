@@ -25,7 +25,7 @@ import clojure.lang.IObj;
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
-import org.quattor.pan.template.Context;
+import org.quattor.pan.ttemplate.Context;
 
 /**
  * All DML (data manipulation language) components implement this interface and

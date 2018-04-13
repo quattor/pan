@@ -30,8 +30,8 @@ import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.HashResource;
 import org.quattor.pan.dml.data.Undef;
 import org.quattor.pan.exceptions.SyntaxException;
-import org.quattor.pan.template.CompileTimeContext;
-import org.quattor.pan.template.Context;
+import org.quattor.pan.ttemplate.CompileTimeContext;
+import org.quattor.pan.ttemplate.Context;
 
 public class ForeachTest extends AbstractOperationTestUtils {
 

@@ -1,4 +1,4 @@
-package org.quattor.pan.template;
+package org.quattor.pan.ttemplate;
 
 import java.util.Map;
 import java.util.TreeMap;

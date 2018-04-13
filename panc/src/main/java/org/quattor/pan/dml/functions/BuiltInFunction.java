@@ -5,8 +5,8 @@ import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_IN_COMPILE_TIME_CON
 import org.quattor.pan.dml.AbstractOperation;
 import org.quattor.pan.dml.Operation;
 import org.quattor.pan.exceptions.EvaluationException;
-import org.quattor.pan.template.Context;
-import org.quattor.pan.template.SourceRange;
+import org.quattor.pan.ttemplate.Context;
+import org.quattor.pan.ttemplate.SourceRange;
 
 /**
  * This is just a marker class to identify those classes that are built-in

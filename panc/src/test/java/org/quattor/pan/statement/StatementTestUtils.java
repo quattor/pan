@@ -41,7 +41,7 @@ import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.output.Formatter;
 import org.quattor.pan.output.PanFormatter;
 import org.quattor.pan.tasks.BuildResult;
-import org.quattor.pan.template.Context;
+import org.quattor.pan.ttemplate.Context;
 import org.quattor.pan.utils.ExceptionUtils;
 
 public class StatementTestUtils {

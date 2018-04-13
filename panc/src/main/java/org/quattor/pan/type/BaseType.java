@@ -34,7 +34,7 @@ import org.quattor.pan.dml.data.NumberProperty;
 import org.quattor.pan.dml.data.Property;
 import org.quattor.pan.dml.data.Resource;
 import org.quattor.pan.dml.data.StringProperty;
-import org.quattor.pan.template.SourceRange;
+import org.quattor.pan.ttemplate.SourceRange;
 
 /**
  * Common abstract class for all 'primitive' types in the pan language; that is,

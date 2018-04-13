@@ -20,8 +20,8 @@
 
 package org.quattor.pan.utils;
 
-import org.quattor.pan.template.SourceRange;
-import org.quattor.pan.template.Template;
+import org.quattor.pan.ttemplate.SourceRange;
+import org.quattor.pan.ttemplate.Template;
 
 /**
  * Represents the source location of a block of characters within a given

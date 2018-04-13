@@ -18,13 +18,13 @@
  $Id: Template.java 3552 2008-08-03 09:55:58Z loomis $
  */
 
-package org.quattor.pan.template;
+package org.quattor.pan.ttemplate;
 
-import static org.quattor.pan.template.Template.TemplateType.DECLARATION;
-import static org.quattor.pan.template.Template.TemplateType.OBJECT;
-import static org.quattor.pan.template.Template.TemplateType.ORDINARY;
-import static org.quattor.pan.template.Template.TemplateType.STRUCTURE;
-import static org.quattor.pan.template.Template.TemplateType.UNIQUE;
+import static org.quattor.pan.ttemplate.Template.TemplateType.DECLARATION;
+import static org.quattor.pan.ttemplate.Template.TemplateType.OBJECT;
+import static org.quattor.pan.ttemplate.Template.TemplateType.ORDINARY;
+import static org.quattor.pan.ttemplate.Template.TemplateType.STRUCTURE;
+import static org.quattor.pan.ttemplate.Template.TemplateType.UNIQUE;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_STATEMENT_IN_STRUCT_TPL;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_STMT_IN_DECL_TPL;
 import static org.quattor.pan.utils.MessageUtils.MSG_MISNAMED_TPL;

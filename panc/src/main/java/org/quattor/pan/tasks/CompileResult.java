@@ -20,7 +20,7 @@
 
 package org.quattor.pan.tasks;
 
-import org.quattor.pan.template.Template;
+import org.quattor.pan.ttemplate.Template;
 
 /**
  * Encapsulates a compiled template (or compilation error).

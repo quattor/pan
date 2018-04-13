@@ -22,7 +22,7 @@ package org.quattor.pan.dml;
 
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.exceptions.SyntaxException;
-import org.quattor.pan.template.CompileTimeContext;
+import org.quattor.pan.ttemplate.CompileTimeContext;
 
 public class AbstractOperationTestUtils {
 

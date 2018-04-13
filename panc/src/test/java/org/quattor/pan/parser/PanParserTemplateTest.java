@@ -28,7 +28,7 @@ public class PanParserTemplateTest {
 
 	private void parseTemplate(String statement) {
 		PanParser parser = new PanParser(new StringReader(statement));
-		parser.template();
+		parser.ttemplate();
 	}
 
 	@Test

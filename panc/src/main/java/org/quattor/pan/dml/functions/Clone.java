@@ -25,8 +25,8 @@ import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_NO_ARGS_CLONE;
 import org.quattor.pan.dml.Operation;
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.exceptions.SyntaxException;
-import org.quattor.pan.template.Context;
-import org.quattor.pan.template.SourceRange;
+import org.quattor.pan.ttemplate.Context;
+import org.quattor.pan.ttemplate.SourceRange;
 
 /**
  * This function will clone the given element. In practice this will really only

@@ -61,9 +61,9 @@ import org.quattor.pan.repository.ParameterList;
 import org.quattor.pan.repository.SourceFile;
 import org.quattor.pan.repository.SourceRepository;
 import org.quattor.pan.repository.SourceRepositoryFactory;
-import org.quattor.pan.template.CompileTimeContext;
-import org.quattor.pan.template.Context;
-import org.quattor.pan.template.SourceRange;
+import org.quattor.pan.ttemplate.CompileTimeContext;
+import org.quattor.pan.ttemplate.Context;
+import org.quattor.pan.ttemplate.SourceRange;
 
 /**
  * Encapsulates the global options for the pan compiler. An instance of this

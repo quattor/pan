@@ -22,7 +22,7 @@ package org.quattor.pan.exceptions;
 
 import java.io.File;
 
-import org.quattor.pan.template.SourceRange;
+import org.quattor.pan.ttemplate.SourceRange;
 import org.quattor.pan.utils.MessageUtils;
 
 /**

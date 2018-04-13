@@ -31,8 +31,8 @@ import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.Resource;
 import org.quattor.pan.dml.data.Undef;
 import org.quattor.pan.exceptions.EvaluationException;
-import org.quattor.pan.template.Context;
-import org.quattor.pan.template.SourceRange;
+import org.quattor.pan.ttemplate.Context;
+import org.quattor.pan.ttemplate.SourceRange;
 import org.quattor.pan.utils.MessageUtils;
 
 /**

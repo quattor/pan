@@ -1,4 +1,4 @@
-package org.quattor.pan.template;
+package org.quattor.pan.ttemplate;
 
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.utils.GlobalVariable;

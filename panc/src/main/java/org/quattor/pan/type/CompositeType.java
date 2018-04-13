@@ -20,8 +20,8 @@
 
 package org.quattor.pan.type;
 
-import org.quattor.pan.template.SourceRange;
-import org.quattor.pan.template.TypeMap;
+import org.quattor.pan.ttemplate.SourceRange;
+import org.quattor.pan.ttemplate.TypeMap;
 import org.quattor.pan.utils.Range;
 
 /**

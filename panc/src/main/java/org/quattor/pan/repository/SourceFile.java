@@ -2,6 +2,7 @@ package org.quattor.pan.repository;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_ABSENT_FILE_MUST_HAVE_NULL_PATH;
 import static org.quattor.pan.utils.MessageUtils.MSG_ABSOLUTE_PATH_REQ;
+import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_COMPRESS_NAME;
 import static org.quattor.pan.utils.MessageUtils.MSG_INVALID_TPL_NAME;
 import static org.quattor.pan.utils.MessageUtils.MSG_MISNAMED_TPL;
 import static org.quattor.pan.utils.MessageUtils.MSG_SRC_FILE_NAME_OR_TYPE_IS_NULL;
@@ -14,6 +15,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.zip.GZIPInputStream;
 
 import net.jcip.annotations.Immutable;
 
@@ -91,8 +93,19 @@ public class SourceFile implements Comparable<SourceFile> {
         return new FileInputStream(path);
     }
 
-    public Reader getReader() throws IOException {
-        return new InputStreamReader(getInputStream(), "UTF-8");
+    public Reader getReader(String compression) throws IOException {
+        InputStream ips = getInputStream();
+        if (compression == null) {
+            return new InputStreamReader(ips, "UTF-8");
+        } else if (compression.equals("gzip")) {
+            return new InputStreamReader(
+                new GZIPInputStream(ips)
+                );
+        } else {
+            throw new IllegalArgumentException(
+                MessageUtils.format(MSG_INVALID_COMPRESS_NAME, compression)
+                );
+        }
     }
 
     public int hashCode() {

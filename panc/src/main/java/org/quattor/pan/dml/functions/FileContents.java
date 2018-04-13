@@ -22,7 +22,7 @@ package org.quattor.pan.dml.functions;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_DIR_NOT_ALLOWED;
 import static org.quattor.pan.utils.MessageUtils.MSG_NONEXISTANT_FILE;
-import static org.quattor.pan.utils.MessageUtils.MSG_ONE_ARG_REQ;
+import static org.quattor.pan.utils.MessageUtils.MSG_ONE_OR_TWO_ARGS_REQ;
 import static org.quattor.pan.utils.MessageUtils.MSG_RELATIVE_FILE_REQ;
 
 import java.io.IOException;
@@ -52,11 +52,12 @@ final public class FileContents extends BuiltInFunction {
             throws SyntaxException {
         super("file_contents", sourceRange, operations);
 
-        // There must be exactly one argument.
-        if (operations.length != 1) {
-            throw SyntaxException.create(sourceRange, MSG_ONE_ARG_REQ,
-                    "file_contents");
-        }
+		// This must have either one or two arguments.
+		if (operations.length < 1 || operations.length > 2) {
+			throw SyntaxException.create(sourceRange, MSG_ONE_OR_TWO_ARGS_REQ,
+					"file_contents");
+		}
+		assert (operations.length == 1 || operations.length == 2);
 
         // If there is already a fixed argument, then check that it is valid.
         if (operations[0] instanceof Element) {
@@ -80,13 +81,18 @@ final public class FileContents extends BuiltInFunction {
 
         // Calculate arguments.
         Element[] args = calculateArgs(context);
-        assert (args.length == 1);
+        assert (args.length == 1 || args.length == 2);
 
         // Get the relative file name to find.
         String relativeFileName = verifyRelativePath(args[0]);
         if (relativeFileName == null) {
             throw EvaluationException.create(sourceRange,
                     MSG_RELATIVE_FILE_REQ, name);
+        }
+
+        String compress = null;
+        if (args.length == 2) {
+            compress = ((StringProperty) args[1]).getValue();
         }
 
         SourceFile srcFile = context.lookupFile(relativeFileName);
@@ -97,7 +103,7 @@ final public class FileContents extends BuiltInFunction {
                         MSG_DIR_NOT_ALLOWED, name);
             }
             try {
-                return readFileAsStringProperty(srcFile);
+                return readFileAsStringProperty(srcFile, compress);
             } catch (IOException e) {
                 throw new SystemException(e.getLocalizedMessage(),
                         srcFile.getPath());
@@ -109,9 +115,9 @@ final public class FileContents extends BuiltInFunction {
 
     }
 
-    private static StringProperty readFileAsStringProperty(SourceFile source)
+    private static StringProperty readFileAsStringProperty(SourceFile source, String compression)
             throws IOException {
-        Reader reader = source.getReader();
+        Reader reader = source.getReader(compression);
         String contents = StringUtils.readCompletely(reader);
         return StringProperty.getInstance(contents);
     }

@@ -476,6 +476,8 @@ Synopsis
 
 string **file\_contents** (string *filename*)
 
+string **file\_contents** (string *filename*, string *compression*)
+
 Description
 -----------
 
@@ -484,6 +486,9 @@ file. The file is located using the standard source file lookup
 algorithm. Because the load path is used to find the file, this function
 may not be used to create a compile-time constant. If the file cannot be
 found, an error will be raised.
+
+Optional second argument indication what type of compression is used in the file,
+and the contents will be decompressed. Supported compression is `gzip`.
 
 .. _file_exists:
 

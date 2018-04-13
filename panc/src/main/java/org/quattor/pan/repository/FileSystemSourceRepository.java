@@ -6,7 +6,9 @@ import static org.quattor.pan.utils.MessageUtils.MSG_NON_DIRECTORY_IN_INCLUDE_DI
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.quattor.pan.exceptions.EvaluationException;
 
@@ -39,6 +41,13 @@ abstract public class FileSystemSourceRepository implements SourceRepository {
 
         sourceFileExtensions = Collections.unmodifiableList(extensions);
     };
+
+    // ConcurrentHashMap is ok for retrieveCache with loadpath
+    //  2 threads will get the same result,
+    //  so it's not an issue if they add the file
+    // No static Map, due to eg include directories
+    protected Map<String, SourceFile> retrievePanCacheLoadpath = new ConcurrentHashMap<String, SourceFile>(50000);
+    protected Map<String, SourceFile> retrieveTxtCacheLoadpath = new ConcurrentHashMap<String, SourceFile>(1000);
 
     protected FileSystemSourceRepository() {
     }
@@ -74,9 +83,18 @@ abstract public class FileSystemSourceRepository implements SourceRepository {
         return createPanSourceFile(name, file);
     }
 
+    // Optimised due to lots of calls and slow lookupSource
     public SourceFile retrievePanSource(String name, List<String> loadpath) {
-        File file = lookupSource(name, loadpath);
-        return createPanSourceFile(name, file);
+
+        String cacheKey = name + ((String) " ") + String.join(":", loadpath);
+
+        SourceFile cachedResult = retrievePanCacheLoadpath.get(cacheKey);
+        if (cachedResult == null) {
+            File file = lookupSource(name, loadpath);
+            cachedResult = createPanSourceFile(name, file);
+            retrievePanCacheLoadpath.put(cacheKey, cachedResult);
+        }
+        return cachedResult;
     }
 
     public SourceFile retrieveTxtSource(String name) {
@@ -85,8 +103,15 @@ abstract public class FileSystemSourceRepository implements SourceRepository {
     }
 
     public SourceFile retrieveTxtSource(String name, List<String> loadpath) {
-        File file = lookupText(name, loadpath);
-        return createTxtSourceFile(name, file);
+        String cacheKey = name + ((String) " ") + String.join(":", loadpath);
+
+        SourceFile cachedResult = retrieveTxtCacheLoadpath.get(cacheKey);
+        if (cachedResult == null) {
+            File file = lookupText(name, loadpath);
+            cachedResult = createTxtSourceFile(name, file);
+            retrieveTxtCacheLoadpath.put(cacheKey, cachedResult);
+        }
+        return cachedResult;
     }
 
     private SourceFile createPanSourceFile(String name, File file) {

@@ -15,6 +15,18 @@ public class FileSystemSourceRepositoryImpl extends
         this.includeDirectories = validateAndCopyIncludeDirectories(includeDirectories);
     }
 
+    // Override to benefit from caching
+    @Override
+    public SourceFile retrievePanSource(String name) {
+        return retrievePanSource(name, emptyRelativePaths);
+    }
+
+    // Override to benefit from caching
+    @Override
+    public SourceFile retrieveTxtSource(String name) {
+        return retrieveTxtSource(name, emptyRelativePaths);
+    }
+
     @Override
     public File lookupText(String name) {
         return lookupText(name, emptyRelativePaths);

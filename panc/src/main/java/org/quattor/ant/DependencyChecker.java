@@ -15,23 +15,30 @@
  */
 package org.quattor.ant;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Scanner;
+import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.regex.Pattern;
+import java.util.zip.GZIPInputStream;
 
 import org.apache.tools.ant.BuildException;
 import org.quattor.pan.CompilerOptions;
 import org.quattor.pan.CompilerOptions.DeprecationWarnings;
 import org.quattor.pan.output.DepFormatter;
+import org.quattor.pan.output.DepGzipFormatter;
 import org.quattor.pan.output.Formatter;
 import org.quattor.pan.parser.ASTTemplate;
 import org.quattor.pan.repository.SourceType;
@@ -49,6 +56,8 @@ public class DependencyChecker {
 
 	private final static Pattern NONE = Pattern.compile("^$");
 
+    private final static Pattern whitespace = Pattern.compile("\\s+");
+
 	private final Set<Formatter> formatters;
 
 	private final CompilerOptions options = CompilerOptions
@@ -56,12 +65,28 @@ public class DependencyChecker {
 
 	private final URI outputDirectoryURI;
 
-	private final Formatter depFormatter = DepFormatter.getInstance();
+    private static boolean depGzip = false;
+	private Formatter depFormatter;
+
+    // ConcurrentHashMap is ok for depOutdatedCache
+    //  2 threads will get the same result,
+    //  so it's not an issue if they add the file
+    // No static Map, due to eg include directories
+    // Very high initial number of expected dependencies
+    protected Map<String, Boolean> depOutdatedCache = new ConcurrentHashMap<String, Boolean>(50000);
 
 	public DependencyChecker(List<File> includeDirectories,
 			File outputDirectory, Set<Formatter> formatters,
 			Pattern ignoredDependencyPattern) {
 
+        // if dep.gz is formatter, assume gzipped deps
+        for (Formatter formatter : formatters) {
+			if (formatter instanceof DepGzipFormatter) {
+				this.depGzip = true;
+			}
+		}
+
+        this.depFormatter = getDepFormatter();
 		ArrayList<File> dirs = new ArrayList<File>();
 
 		if (includeDirectories != null) {
@@ -90,6 +115,14 @@ public class DependencyChecker {
 			this.outputDirectoryURI = outputDirectory.toURI();
 		}
 	}
+
+    public static Formatter getDepFormatter() {
+        if (depGzip) {
+            return DepGzipFormatter.getInstance();
+        } else {
+            return DepFormatter.getInstance();
+        }
+    }
 
 	public List<File> filterForOutdatedFiles(List<File> objectFiles) {
 
@@ -166,13 +199,26 @@ public class DependencyChecker {
 
 		boolean outdated = false;
 
-		Scanner scanner = null;
+        BufferedReader in = null;
+        String line;
 
-		try {
-			scanner = new Scanner(dependencyFile);
+        try {
+            if (depGzip) {
+                in = new BufferedReader(
+                    new InputStreamReader(
+                        new GZIPInputStream(
+                            new FileInputStream(dependencyFile)
+                            )
+                        )
+                    );
+            } else {
+                in = new BufferedReader(
+                    new FileReader(dependencyFile)
+                    );
+            }
 
-			while (scanner.hasNextLine() && !outdated) {
-				if (isDependencyOutdated(scanner.nextLine(), targetTime)) {
+            while (((line = in.readLine()) != null) && !outdated) {
+				if (isDependencyOutdated(line, targetTime)) {
 					outdated = true;
 					break;
 				}
@@ -194,8 +240,11 @@ public class DependencyChecker {
 			outdated = true;
 
 		} finally {
-			if (scanner != null) {
-				scanner.close();
+			if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e)  {
+                }
 			}
 		}
 
@@ -204,28 +253,47 @@ public class DependencyChecker {
 
 	public boolean isDependencyOutdated(String line, Long targetTime) {
 
+        // there's typically one targetTime for all object profiles
+        //   but to be fully correct, add it to the cacheKey
+        String cacheKey =  targetTime.toString() + ((String) " ") + line;
+        Boolean cachedResult = depOutdatedCache.get(cacheKey);
+        if (cachedResult != null) {
+            return cachedResult;
+        }
+
 		DependencyInfo info = new DependencyInfo(line);
 
 		if (ignoreDependencyPattern.matcher(info.name).matches()) {
+            depOutdatedCache.put(cacheKey, false);
 			return false;
 		}
 
-		switch (info.type) {
+        // default outdated; but switch default is to throw exception,
+        //  so doesn't matter much
+        boolean result = true;
+        switch (info.type) {
 
 		case TPL:
-			return isSourceDependencyOutdated(info, targetTime);
+			result = isSourceDependencyOutdated(info, targetTime);
+            break;
 		case PAN:
-			return isSourceDependencyOutdated(info, targetTime);
+			result = isSourceDependencyOutdated(info, targetTime);
+            break;
 		case TEXT:
-			return isTextDependencyOutdated(info, targetTime);
+			result = isTextDependencyOutdated(info, targetTime);
+            break;
 		case ABSENT_SOURCE:
-			return (lookupSourceFile(info.name) != null);
+			result = (lookupSourceFile(info.name) != null);
+            break;
 		case ABSENT_TEXT:
-			return (lookupTextFile(info.name) != null);
+			result = (lookupTextFile(info.name) != null);
+            break;
 		default:
 			throw new BuildException("unknown file type: " + info.type);
 		}
 
+        depOutdatedCache.put(cacheKey, result);
+        return result;
 	}
 
 	public boolean isSourceDependencyOutdated(DependencyInfo info,
@@ -316,7 +384,7 @@ public class DependencyChecker {
 		}
 
 		if (mustIncludeDepFormatter) {
-			f.add(DepFormatter.getInstance());
+			f.add(getDepFormatter());
 		}
 
 		return Collections.unmodifiableSet(f);
@@ -401,7 +469,7 @@ public class DependencyChecker {
 			// template name (or full file name), 2) file type, and 3) full
 			// URI for parent directory. The third element is only there if
 			// the file wasn't absent.
-			String[] fields = dependencyLine.split("\\s+");
+			String[] fields = whitespace.split(dependencyLine);
 
 			if (fields.length != 2 && fields.length != 3) {
 				throw new BuildException("malformed dependency line");

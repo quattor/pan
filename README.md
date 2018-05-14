@@ -100,13 +100,17 @@ ReadTheDocs is normally `stable` which will automatically mapped to the new vers
 once it is built (if it is the highest tag). You can also explicitly select the version
 to show on lower-left corner.
 
+Upload the RPM package (e.g. `panc-10.7-1.noarch.rpm`) to each of the
+externals noarch repositories at http://yum.quattor.org/externals/noarch/
+(one for each major OS version) and regenerate the repository metadata with
+`createrepo`, note that the externals repositories are *not* GPG signed.
+
+For the documentation, log into ReadTheDocs.org and add the tag for the
+release.  Once added it will build automatically.  You can then select
+the latest release as the default version to show.
+
 To finish up, close the current milestone and create a new milestone
 in the pan repository for the next release.
-
-The last step after releasing a new version is to add the new version to Quattor
-externals YUM repositories (there is one per OS version, in the `noarch` branch),
-hosted on `yum.quattor.org server.
-
 
 License
 -------

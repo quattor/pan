@@ -24,10 +24,11 @@ on a CentOS (or compatible) machine with the `rpmbuild` command installed.
 Ensure also that a recent, certified version of the JVM (1.6+) and maven
 (3.0.3+) are installed.
 
-Before doing anything else, ensure that the release notes and the change
-log for the release are up to date and complete.  The source is in the
+Before doing anything else, **ensure that the release notes and the change
+log for the release are up to date**.  The source is in the
 `panc-docs/source/release-notes/release-notes.rst` file.  The change log
-should list all of the issues resolved in the release.
+should list all of the issues resolved in the release, by referencing the
+related GitHub issue. Look at existing entries for the actual format expected.
 
 Clone this repository to your build machine and then verify that the full
 build runs correctly.  Run the following command from the top-level of the
@@ -87,6 +88,22 @@ Now use the interface to upload the packages to GitHub.  You can either
 drop and drag them into place or just select them with the chooser.
 Provide a title and description for the release and then click on the
 "Publish" button.
+
+After producing the release, the documentation on ReadTheDocs (RTD) must be updated,
+as RTD currently does not automatically build new versions.
+You must log into ReadTheDocs.org with an account 
+listed as a maintainer for the `quattor-pan` project and add the tag for the
+release to the list of versions to build (this is done in the `Versions` tab
+of the `Settings` page access through the `Admin` button of the project home page).
+Once added it will build automatically.  The default version displayed on
+ReadTheDocs is normally `stable` which will automatically mapped to the new version
+once it is built (if it is the highest tag). You can also explicitly select the version
+to show on lower-left corner.
+
+Upload the RPM package (e.g. `panc-10.7-1.noarch.rpm`) to each of the
+externals noarch repositories at http://yum.quattor.org/externals/noarch/
+(one for each major OS version) and regenerate the repository metadata with
+`createrepo`, note that the externals repositories are *not* GPG signed.
 
 For the documentation, log into ReadTheDocs.org and add the tag for the
 release.  Once added it will build automatically.  You can then select

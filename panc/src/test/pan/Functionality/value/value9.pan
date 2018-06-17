@@ -1,4 +1,4 @@
-# @expect="/nlist[@name="profile"]/long[@name="undef"]=0 and /nlist[@name="profile"]/long[@name="value"]=5"
+# @expect="/nlist[@name="profile"]/long[@name="undef"]=0 and /nlist[@name="profile"]/long[@name="value"]=0"
 # @format=pan
 #
 object template value9;

@@ -22,6 +22,8 @@ package org.quattor.pan.dml.functions;
 
 import static org.quattor.pan.utils.MessageUtils.MSG_ONE_OR_TWO_ARGS_REQ;
 
+import java.util.List;
+import java.util.Map;
 import org.quattor.pan.dml.Operation;
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.StringProperty;
@@ -30,6 +32,7 @@ import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.ttemplate.Context;
 import org.quattor.pan.ttemplate.SourceRange;
+import org.quattor.pan.type.FullType;
 import org.quattor.pan.utils.Path;
 
 /**
@@ -87,22 +90,69 @@ final public class Value extends BuiltInFunction {
 					getSourceRange(), context);
 		}
 
+        // check for binding default
+        // code based on Buildtask setDefaults
+        // Retrieve the type bindings.
+        Map<Path, List<FullType>> bindings = context.getBindings();
+        // cannot get here with p=null
+        // this is a list, multiple types are allowed
+        // (first default wins; more binds/defaults can be set after the value call, but those won't matter)
+        List<FullType> types = bindings.get(p);
 
+        if (types != null && (result == null || result instanceof Undef)) {
+            // 1st setDefault pass : obvious choice, check for missing element path or undef value
+
+            // There can be more than one binding per path. Loop over
+            // all of them, but stop at the first one which defines a
+            // default value.
+            for (FullType type : types) {
+
+                // Determine if the type has a default value.
+                Element defaultValue = type.findDefault(context);
+
+                // If something was found, set the value, then break out
+                // of the loop.
+                if (defaultValue != null) {
+                    result = defaultValue;
+                    break;
+                }
+            }
+        }
+
+        // ALWAYS duplicate the value to ensure that any
+		// changes to returned resources do not inadvertently change the
+		// referenced part of the configuration.
         if (result == null) {
             if (ops.length == 2) {
                 // 2nd arg is default value
-                result = args[1];
+                result = args[1].duplicate();
             } else {
                 throw new EvaluationException("referenced path (" + p
                                               + ") doesn't exist", getSourceRange(), context);
             }
-        } else if (result instanceof Undef && ops.length == 2) {
-            result = args[1];
+        } else if (result instanceof Undef) {
+            if (ops.length == 2) {
+                result = args[1].duplicate();
+            }
+        } else if (types != null) {
+            // 2nd setDefaults pass: check all children for default values
+            // There can be more than one binding per path.
+
+            // duplicate the result before passing to setDefaults
+            // setDefaults might modify inplace
+            // (unless protected, in which case replacement is not null)
+            result = result.duplicate();
+
+            for (FullType type : types) {
+                Element replacement = type.setDefaults(context, result);
+                if (replacement != null) {
+                    result = replacement;
+                }
+            }
         }
 
-		// Return the result. ALWAYS duplicate the value to ensure that any
-		// changes to returned resources do not inadvertently change the
-		// referenced part of the configuration.
-        return result.duplicate();
+		// Return the result.
+        // Make sure this is a duplicated value.
+        return result;
 	}
 }

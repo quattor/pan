@@ -233,7 +233,7 @@ class TestPanlint(unittest.TestCase):
 
     def test_find_annotation_blocks(self):
         test_text = '''structure template awesome;
-        @{ desc = what is the point of this template? }
+        @ somename { desc = what is the point of this template? }
 
         'foo' : string
         'bar' ? long

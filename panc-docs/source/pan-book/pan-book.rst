@@ -1,4 +1,4 @@
-. highlight:: pan
+.. highlight:: pan
 Getting Started
 ===============
 

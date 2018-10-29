@@ -16,6 +16,7 @@ endif
 " All keywords
 "
 syn keyword panConstantBoolean		false true
+syn keyword panConstantFund		long double path link boolean
 syn keyword panConstantMisc		SELF undef
 syn keyword panFunctionCheck		is_boolean is_defined is_double is_list is_long is_nlist is_null is_number is_property is_resource is_string 
 syn keyword panFunctionControl		return
@@ -76,5 +77,6 @@ hi def link panTypeDeclaration		Type
 hi def link panTypeTemplateModifier	Type
 hi def link panTypeModifier		Type
 hi def link panTypeDeclaration		Type
+hi def link panConstantFund		Type
 
 let b:current_syntax = "pan"

@@ -121,3 +121,8 @@ function! pancomplete#Complete(findstart, base)
   endif
 endfunction
 
+if exists('g:syntastic_extra_filetypes')
+    call add(g:syntastic_extra_filetypes, 'pan')
+else
+    let g:syntastic_extra_filetypes = ['pan']
+endif

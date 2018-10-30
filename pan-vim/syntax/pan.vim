@@ -18,16 +18,16 @@ endif
 syn keyword panConstantBoolean		false true
 syn keyword panConstantFund		long double path link boolean
 syn keyword panConstantMisc		SELF undef
-syn keyword panFunctionCheck		is_boolean is_defined is_double is_list is_long is_nlist is_null is_number is_property is_resource is_string 
+syn keyword panFunctionCheck		is_boolean is_defined is_double is_list is_long is_nlist is_null is_number is_property is_resource is_string is_dict is_valid
 syn keyword panFunctionControl		return
 syn keyword panFunctionList		append list prepend splice dict
 syn keyword panFunctionMisc		clone delete exists merge
 syn keyword panFunctionNList		create nlist
 syn keyword panFunctionProc		debug deprecated error to_lowercase to_uppercase traceback
-syn keyword panFunctionRegex		match matches replace split
-syn keyword panFunctionString		base64_decode base64_encode escape file_contents format substr unescape
+syn keyword panFunctionRegex		match matches replace split join substitute
+syn keyword panFunctionString		base64_decode base64_encode escape file_contents format substr unescape file_exists json_decode json_encode digest
 syn keyword panFunctionTemplate		if_exists path_exists value
-syn keyword panFunctionType		to_boolean to_double to_long to_string
+syn keyword panFunctionType		to_boolean to_double to_long to_string ip4_to_long long_to_ip4
 syn keyword panInclude			include
 syn keyword panStatementConditional	if else
 syn keyword panStatementIterator	first index key length next

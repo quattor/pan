@@ -179,6 +179,10 @@ class TestPanlint(unittest.TestCase):
             # lines that start or end with an operator (i.e. are part of a multi-line expression) should be allowed
             'line_cont': '+ 42;',
             'line_to_be_cont': 'variable EXAMPLE = 42 +',
+            'conditional_negative': 'variable A ?= -4;',
+            'list_negatives': 'variable LARRY = list(-6, 5, -12);',
+            'negative_first': 'variable NEVER = -2 * 3;',
+            'negative_after': 'variable NAMED = 2 * -3;',
         }
 
         bad = {
@@ -207,6 +211,21 @@ class TestPanlint(unittest.TestCase):
                 'Unwanted space after minus sign (not operator)',
                 '                  ^^^',
             ),
+            'negative_before': (
+                panlint.Line('', 16001, 'variable BARRY = -8* -1;'),
+                'Missing space before operator',
+                '                  ^^',
+            ),
+            'negative_after': (
+                panlint.Line('', 16002, 'variable BEHOVES = -16 /-2;'),
+                'Missing space after operator',
+                '                       ^^',
+            ),
+            'negative_both': (
+                panlint.Line('', 16003, 'variable DARIUS = -10--2;'),
+                'Missing space before and after operator',
+                '                    ^^^',
+            ),
         }
 
         lc = panlint.LineChecks()
@@ -224,6 +243,12 @@ class TestPanlint(unittest.TestCase):
         # Handling lines that start or end with an operator (i.e. are part of a multi-line expression) should be allowed
         self.assertEqual(lc.whitespace_around_operators(panlint.Line('', 9216, '+ 42;'), []).problems, [])
         self.assertEqual(lc.whitespace_around_operators(panlint.Line('', 10240, 'variable x = 42 +'), []).problems, [])
+
+        for s in ['+', '-', '*', '/', '>', '<', '>=', '<=']:
+            t = f'variable g = 3 {s} 4'
+            line = panlint.Line('tests.pan', 42, t)
+            result = lc.whitespace_around_operators(line, [])
+            self.assertEqual(line, result)
 
     def test_whitespace_after_semicolons(self):
         self._assert_lint_line(

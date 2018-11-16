@@ -509,7 +509,7 @@ def check_line_methods(line, string_ranges):
     return line
 
 
-def lint_line(line, components_included, first_line=False, allow_mvn_templates=False):
+def lint_line(line, components_included, first_line=False, allow_mvn_templates=False, suppress=SEV_ADVICE):
     """Run all lint checks against line and return any problems found."""
     debug_line(line)
 
@@ -534,10 +534,13 @@ def lint_line(line, components_included, first_line=False, allow_mvn_templates=F
 
         line = check_line_methods(line, string_ranges)
 
+        # Filter out problems with a lower than specified severity
+        line.problems = [p for p in line.problems if p.message.severity >= suppress]
+
     return (line, first_line)
 
 
-def lint_file(filename, allow_mvn_templates=False, ignore_components=None):
+def lint_file(filename, allow_mvn_templates=False, ignore_components=None, suppress=SEV_ADVICE):
     """Run lint checks against all lines of a file."""
     if ignore_components is None:
         ignore_components = []
@@ -576,6 +579,7 @@ def lint_file(filename, allow_mvn_templates=False, ignore_components=None):
                 components_included,
                 first_line,
                 allow_mvn_templates,
+                suppress,
             )
 
             if line.problems:
@@ -601,6 +605,13 @@ def main():
                         help='List of component to ignore when checking included components')
     parser.add_argument('--features_standalone', action='store_true',
                         help='Check that features don\'t include other features')
+    parser.add_argument(
+        '--suppress',
+        type=str,
+        choices=SEVERITY_TEXT.values(),
+        default='Advice',
+        help='Only report problems of the provided level or above',
+    )
     group_output = parser.add_mutually_exclusive_group()
     group_output.add_argument('--debug', action='store_true', help='Enable debug output')
     group_output.add_argument('--ide', action='store_true', help='Output machine-readable results for use by IDEs')
@@ -630,7 +641,7 @@ def main():
 
     for path in args.paths:
         for filename in glob(path):
-            file_problem_lines, file_problem_count = lint_file(filename, args.allow_mvn_templates, ignore_components)
+            file_problem_lines, file_problem_count = lint_file(filename, args.allow_mvn_templates, ignore_components, SEVERITY_VALUE_MAP[args.suppress])
             problem_lines += file_problem_lines
             problem_count += file_problem_count
             problem_stats[filename] = file_problem_count

@@ -22,7 +22,7 @@ import argparse
 import re
 from glob import glob
 from sys import stdout, exit as sys_exit
-from inspect import getmembers, ismethod
+from inspect import getmembers, isfunction
 import six
 from colorama import Fore, Style, init as colorama_init
 from prettytable import PrettyTable
@@ -102,12 +102,10 @@ DEBUG = False
 class LineChecks:
     """More complex single line checks that require some logic to implement their checks"""
 
-    def whitespace_around_operators(self, line, string_ranges):
+    @staticmethod
+    def whitespace_around_operators(line, string_ranges):
         """Check a line of text to ensure that there is whitespace before and after all operators"""
         operators = RE_OPERATOR.finditer(line.text)
-
-        passed = True
-        problems = []
 
         for operator in operators:
             op = operator.group(1)
@@ -145,7 +143,7 @@ class LineChecks:
                 #   no space directly after assignment
                 if re.search(r'^\s', chars_after):
                     valid = False
-                    message = 'Unwanted space after minus sign (not operator)'
+                    message_text = 'Unwanted space after minus sign (not operator)'
                     end += 2
             elif op in ('-', '+', ) and sqb_before and sqb_after:
                 # something simple in square brackets
@@ -153,7 +151,7 @@ class LineChecks:
                 reg = re.search(r'\s', in_brackets)
                 if reg:
                     valid = False
-                    message = 'Unwanted space in simple expression in square brackets'
+                    message_text = 'Unwanted space in simple expression in square brackets'
                     start = sqb_before.start(1) + reg.start(0)
                     end = start + 1
 
@@ -170,15 +168,13 @@ class LineChecks:
                     end += 1
                 messages = list(messages)
                 messages = sorted(list(messages), key=None, reverse=True)
-                message = '%s space %s operator' % (reason, ' and '.join(messages))
+                message_text = '%s space %s operator' % (reason, ' and '.join(messages))
 
             if not valid:
                 debug_range(start, end, 'WS Operator', True)
-                problems.append(Problem(start, end, message))
+                line.problems.append(Problem(start, end, message_text))
 
-            passed &= valid
-
-        return (passed, problems)
+        return line
 
 
 def inside_string(i, j, string_ranges):
@@ -395,14 +391,10 @@ def check_line_paths(line):
 
 def check_line_methods(line, string_ranges):
     """Run checks defined as methods of LineChecks against line, ignoring code within specified string ranges."""
-    problems = []
+    for _, check_method in getmembers(LineChecks(), predicate=isfunction):
+        line = check_method(line, string_ranges)
 
-    for _, check_method in getmembers(LineChecks(), predicate=ismethod):
-        passed, check_problems = check_method(line, string_ranges)
-        if not passed:
-            problems += check_problems
-
-    return problems
+    return line
 
 
 def lint_line(line, components_included, first_line=False, allow_mvn_templates=False):
@@ -423,7 +415,8 @@ def lint_line(line, components_included, first_line=False, allow_mvn_templates=F
         line.problems += check_line_component_use(line, components_included)
         line.problems += check_line_patterns(line, string_ranges)
         line.problems += check_line_paths(line)
-        line.problems += check_line_methods(line, string_ranges)
+
+        line = check_line_methods(line, string_ranges)
 
     return (line, first_line)
 

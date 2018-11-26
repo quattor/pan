@@ -97,9 +97,14 @@ class TestPanlint(unittest.TestCase):
         self.assertEqual(panlint.print_diagnosis('so many words'), FORMAT % 'so many words')
 
     def test_get_string_ranges(self):
-        self.assertEqual(panlint.get_string_ranges(panlint.Line('', 1, '''there is a "string" in here''')), [(11, 19)])
-        self.assertEqual(panlint.get_string_ranges(panlint.Line('', 1, '''"string" + 'string' + something''')),
-                         [(0, 8), (11, 19)])
+        self.assertEqual(
+            panlint.get_string_ranges(panlint.Line('', 1, '''there is a "string" in here''')),
+            [(11, 19)],
+        )
+        self.assertEqual(
+            panlint.get_string_ranges(panlint.Line('', 1, '''"string" + 'string' + something''')),
+            [(0, 8), (11, 19)],
+        )
 
     def test_merge_diagnoses(self):
         diag1 = ' ^'

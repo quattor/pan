@@ -389,10 +389,17 @@ class TestPanlint(unittest.TestCase):
         line_standard_commented = panlint.Line('', 101, '# ' + line_standard.text)
 
         # Test a line setting a path prefix
-        line_prefix = panlint.Line('', 200,
-                                   "prefix '/software/components/metaconfig/services/{/etc/sysconfig/fetch-crl}';")
+        line_prefix = panlint.Line(
+            '',
+            200,
+            "prefix '/software/components/metaconfig/services/{/etc/sysconfig/fetch-crl}';",
+        )
         diag_prefix = "                             ^^^^^^^^^^"
-        line_prefix_commented = panlint.Line('', 201, '# ' + line_prefix.text)
+        line_prefix_commented = panlint.Line(
+            '',
+            201,
+            '# ' + line_prefix.text,
+        )
 
         # Test both lines with components listed as included
         self.assertEqual(

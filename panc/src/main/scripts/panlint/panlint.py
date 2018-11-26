@@ -524,6 +524,7 @@ def main():
     parser.add_argument('paths', metavar='PATH', type=str, nargs='*', help='Paths of files to check')
     parser.add_argument('--vi', action='store_true', help='Output line numbers in a vi option style')
     parser.add_argument('--table', action='store_true', help='Display a table of per-file problem stats')
+    parser.add_argument('--summary', action='store_true', help='Display a summary of problems')
     parser.add_argument('--allow_mvn_templates', action='store_true', help='Allow use of maven templates')
     parser.add_argument('--always_exit_success', action='store_true',
                         help='Always exit cleanly even if problems are found')
@@ -571,7 +572,9 @@ def main():
         print('\nProblem count per file:')
         print(filestats_table(problem_stats))
 
-    print('\n%d problems found in %d lines' % (problem_count, len(problem_lines)))
+    if args.summary:
+        print()
+        print(f"\n{problem_count} problems found in {len(problem_lines)} lines")
 
     if args.always_exit_success:
         return 0

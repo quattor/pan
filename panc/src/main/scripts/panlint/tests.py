@@ -404,11 +404,11 @@ class TestPanlint(unittest.TestCase):
         # Test both lines with components listed as included
         self.assertEqual(
             panlint.lint_line(line_standard, ['chkconfig'], False),
-            (line_standard, 0)
+            (line_standard, False)
         )
         self.assertEqual(
             panlint.lint_line(line_prefix, ['metaconfig'], False),
-            (line_prefix, 0)
+            (line_prefix, False)
         )
 
         # Test both lines without components listed as included

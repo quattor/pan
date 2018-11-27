@@ -20,10 +20,11 @@
 import re
 import argparse
 from glob import glob
-from colorama import Fore, Style, init as colorama_init
 from sys import stdout, exit as sys_exit
 from inspect import getmembers, ismethod
 from prettytable import PrettyTable
+from colorama import Fore, Style, init as colorama_init
+
 
 RS_COMMENT = r'(?:#|@{.*?})'
 
@@ -35,7 +36,7 @@ RE_MVN_TEMPLATE = re.compile(r'\$\{\S+\}')
 RE_COMMENT = re.compile(RS_COMMENT)
 RE_COMMENT_LINE = re.compile(r'^\s*' + RS_COMMENT + '.*$')
 RE_ANNOTATION = re.compile(r'@\w*{.*?}', re.S)
-RE_OPERATOR = re.compile(r'([>=<!?]=|[+*=/-])')
+RE_OPERATOR = re.compile(r'([>=<!?]=|[<>+*=/-])')
 RE_HEREDOC = re.compile(r'<<(\w+);\s*$.*?\1$', re.S | re.M)
 
 # Find usage and inclusion of components

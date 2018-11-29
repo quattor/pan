@@ -312,79 +312,41 @@ class TestPanlint(unittest.TestCase):
         bad_first = panlint.Line('', 122, 'variable foo = "bar";')
 
         # Test first line checking
-        self._assert_lint_line(
-            good_first,
-            [],
-            [],
-            0,
-        )
+        self._assert_lint_line(good_first, [], [], 0, True)
 
-        results, first_line = panlint.lint_line(bad_first, [], True)
-        self.assertIsInstance(results, panlint.Line)
-        self.assertIsInstance(first_line, bool)
-
-        diagnoses = [p.diagnose() for p in results.problems]
-        messages = [p.message for p in results.problems]
-        self.assertEqual(diagnoses, ['^' * len(bad_first.text)])
-        self.assertNotEqual(messages, [])
-        self.assertEqual(len(messages), 1)
-        self.assertEqual(first_line, False)
+        self._assert_lint_line(bad_first, ['^'*len(bad_first.text)], None, 1, True)
 
         # Test component inclusion check
-        results, first_line = panlint.lint_line(
+        self._assert_lint_line(
             panlint.Line('', 123, '"/software/components/foo/bar" = 42;'),
-            [],
-            False,
+            ['                      ^^^'],
+            None,
+            1,
         )
-        diagnoses = [p.diagnose() for p in results.problems]
-        messages = [p.message for p in results.problems]
-        self.assertEqual(diagnoses, ['                      ^^^'])
-        self.assertNotEqual(messages, [])
-        self.assertEqual(len(messages), 1)
-        self.assertEqual(first_line, False)
 
         # Test pattern based checking
-        results, first_line = panlint.lint_line(
+        self._assert_lint_line(
             panlint.Line('', 124, '   x = x + 1; # Bad Indentation'),
-            [],
-            False,
+            ['^^^'],
+            None,
+            1,
         )
-        diagnoses = [p.diagnose() for p in results.problems]
-        messages = [p.message for p in results.problems]
-        self.assertEqual(diagnoses, ['^^^'])
-        self.assertNotEqual(messages, [])
-        self.assertEqual(len(messages), 1)
-        self.assertEqual(first_line, False)
 
         # Test method based checking
-        results, first_line = panlint.lint_line(
-            panlint.Line('missing_space.pan', 125, 'x = x+1; # Missing space'),
-            [],
-            False,
+        self._assert_lint_line(
+            panlint.Line('', 125, 'x = x+1; # Missing space'),
+            ['    ^^^'],
+            None,
+            1,
         )
-        diagnoses = [p.diagnose() for p in results.problems]
-        messages = [p.message for p in results.problems]
-        self.assertEqual(diagnoses, ['    ^^^'])
-        self.assertNotEqual(messages, [])
-        self.assertEqual(len(messages), 1)
-        self.assertEqual(first_line, False)
 
         # Test that all three check types co-exist
-        results, first_line = panlint.lint_line(
+        self._assert_lint_line(
             panlint.Line('', 126, '  "/software/components/foo/bar" = 42+7;'),
-            [],
-            False,
+            ['^^', '                        ^^^', '                                    ^^^'],
+            None,
+            3,
         )
-        diagnoses = [p.diagnose() for p in results.problems]
-        messages = [p.message for p in results.problems]
-        six.assertCountEqual(self, diagnoses, [
-            '^^',
-            '                        ^^^',
-            '                                    ^^^',
-        ])
-        self.assertNotEqual(messages, set())
-        self.assertEqual(len(messages), 3)
-        self.assertEqual(first_line, False)
 
     def test_find_annotation_blocks(self):
         test_text = '''structure template awesome;

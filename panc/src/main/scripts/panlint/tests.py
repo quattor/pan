@@ -265,51 +265,45 @@ class TestPanlint(unittest.TestCase):
         )
 
     def test_profilepath_trailing_slash(self):
-        good_line_1 = panlint.Line('', 148, '"/system/hostname" = "foo.example.org";')
-        self.assertEqual(
-            panlint.lint_line(good_line_1, [], False),
-            (good_line_1, False),
-        )
-
-        good_line_2 = panlint.Line('', 151, "prefix '/system/network/interfaces/eth0';")
-        self.assertEqual(
-            panlint.lint_line(good_line_2, [], False),
-            (good_line_2, False)
-        )
-
-        good_line_3 = panlint.Line('', 795, "'/' = dict();")
-        self.assertEqual(
-            panlint.lint_line(good_line_3, [], False),
-            (good_line_3, False)
-        )
-
-        bad_line_1 = panlint.Line('', 22, '"/system/hostname/" = "bar.example.org";')
-        bad_diag_1 = ['                 ^']
-        bad_msg_1 = ['Unnecessary trailing slash at end of profile path']
+        # Trailing slashes in profile paths
         self._assert_lint_line(
-            bad_line_1,
-            bad_diag_1,
-            bad_msg_1,
+            panlint.Line('', 148, '"/system/hostname" = "foo.example.org";'),
+            [],
+            [],
+            0,
+        )
+        self._assert_lint_line(
+            panlint.Line('', 151, "prefix '/system/network/interfaces/eth0';"),
+            [],
+            [],
+            0,
+        )
+
+        self._assert_lint_line(
+            panlint.Line('', 795, "'/' = dict();"),
+            [],
+            [],
+            0,
+        )
+
+        self._assert_lint_line(
+            panlint.Line('', 22, '"/system/hostname/" = "bar.example.org";'),
+            ['                 ^'],
+            ['Unnecessary trailing slash at end of profile path'],
             1,
         )
 
-        bad_line_2 = panlint.Line('', 77, '"/system/hostname////////" = "bob.example.org";')
-        bad_diag_2 = ['                 ^^^^^^^^']
-        bad_msg_2 = ['Unnecessary trailing slash at end of profile path']
         self._assert_lint_line(
-            bad_line_2,
-            bad_diag_2,
-            bad_msg_2,
+            panlint.Line('', 77, '"/system/hostname////////" = "bob.example.org";'),
+            ['                 ^^^^^^^^'],
+            ['Unnecessary trailing slash at end of profile path'],
             1,
         )
 
-        bad_line_3 = panlint.Line('', 182, "prefix '/system/aii/osinstall/ks/';")
-        bad_diag_3 = ['                                ^']
-        bad_msg_3 = ['Unnecessary trailing slash at end of profile path']
         self._assert_lint_line(
-            bad_line_3,
-            bad_diag_3,
-            bad_msg_3,
+            panlint.Line('', 182, "prefix '/system/aii/osinstall/ks/';"),
+            ['                                ^'],
+            ['Unnecessary trailing slash at end of profile path'],
             1,
         )
 

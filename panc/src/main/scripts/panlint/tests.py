@@ -299,7 +299,6 @@ class TestPanlint(unittest.TestCase):
             ([], set(), 0, False)
         )
 
-
     def test_check_line_patterns(self):
         lines = [
             ('variable UNIVERSAL_TRUTH = 42;', []),

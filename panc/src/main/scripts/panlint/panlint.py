@@ -453,7 +453,6 @@ def lint_line(line, components_included, first_line=False, allow_mvn_templates=F
 
 def lint_file(filename, allow_mvn_templates=False):
     """Run lint checks against all lines of a file."""
-    global DEBUG
     reports = []
     file_problem_count = 0
 

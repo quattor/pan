@@ -455,7 +455,8 @@ def lint_file(filename, allow_mvn_templates=False):
     reports = []
     file_problem_count = 0
 
-    raw_text = open(filename).read()
+    with open(filename) as f:
+        raw_text = f.read()
 
     first_line = True
     ignore_lines = []

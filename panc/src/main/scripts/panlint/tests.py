@@ -19,6 +19,7 @@ import glob
 import unittest
 from sys import argv
 from os.path import basename, dirname, join
+import six
 
 import panlint
 
@@ -112,7 +113,7 @@ class TestPanlint(unittest.TestCase):
             'fn2': 'variable a = afunction() + 31;',
             'for': 'for (idx = 31; idx >= 0; idx = idx - 1) {',
             'square_brackets': 'variable x = b[c-1];',
-            'negative':  'variable x = -1;',
+            'negative': 'variable x = -1;',
             # lines that start or end with an operator (i.e. are part of a multi-line expression) should be allowed
             'line_cont': '+ 42;',
             'line_to_be_cont': 'variable x = 42 +',
@@ -226,7 +227,7 @@ class TestPanlint(unittest.TestCase):
         self.assertEqual(panlint.lint_line(good_first, [], True), ([], set(), 0, False))
 
         diagnoses, messages, problem_count, first_line = panlint.lint_line(bad_first, [], True)
-        self.assertEqual(diagnoses, ['^'*len(bad_first.text)])
+        self.assertEqual(diagnoses, ['^' * len(bad_first.text)])
         self.assertNotEqual(messages, set())
         self.assertEqual(problem_count, 1)
         self.assertEqual(first_line, False)
@@ -270,7 +271,7 @@ class TestPanlint(unittest.TestCase):
             [],
             False,
         )
-        self.assertItemsEqual(diagnoses, [
+        six.assertCountEqual(self, diagnoses, [
             '^^',
             '                        ^^^',
             '                                    ^^^',
@@ -290,7 +291,7 @@ class TestPanlint(unittest.TestCase):
         'simon' : string = 'says';
         '''
 
-        self.assertItemsEqual(panlint.find_annotation_blocks(test_text), [2, 7])
+        six.assertCountEqual(self, panlint.find_annotation_blocks(test_text), [2, 7])
         self.assertEqual(panlint.find_annotation_blocks('template garbage;\n\n# Nothing to see here.\n\n'), [])
 
     def test_find_heredoc_blocks(self):
@@ -305,7 +306,7 @@ class TestPanlint(unittest.TestCase):
         EOFF
         '''
 
-        self.assertItemsEqual(panlint.find_heredoc_blocks(test_text), [4, 5, 8, 9])
+        six.assertCountEqual(self, panlint.find_heredoc_blocks(test_text), [4, 5, 8, 9])
         self.assertEqual(panlint.find_heredoc_blocks('template garbage;\n\n# Nothing to see here.\n\n'), [])
 
     def test_component_use(self):

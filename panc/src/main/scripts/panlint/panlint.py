@@ -160,8 +160,7 @@ class LineChecks:
             passed &= valid
 
         if not passed and messages:
-            messages = list(messages)
-            messages.sort(None, None, True)
+            messages = sorted(list(messages), key=None, reverse=True)
             message = '%s space %s operator' % (reason, ' and '.join(messages))
         return (passed, diagnosis.rstrip(), message)
 

@@ -526,12 +526,10 @@ def main():
         print_report(*report, vi=args.vi)
 
     if args.table:
-        print('')
-        print('Problem count per file:')
+        print('\nProblem count per file:')
         print(filestats_table(problem_stats))
 
-    print('')
-    print('%d problems found in total' % problems_found)
+    print('\n%d problems found in total' % problems_found)
 
     if args.always_exit_success:
         return 0

@@ -18,11 +18,12 @@
 """Linter for the Pan language"""
 
 from __future__ import print_function
-import re
 import argparse
+import re
 from glob import glob
 from sys import stdout, exit as sys_exit
 from inspect import getmembers, ismethod
+import six
 from colorama import Fore, Style, init as colorama_init
 from prettytable import PrettyTable
 from colorama import Fore, Style, init as colorama_init
@@ -348,7 +349,7 @@ def check_line_patterns(line, string_ranges):
     messages = set()
     problem_count = 0
 
-    for message, pattern in LINE_PATTERNS.iteritems():
+    for message, pattern in six.iteritems(LINE_PATTERNS):
         matches = pattern.finditer(line.text)
         for match in matches:
             if match and match.group('error'):
@@ -376,7 +377,7 @@ def check_line_paths(line):
         path_start, path_end = path_match.span('path')
         path_string = line.text[path_start + 1:path_end - 1]
         debug_range(path_start, path_end, 'Path String', False)
-        for message, pattern in PATH_PATTERNS.iteritems():
+        for message, pattern in six.iteritems(PATH_PATTERNS):
             matches = pattern.finditer(path_string)
             for match in matches:
                 if match and match.group('error'):

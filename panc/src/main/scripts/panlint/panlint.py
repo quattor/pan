@@ -17,6 +17,7 @@
 
 """Linter for the Pan language"""
 
+from __future__ import print_function
 import re
 import argparse
 from glob import glob
@@ -221,15 +222,15 @@ def print_diagnosis(diagnosis):
 def debug_line(line):
     """Print debug information for a processed line of an input file"""
     if DEBUG:
-        label = 'DEBUG: %04d %-12s |' % (line.number, '...')
-        print ''.join([Style.DIM, Fore.CYAN, label, Style.RESET_ALL, line.text.replace('\t', TAB_ARROW)])
+        label = 'DEBUG: %04d %-12s |' % (line_number, '...')
+        print(''.join([Style.DIM, Fore.CYAN, label, Style.RESET_ALL, line.text.replace('\t', TAB_ARROW)]))
 
 
 def debug_ignored_line(line):
     """Print debug information for an ignored line of an input file"""
     if DEBUG:
-        label = 'DEBUG: %04d %-12s |' % (line.number, 'Ignored')
-        print ''.join([Fore.CYAN, Style.DIM, label, Fore.RESET, line.text.replace('\t', TAB_ARROW), Style.RESET_ALL])
+        label = 'DEBUG: %04d %-12s |' % (line_number, 'Ignored')
+        print(''.join([Fore.CYAN, Style.DIM, label, Fore.RESET, line.text.replace('\t', TAB_ARROW), Style.RESET_ALL]))
 
 
 def debug_range(start, end, label, problem=False):
@@ -240,7 +241,7 @@ def debug_range(start, end, label, problem=False):
         color = Fore.CYAN
         if problem:
             color = Fore.RED
-        print ''.join([Style.DIM, Fore.CYAN, label, Style.BRIGHT, color, diagnosis, Style.RESET_ALL])
+        print(''.join([Style.DIM, Fore.CYAN, label, Style.BRIGHT, color, diagnosis, Style.RESET_ALL]))
 
 
 def diagnose(start, end):
@@ -250,10 +251,10 @@ def diagnose(start, end):
 
 def print_report(filename, line, diagnosis, message, vi=False):
     """Print a full report of all problems found with a single line of a processed file"""
-    print
-    print print_fileinfo(filename, line.number, message, vi=vi)
-    print print_line(line.text)
-    print print_diagnosis(diagnosis)
+    print('')
+    print(print_fileinfo(filename, line.number, message, vi=vi))
+    print(print_line(line.text))
+    print(print_diagnosis(diagnosis))
 
 
 def get_string_ranges(line):
@@ -511,7 +512,7 @@ def main():
     problem_stats = {}
 
     if not args.paths:
-        print 'No files were provided, not doing anything'
+        print('No files were provided, not doing anything')
         return 0
 
     for path in args.paths:
@@ -525,12 +526,12 @@ def main():
         print_report(*report, vi=args.vi)
 
     if args.table:
-        print
-        print 'Problem count per file:'
-        print filestats_table(problem_stats)
+        print('')
+        print('Problem count per file:')
+        print(filestats_table(problem_stats))
 
-    print
-    print '%d problems found in total' % problems_found
+    print('')
+    print('%d problems found in total' % problems_found)
 
     if args.always_exit_success:
         return 0

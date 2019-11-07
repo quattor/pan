@@ -109,7 +109,7 @@ class LineChecks:
             #    also whitespace, those are invalid
             sqb_simple = r'\s\w\d+-'
 
-            sqb_before = re.search(r'[[]([' + sqb_simple + ']*)$', chars_before)
+            sqb_before = re.search(r'[\[]([' + sqb_simple + ']*)$', chars_before)
             sqb_after = re.search(r'^([' + sqb_simple + ']*)[]]', chars_after)
 
             valid = True

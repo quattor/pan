@@ -2096,7 +2096,9 @@ statement to the ``nfsserver.example.org`` example.
 
 This statement can appear anywhere in the file; all of the specified
 constraints will be verified *after* the complete configuration is
-built. Setting this path to a value that is not a long or not setting
+built. To minimise the risk of programming errors, there is no
+``unbind`` statement to remove a previously specified constraint.
+Setting this path to a value that is not a long or not setting
 the value at all will cause the compilation to fail.
 
 The above constraint only does part of the work though; the value could

@@ -1,11 +1,17 @@
-language: python
-python:
-- 2.7
+language: java
+jdk:
+    - openjdk8
 
-install: "pip install prettytable colorama coverage coveralls"
+cache:
+  directories:
+  - $HOME/.m2
 
-script: coverage run --source=panc/src/main/scripts/panlint --omit panc/src/main/scripts/panlint/tests.py panc/src/main/scripts/panlint/tests.py
+install:
+    - pip install -U --user prettytable colorama coverage coveralls Sphinx
+
+script:
+    - mvn clean install
+    - python panc/src/main/scripts/panlint/tests.py
+    - coverage run --source=panc/src/main/scripts/panlint --omit panc/src/main/scripts/panlint/tests.py panc/src/main/scripts/panlint/tests.py
 
 after_success: coveralls
-
-sudo: false

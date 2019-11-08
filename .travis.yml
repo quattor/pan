@@ -1,17 +1,29 @@
-language: java
-jdk:
-    - openjdk8
-
-cache:
-  directories:
-  - $HOME/.m2
-
-install:
-    - pip install -U --user prettytable colorama coverage coveralls Sphinx
-
-script:
-    - mvn clean install
-    - python panc/src/main/scripts/panlint/tests.py
-    - coverage run --source=panc/src/main/scripts/panlint --omit panc/src/main/scripts/panlint/tests.py panc/src/main/scripts/panlint/tests.py
-
-after_success: coveralls
+matrix:
+    include:
+        - language: java
+          jdk:
+              - openjdk8
+          cache:
+              directories:
+                  - $HOME/.m2
+          install:
+              - pip install -U --user Sphinx
+          script:
+              - mvn clean install
+        - language: python
+          python:
+              - 2.7
+          install:
+              - pip install -U prettytable colorama coverage coveralls
+          script:
+              - python panc/src/main/scripts/panlint/tests.py
+              - coverage run --source=panc/src/main/scripts/panlint --omit panc/src/main/scripts/panlint/tests.py panc/src/main/scripts/panlint/tests.py
+        - language: python
+          python:
+              - 3.6
+          install:
+              - pip install -U prettytable colorama coverage coveralls
+          script:
+              - python panc/src/main/scripts/panlint/tests.py
+              - coverage run --source=panc/src/main/scripts/panlint --omit panc/src/main/scripts/panlint/tests.py panc/src/main/scripts/panlint/tests.py
+          after_success: coveralls

@@ -41,8 +41,8 @@ class TestPanlint(unittest.TestCase):
         self.assertEqual(panlint.print_diagnosis('so many words'), FORMAT % 'so many words')
 
     def test_get_string_ranges(self):
-        self.assertEqual(panlint.get_string_ranges('''there is a "string" in here'''), [(11, 19)])
-        self.assertEqual(panlint.get_string_ranges('''"string" + 'string' + something'''), [(0, 8), (11, 19)])
+        self.assertEqual(panlint.get_string_ranges(panlint.Line('', 1, '''there is a "string" in here''')), [(11, 19)])
+        self.assertEqual(panlint.get_string_ranges(panlint.Line('', 1, '''"string" + 'string' + something''')), [(0, 8), (11, 19)])
 
     def test_merge_diagnoses(self):
         diag1 = ' ^'
@@ -72,21 +72,38 @@ class TestPanlint(unittest.TestCase):
         self.assertEqual(panlint.lint_file(join(dir_base, 'mvn_template_first_line.pan'), False)[1], 1)
 
     def test_strip_trailing_comments(self):
-        comment_plain = '''Words; # This is a trailing comment'''
-        comment_in_string = '''words = '# Not a trailing comment' + pictures;'''
-        comment_mixed = '''words = '# Not a trailing comment';#But this is'''
+        comment_plain = panlint.Line('', 1, '''Words; # This is a trailing comment''')
+        comment_in_string = panlint.Line('', 2, '''words = '# Not a trailing comment' + pictures;''')
+        comment_mixed = panlint.Line('', 3, '''words = '# Not a trailing comment';#But this is''')
 
-        annotation_plain = '''Words; @{This is a trailing annotation}'''
-        annotation_in_string = '''words = '@{Not a trailing annotation}' + pictures;'''
-        annotation_mixed = '''words = '@{Not a trailing annotation}';@{But this is}'''
+        annotation_plain = panlint.Line('', 4, '''Words; @{This is a trailing annotation}''')
+        annotation_in_string = panlint.Line('', 5, '''words = '@{Not a trailing annotation}' + pictures;''')
+        annotation_mixed = panlint.Line('', 6, '''words = '@{Not a trailing annotation}';@{But this is}''')
 
-        self.assertEqual(panlint.strip_trailing_comments(comment_plain, []), 'Words;')
-        self.assertEqual(panlint.strip_trailing_comments(comment_in_string, panlint.get_string_ranges(comment_in_string)), comment_in_string)
-        self.assertEqual(panlint.strip_trailing_comments(comment_mixed, panlint.get_string_ranges(comment_mixed)), '''words = '# Not a trailing comment';''')
-
-        self.assertEqual(panlint.strip_trailing_comments(annotation_plain, []), 'Words;')
-        self.assertEqual(panlint.strip_trailing_comments(annotation_in_string, panlint.get_string_ranges(annotation_in_string)), annotation_in_string)
-        self.assertEqual(panlint.strip_trailing_comments(annotation_mixed, panlint.get_string_ranges(annotation_mixed)), '''words = '@{Not a trailing annotation}';''')
+        self.assertEqual(
+            panlint.strip_trailing_comments(comment_plain, []).text,
+            'Words;'
+        )
+        self.assertEqual(
+            panlint.strip_trailing_comments(comment_in_string, panlint.get_string_ranges(comment_in_string)).text,
+            comment_in_string.text
+        )
+        self.assertEqual(
+            panlint.strip_trailing_comments(comment_mixed, panlint.get_string_ranges(comment_mixed)).text,
+            '''words = '# Not a trailing comment';'''
+        )
+        self.assertEqual(
+            panlint.strip_trailing_comments(annotation_plain, []).text,
+            'Words;'
+        )
+        self.assertEqual(
+            panlint.strip_trailing_comments(annotation_in_string, panlint.get_string_ranges(annotation_in_string)).text,
+            annotation_in_string.text
+        )
+        self.assertEqual(
+            panlint.strip_trailing_comments(annotation_mixed, panlint.get_string_ranges(annotation_mixed)).text,
+            '''words = '@{Not a trailing annotation}';'''
+        )
 
     def test_whitespace_around_operators(self):
         good = {
@@ -101,132 +118,163 @@ class TestPanlint(unittest.TestCase):
             'line_to_be_cont': 'variable x = 42 +',
         }
 
-        bad_before = 'variable b = 8* 1;'
+        bad_before = panlint.Line('', 2048, 'variable b = 8* 1;')
         dgn_before = '             ^^'
 
-        bad_after = 'variable b = 16 /2;'
+        bad_after = panlint.Line('', 3072, 'variable b = 16 /2;')
         dgn_after = '                ^^'
 
-        bad_both = 'variable d = 10-2;'
+        bad_both = panlint.Line('', 4096, 'variable d = 10-2;')
         dgn_both = '              ^^^'
 
-        bad_square_brackets = 'variable x = b[c + 1];'
+        bad_square_brackets = panlint.Line('', 6144, 'variable x = b[c + 1];')
         dgn_square_brackets = '                ^'
 
-        bad_negative = 'variable x = - 1;'
+        bad_negative = panlint.Line('', 8192, 'variable x = - 1;')
         dgn_negative = '             ^^^'
+
+        bad_tests = [
+            (bad_before, 'Missing space before operator', dgn_before),
+            (bad_after, 'Missing space after operator', dgn_after),
+            (bad_both, 'Missing space before and after operator', dgn_both),
+            (bad_square_brackets, 'Unwanted space in simple expression in square brackets', dgn_square_brackets),
+            (bad_negative, 'Unwanted space after minus sign (not operator)', dgn_negative)
+        ]
 
         lc = panlint.LineChecks()
 
-        for (name, line) in good.items():
-            self.assertEqual(lc.whitespace_around_operators(line, []), (True, '', ''), "good %s line:'%s'" % (name, line))
+        for i, (_, line) in enumerate(good.items()):
+            passed, _, message = lc.whitespace_around_operators(panlint.Line('', i, line), [])
+            self.assertTrue(passed)
+            self.assertEqual(message, '')
 
-        self.assertEqual(lc.whitespace_around_operators(bad_before, []), (False, dgn_before, 'Missing space before operator'))
-        self.assertEqual(lc.whitespace_around_operators(bad_after, []), (False, dgn_after, 'Missing space after operator'))
-        self.assertEqual(lc.whitespace_around_operators(bad_both, []), (False, dgn_both, 'Missing space before and after operator'))
-        self.assertEqual(lc.whitespace_around_operators(bad_square_brackets, []),
-                         (False, dgn_square_brackets, 'Unwanted space in simple expression in square brackets'))
-        self.assertEqual(lc.whitespace_around_operators(bad_negative, []),
-                         (False, dgn_negative, 'Unwanted space after minus sign (not operator)'))
+        for bad_test, bad_message, bad_diag in bad_tests:
+            passed, diag, message = lc.whitespace_around_operators(bad_test, [])
+            self.assertFalse(passed)
+            self.assertEqual(message, bad_message)
+            self.assertEqual(diag, bad_diag)
 
+        # Handling lines that start or end with an operator (i.e. are part of a multi-line expression) should be allowed
+        self.assertEqual(lc.whitespace_around_operators(panlint.Line('', 9216, '+ 42;'), []), (True, '', ''))
+        self.assertEqual(lc.whitespace_around_operators(panlint.Line('', 10240, 'variable x = 42 +'), []), (True, '', ''))
 
     def test_whitespace_after_semicolons(self):
-        bad_1 = 'foreach(k; v;  things) {'
+        bad_1 = panlint.Line('', 1, 'foreach(k; v;  things) {')
         dgn_1 = ['             ^^']
         msg_1 = ['Semicolons should be followed exactly one space or end-of-line']
         self.assertEqual(
-            panlint.lint_line(bad_1, 1, [], False),
+            panlint.lint_line(bad_1, [], False),
             (dgn_1, set(msg_1), 1, False)
         )
 
-        bad_2 = 'foreach(k;    v;  things) {'
+        bad_2 = panlint.Line('', 2, 'foreach(k;    v;  things) {')
         dgn_2 = ['          ^^^^', '                ^^']
         msg_2 = ['Semicolons should be followed exactly one space or end-of-line']
         self.assertEqual(
-            panlint.lint_line(bad_2, 2, [], False),
+            panlint.lint_line(bad_2, [], False),
             (dgn_2, set(msg_2), 2, False)
         )
 
     def test_profilepath_trailing_slash(self):
-        good_line_1 = '"/system/hostname" = "foo.example.org";'
+        good_line_1 = panlint.Line('', 148, '"/system/hostname" = "foo.example.org";')
         self.assertEqual(
-            panlint.lint_line(good_line_1, 148, [], False),
+            panlint.lint_line(good_line_1, [], False),
             ([], set(), 0, False)
         )
 
-        good_line_2 = "prefix '/system/network/interfaces/eth0';"
+        good_line_2 = panlint.Line('', 151, "prefix '/system/network/interfaces/eth0';")
         self.assertEqual(
-            panlint.lint_line(good_line_2, 151, [], False),
+            panlint.lint_line(good_line_2, [], False),
             ([], set(), 0, False)
         )
 
-        good_line_3 = "'/' = dict();"
+        good_line_3 = panlint.Line('', 795, "'/' = dict();")
         self.assertEqual(
-            panlint.lint_line(good_line_3, 151, [], False),
+            panlint.lint_line(good_line_3, [], False),
             ([], set(), 0, False)
         )
 
-        bad_line_1 = '"/system/hostname/" = "bar.example.org";'
+        bad_line_1 = panlint.Line('', 22, '"/system/hostname/" = "bar.example.org";')
         bad_diag_1 = ['                 ^']
         bad_msg_1 = ['Unnecessary trailing slash at end of profile path']
         self.assertEqual(
-            panlint.lint_line(bad_line_1, 22, [], False),
+            panlint.lint_line(bad_line_1, [], False),
             (bad_diag_1, set(bad_msg_1), 1, False)
         )
 
-        bad_line_2 = '"/system/hostname////////" = "bob.example.org";'
+        bad_line_2 = panlint.Line('', 77, '"/system/hostname////////" = "bob.example.org";')
         bad_diag_2 = ['                 ^^^^^^^^']
         bad_msg_2 = ['Unnecessary trailing slash at end of profile path']
         self.assertEqual(
-            panlint.lint_line(bad_line_2, 77, [], False),
+            panlint.lint_line(bad_line_2, [], False),
             (bad_diag_2, set(bad_msg_2), 1, False)
         )
 
-        bad_line_3 = "prefix '/system/aii/osinstall/ks/';"
+        bad_line_3 = panlint.Line('', 182, "prefix '/system/aii/osinstall/ks/';")
         bad_diag_3 = ['                                ^']
         bad_msg_3 = ['Unnecessary trailing slash at end of profile path']
         self.assertEqual(
-            panlint.lint_line(bad_line_3, 182, [], False),
+            panlint.lint_line(bad_line_3, [], False),
             (bad_diag_3, set(bad_msg_3), 1, False)
         )
 
     def test_lint_line(self):
-        good_first = 'structure template foo.bar;'
-        bad_first = 'variable foo = "bar";'
+        good_first = panlint.Line('', 120, 'structure template foo.bar;')
+        bad_first = panlint.Line('', 122, 'variable foo = "bar";')
 
         # Test first line checking
-        self.assertEqual(panlint.lint_line(good_first, 1, [], True), ([], set(), 0, False))
+        self.assertEqual(panlint.lint_line(good_first, [], True), ([], set(), 0, False))
 
-        diagnoses, messages, problem_count, first_line = panlint.lint_line(bad_first, 1, [], True)
-        self.assertEqual(diagnoses, ['^'*len(bad_first)])
+        diagnoses, messages, problem_count, first_line = panlint.lint_line(bad_first, [], True)
+        self.assertEqual(diagnoses, ['^'*len(bad_first.text)])
         self.assertNotEqual(messages, set())
         self.assertEqual(problem_count, 1)
         self.assertEqual(first_line, False)
 
         # Test component inclusion check
-        diagnoses, messages, problem_count, first_line = panlint.lint_line('"/software/components/foo/bar" = 42;', 7, [], False)
+        diagnoses, messages, problem_count, first_line = panlint.lint_line(
+            panlint.Line('', 123, '"/software/components/foo/bar" = 42;'),
+            [],
+            False,
+        )
         self.assertEqual(diagnoses, ['                      ^^^'])
         self.assertNotEqual(messages, set())
         self.assertEqual(problem_count, 1)
         self.assertEqual(first_line, False)
 
         # Test pattern based checking
-        diagnoses, messages, problem_count, first_line = panlint.lint_line('   x = x + 1; # Bad Indentation', 7, [], False)
+        diagnoses, messages, problem_count, first_line = panlint.lint_line(
+            panlint.Line('', 124, '   x = x + 1; # Bad Indentation'),
+            [],
+            False,
+        )
         self.assertEqual(diagnoses, ['^^^'])
         self.assertNotEqual(messages, set())
         self.assertEqual(problem_count, 1)
         self.assertEqual(first_line, False)
 
         # Test method based checking
-        diagnoses, messages, problem_count, first_line = panlint.lint_line('x = x+1; # Missing space', 7, [], False)
+        diagnoses, messages, problem_count, first_line = panlint.lint_line(
+            panlint.Line('', 125, 'x = x+1; # Missing space'),
+            [],
+            False,
+        )
         self.assertEqual(diagnoses, ['    ^^^'])
         self.assertNotEqual(messages, set())
         self.assertEqual(problem_count, 1)
         self.assertEqual(first_line, False)
 
         # Test that all three check types co-exist
-        diagnoses, messages, problem_count, first_line = panlint.lint_line('  "/software/components/foo/bar" = 42+7;', 7, [], False)
-        self.assertItemsEqual(diagnoses, ['^^', '                        ^^^', '                                    ^^^'])
+        diagnoses, messages, problem_count, first_line = panlint.lint_line(
+            panlint.Line('', 126, '  "/software/components/foo/bar" = 42+7;'),
+            [],
+            False,
+        )
+        self.assertItemsEqual(diagnoses, [
+            '^^',
+            '                        ^^^',
+            '                                    ^^^',
+        ])
         self.assertNotEqual(messages, set())
         self.assertEqual(problem_count, 3)
         self.assertEqual(first_line, False)
@@ -262,43 +310,44 @@ class TestPanlint(unittest.TestCase):
 
     def test_component_use(self):
         # Test a line containing a standard path assignment
-        line_standard = "'/software/components/chkconfig/service/rdma' = dict("
+        line_standard = panlint.Line('', 100, "'/software/components/chkconfig/service/rdma' = dict(")
         diag_standard = "                      ^^^^^^^^^"
+        line_standard_commented = panlint.Line('', 101, '# ' + line_standard.text)
 
         # Test a line setting a path prefix
-        line_prefix = "prefix '/software/components/metaconfig/services/{/etc/sysconfig/fetch-crl}';"
+        line_prefix = panlint.Line('', 200, "prefix '/software/components/metaconfig/services/{/etc/sysconfig/fetch-crl}';")
         diag_prefix = "                             ^^^^^^^^^^"
+        line_prefix_commented = panlint.Line('', 201, '# ' + line_prefix.text)
 
         # Test both lines with components listed as included
         self.assertEqual(
-            panlint.lint_line(line_standard, 100, ['chkconfig'], False),
+            panlint.lint_line(line_standard, ['chkconfig'], False),
             ([], set(), 0, False)
         )
         self.assertEqual(
-            panlint.lint_line(line_prefix, 200, ['metaconfig'], False),
+            panlint.lint_line(line_prefix, ['metaconfig'], False),
             ([], set(), 0, False)
         )
 
         # Test both lines without components listed as included
         self.assertEqual(
-            panlint.lint_line(line_standard, 100, [], False),
+            panlint.lint_line(line_standard, [], False),
             ([diag_standard], set(['Component chkconfig in use, but component config has not been included']), 1, False)
         )
         self.assertEqual(
-            panlint.lint_line(line_prefix, 200, [], False),
+            panlint.lint_line(line_prefix, [], False),
             ([diag_prefix], set(['Component metaconfig in use, but component config has not been included']), 1, False)
         )
 
         # Test both lines without components listed as included but commented out
         self.assertEqual(
-            panlint.lint_line('# ' + line_standard, 100, [], False),
+            panlint.lint_line(line_standard_commented, [], False),
             ([], set(), 0, False)
         )
         self.assertEqual(
-            panlint.lint_line('    #' + line_prefix, 200, [], False),
+            panlint.lint_line(line_prefix_commented, [], False),
             ([], set(), 0, False)
         )
-
 
     def test_check_line_patterns(self):
         lines = [
@@ -313,8 +362,9 @@ class TestPanlint(unittest.TestCase):
         ]
 
         for text, messages in lines:
+            line = panlint.Line('patterns.pan', 0, text)
             messages = set(messages)
-            m = panlint.check_line_patterns(text, [])[1]
+            m = panlint.check_line_patterns(line, [])[1]
             self.assertEqual(m, messages)
 
 

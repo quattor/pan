@@ -43,7 +43,8 @@ class TestPanlint(unittest.TestCase):
 
     def test_get_string_ranges(self):
         self.assertEqual(panlint.get_string_ranges(panlint.Line('', 1, '''there is a "string" in here''')), [(11, 19)])
-        self.assertEqual(panlint.get_string_ranges(panlint.Line('', 1, '''"string" + 'string' + something''')), [(0, 8), (11, 19)])
+        self.assertEqual(panlint.get_string_ranges(panlint.Line('', 1, '''"string" + 'string' + something''')),
+                         [(0, 8), (11, 19)])
 
     def test_merge_diagnoses(self):
         diag1 = ' ^'
@@ -157,7 +158,8 @@ class TestPanlint(unittest.TestCase):
 
         # Handling lines that start or end with an operator (i.e. are part of a multi-line expression) should be allowed
         self.assertEqual(lc.whitespace_around_operators(panlint.Line('', 9216, '+ 42;'), []), (True, '', ''))
-        self.assertEqual(lc.whitespace_around_operators(panlint.Line('', 10240, 'variable x = 42 +'), []), (True, '', ''))
+        self.assertEqual(lc.whitespace_around_operators(panlint.Line('', 10240, 'variable x = 42 +'), []),
+                         (True, '', ''))
 
     def test_whitespace_after_semicolons(self):
         bad_1 = panlint.Line('', 1, 'foreach(k; v;  things) {')
@@ -316,7 +318,8 @@ class TestPanlint(unittest.TestCase):
         line_standard_commented = panlint.Line('', 101, '# ' + line_standard.text)
 
         # Test a line setting a path prefix
-        line_prefix = panlint.Line('', 200, "prefix '/software/components/metaconfig/services/{/etc/sysconfig/fetch-crl}';")
+        line_prefix = panlint.Line('', 200,
+                                   "prefix '/software/components/metaconfig/services/{/etc/sysconfig/fetch-crl}';")
         diag_prefix = "                             ^^^^^^^^^^"
         line_prefix_commented = panlint.Line('', 201, '# ' + line_prefix.text)
 
@@ -355,7 +358,8 @@ class TestPanlint(unittest.TestCase):
             ('variable UNIVERSAL_TRUTH = 42;', []),
             ('variable BAD = -1;', ['Global variables should be five or more characters']),
             ('variable bad_long = ":-(";', ['Global variables should be uppercase']),
-            ('variable bad = "all lower";', ['Global variables should be uppercase', 'Global variables should be five or more characters']),
+            ('variable bad = "all lower";', ['Global variables should be uppercase',
+                                             'Global variables should be five or more characters']),
             ('variable tricky_onE = "Uhoh";', ['Global variables should be uppercase']),
             ('variable camelCase = "camels!";', ['Global variables should be uppercase']),
             ('variable TitleCase ?= -3;', ['Global variables should be uppercase']),

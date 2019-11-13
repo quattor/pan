@@ -26,7 +26,6 @@ from inspect import getmembers, ismethod
 import six
 from colorama import Fore, Style, init as colorama_init
 from prettytable import PrettyTable
-from colorama import Fore, Style, init as colorama_init
 
 
 class Line(object):
@@ -222,14 +221,14 @@ def print_diagnosis(diagnosis):
 def debug_line(line):
     """Print debug information for a processed line of an input file"""
     if DEBUG:
-        label = 'DEBUG: %04d %-12s |' % (line_number, '...')
+        label = 'DEBUG: %04d %-12s |' % (line.number, '...')
         print(''.join([Style.DIM, Fore.CYAN, label, Style.RESET_ALL, line.text.replace('\t', TAB_ARROW)]))
 
 
 def debug_ignored_line(line):
     """Print debug information for an ignored line of an input file"""
     if DEBUG:
-        label = 'DEBUG: %04d %-12s |' % (line_number, 'Ignored')
+        label = 'DEBUG: %04d %-12s |' % (line.number, 'Ignored')
         print(''.join([Fore.CYAN, Style.DIM, label, Fore.RESET, line.text.replace('\t', TAB_ARROW), Style.RESET_ALL]))
 
 

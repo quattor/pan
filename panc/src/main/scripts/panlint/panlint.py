@@ -56,6 +56,8 @@ LINE_PATTERNS = {
     "Commas should be followed by exactly one space": re.compile(r'(?P<error>,(?:\S|\s{2,}))'),
     "Whitespace before semicolon": re.compile(r'(?P<error>\s+;)'),
     "Semicolons should be followed exactly one space or end-of-line": re.compile(r';(?P<error>(?:\S|\s{2,}))'),
+    "Global variables should be uppercase": re.compile(r'variable\s+(?P<error>[\w]+)(?<=\S[a-z]\S)'),
+    "Global variables should be five or more characters": re.compile(r'variable\s+(?P<error>\w{1,4})\b'),
 }
 
 # Simple regular-expression based checks that will be performed against

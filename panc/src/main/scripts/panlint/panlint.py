@@ -17,13 +17,15 @@
 
 """Linter for the Pan language"""
 
-import re
+from __future__ import print_function
 import argparse
+import re
 from glob import glob
 from sys import stdout, exit as sys_exit
 from inspect import getmembers, ismethod
-from prettytable import PrettyTable
+import six
 from colorama import Fore, Style, init as colorama_init
+from prettytable import PrettyTable
 
 
 class Line(object):
@@ -59,7 +61,8 @@ LINE_PATTERNS = {
     "Trailing whitespace": re.compile(r'(?P<error>\s+$)'),
     "Use dicts instead of nlists": re.compile(r'\b(?P<error>(?:is_)?nlist)\s*\('),
     "Include statements no longer need curly braces": re.compile(r'''include\s+(?P<error>{[^;]+})'''),
-    "Line is longer than %s characters" % LINE_LENGTH_LIMIT: re.compile(r'''^.{0,%s}(?P<error>.*?)$''' % LINE_LENGTH_LIMIT),
+    "Line is longer than %s characters" % LINE_LENGTH_LIMIT:
+    re.compile(r'''^.{0,%s}(?P<error>.*?)$''' % LINE_LENGTH_LIMIT),
     "Commas should be followed by exactly one space": re.compile(r'(?P<error>,(?:\S|\s{2,}))'),
     "Whitespace before semicolon": re.compile(r'(?P<error>\s+;)'),
     "Semicolons should be followed exactly one space or end-of-line": re.compile(r';(?P<error>(?:\S|\s{2,}))'),
@@ -105,21 +108,15 @@ class LineChecks:
             #    also whitespace, those are invalid
             sqb_simple = r'\s\w\d+-'
 
-            sqb_before = re.search(r'[[]([' + sqb_simple + ']*)$', chars_before)
+            sqb_before = re.search(r'[\[]([' + sqb_simple + ']*)$', chars_before)
             sqb_after = re.search(r'^([' + sqb_simple + ']*)[]]', chars_after)
 
             valid = True
             if op == '-' and (
                     (
-                        re.search(r'[^\w\s)=]\s*$', chars_before)
-                        and
-                        re.search(r'^\s*\d+\s*[^\w\s]', chars_after)
-                    )
-                    or
-                    (
-                        re.search(r'=\s*$', chars_before)
-                        and
-                        re.search(r'^\s*\d+', chars_after)
+                        re.search(r'[^\w\s)=]\s*$', chars_before) and re.search(r'^\s*\d+\s*[^\w\s]', chars_after)
+                    ) or (
+                        re.search(r'=\s*$', chars_before) and re.search(r'^\s*\d+', chars_after)
                     )
             ):
                 # -\d not preceded or followed by eg variable name
@@ -157,13 +154,12 @@ class LineChecks:
 
             if not valid:
                 debug_range(start, end, 'WS Operator', True)
-                diagnosis = diagnosis[:start] + ('^' * (end-start)) + diagnosis[end:]
+                diagnosis = diagnosis[:start] + ('^' * (end - start)) + diagnosis[end:]
 
             passed &= valid
 
         if not passed and messages:
-            messages = list(messages)
-            messages.sort(None, None, True)
+            messages = sorted(list(messages), key=None, reverse=True)
             message = '%s space %s operator' % (reason, ' and '.join(messages))
         return (passed, diagnosis.rstrip(), message)
 
@@ -226,14 +222,14 @@ def debug_line(line):
     """Print debug information for a processed line of an input file"""
     if DEBUG:
         label = 'DEBUG: %04d %-12s |' % (line.number, '...')
-        print ''.join([Style.DIM, Fore.CYAN, label, Style.RESET_ALL, line.text.replace('\t', TAB_ARROW)])
+        print(''.join([Style.DIM, Fore.CYAN, label, Style.RESET_ALL, line.text.replace('\t', TAB_ARROW)]))
 
 
 def debug_ignored_line(line):
     """Print debug information for an ignored line of an input file"""
     if DEBUG:
         label = 'DEBUG: %04d %-12s |' % (line.number, 'Ignored')
-        print ''.join([Fore.CYAN, Style.DIM, label, Fore.RESET, line.text.replace('\t', TAB_ARROW), Style.RESET_ALL])
+        print(''.join([Fore.CYAN, Style.DIM, label, Fore.RESET, line.text.replace('\t', TAB_ARROW), Style.RESET_ALL]))
 
 
 def debug_range(start, end, label, problem=False):
@@ -244,7 +240,7 @@ def debug_range(start, end, label, problem=False):
         color = Fore.CYAN
         if problem:
             color = Fore.RED
-        print ''.join([Style.DIM, Fore.CYAN, label, Style.BRIGHT, color, diagnosis, Style.RESET_ALL])
+        print(''.join([Style.DIM, Fore.CYAN, label, Style.BRIGHT, color, diagnosis, Style.RESET_ALL]))
 
 
 def diagnose(start, end):
@@ -254,10 +250,10 @@ def diagnose(start, end):
 
 def print_report(filename, line, diagnosis, message, vi=False):
     """Print a full report of all problems found with a single line of a processed file"""
-    print
-    print print_fileinfo(filename, line.number, message, vi=vi)
-    print print_line(line.text)
-    print print_diagnosis(diagnosis)
+    print('')
+    print(print_fileinfo(filename, line.number, message, vi=vi))
+    print(print_line(line.text))
+    print(print_diagnosis(diagnosis))
 
 
 def get_string_ranges(line):
@@ -318,14 +314,17 @@ def strip_trailing_comments(line, string_ranges):
     for comment in RE_COMMENT.finditer(line.text):
         # Does the candidate comment start inside a string?
         # If so, it's not really a comment.
-        if not inside_string(comment.start(), comment.start()+1, string_ranges):
+        if not inside_string(comment.start(), comment.start() + 1, string_ranges):
             debug_range(comment.start(), comment.end(), 'Comment', False)
             line.text = line.text[:comment.start()].rstrip()
     return line
 
 
 def check_line_component_use(line, components_included):
-    """Check a line for usage of a component, flag a problem if any component is not in the list of included components."""
+    """
+    Check a line for usage of a component, flag a problem if any component
+    is not in the list of included components.
+    """
     diagnoses = []
     messages = []
     problem_count = 0
@@ -348,7 +347,7 @@ def check_line_patterns(line, string_ranges):
     messages = set()
     problem_count = 0
 
-    for message, pattern in LINE_PATTERNS.iteritems():
+    for message, pattern in six.iteritems(LINE_PATTERNS):
         matches = pattern.finditer(line.text)
         for match in matches:
             if match and match.group('error'):
@@ -374,9 +373,9 @@ def check_line_paths(line):
     path_match = RE_PATH.match(line.text)
     if path_match:
         path_start, path_end = path_match.span('path')
-        path_string = line.text[path_start+1:path_end-1]
+        path_string = line.text[path_start + 1:path_end - 1]
         debug_range(path_start, path_end, 'Path String', False)
-        for message, pattern in PATH_PATTERNS.iteritems():
+        for message, pattern in six.iteritems(PATH_PATTERNS):
             matches = pattern.finditer(path_string)
             for match in matches:
                 if match and match.group('error'):
@@ -452,11 +451,11 @@ def lint_line(line, components_included, first_line=False, allow_mvn_templates=F
 
 def lint_file(filename, allow_mvn_templates=False):
     """Run lint checks against all lines of a file."""
-    global DEBUG
     reports = []
     file_problem_count = 0
 
-    raw_text = open(filename).read()
+    with open(filename) as f:
+        raw_text = f.read()
 
     first_line = True
     ignore_lines = []
@@ -475,7 +474,8 @@ def lint_file(filename, allow_mvn_templates=False):
         line = Line(filename, line_number, line_text.rstrip('\n'))
 
         if line and line_number not in ignore_lines and not RE_COMMENT_LINE.match(line_text):
-            diagnoses, messages, line_problem_count, first_line = lint_line(line, components_included, first_line, allow_mvn_templates)
+            diagnoses, messages, line_problem_count, first_line = lint_line(line, components_included, first_line,
+                                                                            allow_mvn_templates)
             file_problem_count += line_problem_count
 
             if messages and diagnoses:
@@ -493,7 +493,8 @@ def main():
     parser.add_argument('--vi', action='store_true', help='Output line numbers in a vi option style')
     parser.add_argument('--table', action='store_true', help='Display a table of per-file problem stats')
     parser.add_argument('--allow_mvn_templates', action='store_true', help='Allow use of maven templates')
-    parser.add_argument('--always_exit_success', action='store_true', help='Always exit cleanly even if problems are found')
+    parser.add_argument('--always_exit_success', action='store_true',
+                        help='Always exit cleanly even if problems are found')
     group_output = parser.add_mutually_exclusive_group()
     group_output.add_argument('--debug', action='store_true', help='Enable debug output')
     group_output.add_argument('--ide', action='store_true', help='Output machine-readable results for use by IDEs')
@@ -510,7 +511,7 @@ def main():
     problem_stats = {}
 
     if not args.paths:
-        print 'No files were provided, not doing anything'
+        print('No files were provided, not doing anything')
         return 0
 
     for path in args.paths:
@@ -524,18 +525,18 @@ def main():
         print_report(*report, vi=args.vi)
 
     if args.table:
-        print
-        print 'Problem count per file:'
-        print filestats_table(problem_stats)
+        print('\nProblem count per file:')
+        print(filestats_table(problem_stats))
 
-    print
-    print '%d problems found in total' % problems_found
+    print('\n%d problems found in total' % problems_found)
 
     if args.always_exit_success:
         return 0
 
     if problems_found:
         return 1
+
+    return 0
 
 
 if __name__ == '__main__':

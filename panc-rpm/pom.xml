@@ -47,6 +47,12 @@
           <packager>Quattor</packager>
           <changelogFile>src/changelog</changelogFile>
           <buildarch>noarch</buildarch>
+          <requires>
+              <!-- This is the only combination I could find to make it work under CentOS and Fedora -->
+              <require>python2-six</require>
+              <require>python2-prettytable</require>
+              <require>python-colorama</require>
+          </requires>
           <mappings>
             <mapping>
               <directory>/usr/lib</directory>

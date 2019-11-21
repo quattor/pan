@@ -435,8 +435,11 @@ def lint_line(line, components_included, first_line=False, allow_mvn_templates=F
     return (line, first_line)
 
 
-def lint_file(filename, allow_mvn_templates=False):
+def lint_file(filename, allow_mvn_templates=False, ignore_components=None):
     """Run lint checks against all lines of a file."""
+    if ignore_components is None:
+        ignore_components = []
+
     problem_lines = []
     file_problem_count = 0
 
@@ -455,6 +458,8 @@ def lint_file(filename, allow_mvn_templates=False):
 
     # Get list of all component configs included in template
     components_included = RE_COMPONENT_INCLUDE.findall(raw_text)
+    # add ignored components
+    components_included.extend(ignore_components)
 
     # Is the current file part of the source tree of a component?
     # If so, regard the component config as being included
@@ -489,6 +494,8 @@ def main():
     parser.add_argument('--allow_mvn_templates', action='store_true', help='Allow use of maven templates')
     parser.add_argument('--always_exit_success', action='store_true',
                         help='Always exit cleanly even if problems are found')
+    parser.add_argument('--ignore-components', type=str,
+                        help='List of component to ignore when checking included components')
     group_output = parser.add_mutually_exclusive_group()
     group_output.add_argument('--debug', action='store_true', help='Enable debug output')
     group_output.add_argument('--ide', action='store_true', help='Output machine-readable results for use by IDEs')
@@ -507,9 +514,13 @@ def main():
         print('No files were provided, not doing anything')
         return 0
 
+    ignore_components = None
+    if args.ignore_components:
+        ignore_components = args.ignore_components.split(',')
+
     for path in args.paths:
         for filename in glob(path):
-            file_problem_lines, file_problem_count = lint_file(filename, args.allow_mvn_templates)
+            file_problem_lines, file_problem_count = lint_file(filename, args.allow_mvn_templates, ignore_components)
             problem_lines += file_problem_lines
             problem_count += file_problem_count
             problem_stats[filename] = file_problem_count

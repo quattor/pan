@@ -409,37 +409,28 @@ def lint_line(line, components_included, first_line=False, allow_mvn_templates=F
     """Run all lint checks against line and return any problems found."""
     debug_line(line)
 
-    messages = set()
-    diagnoses = []
-    problem_count = 0
-
     if first_line:
         first_line = False
         if not RE_FIRST_LINE.match(line.text):
             if not (RE_MVN_TEMPLATE.match(line.text) and allow_mvn_templates):
-                messages.add('First non-comment line must be the template type and name')
-                diagnoses.append(diagnose(0, len(line.text)))
-                problem_count += 1
-
+                line.problems.append(
+                    Problem(0, len(line.text), 'First non-comment line must be the template type and name')
+                )
     else:
         string_ranges = get_string_ranges(line)
         line = strip_trailing_comments(line, string_ranges)
 
-        problems = check_line_component_use(line, components_included)
-        problems += check_line_patterns(line, string_ranges)
-        problems += check_line_paths(line)
-        problems += check_line_methods(line, string_ranges)
+        line.problems += check_line_component_use(line, components_included)
+        line.problems += check_line_patterns(line, string_ranges)
+        line.problems += check_line_paths(line)
+        line.problems += check_line_methods(line, string_ranges)
 
-        diagnoses = [p.diagnose() for p in problems]
-        messages = set([p.message for p in problems])
-        problem_count = len(problems)
-
-    return (diagnoses, messages, problem_count, first_line)
+    return (line, first_line)
 
 
 def lint_file(filename, allow_mvn_templates=False):
     """Run lint checks against all lines of a file."""
-    reports = []
+    problem_lines = []
     file_problem_count = 0
 
     with open(filename) as f:
@@ -466,16 +457,20 @@ def lint_file(filename, allow_mvn_templates=False):
         line = Line(filename, line_number, line_text.rstrip('\n'))
 
         if line.text and line.number not in ignore_lines and not RE_COMMENT_LINE.match(line.text):
-            diagnoses, messages, line_problem_count, first_line = lint_line(line, components_included, first_line,
-                                                                            allow_mvn_templates)
-            file_problem_count += line_problem_count
+            line, first_line = lint_line(
+                line,
+                components_included,
+                first_line,
+                allow_mvn_templates,
+            )
 
-            if messages and diagnoses:
-                reports.append([filename, line, merge_diagnoses(diagnoses), ', '.join(messages)])
+            if line.problems:
+                problem_lines.append(line)
+                file_problem_count += len(line.problems)
         else:
             debug_ignored_line(line)
 
-    return (reports, file_problem_count)
+    return (problem_lines, file_problem_count)
 
 
 def main():

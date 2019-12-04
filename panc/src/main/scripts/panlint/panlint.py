@@ -261,12 +261,13 @@ def diagnose(start, end):
     return (' ' * start) + ('^' * (end - start))
 
 
-def print_report(filename, line, diagnosis, message, vi=False):
+def print_report(line, vi=False):
     """Print a full report of all problems found with a single line of a processed file"""
     print('')
-    print(print_fileinfo(filename, line.number, message, vi=vi))
+    messages = ', '.join(set([p.message for p in line.problems]))
+    print(print_fileinfo(line.filename, line.number, messages, vi=vi))
     print(print_line(line.text))
-    print(print_diagnosis(diagnosis))
+    print(print_diagnosis(merge_diagnoses([p.diagnose() for p in line.problems])))
 
 
 def get_string_ranges(line):
@@ -485,9 +486,8 @@ def main():
     global DEBUG
     DEBUG = args.debug
 
-    problems_found = 0
-
-    reports = []
+    problem_count = 0
+    problem_lines = []
     problem_stats = {}
 
     if not args.paths:
@@ -496,24 +496,24 @@ def main():
 
     for path in args.paths:
         for filename in glob(path):
-            file_reports, file_problems = lint_file(filename, args.allow_mvn_templates)
-            reports += file_reports
-            problems_found += file_problems
-            problem_stats[filename] = file_problems
+            file_problem_lines, file_problem_count = lint_file(filename, args.allow_mvn_templates)
+            problem_lines += file_problem_lines
+            problem_count += file_problem_count
+            problem_stats[filename] = file_problem_count
 
-    for report in reports:
-        print_report(*report, vi=args.vi)
+    for line in problem_lines:
+        print_report(line, vi=args.vi)
 
     if args.table:
         print('\nProblem count per file:')
         print(filestats_table(problem_stats))
 
-    print('\n%d problems found in total' % problems_found)
+    print('\n%d problems found in %d lines' % (problem_count, len(problem_lines)))
 
     if args.always_exit_success:
         return 0
 
-    if problems_found:
+    if problem_count:
         return 1
 
     return 0

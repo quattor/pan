@@ -97,8 +97,14 @@ class TestPanlint(unittest.TestCase):
 
     def test_mvn_templates(self):
         dir_base = join(dirname(argv[0]), 'test_files')
-        self.assertEqual(panlint.lint_file(join(dir_base, 'mvn_template_first_line.pan'), True)[1], 0)
-        self.assertEqual(panlint.lint_file(join(dir_base, 'mvn_template_first_line.pan'), False)[1], 1)
+        self.assertEqual(
+            panlint.lint_file(join(dir_base, 'mvn_template_first_line.pan'), True),
+            ([], 0),
+        )
+        self.assertEqual(
+            panlint.lint_file(join(dir_base, 'mvn_template_first_line.pan'), False)[1],
+            1,
+        )
 
     def test_strip_trailing_comments(self):
         comment_plain = panlint.Line('', 1, '''Words; # This is a trailing comment''')

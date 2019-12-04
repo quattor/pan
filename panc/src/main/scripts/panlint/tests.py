@@ -386,6 +386,17 @@ class TestPanlint(unittest.TestCase):
             [],
         )
 
+    def test_check_line_component_use(self):
+        problems = panlint.check_line_component_use(
+            panlint.Line('rdma.pan', 12, "'/software/components/chkconfig/service/rdma' = dict("),
+            [],
+        )
+
+        self.assertIsInstance(problems, list)
+        self.assertEqual(len(problems), 1)
+        for p in problems:
+            self.assertIsInstance(p, panlint.Problem)
+
     def test_check_line_patterns(self):
         lines = [
             ('variable UNIVERSAL_TRUTH = 42;', []),

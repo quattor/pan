@@ -424,6 +424,16 @@ class TestPanlint(unittest.TestCase):
                 self.assertIsInstance(p, panlint.Problem)
             self.assertEqual(set([p.message for p in problems]), messages)
 
+    def test_check_line_paths(self):
+        problems = panlint.check_line_paths(
+            panlint.Line('slash.pan', 24, "'/software/components/fake/' = list("),
+        )
+
+        self.assertIsInstance(problems, list)
+        self.assertEqual(len(problems), 1)
+        for p in problems:
+            self.assertIsInstance(p, panlint.Problem)
+
 
 if __name__ == '__main__':
     unittest.main()

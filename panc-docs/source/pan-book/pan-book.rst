@@ -1422,7 +1422,7 @@ child::
 
 
 The indices can be specified in decimal (digits only).
-Leading ``0``(s) (e.g. octal notation) are considered ambiguous
+Leading zeros (e.g. octal notation) are considered ambiguous
 and as such invalid.
 The names of children in an dict can be any string that has at
 least one non-digit character, starts with a so-called ``word``-character

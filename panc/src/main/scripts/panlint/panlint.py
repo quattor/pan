@@ -51,6 +51,10 @@ RE_HEREDOC = re.compile(r'<<(\w+);\s*$.*?\1$', re.S | re.M)
 # Find usage and inclusion of components
 RE_COMPONENT_INCLUDE = re.compile(r'^\s*[^#]?\s*include.*components/(?P<name>\w+)/config', re.M)
 RE_COMPONENT_USE = re.compile(r'/software/components/(?P<name>\w+)/')
+
+# Detect whether a file is part of the source tree of a component
+RE_COMPONENT_SOURCE_FILE = re.compile(r'^/?(?:\S+/)?(?:core/components/|ncm-)(?P<name>\w+)/\S+$')
+
 LINE_LENGTH_LIMIT = 120
 
 # Simple regular-expression based checks that will be performed against all non-ignored lines
@@ -469,6 +473,10 @@ def lint_file(filename, allow_mvn_templates=False):
 
     # Get list of all component configs included in template
     components_included = RE_COMPONENT_INCLUDE.findall(raw_text)
+
+    # Is the current file part of the source tree of a component?
+    # If so, regard the component config as being included
+    components_included += RE_COMPONENT_SOURCE_FILE.findall(filename)
 
     for line_number, line_text in enumerate(raw_text.splitlines(), start=1):
         line = Line(filename, line_number, line_text.rstrip('\n'))

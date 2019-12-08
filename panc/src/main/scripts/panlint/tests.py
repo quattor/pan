@@ -61,7 +61,7 @@ class TestPanlint(unittest.TestCase):
         """
         no_errors = ([], 0)
         dir_base = join(dirname(argv[0]), 'test_files')
-        for afn in glob.glob(join(dir_base, '/test_*.pan')):
+        for afn in glob.glob(join(dir_base, 'test_*.pan')):
             fn = basename(afn)
             if fn.startswith('test_good'):
                 self.assertEqual(panlint.lint_file(afn), no_errors)

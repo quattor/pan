@@ -353,6 +353,38 @@ class TestPanlint(unittest.TestCase):
             ([], set(), 0, False)
         )
 
+    def test_component_source_file(self):
+        """ Test the regex designed to detect whether the template being linted is part of a component's source code """
+        rfa = panlint.RE_COMPONENT_SOURCE_FILE.findall
+
+        # These tests should all find component names
+        self.assertEqual(
+            rfa('/var/quattor/cfg/plenary/template-library/18.6.0/core/components/shorewall/sysconfig.pan'),
+            ['shorewall'],
+        )
+        self.assertEqual(
+            rfa('./ncm-metaconfig/src/main/metaconfig/nginx/tests/profiles/config.pan'),
+            ['metaconfig'],
+        )
+        self.assertEqual(
+            rfa('./configuration-modules-core/ncm-opennebula/src/main/resources/tests/profiles/remoteconf_ceph.pan'),
+            ['opennebula'],
+        )
+        self.assertEqual(
+            rfa('ncm-network/src/test/resources/actions.pan'),
+            ['network'],
+        )
+
+        # These tests should NOT find component names
+        self.assertEqual(
+            rfa('features/monitoring/grafana/config.pan'),
+            [],
+        )
+        self.assertEqual(
+            rfa('./service/profileserver/client/config.pan'),
+            [],
+        )
+
     def test_check_line_patterns(self):
         lines = [
             ('variable UNIVERSAL_TRUTH = 42;', []),

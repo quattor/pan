@@ -396,6 +396,10 @@ class TestPanlint(unittest.TestCase):
             ('variable camelCase = "camels!";', ['Global variables should be uppercase']),
             ('variable TitleCase ?= -3;', ['Global variables should be uppercase']),
             ('variable NoSpacesHere?=True;', ['Global variables should be uppercase']),
+            ('error(format("Duplicate %s in foo", mp));', ['Redundant use of format within error or debug call']),
+            ('error("is_asndate: invalid format for time");', []),
+            ('debug(format("%s: bar: %s", OBJECT, ARGV[0]));', ['Redundant use of format within error or debug call']),
+            ('debug("Foo" + bar + " has an unexpected format (should be a dict)");', []),
         ]
 
         for text, messages in lines:

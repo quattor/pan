@@ -117,7 +117,7 @@ base64\_encode -- encodes a string in base64 format
 Synopsis
 --------
 
-string **base64\_encode** (string *encoded)
+string **base64\_encode** (string *encoded*)
 
 Description
 -----------

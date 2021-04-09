@@ -1,4 +1,5 @@
 .. highlight:: pan
+
 Getting Started
 ===============
 
@@ -78,7 +79,7 @@ Download and Installation
 
 The pan compiler can be invoked via the Unix (Linux) command line, ant,
 or maven. The easiest for the simple examples in this book is the
-command line interface. (See :ref:`running_panc`for installation
+command line interface. (See :ref:`running_panc` for installation
 instructions for all the execution methods.) Locate and download the latest
 version of the pan tarball and untar this into a convenient directory. You
 can find the packaged versions of the compiler in the releases area of
@@ -1771,8 +1772,8 @@ Table: String Manipulation Functions
 |                   | traceback. Returns ``undef``.                             |
 +-------------------+-----------------------------------------------------------+
 | :ref:`deprecated` | Print a warning message to the standard error if required |
-|                   | by the deprecation level in effect. Returns ``the message |
-|                   |               or undef``.                                 |
+|                   | by the deprecation level in effect. Returns the message   |
+|                   | or ``undef``.                                             |
 +-------------------+-----------------------------------------------------------+
 
 Table: Debugging Functions

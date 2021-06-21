@@ -14,3 +14,5 @@ dict(
         4123,
     ),
 );
+
+"name" = "Some string [foo-bar is bar+foo]";

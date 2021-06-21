@@ -116,7 +116,9 @@ class LineChecks:
             sqb_after = re.search(r'^([' + sqb_simple + ']*)[]]', chars_after)
 
             valid = True
-            if op == '-' and (
+            if inside_string(start, end, string_ranges):
+                continue
+            elif op == '-' and (
                     (
                         re.search(r'[^\w\s)=]\s*$', chars_before) and re.search(r'^\s*\d+\s*[^\w\s]', chars_after)
                     ) or (
@@ -145,7 +147,7 @@ class LineChecks:
                     start = sqb_before.start(1) + reg.start(0)
                     end = start + 1
 
-            elif not inside_string(start, end, string_ranges):
+            else:
                 reason = 'Missing'
                 if chars_before and chars_before[-1] not in (' ', '\t'):
                     valid = False

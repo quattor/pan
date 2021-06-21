@@ -531,6 +531,19 @@ class TestPanlint(unittest.TestCase):
             panlint.print_report(test_line)
             self.assertEqual(mock_stdout.getvalue(), expected_output)
 
+    def test_feature_child_inclusion(self):
+        lc = panlint.LineChecks()
+        passed, _, message = lc.feature_child_inclusion(
+            panlint.Line('features/test/foo/config.pan', 3, "include 'features/test/foo/service/users';"),
+            [],
+        );
+        self.assertTrue(passed);
+        passed, _, message = lc.feature_child_inclusion(
+            panlint.Line('features/test/foo/config.pan', 3, "include 'features/test/bar/webserver';"),
+            [],
+        );
+        self.assertFalse(passed);
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -388,8 +388,8 @@ public class RecordType extends BaseType {
 				}
 
 			} catch (ClassCastException cce) {
-				throw ValidationException.create(MSG_MISMATCHED_TYPES, "dict",
-						self.getTypeAsString());
+				throw ValidationException.createv(self, MSG_MISMATCHED_TYPES,
+                                                  "dict", self.getTypeAsString());
 			}
 		}
 
@@ -500,8 +500,8 @@ public class RecordType extends BaseType {
 			}
 
 		} catch (ClassCastException cce) {
-			throw ValidationException.create(MSG_MISMATCHED_TYPES, "dict",
-					self.getTypeAsString());
+			throw ValidationException.createv(self, MSG_MISMATCHED_TYPES,
+                                              "dict", self.getTypeAsString());
 		}
 	}
 

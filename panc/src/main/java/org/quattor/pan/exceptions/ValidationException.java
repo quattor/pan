@@ -32,9 +32,9 @@ import org.quattor.pan.utils.Term;
 /**
  * Exceptions of this type can be thrown during the validation phase of the
  * processing.
- * 
+ *
  * @author loomis
- * 
+ *
  */
 @SuppressWarnings("serial")
 public class ValidationException extends RuntimeException {
@@ -49,7 +49,7 @@ public class ValidationException extends RuntimeException {
 
 	private LinkedList<String> typeStack;
 
-	private Property value;
+	private Object value;
 
 	private ValidationException(String message) {
 		super(message);
@@ -66,6 +66,14 @@ public class ValidationException extends RuntimeException {
 	public static ValidationException create(String msgkey, Object... args) {
 		String msg = MessageUtils.format(msgkey, args);
 		return new ValidationException(msg);
+	}
+
+    /* create exception with value from data */
+	public static ValidationException createv(Object data, String msgkey, Object... args) {
+		String msg = MessageUtils.format(msgkey, args);
+		ValidationException ve = new ValidationException(msg);
+        ve.setValue(data);
+        return ve;
 	}
 
 	public ValidationException setObjectTemplate(File objectTemplate) {
@@ -101,9 +109,9 @@ public class ValidationException extends RuntimeException {
 			sb.append("'\n");
 		}
 		if (value != null) {
-			sb.append("element value: ");
-			sb.append(value.toString());
-			sb.append("\n");
+            sb.append("element value: ");
+            sb.append(value.toString());
+            sb.append("\n");
 		}
 
 		for (String s : typeStack) {
@@ -170,8 +178,8 @@ public class ValidationException extends RuntimeException {
 		return this;
 	}
 
-	public ValidationException setValue(Property property) {
-		this.value = property;
+	public ValidationException setValue(Object data) {
+		this.value = data;
 		return this;
 	}
 

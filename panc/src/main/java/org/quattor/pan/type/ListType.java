@@ -159,8 +159,8 @@ public class ListType extends CompositeType {
 			}
 
 		} catch (ClassCastException cce) {
-			throw ValidationException.create(MSG_MISMATCHED_TYPES, "list", self
-					.getTypeAsString());
+			throw ValidationException.createv(self, MSG_MISMATCHED_TYPES,
+                                              "list", self.getTypeAsString());
 		}
         return null;
 	}

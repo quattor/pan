@@ -63,15 +63,9 @@ public class ConcretePrimitiveType extends PrimitiveType {
 
 		} catch (ClassCastException cce) {
 
-			ValidationException ve = ValidationException.create(
-					MSG_MISMATCHED_TYPES, name, self.getTypeAsString());
+            throw ValidationException.createv(self, MSG_MISMATCHED_TYPES,
+                                              name, self.getTypeAsString());
 
-			// Provide the actual value if it is a simple property.
-			if (self instanceof Property) {
-				ve.setValue((Property) self);
-			}
-
-			throw ve;
 		}
         return null;
 	}

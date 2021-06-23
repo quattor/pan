@@ -53,7 +53,7 @@ final public class Match extends AbstractVariableMatcher {
 
 		// Optimize the operation if compile time constants are given for the
 		// regular expression and match flags.
-		if (operations.length > 0
+		if (operations.length > 1
 				&& operations[1] instanceof StringProperty
 				&& (operations.length < 3 || operations[2] instanceof StringProperty)) {
 			return StaticMatch.getInstance(sourceRange, operations);

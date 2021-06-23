@@ -72,6 +72,7 @@ LINE_PATTERNS = {
     "Semicolons should be followed exactly one space or end-of-line": re.compile(r';(?P<error>(?:\S|\s{2,}))'),
     "Global variables should be uppercase": re.compile(r'variable\s+(?P<error>[\w]+)(?<=\S[a-z]\S)'),
     "Global variables should be five or more characters": re.compile(r'variable\s+(?P<error>\w{1,4})\b'),
+    "Redundant use of format within error or debug call": re.compile(r'(?:error|debug)\s*\(\s*(?P<error>format)\s*\('),
 }
 
 # Simple regular-expression based checks that will be performed against

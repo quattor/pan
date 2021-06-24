@@ -3,7 +3,7 @@ name: Python
 on: [push, pull_request]
 
 jobs:
-  tests:
+  test-panlint:
 
     runs-on: ubuntu-latest
 

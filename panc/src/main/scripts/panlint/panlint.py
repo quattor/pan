@@ -22,7 +22,7 @@ import argparse
 import re
 from glob import glob
 from sys import stdout, exit as sys_exit
-from inspect import getmembers, ismethod
+from inspect import getmembers, isfunction
 import six
 from colorama import Fore, Style, init as colorama_init
 from prettytable import PrettyTable
@@ -33,6 +33,18 @@ class Line(object):
         self.filename = str(filename)
         self.number = int(number)
         self.text = str(text)
+        self.problems = []
+
+
+class Problem(object):
+    def __init__(self, start, end, message):
+        self.start = int(start)
+        self.end = int(end)
+        self.message = str(message)
+
+    def diagnose(self):
+        """Format a line of diagnosis markers from a range of character positions"""
+        return (' ' * self.start) + ('^' * (self.end - self.start))
 
 
 RS_COMMENT = r'(?:#|@{.*?})'
@@ -90,15 +102,10 @@ DEBUG = False
 class LineChecks:
     """More complex single line checks that require some logic to implement their checks"""
 
-    def whitespace_around_operators(self, line, string_ranges):
+    @staticmethod
+    def whitespace_around_operators(line, string_ranges):
         """Check a line of text to ensure that there is whitespace before and after all operators"""
         operators = RE_OPERATOR.finditer(line.text)
-
-        passed = True
-        message = ''
-        messages = set()
-
-        diagnosis = ' ' * len(line.text)
 
         for operator in operators:
             op = operator.group(1)
@@ -136,7 +143,7 @@ class LineChecks:
                 #   no space directly after assignment
                 if re.search(r'^\s', chars_after):
                     valid = False
-                    message = 'Unwanted space after minus sign (not operator)'
+                    message_text = 'Unwanted space after minus sign (not operator)'
                     end += 2
             elif op in ('-', '+', ) and sqb_before and sqb_after:
                 # something simple in square brackets
@@ -144,12 +151,13 @@ class LineChecks:
                 reg = re.search(r'\s', in_brackets)
                 if reg:
                     valid = False
-                    message = 'Unwanted space in simple expression in square brackets'
+                    message_text = 'Unwanted space in simple expression in square brackets'
                     start = sqb_before.start(1) + reg.start(0)
                     end = start + 1
 
             else:
                 reason = 'Missing'
+                messages = set()
                 if chars_before and chars_before[-1] not in (' ', '\t'):
                     valid = False
                     messages.add('before')
@@ -158,17 +166,15 @@ class LineChecks:
                     valid = False
                     messages.add('after')
                     end += 1
+                messages = list(messages)
+                messages = sorted(list(messages), key=None, reverse=True)
+                message_text = '%s space %s operator' % (reason, ' and '.join(messages))
 
             if not valid:
                 debug_range(start, end, 'WS Operator', True)
-                diagnosis = diagnosis[:start] + ('^' * (end - start)) + diagnosis[end:]
+                line.problems.append(Problem(start, end, message_text))
 
-            passed &= valid
-
-        if not passed and messages:
-            messages = sorted(list(messages), key=None, reverse=True)
-            message = '%s space %s operator' % (reason, ' and '.join(messages))
-        return (passed, diagnosis.rstrip(), message)
+        return line
 
 
 def inside_string(i, j, string_ranges):
@@ -186,8 +192,8 @@ def print_fileinfo(filename, line_number, message, vi=False):
     vi -- output line numbers in a format suitable for passing to editors such as vi (default False)
     """
     if vi:
-        return '%s +%d #%s' % (filename, line_number, message)
-    return '%s:%d: %s' % (filename, line_number, message)
+        return u'%s +%d #%s' % (filename, line_number, message)
+    return u'%s:%d: %s' % (filename, line_number, message)
 
 
 def print_line(text):
@@ -202,7 +208,7 @@ def print_line(text):
     else:
         text = text.replace('\t', ' ')
 
-    return ''.join([Fore.GREEN, text.rstrip('\n'), Fore.RESET])
+    return u''.join([Fore.GREEN, text.rstrip('\n'), Fore.RESET])
 
 
 def merge_diagnoses(args):
@@ -217,26 +223,26 @@ def merge_diagnoses(args):
         for i, c in enumerate(text):
             if c != ' ':
                 result[i] = c
-    return ''.join(result).rstrip()
+    return u''.join(result).rstrip()
 
 
 def print_diagnosis(diagnosis):
     """Format a line of diagnosis produced by diagnose() and/or merge_diagnoses()"""
-    return ''.join([Fore.BLUE, diagnosis, Fore.RESET])
+    return u''.join([Fore.BLUE, diagnosis, Fore.RESET])
 
 
 def debug_line(line):
     """Print debug information for a processed line of an input file"""
     if DEBUG:
         label = 'DEBUG: %04d %-12s |' % (line.number, '...')
-        print(''.join([Style.DIM, Fore.CYAN, label, Style.RESET_ALL, line.text.replace('\t', TAB_ARROW)]))
+        print(u''.join([Style.DIM, Fore.CYAN, label, Style.RESET_ALL, line.text.replace('\t', TAB_ARROW)]))
 
 
 def debug_ignored_line(line):
     """Print debug information for an ignored line of an input file"""
     if DEBUG:
         label = 'DEBUG: %04d %-12s |' % (line.number, 'Ignored')
-        print(''.join([Fore.CYAN, Style.DIM, label, Fore.RESET, line.text.replace('\t', TAB_ARROW), Style.RESET_ALL]))
+        print(u''.join([Fore.CYAN, Style.DIM, label, Fore.RESET, line.text.replace('\t', TAB_ARROW), Style.RESET_ALL]))
 
 
 def debug_range(start, end, label, problem=False):
@@ -247,20 +253,21 @@ def debug_range(start, end, label, problem=False):
         color = Fore.CYAN
         if problem:
             color = Fore.RED
-        print(''.join([Style.DIM, Fore.CYAN, label, Style.BRIGHT, color, diagnosis, Style.RESET_ALL]))
+        print(u''.join([Style.DIM, Fore.CYAN, label, Style.BRIGHT, color, diagnosis, Style.RESET_ALL]))
 
 
 def diagnose(start, end):
     """Format a line of diagnosis markers from a range of character positions"""
-    return (' ' * start) + ('^' * (end - start))
+    return (u' ' * start) + (u'^' * (end - start))
 
 
-def print_report(filename, line, diagnosis, message, vi=False):
+def print_report(line, vi=False):
     """Print a full report of all problems found with a single line of a processed file"""
-    print('')
-    print(print_fileinfo(filename, line.number, message, vi=vi))
+    print(u'')
+    messages = ', '.join(set([p.message for p in line.problems]))
+    print(print_fileinfo(line.filename, line.number, messages, vi=vi))
     print(print_line(line.text))
-    print(print_diagnosis(diagnosis))
+    print(print_diagnosis(merge_diagnoses([p.diagnose() for p in line.problems])))
 
 
 def get_string_ranges(line):
@@ -332,27 +339,20 @@ def check_line_component_use(line, components_included):
     Check a line for usage of a component, flag a problem if any component
     is not in the list of included components.
     """
-    diagnoses = []
-    messages = []
-    problem_count = 0
+    problems = []
 
     for match in RE_COMPONENT_USE.finditer(line.text):
         if match.group('name') not in components_included:
             start, end = match.span('name')
             debug_range(start, end, 'ComponentUse', True)
             message = 'Component %s in use, but component config has not been included' % match.group('name')
-            diagnoses.append(diagnose(*match.span('name')))
-            messages.append(message)
-            problem_count += 1
-
-    return diagnoses, messages, problem_count
+            problems.append(Problem(start, end, message))
+    return problems
 
 
 def check_line_patterns(line, string_ranges):
     """Check line against regular expressions in LINE_PATTERNS, ignoring code within specified string ranges."""
-    diagnoses = []
-    messages = set()
-    problem_count = 0
+    problems = []
 
     for message, pattern in six.iteritems(LINE_PATTERNS):
         matches = pattern.finditer(line.text)
@@ -361,11 +361,8 @@ def check_line_patterns(line, string_ranges):
                 start, end = match.span('error')
                 debug_range(start, end, 'LineRE Match', True)
                 if not inside_string(start, end, string_ranges):
-                    diagnoses.append(diagnose(start, end))
-                    messages.add(message)
-                    problem_count += 1
-
-    return diagnoses, messages, problem_count
+                    problems.append(Problem(start, end, message))
+    return problems
 
 
 def check_line_paths(line):
@@ -373,9 +370,7 @@ def check_line_paths(line):
     If a line contains a profile path on the left hand side,
     check code within it against regular expressions in PATH_PATTERNS.
     """
-    diagnoses = []
-    messages = set()
-    problem_count = 0
+    problems = []
 
     path_match = RE_PATH.match(line.text)
     if path_match:
@@ -390,75 +385,46 @@ def check_line_paths(line):
                     start += path_start + 1
                     end += path_start + 1
                     debug_range(start, end, 'PathRE Match', True)
-                    diagnoses.append(diagnose(start, end))
-                    messages.add(message)
-                    problem_count += 1
+                    problems.append(Problem(start, end, message))
 
-    return diagnoses, messages, problem_count
+    return problems
 
 
 def check_line_methods(line, string_ranges):
     """Run checks defined as methods of LineChecks against line, ignoring code within specified string ranges."""
-    diagnoses = []
-    messages = set()
-    problem_count = 0
+    for _, check_method in getmembers(LineChecks(), predicate=isfunction):
+        line = check_method(line, string_ranges)
 
-    for _, check_method in getmembers(LineChecks(), predicate=ismethod):
-        passed, diagnosis, message = check_method(line, string_ranges)
-        if not passed:
-            diagnoses.append(diagnosis)
-            messages.add(message)
-            problem_count += 1
-
-    return diagnoses, messages, problem_count
+    return line
 
 
 def lint_line(line, components_included, first_line=False, allow_mvn_templates=False):
     """Run all lint checks against line and return any problems found."""
     debug_line(line)
 
-    messages = set()
-    diagnoses = []
-    problem_count = 0
-
     if first_line:
         first_line = False
         if not RE_FIRST_LINE.match(line.text):
             if not (RE_MVN_TEMPLATE.match(line.text) and allow_mvn_templates):
-                messages.add('First non-comment line must be the template type and name')
-                diagnoses.append(diagnose(0, len(line.text)))
-                problem_count += 1
-
+                line.problems.append(
+                    Problem(0, len(line.text), 'First non-comment line must be the template type and name')
+                )
     else:
         string_ranges = get_string_ranges(line)
         line = strip_trailing_comments(line, string_ranges)
 
-        d, m, p = check_line_component_use(line, components_included)
-        diagnoses += d
-        messages.update(m)
-        problem_count += p
+        line.problems += check_line_component_use(line, components_included)
+        line.problems += check_line_patterns(line, string_ranges)
+        line.problems += check_line_paths(line)
 
-        d, m, p = check_line_patterns(line, string_ranges)
-        diagnoses += d
-        messages.update(m)
-        problem_count += p
+        line = check_line_methods(line, string_ranges)
 
-        d, m, p = check_line_paths(line)
-        diagnoses += d
-        messages.update(m)
-        problem_count += p
-
-        d, m, p = check_line_methods(line, string_ranges)
-        diagnoses += d
-        messages.update(m)
-        problem_count += p
-
-    return (diagnoses, messages, problem_count, first_line)
+    return (line, first_line)
 
 
 def lint_file(filename, allow_mvn_templates=False):
     """Run lint checks against all lines of a file."""
-    reports = []
+    problem_lines = []
     file_problem_count = 0
 
     with open(filename) as f:
@@ -485,16 +451,20 @@ def lint_file(filename, allow_mvn_templates=False):
         line = Line(filename, line_number, line_text.rstrip('\n'))
 
         if line.text and line.number not in ignore_lines and not RE_COMMENT_LINE.match(line.text):
-            diagnoses, messages, line_problem_count, first_line = lint_line(line, components_included, first_line,
-                                                                            allow_mvn_templates)
-            file_problem_count += line_problem_count
+            line, first_line = lint_line(
+                line,
+                components_included,
+                first_line,
+                allow_mvn_templates,
+            )
 
-            if messages and diagnoses:
-                reports.append([filename, line, merge_diagnoses(diagnoses), ', '.join(messages)])
+            if line.problems:
+                problem_lines.append(line)
+                file_problem_count += len(line.problems)
         else:
             debug_ignored_line(line)
 
-    return (reports, file_problem_count)
+    return (problem_lines, file_problem_count)
 
 
 def main():
@@ -516,9 +486,8 @@ def main():
     global DEBUG
     DEBUG = args.debug
 
-    problems_found = 0
-
-    reports = []
+    problem_count = 0
+    problem_lines = []
     problem_stats = {}
 
     if not args.paths:
@@ -527,24 +496,24 @@ def main():
 
     for path in args.paths:
         for filename in glob(path):
-            file_reports, file_problems = lint_file(filename, args.allow_mvn_templates)
-            reports += file_reports
-            problems_found += file_problems
-            problem_stats[filename] = file_problems
+            file_problem_lines, file_problem_count = lint_file(filename, args.allow_mvn_templates)
+            problem_lines += file_problem_lines
+            problem_count += file_problem_count
+            problem_stats[filename] = file_problem_count
 
-    for report in reports:
-        print_report(*report, vi=args.vi)
+    for line in problem_lines:
+        print_report(line, vi=args.vi)
 
     if args.table:
         print('\nProblem count per file:')
         print(filestats_table(problem_stats))
 
-    print('\n%d problems found in total' % problems_found)
+    print('\n%d problems found in %d lines' % (problem_count, len(problem_lines)))
 
     if args.always_exit_success:
         return 0
 
-    if problems_found:
+    if problem_count:
         return 1
 
     return 0

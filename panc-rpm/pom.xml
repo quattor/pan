@@ -48,10 +48,9 @@
           <changelogFile>src/changelog</changelogFile>
           <buildarch>noarch</buildarch>
           <requires>
-              <!-- This is the only combination I could find to make it work under CentOS and Fedora -->
-              <require>python2-six</require>
-              <require>python2-prettytable</require>
-              <require>python-colorama</require>
+              <require>python3-six</require>
+              <require>python3-prettytable</require>
+              <require>python3-colorama</require>
           </requires>
           <mappings>
             <mapping>

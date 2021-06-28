@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # coding=utf8
 #
 # Copyright 2016 Science & Technology Facilities Council

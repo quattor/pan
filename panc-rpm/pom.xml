@@ -47,6 +47,11 @@
           <packager>Quattor</packager>
           <changelogFile>src/changelog</changelogFile>
           <buildarch>noarch</buildarch>
+          <requires>
+              <require>python3-six</require>
+              <require>python3-prettytable</require>
+              <require>python3-colorama</require>
+          </requires>
           <mappings>
             <mapping>
               <directory>/usr/lib</directory>

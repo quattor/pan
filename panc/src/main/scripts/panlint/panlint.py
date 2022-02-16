@@ -180,7 +180,6 @@ class LineChecks:
                     valid = False
                     messages.add('after')
                     end += 1
-                messages = list(messages)
                 messages = sorted(list(messages), key=None, reverse=True)
                 message_text = '%s space %s operator' % (reason, ' and '.join(messages))
 

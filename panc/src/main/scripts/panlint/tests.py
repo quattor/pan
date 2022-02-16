@@ -30,6 +30,15 @@ class TestPanlint(unittest.TestCase):
         self.longMessage = True
 
     def _assert_lint_line(self, line, diagnoses, messages, problems, first_line=False):
+        """For a given line of code, assert that the full lint output matches expectations
+
+        Parameters:
+            line (panlint.Line): Line of source code to be linted
+            diagnoses (list of str): Expected lines of diagnosis markers
+            messages (list of str): Expected problem descriptions
+            problems (int): Expected number of problems
+            first_line (bool): Whether this line should be considered the first line of a file (defaults to False)
+        """
         diagnoses.sort()
 
         r_line, r_first_line = panlint.lint_line(line, [], first_line)

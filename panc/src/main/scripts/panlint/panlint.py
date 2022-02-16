@@ -37,13 +37,27 @@ class Line(object):
 
 
 class Problem(object):
+    """A class representing the abstract concept of a problem with a line of code.
+
+    Problems have the ability to self-diagnose.
+    Problems are a property of Lines, rather than the other way around.
+    """
     def __init__(self, start, end, message):
+        """
+        Parameters:
+            start (int): Position of the first character of the problem
+            end (int): Position of the last character of the problem
+            message (str): A description of the problem
+        """
         self.start = int(start)
         self.end = int(end)
         self.message = str(message)
 
     def diagnose(self):
-        """Format a line of diagnosis markers from a range of character positions"""
+        """Format a line of diagnosis markers from a range of character positions
+        Returns:
+            str: A line of marker characers aligned with the position of the problem
+        """
         return (' ' * self.start) + ('^' * (self.end - self.start))
 
 

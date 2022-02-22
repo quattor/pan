@@ -205,8 +205,8 @@ def print_fileinfo(filename, line_number, message, vi=False):
     vi -- output line numbers in a format suitable for passing to editors such as vi (default False)
     """
     if vi:
-        return '%s +%d #%s' % (filename, line_number, message)
-    return '%s:%d: %s' % (filename, line_number, message)
+        return u'%s +%d #%s' % (filename, line_number, message)
+    return u'%s:%d: %s' % (filename, line_number, message)
 
 
 def print_line(text):
@@ -221,7 +221,7 @@ def print_line(text):
     else:
         text = text.replace('\t', ' ')
 
-    return ''.join([Fore.GREEN, text.rstrip('\n'), Fore.RESET])
+    return u''.join([Fore.GREEN, text.rstrip('\n'), Fore.RESET])
 
 
 def merge_diagnoses(args):
@@ -236,26 +236,26 @@ def merge_diagnoses(args):
         for i, c in enumerate(text):
             if c != ' ':
                 result[i] = c
-    return ''.join(result).rstrip()
+    return u''.join(result).rstrip()
 
 
 def print_diagnosis(diagnosis):
     """Format a line of diagnosis produced by diagnose() and/or merge_diagnoses()"""
-    return ''.join([Fore.BLUE, diagnosis, Fore.RESET])
+    return u''.join([Fore.BLUE, diagnosis, Fore.RESET])
 
 
 def debug_line(line):
     """Print debug information for a processed line of an input file"""
     if DEBUG:
         label = 'DEBUG: %04d %-12s |' % (line.number, '...')
-        print(''.join([Style.DIM, Fore.CYAN, label, Style.RESET_ALL, line.text.replace('\t', TAB_ARROW)]))
+        print(u''.join([Style.DIM, Fore.CYAN, label, Style.RESET_ALL, line.text.replace('\t', TAB_ARROW)]))
 
 
 def debug_ignored_line(line):
     """Print debug information for an ignored line of an input file"""
     if DEBUG:
         label = 'DEBUG: %04d %-12s |' % (line.number, 'Ignored')
-        print(''.join([Fore.CYAN, Style.DIM, label, Fore.RESET, line.text.replace('\t', TAB_ARROW), Style.RESET_ALL]))
+        print(u''.join([Fore.CYAN, Style.DIM, label, Fore.RESET, line.text.replace('\t', TAB_ARROW), Style.RESET_ALL]))
 
 
 def debug_range(start, end, label, problem=False):
@@ -266,17 +266,17 @@ def debug_range(start, end, label, problem=False):
         color = Fore.CYAN
         if problem:
             color = Fore.RED
-        print(''.join([Style.DIM, Fore.CYAN, label, Style.BRIGHT, color, diagnosis, Style.RESET_ALL]))
+        print(u''.join([Style.DIM, Fore.CYAN, label, Style.BRIGHT, color, diagnosis, Style.RESET_ALL]))
 
 
 def diagnose(start, end):
     """Format a line of diagnosis markers from a range of character positions"""
-    return (' ' * start) + ('^' * (end - start))
+    return (u' ' * start) + (u'^' * (end - start))
 
 
 def print_report(line, vi=False):
     """Print a full report of all problems found with a single line of a processed file"""
-    print('')
+    print(u'')
     messages = ', '.join(set([p.message for p in line.problems]))
     print(print_fileinfo(line.filename, line.number, messages, vi=vi))
     print(print_line(line.text))

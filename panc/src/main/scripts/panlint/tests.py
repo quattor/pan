@@ -19,6 +19,8 @@ import glob
 import unittest
 from sys import argv
 from os.path import basename, dirname, join
+from io import StringIO
+import mock
 import six
 
 import panlint
@@ -512,6 +514,22 @@ class TestPanlint(unittest.TestCase):
         self.assertEqual(len(result.problems), 1)
         for p in result.problems:
             self.assertIsInstance(p, panlint.Problem)
+
+    def test_print_report(self):
+        test_line = panlint.Line('fake.pan', 7, "This is a FAKE line")
+        test_line.problems = [panlint.Problem(10, 14, u'Everything is Fine')]
+
+        expected_output = '\n'.join([
+            '',
+            'fake.pan:7: Everything is Fine',
+            '\x1b[32mThis is a FAKE line\x1b[39m',
+            '\x1b[34m          ^^^^\x1b[39m',
+            '',
+        ])
+
+        with mock.patch('sys.stdout', new=StringIO()) as mock_stdout:
+            panlint.print_report(test_line)
+            self.assertEqual(mock_stdout.getvalue(), expected_output)
 
 
 if __name__ == '__main__':

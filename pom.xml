@@ -157,7 +157,7 @@
       <dependency>
         <groupId>org.clojure</groupId>
         <artifactId>clojure</artifactId>
-        <version>1.9.0-alpha15</version>
+        <version>1.11.2</version>
       </dependency>
       <dependency>
         <groupId>org.clojure</groupId>

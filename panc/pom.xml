@@ -94,6 +94,7 @@
             <exclude>**/TestUtils.java</exclude>
             <exclude>**/ScriptCompilerTest.java</exclude>
           </excludes>
+          <argLine>-Djdk.xml.xpathExprOpLimit=500</argLine>
         </configuration>
       </plugin>
       <plugin>

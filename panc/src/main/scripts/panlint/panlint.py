@@ -26,6 +26,7 @@ from inspect import getmembers, isfunction
 import six
 from colorama import Fore, Style, init as colorama_init
 from prettytable import PrettyTable
+from os.path import dirname
 
 
 class Line(object):
@@ -80,6 +81,9 @@ RE_COMPONENT_USE = re.compile(r'/software/components/(?P<name>\w+)/')
 
 # Detect whether a file is part of the source tree of a component
 RE_COMPONENT_SOURCE_FILE = re.compile(r'^/?(?:\S+/)?(?:core/components/|ncm-)(?P<name>\w+)/\S+$')
+
+# Find where templates belonging to features have been included
+RE_FEATURE_INCLUDE = re.compile(r'^\s*[^#]?\s*include.*(?P<name>features/\S+\w)', re.M)
 
 LINE_LENGTH_LIMIT = 120
 
@@ -188,6 +192,24 @@ class LineChecks:
                 line.problems.append(Problem(start, end, message_text))
 
         return line
+
+    def feature_child_inclusion(self, line, string_ranges):
+        """If the current file looks like a feature, then check a line for includes of feature templates
+        to ensure that they are children of the current feature"""
+        passed = True
+        diagnosis = ''
+        message = 'Feature template includes a template which is not a child of the feature'
+        if line.filename.startswith('features/'):
+            includes = RE_FEATURE_INCLUDE.finditer(line.text)
+            for include in includes:
+                this_file = line.filename
+                this_dir = dirname(this_file)
+                incl_file = include.group('name')
+                incl_dir = dirname(incl_file)
+                passed = passed and incl_dir.startswith(this_dir)
+                diagnosis = diagnose(*include.span('name'))
+    
+        return (passed, diagnosis, message)
 
 
 def inside_string(i, j, string_ranges):

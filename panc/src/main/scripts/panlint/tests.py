@@ -482,6 +482,8 @@ class TestPanlint(unittest.TestCase):
             ('error("is_asndate: invalid format for time");', []),
             ('debug(format("%s: bar: %s", OBJECT, ARGV[0]));', ['Redundant use of format within error or debug call']),
             ('debug("Foo" + bar + " has an unexpected format (should be a dict)");', []),
+            ('"/software/components/metaconfig/services/{/etc/example_service_with_long_name/conf.d/dropin_config.cfg}/contents/foo" = "bar";', ['Line is longer than 120 characters']),
+            ('bind "/software/components/metaconfig/services/{/etc/example_service_with_long_name/conf.d/dropin_config.cfg}/contents" = type_example_service;', []),
         ]
 
         for text, messages in lines:

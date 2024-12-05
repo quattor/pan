@@ -72,7 +72,7 @@ RE_FIRST_LINE = re.compile(r'^\s*(?:(?:declaration|unique|structure|object)\s+)?
 RE_MVN_TEMPLATE = re.compile(r'\$\{\S+\}')
 RE_COMMENT = re.compile(RS_COMMENT)
 RE_COMMENT_LINE = re.compile(r'^\s*' + RS_COMMENT + '.*$')
-RE_ANNOTATION = re.compile(r'@\w*{.*?}', re.S)
+RE_ANNOTATION = re.compile(r'@\w*\s*{.*?}', re.S)
 RE_OPERATOR = re.compile(r'([>=<!?]=|[<>+*=/-])')
 RE_HEREDOC = re.compile(r'<<(\w+);\s*$.*?\1$', re.S | re.M)
 

@@ -23,6 +23,8 @@ import re
 from glob import glob
 from sys import stdout, exit as sys_exit
 from inspect import getmembers, isfunction
+from os import sep as os_sep
+from os.path import dirname
 import six
 from colorama import Fore, Style, init as colorama_init
 from prettytable import PrettyTable
@@ -81,6 +83,9 @@ RE_COMPONENT_USE = re.compile(r'/software/components/(?P<name>\w+)/')
 # Detect whether a file is part of the source tree of a component
 RE_COMPONENT_SOURCE_FILE = re.compile(r'^/?(?:\S+/)?(?:core/components/|ncm-)(?P<name>\w+)/\S+$')
 
+# Find where templates belonging to features have been included
+RE_FEATURE_INCLUDE = re.compile(r'^\s*[^#]?\s*include.*(?P<name>features/\S+\w)', re.M)
+
 LINE_LENGTH_LIMIT = 120
 
 # Simple regular-expression based checks that will be performed against all non-ignored lines
@@ -107,7 +112,6 @@ LINE_PATTERNS = {
 PATH_PATTERNS = {
     "Unnecessary trailing slash at end of profile path": re.compile(r'''.(?P<error>/+)$'''),
 }
-
 TAB_ARROW = u'\u2192'
 
 DEBUG = False
@@ -186,6 +190,35 @@ class LineChecks:
             if not valid:
                 debug_range(start, end, 'WS Operator', True)
                 line.problems.append(Problem(start, end, message_text))
+
+        return line
+
+    @staticmethod
+    def features_standalone(line, _):
+        """If the current file looks like a feature, then check a line for includes of feature templates
+        to ensure that they are children of the current feature"""
+        message_text = 'Feature template includes a template which is not a child of the feature'
+
+        file_path = line.filename.split(os_sep)
+        try:
+            file_feature = file_path.index('features')
+        except ValueError:
+            # Return immediately if this file isn't part of a feature
+            return line
+
+        if file_feature >= 0:
+            file_path = file_path[file_feature:]
+            includes = RE_FEATURE_INCLUDE.finditer(line.text)
+            for include in includes:
+                this_file = os_sep.join(file_path)
+                this_dir = dirname(this_file)
+
+                incl_file = include.group('name')
+                incl_dir = dirname(incl_file)
+
+                if not incl_dir.startswith(this_dir):
+                    start, end = include.span('name')
+                    line.problems.append(Problem(start, end, message_text))
 
         return line
 
@@ -496,6 +529,8 @@ def main():
                         help='Always exit cleanly even if problems are found')
     parser.add_argument('--ignore-components', type=str,
                         help='List of component to ignore when checking included components')
+    parser.add_argument('--features_standalone', action='store_true',
+                        help='Check that features don\'t include other features')
     group_output = parser.add_mutually_exclusive_group()
     group_output.add_argument('--debug', action='store_true', help='Enable debug output')
     group_output.add_argument('--ide', action='store_true', help='Output machine-readable results for use by IDEs')
@@ -517,6 +552,10 @@ def main():
     ignore_components = None
     if args.ignore_components:
         ignore_components = args.ignore_components.split(',')
+
+    # This check is based on site-specific policy, so it is optional
+    if not args.features_standalone:
+        del LineChecks.features_standalone
 
     for path in args.paths:
         for filename in glob(path):

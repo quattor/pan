@@ -533,6 +533,28 @@ class TestPanlint(unittest.TestCase):
             panlint.print_report(test_line)
             self.assertEqual(mock_stdout.getvalue(), expected_output)
 
+    def test_features_standalone(self):
+        lc = panlint.LineChecks()
+
+        self.assertEqual(
+            lc.features_standalone(
+                panlint.Line('./linux/features/test/foo/config.pan', 3, "include 'features/test/foo/service/users';"),
+                [],
+            ).problems,
+            [],
+        )
+
+        problems = lc.features_standalone(
+            panlint.Line('./linux/features/test/foo/config.pan', 3, "include 'features/test/bar/webserver';"),
+            [],
+        ).problems
+        self.assertEqual(len(problems), 1)
+        for p in problems:
+            self.assertIsInstance(p, panlint.Problem)
+            self.assertEqual(p.message, 'Feature template includes a template which is not a child of the feature')
+            self.assertEqual(p.start, 9)
+            self.assertEqual(p.end, 36)
+
 
 if __name__ == '__main__':
     unittest.main()

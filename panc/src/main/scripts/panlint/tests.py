@@ -55,10 +55,10 @@ class TestPanlint(unittest.TestCase):
         # If messages is set to None, ignore the contents and just check that is not an empty set
         if messages is None:
             for p in r_line.problems:
-                self.assertNotEqual(p.message, '')
+                self.assertNotEqual(p.message.text, '')
         else:
             messages.sort()
-            r_messages = [p.message for p in r_line.problems]
+            r_messages = [p.message.text for p in r_line.problems]
             r_messages.sort()
             for m1, m2 in zip(messages, r_messages):
                 self.assertEqual(m1, m2)
@@ -196,7 +196,7 @@ class TestPanlint(unittest.TestCase):
         for bad_line, bad_message, bad_diag in bad_tests:
             result = lc.whitespace_around_operators(bad_line, [])
             self.assertEqual(len(result.problems), 1)
-            self.assertEqual(result.problems[0].message, bad_message)
+            self.assertEqual(result.problems[0].message.text, bad_message)
             self.assertEqual(result.problems[0].diagnose(), bad_diag)
 
         # Handling lines that start or end with an operator (i.e. are part of a multi-line expression) should be allowed
@@ -494,7 +494,7 @@ class TestPanlint(unittest.TestCase):
             self.assertIsInstance(problems, list)
             for p in problems:
                 self.assertIsInstance(p, panlint.Problem)
-            self.assertEqual(set([p.message for p in problems]), messages)
+            self.assertEqual(set([p.message.text for p in problems]), messages)
 
     def test_check_line_paths(self):
         problems = panlint.check_line_paths(
@@ -519,7 +519,7 @@ class TestPanlint(unittest.TestCase):
 
     def test_print_report(self):
         test_line = panlint.Line('fake.pan', 7, "This is a FAKE line")
-        test_line.problems = [panlint.Problem(10, 14, u'Everything is Fine')]
+        test_line.problems = [panlint.Problem(10, 14, panlint.Message('FM000', 1, u'Everything is Fine'))]
 
         expected_output = '\n'.join([
             '',

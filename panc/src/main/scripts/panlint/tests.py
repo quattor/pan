@@ -37,7 +37,7 @@ class TestPanlint(unittest.TestCase):
         Parameters:
             line (panlint.Line): Line of source code to be linted
             diagnoses (list of str): Expected lines of diagnosis markers
-            messages (list of str): Expected problem descriptions
+            messages (list of Message): Expected problem descriptions
             problems (int): Expected number of problems
             first_line (bool): Whether this line should be considered the first line of a file (defaults to False)
         """
@@ -55,10 +55,10 @@ class TestPanlint(unittest.TestCase):
         # If messages is set to None, ignore the contents and just check that is not an empty set
         if messages is None:
             for p in r_line.problems:
-                self.assertNotEqual(p.message, '')
+                self.assertNotEqual(p.message.text, '')
         else:
             messages.sort()
-            r_messages = [p.message for p in r_line.problems]
+            r_messages = [p.message.text for p in r_line.problems]
             r_messages.sort()
             for m1, m2 in zip(messages, r_messages):
                 self.assertEqual(m1, m2)
@@ -66,8 +66,25 @@ class TestPanlint(unittest.TestCase):
         # first_line must ALWAYS be False when returned
         self.assertEqual(r_first_line, False)
 
+    def test_message_ids(self):
+        line_pattern_ids = [m.id for m in panlint.LINE_PATTERNS.keys()]
+        line_pattern_ids.sort()
+        for p in line_pattern_ids:
+            self.assertRegex(p, r'LP\d{3}', f'Format of line pattern message ID {p}')
+
+        path_pattern_ids = [m.id for m in panlint.PATH_PATTERNS.keys()]
+        path_pattern_ids.sort()
+        for p in path_pattern_ids:
+            self.assertRegex(p, r'PP\d{3}', f'Format of path pattern message ID {p}')
+
+        all_pattern_ids = line_pattern_ids + path_pattern_ids
+        all_pattern_ids.sort()
+        unique_pattern_ids = list(set(all_pattern_ids))
+        unique_pattern_ids.sort()
+        self.assertEqual(unique_pattern_ids, all_pattern_ids)
+
     def test_diagnose(self):
-        dummy_message = ''
+        dummy_message = panlint.Message('', 0, '')
         self.assertEqual(panlint.Problem(0, 0, dummy_message).diagnose(), '')
         self.assertEqual(panlint.Problem(0, 4, dummy_message).diagnose(), '^^^^')
         self.assertEqual(panlint.Problem(2, 8, dummy_message).diagnose(), '  ^^^^^^')
@@ -196,7 +213,7 @@ class TestPanlint(unittest.TestCase):
         for bad_line, bad_message, bad_diag in bad_tests:
             result = lc.whitespace_around_operators(bad_line, [])
             self.assertEqual(len(result.problems), 1)
-            self.assertEqual(result.problems[0].message, bad_message)
+            self.assertEqual(result.problems[0].message.text, bad_message)
             self.assertEqual(result.problems[0].diagnose(), bad_diag)
 
         # Handling lines that start or end with an operator (i.e. are part of a multi-line expression) should be allowed
@@ -494,7 +511,7 @@ class TestPanlint(unittest.TestCase):
             self.assertIsInstance(problems, list)
             for p in problems:
                 self.assertIsInstance(p, panlint.Problem)
-            self.assertEqual(set([p.message for p in problems]), messages)
+            self.assertEqual(set([p.message.text for p in problems]), messages)
 
     def test_check_line_paths(self):
         problems = panlint.check_line_paths(
@@ -519,7 +536,7 @@ class TestPanlint(unittest.TestCase):
 
     def test_print_report(self):
         test_line = panlint.Line('fake.pan', 7, "This is a FAKE line")
-        test_line.problems = [panlint.Problem(10, 14, u'Everything is Fine')]
+        test_line.problems = [panlint.Problem(10, 14, panlint.Message('FM000', 1, u'Everything is Fine'))]
 
         expected_output = '\n'.join([
             '',

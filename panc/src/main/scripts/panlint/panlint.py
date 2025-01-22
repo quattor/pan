@@ -37,6 +37,9 @@ class Line(object):
         self.text = str(text)
         self.problems = []
 
+    def __repr__(self):
+        return f"Line('{self.filename}', {self.number}, '{self.text}')"
+
 
 class Problem(object):
     """A class representing the abstract concept of a problem with a line of code.
@@ -90,7 +93,9 @@ RE_MVN_TEMPLATE = re.compile(r'\$\{\S+\}')
 RE_COMMENT = re.compile(RS_COMMENT)
 RE_COMMENT_LINE = re.compile(r'^\s*' + RS_COMMENT + '.*$')
 RE_ANNOTATION = re.compile(r'@\w*\s*{.*?}', re.S)
-RE_OPERATOR = re.compile(r'([>=<!?]=|[<>+*=/-])')
+# Deal with heredoc as fake operator incl tag (so no bitshift). Will ignore it in the code.
+#   The order here is important: the < at the end must remain at the end or linting heredocs will fail.
+RE_OPERATOR = re.compile(r'([>=<!?]=|[>+*=/-]|<<\w+(?!;)|<)')
 RE_HEREDOC = re.compile(r'<<(\w+);\s*$.*?\1$', re.S | re.M)
 
 # Find usage and inclusion of components
@@ -195,6 +200,9 @@ class LineChecks:
 
             valid = True
             if inside_string(start, end, string_ranges):
+                continue
+            elif op.startswith('<<') and len(op) > 2:
+                # ignore fake heredoc operator
                 continue
             elif op == '-' and (
                     (

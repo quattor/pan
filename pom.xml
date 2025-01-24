@@ -9,7 +9,7 @@
   <description>Pan Language Tools</description>
   <url>http://quattor.org/</url>
   <prerequisites>
-    <maven>3.3.3</maven>
+    <maven>3.5.4</maven>
   </prerequisites>
   <licenses>
     <license>
@@ -298,7 +298,22 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-enforcer-plugin</artifactId>
-          <version>1.4.1</version>
+	  <version>3.5.0</version>
+          <executions>
+            <execution>
+              <id>enforce-maven</id>
+              <goals>
+                <goal>enforce</goal>
+              </goals>
+              <configuration>
+                <rules>
+                  <requireMavenVersion>
+                    <version>3.5.4</version>
+                  </requireMavenVersion>
+                </rules>
+              </configuration>
+            </execution>
+          </executions>
         </plugin>
       </plugins>
     </pluginManagement>

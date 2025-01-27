@@ -1332,6 +1332,27 @@ being the complete matched string.
       return(true);
     };
 
+.. _max:
+
+max
+===
+
+Name
+----
+
+max -- returns the largest argument passed
+
+Synopsis
+--------
+
+number **max** (number *arg1*, number *arg2*)
+
+Description
+-----------
+
+The ``max`` function will return the larger of two numbers.
+If both arguments are longs, the returned value with also be a long, otherwise the returned value will be a double.
+
 .. _merge:
 
 merge

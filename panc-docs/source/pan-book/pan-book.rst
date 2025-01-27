@@ -1739,6 +1739,8 @@ arguments and other detailed information about the functions.
 +----------------------+-----------------------------------------------------------+
 | :ref:`max`           | Return the largest of two numbers.                        |
 +----------------------+-----------------------------------------------------------+
+| :ref:`min`           | Return the smallest of two numbers.                       |
++----------------------+-----------------------------------------------------------+
 | :ref:`replace`       | Replace all occurrences of a substring within a given     |
 |                      | string.                                                   |
 +----------------------+-----------------------------------------------------------+

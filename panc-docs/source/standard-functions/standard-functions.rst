@@ -1383,6 +1383,27 @@ occurs.
     '/y' = list('d', 'e');
     '/z' = merge (value('/x'), value('/y'));
 
+.. _min:
+
+min
+===
+
+Name
+----
+
+min -- returns the smallest argument passed
+
+Synopsis
+--------
+
+number **min** (number *arg1*, number *arg2*)
+
+Description
+-----------
+
+The ``min`` function will return the smaller of two numbers.
+If both arguments are longs, the returned value with also be a long, otherwise the returned value will be a double.
+
 .. _next:
 
 next

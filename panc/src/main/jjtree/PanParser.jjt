@@ -713,7 +713,7 @@ org.quattor.pan.ttemplate.SourceRange typeSpec() #TypeSpec :
 org.quattor.pan.ttemplate.SourceRange baseTypeSpec() #BaseTypeSpec :
 { Token t = null, b=null, e=null; org.quattor.pan.utils.Range r = null; }
 {
-  t=<CHOICE> <LPAREN> stringLiteral() (<COMMA> stringLiteral())* e=<RPAREN>
+  t=<CHOICE> <LPAREN> stringLiteral() (LOOKAHEAD(2) <COMMA> stringLiteral())* [ <COMMA> ] e=<RPAREN>
   {
     jjtThis.setIdentifier(t.image);
     jjtThis.setSourceRange(PanParserUtils.sourceRangeFromTokens(t,(e!=null)?e:t));

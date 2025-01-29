@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.quattor.pan.dml.Operation;
+import org.quattor.pan.dml.data.BooleanProperty;
 import org.quattor.pan.dml.data.LongProperty;
 import org.quattor.pan.dml.data.StringProperty;
 import org.quattor.pan.exceptions.SyntaxException;
@@ -40,6 +41,14 @@ public class DeprecatedTest extends BuiltInFunctionTestUtils {
 		Operation op = Deprecated.getInstance(null, LongProperty
 				.getInstance(1L), StringProperty.getInstance("message"));
 		assertTrue(op instanceof Deprecated);
+	}
+
+	@Test
+	public void testReturnTrue() throws SyntaxException {
+		Operation r1 = runDml(
+			Deprecated.getInstance(null, LongProperty.getInstance(1L), StringProperty.getInstance("message"))
+		);
+		assertTrue(r1 == BooleanProperty.TRUE);
 	}
 
 	@Test(expected = SyntaxException.class)

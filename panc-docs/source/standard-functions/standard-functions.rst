@@ -274,16 +274,14 @@ deprecated -- print deprecation warning to console
 Synopsis
 --------
 
-string **deprecated** (long *level*, string *msg*)
+boolean **deprecated** (long *level*, string *msg*)
 
 Description
 -----------
 
-This function will print the given string to the console (on stderr) and
-return the message as the result, if ``level`` is less than or equal to
-the deprecation level given as a compiler option. If the message is not
-printed, the function returns undef. The value of ``level`` must be
-non-negative.
+This function will print the given string to the console (on stderr), if
+``level`` is less than or equal to the deprecation level given as a compiler
+option and always returns true. The value of ``level`` must be non-negative.
 
 .. _dict:
 

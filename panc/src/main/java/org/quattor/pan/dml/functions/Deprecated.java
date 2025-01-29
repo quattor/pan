@@ -29,7 +29,7 @@ import org.quattor.pan.dml.Operation;
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.LongProperty;
 import org.quattor.pan.dml.data.StringProperty;
-import org.quattor.pan.dml.data.Undef;
+import org.quattor.pan.dml.data.BooleanProperty;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.ttemplate.Context;
@@ -37,11 +37,10 @@ import org.quattor.pan.ttemplate.SourceRange;
 
 /**
  * Prints the argument to the standard error stream if the given level is less
- * than or equal to the deprecation level option. The returned value is the
- * message, if the message is printed; undef, otherwise.
- * 
+ * than or equal to the deprecation level option. The returned value is always true.
+ *
  * @author loomis
- * 
+ *
  */
 // FIXME: This method should really only accept one argument now.
 final public class Deprecated extends BuiltInFunction {
@@ -91,7 +90,7 @@ final public class Deprecated extends BuiltInFunction {
 
 		assert (ops.length == 2);
 
-		Element value = Undef.VALUE;
+		Element value = BooleanProperty.TRUE;
 
 		if (!context.isCompileTimeContext()) {
 

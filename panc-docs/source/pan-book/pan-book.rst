@@ -1737,6 +1737,10 @@ arguments and other detailed information about the functions.
 | :ref:`matches`       | Return an array containing the matched string and matched |
 |                      | groups for a given string and regular expression.         |
 +----------------------+-----------------------------------------------------------+
+| :ref:`max`           | Return the largest of two numbers.                        |
++----------------------+-----------------------------------------------------------+
+| :ref:`min`           | Return the smallest of two numbers.                       |
++----------------------+-----------------------------------------------------------+
 | :ref:`replace`       | Replace all occurrences of a substring within a given     |
 |                      | string.                                                   |
 +----------------------+-----------------------------------------------------------+

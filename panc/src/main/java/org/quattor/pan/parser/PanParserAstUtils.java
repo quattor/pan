@@ -276,6 +276,10 @@ public class PanParserAstUtils {
             fc.put("join",
                     (Join.class).getDeclaredMethod("getInstance", SourceRange.class, Operation[].class));
 
+            fc.put("max", (Max.class).getDeclaredMethod("getInstance", SourceRange.class, Operation[].class));
+
+            fc.put("min", (Min.class).getDeclaredMethod("getInstance", SourceRange.class, Operation[].class));
+
             // Make the visible map invariant, just to make sure that no one
             // makes unexpected changes.
             functionConstructors = Collections.unmodifiableMap(fc);

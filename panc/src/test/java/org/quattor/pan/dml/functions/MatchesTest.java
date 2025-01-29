@@ -188,6 +188,11 @@ public class MatchesTest extends BuiltInFunctionTestUtils {
 	}
 
 	@Test(expected = SyntaxException.class)
+	public void invalidCallWithOneArgument() throws SyntaxException {
+		Matches.getInstance(null, StringProperty.getInstance("a"));
+	}
+
+	@Test(expected = SyntaxException.class)
 	public void invalidCallWithTooManyArguments() throws SyntaxException {
 		Matches.getInstance(null, StringProperty.getInstance("a"),
 				StringProperty.getInstance("b"), StringProperty

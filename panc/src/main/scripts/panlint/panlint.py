@@ -656,6 +656,7 @@ def main():
     if args.summary:
         print()
         print(f"\n{problem_count} problems found in {len(problem_lines)} lines")
+        print('Highest severity problem found was %s' % (SEVERITY_TEXT[problem_max_severity]))
 
     if args.always_exit_success:
         return 0

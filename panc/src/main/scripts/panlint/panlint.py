@@ -612,6 +612,13 @@ def main():
         default='Advice',
         help='Only report problems of the provided level or above',
     )
+    parser.add_argument(
+        '--threshold',
+        type=str,
+        choices=SEVERITY_TEXT.values(),
+        default='Advice',
+        help='Only fail if problems of a certain level or above are found',
+    )
     group_output = parser.add_mutually_exclusive_group()
     group_output.add_argument('--debug', action='store_true', help='Enable debug output')
     group_output.add_argument('--ide', action='store_true', help='Output machine-readable results for use by IDEs')
@@ -672,7 +679,7 @@ def main():
     if args.always_exit_success:
         return 0
 
-    if problem_count:
+    if problem_count and problem_max_severity >= SEVERITY_VALUE_MAP[args.threshold]:
         return 1
 
     return 0

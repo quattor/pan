@@ -83,6 +83,23 @@ class TestPanlint(unittest.TestCase):
         unique_pattern_ids.sort()
         self.assertEqual(unique_pattern_ids, all_pattern_ids)
 
+    def test_message_ids(self):
+        line_pattern_ids = [m.id for m in panlint.LINE_PATTERNS.keys()]
+        line_pattern_ids.sort()
+        for p in line_pattern_ids:
+            self.assertRegex(p, r'LP\d{3}', f'Format of line pattern message ID {p}')
+
+        path_pattern_ids = [m.id for m in panlint.PATH_PATTERNS.keys()]
+        path_pattern_ids.sort()
+        for p in path_pattern_ids:
+            self.assertRegex(p, r'PP\d{3}', f'Format of path pattern message ID {p}')
+
+        all_pattern_ids = line_pattern_ids + path_pattern_ids
+        all_pattern_ids.sort()
+        unique_pattern_ids = list(set(all_pattern_ids))
+        unique_pattern_ids.sort()
+        self.assertEqual(unique_pattern_ids, all_pattern_ids)
+
     def test_diagnose(self):
         dummy_message = panlint.Message('', 0, '')
         self.assertEqual(panlint.Problem(0, 0, dummy_message).diagnose(), '')
@@ -485,31 +502,32 @@ class TestPanlint(unittest.TestCase):
     def test_check_line_patterns(self):
         lines = [
             ('variable UNIVERSAL_TRUTH = 42;', []),
-            ('variable BAD = -1;', ['Global variables should be five or more characters']),
-            ('variable bad_long = ":-(";', ['Global variables should be uppercase']),
-            ('variable bad = "all lower";', ['Global variables should be uppercase',
-                                             'Global variables should be five or more characters']),
-            ('variable tricky_onE = "Uhoh";', ['Global variables should be uppercase']),
-            ('variable camelCase = "camels!";', ['Global variables should be uppercase']),
-            ('variable TitleCase ?= -3;', ['Global variables should be uppercase']),
-            ('variable NoSpacesHere?=True;', ['Global variables should be uppercase']),
-            ('error(format("Duplicate %s in foo", mp));', ['Redundant use of format within error or debug call']),
+            ('variable BAD = -1;', ['LP011']),
+            ('variable bad_long = ":-(";', ['LP010']),
+            ('variable bad = "all lower";', ['LP010', 'LP011']),
+            ('variable tricky_onE = "Uhoh";', ['LP010']),
+            ('variable camelCase = "camels!";', ['LP010']),
+            ('variable TitleCase ?= -3;', ['LP010']),
+            ('variable NoSpacesHere?=True;', ['LP010']),
+            ('error(format("Duplicate %s in foo", mp));', ['LP012']),
             ('error("is_asndate: invalid format for time");', []),
-            ('debug(format("%s: bar: %s", OBJECT, ARGV[0]));', ['Redundant use of format within error or debug call']),
+            ('debug(format("%s: bar: %s", OBJECT, ARGV[0]));', ['LP012']),
             ('debug("Foo" + bar + " has an unexpected format (should be a dict)");', []),
-            ('"/software/components/metaconfig/services/{/etc/example_service_with_long_name/conf.d/dropin_config.cfg}/contents/foo" = "bar";', ['Line is longer than 120 characters']),
+            ('"/software/components/metaconfig/services/{/etc/example_service_with_long_name/conf.d/dropin_config.cfg}/contents/foo" = "bar";', ['LP006']),
             ('bind "/software/components/metaconfig/services/{/etc/example_service_with_long_name/conf.d/dropin_config.cfg}/contents" = type_example_service;', []),
         ]
 
-        for text, messages in lines:
+        for text, ids in lines:
+            ids.sort()
             line = panlint.Line('patterns.pan', 0, text)
-            messages = set(messages)
             problems = panlint.check_line_patterns(line, [])
+            problem_ids = [problem.message.id for problem in problems]
+            problem_ids.sort()
+            self.assertEqual(problem_ids, ids)
 
             self.assertIsInstance(problems, list)
             for p in problems:
                 self.assertIsInstance(p, panlint.Problem)
-            self.assertEqual(set([p.message.text for p in problems]), messages)
 
     def test_check_line_paths(self):
         problems = panlint.check_line_paths(

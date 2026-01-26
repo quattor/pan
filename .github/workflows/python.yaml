@@ -26,7 +26,16 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Run unit tests
       run: |
-        python panc/src/main/scripts/panlint/tests.py
-    - name: Produce coverage report
-      run: |
         coverage run --source=panc/src/main/scripts/panlint --omit panc/src/main/scripts/panlint/tests.py panc/src/main/scripts/panlint/tests.py
+    - name: Report Coverage
+      env:
+        TERM: xterm
+      run: |
+        coverage report
+        coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
+        # Produce a quick and dirty coloured annotation with numbered lines
+        coverage annotate
+        awk -v ln=1 '{printf("%4d %s\n", ln++, $0) }' panc/src/main/scripts/panlint/panlint.py,cover |
+          sed 's#^\( \+[[:digit:]]\+\) !#'"$(tput setaf 1)"'\1 !#' |
+          sed 's#^\( \+[[:digit:]]\+\) >#'"$(tput setaf 2)"'\1 >#' |
+          sed 's#^\( \+[[:digit:]]\+\)  #'"$(tput setaf 7)"'\1  #'

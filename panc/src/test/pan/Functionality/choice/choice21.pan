@@ -4,6 +4,11 @@
 
 object template choice21;
 
-type mychoice = choice("aa", "bb", "aaa", "bbb");
+type mychoice = choice(
+    "aa",
+    "bb",
+    "aaa",
+    "bbb",
+);
 bind '/x' = mychoice(3);
 '/x' = "aaa";

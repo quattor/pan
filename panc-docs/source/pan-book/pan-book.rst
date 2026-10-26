@@ -2433,7 +2433,7 @@ following example will do this::
       myhost = info['host'];
       mypath = info['path'];
 
-      exports_path = host + ':/software/components/nfs/exports';
+      exports_path = myhost + ':/software/components/nfs/exports';
 
       found = false;
       if (path_exists(exports_path)) {

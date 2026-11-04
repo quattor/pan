@@ -124,6 +124,12 @@ SEVERITY_TEXT = {
 
 SEVERITY_VALUE_MAP = dict(zip(SEVERITY_TEXT.values(), SEVERITY_TEXT.keys()))
 
+SEVERITY_COLOR = {
+    SEV_ADVICE : Fore.BLUE,
+    SEV_WARNING : Fore.YELLOW,
+    SEV_ERROR : Fore.RED,
+}
+
 # Simple regular-expression based checks that will be performed against all non-ignored lines
 # Every pattern must provide a single capturing group named "error"
 LINE_PATTERNS = {
@@ -286,6 +292,114 @@ class LineChecks:
         return line
 
 
+# Output Formatters
+class Formatters(object):
+    @staticmethod
+    def default(reports):
+        for filename, lines in reports.iteritems():
+            for line in lines:
+                for problem in line.problems:
+                    print()
+                    print('%s:%d: %s' % (filename, line.number, problem.message))
+                    print(print_line(line.text))
+                    print(print_line(problem.diagnose(), Fore.BLUE))
+
+
+    @staticmethod
+    def vi(reports):
+        for filename, lines in reports.iteritems():
+            for line in lines:
+                for problem in line.problems:
+                    print()
+                    print('%s +%d # %s' % (filename, line.number, problem.message))
+                    print(print_line(line.text))
+                    print(print_line(problem.diagnose(), Fore.BLUE))
+
+
+    @staticmethod
+    def ide(reports):
+        for filename, lines in reports.iteritems():
+            for line in lines:
+                for problem in line.problems:
+                    print('%s|%d|%d|%d|%s|%s' % (
+                        filename,
+                        line.number,
+                        problem.start,
+                        problem.end,
+                        problem.message.severity,
+                        problem.message,
+                    ))
+
+    @staticmethod
+    def codeframe(reports):
+        for filename, lines in reports.iteritems():
+            for line in lines:
+                for problem in line.problems:
+                    print()
+                    print('%s at %s:%d:%d:' % (problem.message, filename, line.number, problem.start))
+                    print('> %3d | %s' % (line.number, line.text))
+                    print('      | %s' % (problem.diagnose()))
+
+
+    @staticmethod
+    def json(reports):
+        result = {
+            'files' : [],
+        }
+        for filename, lines in reports.iteritems():
+            r_file = {
+                'filename' : filename,
+                'lines' : [],
+            }
+            for line in lines:
+                r_line = {
+                    'text' : line.text,
+                    'number' : line.number,
+                    'problems' : [],
+                }
+                for problem in line.problems:
+                    r_line['problems'].append({
+                        'id' : problem.message.id,
+                        'severity' : SEVERITY_TEXT[problem.message.severity],
+                        'text' : problem.message.text,
+                        'start' : problem.start,
+                        'end' : problem.end,
+                    })
+                r_file['lines'].append(r_line)
+            result['files'].append(r_file)
+
+        from json import dumps
+        print(dumps(result))
+
+
+    @staticmethod
+    def compact(reports):
+        for filename, lines in reports.iteritems():
+            for line in lines:
+                for problem in line.problems:
+                    print('%s: line %d, col %d, %s - %s (%s)' % (
+                        filename,
+                        line.number,
+                        problem.start,
+                        SEVERITY_TEXT[problem.message.severity],
+                        problem.message.text,
+                        problem.message.id,
+                    ))
+
+    @staticmethod
+    def shellcheck(reports):
+        for filename, lines in reports.iteritems():
+            for line in lines:
+                for problem in line.problems:
+                    print()
+                    print(print_line('In %s line %d:' % (filename, line.number), Style.BRIGHT))
+                    print(line.text)
+                    print(print_line(
+                        '%s %s: %s' % (problem.diagnose(), problem.message.id, problem.message.text),
+                        SEVERITY_COLOR[problem.message.severity],
+                    ))
+
+
 def inside_string(i, j, string_ranges):
     """Returns true if the range described by i and j is contained within a range in the list string_ranges"""
     for s, e in string_ranges:
@@ -305,7 +419,7 @@ def print_fileinfo(filename, line_number, message, vi=False):
     return u'%s:%d: %s' % (filename, line_number, message)
 
 
-def print_line(text):
+def print_line(text, color=Fore.GREEN):
     """Return a formatted line of text, replacing tabs with a visible character
 
     If stdout is a tty and claims to support UTF-8 encoding, a unicode rightwards arrow (u2192) will be used for tabs,
@@ -317,7 +431,7 @@ def print_line(text):
     else:
         text = text.replace('\t', ' ')
 
-    return u''.join([Fore.GREEN, text.rstrip('\n'), Fore.RESET])
+    return ''.join([color, text.rstrip('\n'), Style.RESET_ALL])
 
 
 def merge_diagnoses(args):
@@ -634,7 +748,6 @@ def main():
     """Main function"""
     parser = argparse.ArgumentParser(description='Linter for the pan language')
     parser.add_argument('paths', metavar='PATH', type=str, nargs='*', help='Paths of files to check')
-    parser.add_argument('--vi', action='store_true', help='Output line numbers in a vi option style')
     parser.add_argument('--table', action='store_true', help='Display a table of per-file problem stats')
     parser.add_argument('--summary', action='store_true', help='Display a summary of problems')
     parser.add_argument('--allow_mvn_templates', action='store_true', help='Allow use of maven templates')
@@ -658,13 +771,18 @@ def main():
         default='Advice',
         help='Only fail if problems of a certain level or above are found',
     )
+    parser.add_argument(
+        '--format',
+        type=str,
+        choices=[m[0] for m in getmembers(Formatters(), predicate=isfunction)],
+        default='default',
+    )
     group_output = parser.add_mutually_exclusive_group()
     group_output.add_argument('--debug', action='store_true', help='Enable debug output')
-    group_output.add_argument('--ide', action='store_true', help='Output machine-readable results for use by IDEs')
     args = parser.parse_args()
 
     # Only output colors sequences if the output is a terminal
-    colorama_init(strip=(not stdout.isatty()) or args.ide)
+    colorama_init(strip=(not stdout.isatty()))
     global DEBUG
     DEBUG = args.debug
 

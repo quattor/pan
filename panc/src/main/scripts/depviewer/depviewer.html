@@ -1,0 +1,910 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Depx trace viewer</title>
+  <style>
+    :root {
+      font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+      color: #202a35;
+      background: #f3f5f7;
+      font-synthesis: none;
+      --ink: #202a35;
+      --muted: #5d6975;
+      --line: #d8dee5;
+      --paper: #fff;
+      --accent: #146c68;
+      --accent-soft: #e6f3f1;
+      --warning: #8b4c13;
+      --warning-soft: #fff2df;
+      --focus: #1369b3;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-width: 320px; }
+    button, input, select { font: inherit; }
+    button, select, input { color: inherit; }
+    button:focus-visible, input:focus-visible, select:focus-visible, [tabindex="0"]:focus-visible {
+      outline: 3px solid var(--focus); outline-offset: 2px;
+    }
+    .shell { width: min(1500px, 100%); margin: 0 auto; padding: 26px clamp(16px, 3vw, 42px) 40px; }
+    header { display: flex; align-items: end; justify-content: space-between; gap: 24px; border-bottom: 1px solid var(--line); padding-bottom: 20px; }
+    .eyebrow { margin: 0 0 6px; color: var(--accent); font-size: .75rem; font-weight: 750; letter-spacing: .12em; text-transform: uppercase; }
+    h1 { margin: 0; font-size: clamp(1.7rem, 4vw, 2.4rem); letter-spacing: -.045em; line-height: 1.1; }
+    .lede { max-width: 650px; margin: 10px 0 0; color: var(--muted); line-height: 1.5; }
+    .controls { display: flex; flex-wrap: wrap; align-items: end; gap: 10px; padding: 18px 0; }
+    .control { display: grid; gap: 5px; min-width: 155px; }
+    .control.search { flex: 1 1 290px; }
+    .profile-menu { position: relative; }
+    .profile-picker-popup { display: grid; grid-template-columns: minmax(220px, 1fr) auto; gap: 8px; position: absolute; z-index: 5; top: calc(100% + 6px); left: 0; width: min(520px, calc(100vw - 32px)); max-height: min(70vh, 520px); overflow: auto; border: 1px solid var(--line); border-radius: 6px; background: white; padding: 12px; box-shadow: 0 8px 24px #18283a20; }
+    .profile-picker-popup[hidden] { display: none; }
+    .profile-picker-popup .control { grid-column: 1 / -1; min-width: 0; }
+    .profile-picker-popup select { width: 100%; min-height: 0; padding: 4px; }
+    .profile-picker-popup select option { padding: 5px 7px; }
+    #profile-picker-toggle { max-width: min(52vw, 420px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #profile-current { overflow: hidden; text-overflow: ellipsis; }
+    .profile-picker-popup option { padding: 5px 7px; }
+    .profile-picker-status { grid-column: 1 / -1; margin: 0; min-height: 1.3em; }
+    .profile-picker-pager { display: flex; align-items: center; justify-content: flex-end; gap: 7px; }
+    @media (max-width: 720px) { .profile-picker-popup { grid-template-columns: 1fr; max-width: calc(100vw - 32px); } }
+    label, .label { color: var(--muted); font-size: .78rem; font-weight: 650; }
+    input, select { min-height: 40px; border: 1px solid #bdc7d1; border-radius: 5px; background: white; padding: 8px 10px; }
+    button { min-height: 40px; border: 1px solid #bdc7d1; border-radius: 5px; background: white; padding: 8px 12px; cursor: pointer; }
+    button:hover:not(:disabled) { border-color: var(--accent); background: var(--accent-soft); }
+    button:disabled { cursor: not-allowed; opacity: .5; }
+    .primary { border-color: var(--accent); color: white; background: var(--accent); font-weight: 700; }
+    .primary:hover:not(:disabled) { color: white; background: #0e5955; }
+    .file-button { display: inline-flex; align-items: center; min-height: 40px; border-radius: 5px; padding: 8px 12px; cursor: pointer; }
+    .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+    .status { min-height: 42px; border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 4px; background: white; padding: 10px 12px; color: var(--muted); font-size: .9rem; }
+    .status.error { border-left-color: var(--warning); color: #66340d; background: var(--warning-soft); }
+    .workspace { display: grid; grid-template-columns: minmax(320px, 1.15fr) minmax(300px, .85fr); gap: 16px; margin-top: 16px; align-items: start; }
+    .panel { min-width: 0; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); box-shadow: 0 2px 10px #18283a08; }
+    .panel-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; border-bottom: 1px solid var(--line); padding: 12px 14px; }
+    h2 { margin: 0; font-size: 1rem; letter-spacing: -.01em; }
+    .panel-tools { display: flex; align-items: center; gap: 8px; }
+    .counter { min-width: 72px; text-align: center; color: var(--muted); font-size: .82rem; font-variant-numeric: tabular-nums; }
+    .pager { display: flex; align-items: center; justify-content: flex-end; gap: 8px; border-top: 1px solid var(--line); padding: 8px 10px; }
+    .pager .counter { flex: 0 0 auto; }
+    .tree-scroll { max-height: min(65vh, 700px); min-height: 190px; overflow: auto; padding: 8px 10px 16px 8px; }
+    .tree-row { display: flex; align-items: start; gap: 7px; min-height: 32px; padding: 4px 5px; border-radius: 3px; font-family: "IBM Plex Mono", "Cascadia Code", Consolas, monospace; font-size: .83rem; line-height: 1.45; }
+    .tree-row.selected { background: var(--accent-soft); box-shadow: inset 3px 0 var(--accent); }
+    .tree-row[aria-selected="true"] { font-weight: 650; }
+    .tree-row[aria-expanded="false"] .tree-toggle { font-weight: 800; }
+    .tree-row.match { outline: 1px solid #d8a14b; outline-offset: -1px; }
+    .tree-indent { flex: 0 0 auto; height: 1px; }
+    .tree-toggle { flex: 0 0 22px; width: 22px; min-height: 22px; border: 0; padding: 0; background: transparent; color: var(--muted); }
+    .tree-toggle:hover:not(:disabled) { background: var(--accent-soft); }
+    .tree-spacer { flex: 0 0 22px; }
+    .tree-main { display: flex; flex: 1; min-width: 0; align-items: baseline; flex-wrap: wrap; gap: 6px 9px; }
+    .tree-name { overflow-wrap: anywhere; }
+    .tree-meta { color: var(--muted); font-size: .72rem; }
+    .badge { display: inline-block; border: 1px solid #a9c9c5; border-radius: 3px; background: #eff8f7; color: #155b57; padding: 0 5px; font: 650 .67rem/1.55 "IBM Plex Sans", "Segoe UI", sans-serif; }
+    .badge.skipped { border-color: #e5c78d; background: #fff6e7; color: #74440f; }
+    .empty { padding: 22px 14px; color: var(--muted); line-height: 1.5; }
+    .details { padding: 14px; }
+    .details h3 { margin: 18px 0 8px; font-size: .82rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+    .details h3:first-child { margin-top: 0; }
+    dl { display: grid; grid-template-columns: minmax(88px, .25fr) minmax(0, 1fr); gap: 8px 12px; margin: 0; font-size: .87rem; }
+    dt { color: var(--muted); }
+    dd { min-width: 0; margin: 0; overflow-wrap: anywhere; }
+    code, .path { font-family: "IBM Plex Mono", "Cascadia Code", Consolas, monospace; font-size: .83em; }
+    .inventory { border-top: 1px solid var(--line); margin-top: 14px; padding-top: 14px; }
+    .inventory-list { max-height: 200px; overflow: auto; margin: 0; padding: 0; list-style: none; }
+    .inventory-list li { overflow-wrap: anywhere; padding: 5px 0; border-bottom: 1px solid #edf0f2; font-family: "IBM Plex Mono", "Cascadia Code", Consolas, monospace; font-size: .8rem; }
+    .hint { color: var(--muted); font-size: .82rem; line-height: 1.5; }
+    .noscript { margin-top: 16px; border: 1px solid #dfb277; background: var(--warning-soft); padding: 12px; }
+    @media (max-width: 820px) {
+      header { align-items: start; flex-direction: column; }
+      .workspace { grid-template-columns: 1fr; }
+      .tree-scroll { max-height: 56vh; }
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .panel { animation: arrive .24s ease-out both; }
+      .panel:nth-child(2) { animation-delay: .05s; }
+      @keyframes arrive { from { opacity: .6; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div>
+        <p class="eyebrow">Local analysis · no upload</p>
+        <h1>Depx trace viewer</h1>
+        <p class="lede">Inspect which templates were included, where each include came from, and which files were read. Your trace stays in this browser tab.</p>
+      </div>
+      <div>
+        <button id="open-file" class="primary" type="button">Open depx JSON file</button>
+        <input id="file-input" class="visually-hidden" type="file" accept=".depx,.gz,application/json,application/gzip" tabindex="-1" aria-hidden="true">
+      </div>
+    </header>
+
+    <section class="controls" aria-label="Trace controls">
+      <div class="control profile-menu" id="profile-control" hidden>
+        <span class="label" id="profile-label">Profile</span>
+        <button id="profile-picker-toggle" type="button" class="primary" aria-labelledby="profile-label profile-current" aria-haspopup="dialog" aria-expanded="false" aria-controls="profile-picker-popup"><span id="profile-current">Choose a profile</span></button>
+        <div id="profile-picker-popup" class="profile-picker-popup" role="dialog" aria-labelledby="profile-picker-heading" hidden>
+          <div class="control">
+            <label id="profile-picker-heading" for="profile-filter">Filter profiles and traces</label>
+            <input id="profile-filter" type="search" placeholder="Type to find a name" aria-controls="profile-options" aria-describedby="profile-picker-status">
+          </div>
+          <select id="profile-options" size="10" aria-label="Matching profiles and traces" aria-controls="profile-picker-popup"></select>
+          <nav class="profile-picker-pager" aria-label="Profile result pages">
+            <button id="profile-previous-page" type="button" disabled aria-label="Previous profile results">Previous</button>
+            <span id="profile-page-label" class="counter" aria-live="polite"></span>
+            <button id="profile-next-page" type="button" disabled aria-label="Next profile results">Next</button>
+          </nav>
+          <p id="profile-picker-status" class="hint profile-picker-status" role="status" aria-live="polite"></p>
+        </div>
+      </div>
+      <div class="control search">
+        <label for="search-input">Find template, path, or location</label>
+        <input id="search-input" type="search" placeholder="Type to filter occurrences" disabled>
+      </div>
+      <button id="previous-match" type="button" disabled aria-label="Previous search match">Previous</button>
+      <button id="next-match" type="button" disabled aria-label="Next search match">Next</button>
+    </section>
+    <div id="status" class="status" role="status" aria-live="polite">Choose a .depx or .depx.gz file to begin. The viewer runs offline; gzip support depends on your browser.</div>
+
+    <section class="workspace" aria-label="Trace contents">
+      <section class="panel" aria-labelledby="occurrences-heading">
+        <div class="panel-head">
+          <div><h2 id="occurrences-heading">Include occurrences</h2><div id="occurrence-summary" class="hint">Ordered per-profile execution trace</div></div>
+           <div class="panel-tools"><button id="expand-all" type="button" disabled>Expand all</button><button id="collapse-all" type="button" disabled>Collapse all</button></div>
+        </div>
+        <div id="tree" class="tree-scroll" role="tree" aria-label="Include occurrence tree" aria-multiselectable="false">
+          <div class="empty">Load a depx JSON trace to see its include order. Repeated and skipped includes remain visible as separate occurrences.</div>
+        </div>
+        <nav id="tree-pager" class="pager" aria-label="Occurrence tree pages" hidden>
+          <button id="tree-previous-page" type="button">Previous rows</button><span id="tree-page-label" class="counter" aria-live="polite"></span><button id="tree-next-page" type="button">Next rows</button>
+        </nav>
+      </section>
+      <section class="panel" aria-labelledby="details-heading">
+        <div class="panel-head"><h2 id="details-heading">Selected occurrence</h2></div>
+        <div id="details" class="details"><p class="hint">Select an occurrence to see its resolved source, target, status, and source location.</p></div>
+      </section>
+    </section>
+    <noscript><div class="noscript">JavaScript is required to parse and display a trace. Enable it and reopen this local page.</div></noscript>
+  </main>
+
+  <script>
+  "use strict";
+  (() => {
+    const MAX_INPUT_BYTES = 128 * 1024 * 1024;
+    const PAGE_SIZE = 500;
+    const DEPENDENCY_PAGE_SIZE = 250;
+    const PICKER_PAGE_SIZE = 10;
+    function buildVisibleModel(occurrences, matchingIndexes, expandedIndexes, filterActive, page, pageSize, collapsedIndexes = new Set()) {
+      const hasMatchInSubtree = new Uint8Array(occurrences.length);
+      const expanded = new Set(expandedIndexes);
+      if (filterActive) {
+        expanded.clear();
+        for (let index = occurrences.length - 1; index >= 0; index--) {
+          const occurrence = occurrences[index];
+          let hasMatchingChild = false;
+          for (const child of occurrence.children) hasMatchingChild ||= hasMatchInSubtree[child] === 1;
+          const containsMatch = matchingIndexes.has(index) || hasMatchingChild;
+          if (containsMatch) hasMatchInSubtree[index] = 1;
+          if (hasMatchingChild) expanded.add(index);
+        }
+        for (const index of collapsedIndexes) expanded.delete(index);
+      }
+      const allVisible = [];
+      const stack = [];
+      for (let index = occurrences.length - 1; index >= 0; index--) if (occurrences[index].parent === null) stack.push(index);
+      while (stack.length) {
+        const index = stack.pop();
+        const occurrence = occurrences[index];
+        if (filterActive && !hasMatchInSubtree[index]) continue;
+        allVisible.push({ index, matching: matchingIndexes.has(index) });
+        if (expanded.has(index)) for (let child = occurrence.children.length - 1; child >= 0; child--) stack.push(occurrence.children[child]);
+      }
+      const pageCount = Math.max(1, Math.ceil(allVisible.length / pageSize));
+      const currentPage = Math.min(Math.max(0, page), pageCount - 1);
+      const start = currentPage * pageSize;
+      return { allVisible, visible: allVisible.slice(start, start + pageSize), expanded, page: currentPage, pageCount, start };
+    }
+    function matchAt(matches, currentIndex, direction) {
+      if (!matches.length) return -1;
+      const currentPosition = matches.indexOf(currentIndex);
+      return (currentPosition + direction + matches.length) % matches.length;
+    }
+    function moveRowSelection(rows, currentIndex, page, pageSize, key) {
+      if (!rows.length) return { index: null, page };
+      const position = rows.findIndex((row) => row.index === currentIndex);
+      const lastPage = Math.ceil(rows.length / pageSize) - 1;
+      if (key === "Home") return { index: rows[0].index, page: 0 };
+      if (key === "End") return { index: rows.at(-1).index, page: lastPage };
+      if (key === "ArrowDown" && position < rows.length - 1) return { index: rows[position + 1].index, page: Math.floor((position + 1) / pageSize) };
+      if (key === "ArrowUp" && position > 0) return { index: rows[position - 1].index, page: Math.floor((position - 1) / pageSize) };
+      return { index: currentIndex, page };
+    }
+    function dependencyPage(items, page, pageSize) {
+      const pageCount = Math.max(1, Math.ceil(items.length / pageSize));
+      const currentPage = Math.min(Math.max(0, page), pageCount - 1);
+      const start = currentPage * pageSize;
+      return { items: items.slice(start, start + pageSize), page: currentPage, pageCount, start };
+    }
+    function pageItems(items, page, pageSize) {
+      const pageCount = Math.max(1, Math.ceil(items.length / pageSize));
+      const currentPage = Math.min(Math.max(0, page), pageCount - 1);
+      const start = Math.min(currentPage * pageSize, Math.max(0, items.length - 1));
+      return { items: items.slice(start, start + pageSize), page: currentPage, pageCount, start };
+    }
+    function traceDisplayName(filename) { return filename.replace(/\.depx(?:\.gz)?$/i, ""); }
+    function statusLabel(status) { return status.replaceAll("_", " "); }
+    function searchableText(occurrence) {
+      const { site } = occurrence;
+      return [site.caller, site.target, site.callerPath, site.targetPath, occurrence.location, occurrence.status, statusLabel(occurrence.status)].join(" ").toLocaleLowerCase();
+    }
+    if (typeof document === "undefined") {
+        globalThis.DepxViewerParser = { parseDepx, resolvePath, readFile, readResponseFile, validateTraceCatalog, traceDisplayName, filterTraces, filterProfiles, pageItems, initializeTraceCatalog, loadRemoteTrace, loadLocalTrace, buildVisibleModel, matchAt, moveRowSelection, dependencyPage, statusLabel, searchableText };
+      return;
+    }
+      const state = { document: null, profile: null, allVisible: [], visible: [], matches: [], matchIndex: -1, selected: null, expanded: new Set(), collapsedSearchBranches: new Set(), rowByIndex: new Map(), treePage: 0, dependencyPage: 0, searchQuery: null, traces: [], filteredProfiles: [], pickerPage: 0, pickerEntries: [], currentTrace: null, currentLocalFilename: null, traceGeneration: 0, pendingProfileName: null, loadingRemoteTrace: false };
+      const ui = {
+        input: document.getElementById("file-input"), open: document.getElementById("open-file"), status: document.getElementById("status"),
+       profileControl: document.getElementById("profile-control"), profileCurrent: document.getElementById("profile-current"), profileToggle: document.getElementById("profile-picker-toggle"), profilePopup: document.getElementById("profile-picker-popup"), profileFilter: document.getElementById("profile-filter"), profileOptions: document.getElementById("profile-options"), profileStatus: document.getElementById("profile-picker-status"), profilePrevious: document.getElementById("profile-previous-page"), profileNext: document.getElementById("profile-next-page"), profilePageLabel: document.getElementById("profile-page-label"),
+      search: document.getElementById("search-input"), prev: document.getElementById("previous-match"), next: document.getElementById("next-match"),
+      tree: document.getElementById("tree"), summary: document.getElementById("occurrence-summary"), details: document.getElementById("details"),
+      expand: document.getElementById("expand-all"), collapse: document.getElementById("collapse-all"),
+      treePager: document.getElementById("tree-pager"), treePrevious: document.getElementById("tree-previous-page"), treeNext: document.getElementById("tree-next-page"), treePageLabel: document.getElementById("tree-page-label")
+    };
+
+    function setStatus(message, isError = false) {
+      ui.status.textContent = message;
+      ui.status.classList.toggle("error", isError);
+      ui.status.setAttribute("role", isError ? "alert" : "status");
+    }
+
+    function showLoadError(message) {
+      state.document = null; state.profile = null; state.selected = null;
+      ui.search.disabled = true; ui.expand.disabled = true; ui.collapse.disabled = true; ui.profileControl.hidden = true;
+      ui.tree.replaceChildren(makeElement("div", "empty", message));
+      ui.details.replaceChildren(makeElement("p", "hint", "Correct the file or choose another depx trace to continue."));
+      updateSearchControls(); setStatus(message, true);
+    }
+
+    function parseDepx(text) {
+      let input;
+      try { input = JSON.parse(text.replace(/^\uFEFF/, "")); }
+      catch { throw new Error("Invalid depx JSON. Check that the file contains valid UTF-8 JSON."); }
+      const requireObject = (value, label) => {
+        if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error(`${label} must be an object.`);
+      };
+      const requireString = (value, label, nonempty = true) => {
+        if (typeof value !== "string" || (nonempty && !value.length)) throw new Error(`${label} must be ${nonempty ? "a non-empty" : "a"} string.`);
+      };
+      const requireIndex = (value, label) => {
+        if (!Number.isSafeInteger(value) || value < 0) throw new Error(`${label} must be a non-negative integer.`);
+      };
+      const isAbsolutePath = (value) => /^(?:\/|[A-Za-z]:[\\/])/.test(value);
+      requireObject(input, "Document");
+      if (input.format !== "depx") throw new Error("Unsupported depx JSON format; expected format 'depx'.");
+      if (input.version !== 1) throw new Error("Unsupported depx JSON version; expected version 1.");
+      if (!Array.isArray(input.roots) || !Array.isArray(input.profiles) || !Array.isArray(input.dependencies)) throw new Error("Document roots, profiles, and dependencies must be arrays.");
+      const roots = input.roots;
+      roots.forEach((root, index) => {
+        requireString(root, `Root ${index}`);
+        if (!isAbsolutePath(root)) throw new Error(`Root ${index} must be an absolute filesystem path.`);
+      });
+      const validateLocation = (location, label) => {
+        if (location === null) return null;
+        requireObject(location, label);
+        for (const key of ["begin_line", "begin_column", "end_line", "end_column"]) {
+          const minimum = key.endsWith("_line") ? 1 : 0;
+          if (!Number.isSafeInteger(location[key]) || location[key] < minimum) throw new Error(`${label} ${key} must be a valid coordinate.`);
+        }
+        if (location.end_line < location.begin_line || (location.end_line === location.begin_line && location.end_column < location.begin_column)) throw new Error(`${label} has an invalid range.`);
+        return `${location.begin_line}:${location.begin_column}-${location.end_line}:${location.end_column}`;
+      };
+      const validateSource = (value, label) => {
+        if (value === null) return null;
+        requireObject(value, label);
+        requireString(value.name, `${label} name`);
+        requireString(value.type, `${label} type`);
+        const location = value.location;
+        if (location === null) return { name: value.name, type: value.type, location: null };
+        requireObject(location, `${label} location`);
+        if (Object.hasOwn(location, "root")) {
+          if (Object.keys(location).length !== 2 || !Object.hasOwn(location, "path")) throw new Error(`${label} must contain either root and path or URI, not both.`);
+          requireIndex(location.root, `${label} root`);
+          if (location.root >= roots.length) throw new Error(`${label} refers to missing root ${location.root}.`);
+          requireString(location.path, `${label} relative path`, false);
+          if (location.path.includes("\\") || location.path.startsWith("/") || location.path.split("/").some((segment) => segment === "." || segment === "..")) throw new Error(`${label} path must be a safe slash-separated relative path without traversal.`);
+          return { name: value.name, type: value.type, location: { root: location.root, path: location.path } };
+        }
+        if (Object.keys(location).length !== 1 || !Object.hasOwn(location, "uri")) throw new Error(`${label} must contain either root and path or URI.`);
+        requireString(location.uri, `${label} URI`);
+        let fileUri;
+        try {
+          fileUri = new URL(location.uri);
+        } catch {
+          throw new Error(`${label} URI must be an absolute file URI.`);
+        }
+        if (fileUri.protocol !== "file:" || !fileUri.pathname.startsWith("/") || !/^file:(?:\/\/|\/)/i.test(location.uri) || /%(?![0-9a-f]{2})/i.test(location.uri)) throw new Error(`${label} URI must be an absolute file URI.`);
+        return { name: value.name, type: value.type, location: { uri: fileUri.href } };
+      };
+      const profiles = new Map();
+      for (const [profileIndex, rawProfile] of input.profiles.entries()) {
+        requireObject(rawProfile, `Profile ${profileIndex}`);
+        requireString(rawProfile.name, `Profile ${profileIndex} name`);
+        if (profiles.has(rawProfile.name)) throw new Error(`Duplicate profile name '${rawProfile.name}'.`);
+        if (!Array.isArray(rawProfile.sites) || !Array.isArray(rawProfile.occurrences)) throw new Error(`Profile '${rawProfile.name}' sites and occurrences must be arrays.`);
+        const sites = new Map();
+        for (const [siteIndex, rawSite] of rawProfile.sites.entries()) {
+          requireObject(rawSite, `Profile '${rawProfile.name}' site ${siteIndex}`);
+          for (const key of ["caller", "target"]) {
+            if (rawSite[key] !== null) {
+              requireObject(rawSite[key], `Site ${siteIndex} ${key}`);
+              requireString(rawSite[key].name, `Site ${siteIndex} ${key} name`);
+              rawSite[key] = { name: rawSite[key].name, source: validateSource(rawSite[key].source, `Site ${siteIndex} ${key} source`) };
+            }
+          }
+          const location = validateLocation(rawSite.location, `Site ${siteIndex} location`);
+          const site = {
+            index: siteIndex,
+            caller: rawSite.caller?.name ?? null,
+            target: rawSite.target?.name ?? null,
+            callerPath: rawSite.caller ? resolvePath(rawSite.caller.source, roots) : null,
+            targetPath: rawSite.target ? resolvePath(rawSite.target.source, roots) : null,
+            location
+          };
+          sites.set(siteIndex, site);
+        }
+        const occurrences = [];
+        const activeAncestors = [];
+        const activePositions = new Map();
+        for (const [index, rawOccurrence] of rawProfile.occurrences.entries()) {
+          requireObject(rawOccurrence, `Occurrence ${index}`);
+          requireIndex(rawOccurrence.site, `Occurrence ${index} site`);
+          if (!sites.has(rawOccurrence.site)) throw new Error(`Occurrence ${index} refers to unknown site ${rawOccurrence.site}.`);
+          if (rawOccurrence.parent !== null) {
+            requireIndex(rawOccurrence.parent, `Occurrence ${index} parent`);
+            if (rawOccurrence.parent >= index) throw new Error(`Occurrence ${index} parent must refer to an earlier occurrence.`);
+            const parentPosition = activePositions.get(rawOccurrence.parent);
+            if (parentPosition === undefined) throw new Error(`Occurrence ${index} parent is not an active ancestor.`);
+            for (let position = activeAncestors.length - 1; position > parentPosition; position--) activePositions.delete(activeAncestors[position]);
+            activeAncestors.length = parentPosition + 1;
+          } else {
+            activePositions.clear();
+            activeAncestors.length = 0;
+          }
+          const status = rawOccurrence.status;
+          if (!["executed", "skipped_unique", "skipped_declaration", "create"].includes(status)) throw new Error(`Occurrence ${index} has unknown status.`);
+          if (rawOccurrence.parent !== null && ["skipped_unique", "skipped_declaration"].includes(occurrences[rawOccurrence.parent].status)) throw new Error(`Occurrence ${index} cannot be a child of a skipped occurrence.`);
+          const parent = rawOccurrence.parent;
+          const depth = parent === null ? 0 : occurrences[parent].depth + 1;
+          const occurrence = { index, siteIndex: rawOccurrence.site, site: sites.get(rawOccurrence.site), parent, depth, kind: status === "create" ? "create" : "include", status, location: sites.get(rawOccurrence.site).location, children: [] };
+          if (parent !== null) occurrences[parent].children.push(index);
+          occurrences.push(occurrence);
+          activePositions.set(index, activeAncestors.length);
+          activeAncestors.push(index);
+        }
+        profiles.set(rawProfile.name, { name: rawProfile.name, sites, occurrences });
+      }
+      if (!profiles.size) throw new Error("This depx JSON file contains no profiles.");
+      const dependencies = input.dependencies.map((dependency, index) => {
+        const validated = validateSource(dependency, `Dependency ${index}`);
+        return resolvePath(validated, roots);
+      });
+      return { version: 1, profiles, dependencies, roots };
+    }
+
+    function resolvePath(source, roots) {
+      if (source === null || source === undefined) return source;
+      if (typeof source === "string") throw new Error("Source descriptors must be structured JSON objects.");
+      const { name, type, location } = source;
+      if (location === null) return `${name} (${type})`;
+      if (location.uri) return `${name} ${type} ${location.uri}`;
+      const root = roots[location.root].replace(/\\/g, "/");
+      const relative = location.path;
+      const absolutePath = `${root.endsWith("/") ? root : `${root}/`}${relative}`;
+      const encodedPath = absolutePath.split("/").map((segment) => encodeURIComponent(segment).replace(/%3A/gi, ":")).join("/");
+      const fileUri = `file://${absolutePath.startsWith("//") ? encodedPath.slice(2) : absolutePath.startsWith("/") ? encodedPath : `/${encodedPath}`}`;
+      return `${name} ${type} ${fileUri}`;
+    }
+
+    async function readFile(file) {
+      if (file.size > MAX_INPUT_BYTES) throw new Error("This file is larger than the 128 MiB safety limit. Use a smaller trace or split the output.");
+      let bytes = new Uint8Array(await file.arrayBuffer());
+      const gzip = file.name.toLowerCase().endsWith(".gz") || (bytes[0] === 0x1f && bytes[1] === 0x8b);
+      if (gzip) {
+        if (typeof DecompressionStream === "undefined") throw new Error("This browser cannot decompress gzip files. Open an uncompressed .depx file, or use a current version of Firefox, Chrome, or Safari.");
+        try {
+          const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"));
+          const reader = stream.getReader();
+          const chunks = []; let totalBytes = 0;
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            totalBytes += value.byteLength;
+            if (totalBytes > MAX_INPUT_BYTES) {
+              await reader.cancel();
+              throw new Error("The decompressed trace exceeds the 128 MiB safety limit.");
+            }
+            chunks.push(value);
+          }
+          bytes = new Uint8Array(totalBytes);
+          let offset = 0;
+          for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.byteLength; }
+        } catch (error) {
+          if (error.message.includes("safety limit")) throw error;
+          throw new Error("Could not decompress this file. Check that it is a valid .depx.gz file.");
+        }
+      }
+      try { return new TextDecoder("utf-8", { fatal: true }).decode(bytes); }
+      catch { throw new Error("This file is not valid UTF-8 text."); }
+    }
+
+    async function readResponseFile(response, filename, FileConstructor) {
+      if (!response.ok) throw new Error(`Could not load ${filename} (HTTP ${response.status}).`);
+      const declaredSize = Number(response.headers.get("content-length"));
+      if (Number.isFinite(declaredSize) && declaredSize > MAX_INPUT_BYTES) {
+        throw new Error("This file is larger than the 128 MiB safety limit. Use a smaller trace or split the output.");
+      }
+      if (!response.body) throw new Error("Could not load this trace because the browser cannot stream the response.");
+      const reader = response.body.getReader();
+      const chunks = [];
+      let totalBytes = 0;
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          totalBytes += value.byteLength;
+          if (totalBytes > MAX_INPUT_BYTES) {
+            await reader.cancel();
+            throw new Error("This file is larger than the 128 MiB safety limit. Use a smaller trace or split the output.");
+          }
+          chunks.push(value);
+        }
+      } finally {
+        reader.releaseLock();
+      }
+      return new FileConstructor(chunks, filename, { type: "application/octet-stream" });
+    }
+
+    function validateTraceCatalog(catalog) {
+      if (!catalog || typeof catalog !== "object" || !Array.isArray(catalog.traces) || catalog.traces.length === 0) throw new Error("The trace catalog is empty or invalid.");
+      return catalog.traces.map((trace, index) => {
+        if (!trace || typeof trace !== "object" || trace.id !== String(index) || typeof trace.name !== "string" || !trace.name.length) throw new Error("The trace catalog contains an invalid trace entry.");
+        return { id: trace.id, name: trace.name };
+      });
+    }
+
+    function globExpression(pattern) {
+      let expression = "^";
+      for (let index = 0; index < pattern.length; index++) {
+        const character = pattern[index];
+        if (character === "\\" && (pattern[index + 1] === "*" || pattern[index + 1] === "?")) expression += `\\${pattern[++index]}`;
+        else if (character === "*") expression += "[\\s\\S]*";
+        else if (character === "?") expression += "[\\s\\S]";
+        else expression += character.replace(/[|\\{}()[\]^$+?.]/g, "\\$&");
+      }
+      return new RegExp(`${expression}$`);
+    }
+
+    function filterProfiles(profiles, query) {
+      const expression = globExpression(`*${query}*`);
+      return profiles.filter((profile) => expression.test(profile.label));
+    }
+
+     function filterTraces(traces, query) {
+      return filterProfiles(traces.map((trace) => ({ ...trace, label: traceDisplayName(trace.name) })), query)
+        .map(({ label, ...trace }) => trace);
+    }
+
+
+    async function initializeTraceCatalog({ protocol, fetchCatalog, onCatalog, onError }) {
+      if (protocol !== "http:" && protocol !== "https:") return false;
+      try {
+        const response = await fetchCatalog("catalog");
+        if (!response.ok) throw new Error(`Could not load the trace catalog (HTTP ${response.status}).`);
+        const traces = validateTraceCatalog(await response.json());
+        onCatalog(traces);
+      } catch (error) {
+        onError(error instanceof Error ? error.message : "Unable to load the trace catalog.");
+      }
+      return true;
+    }
+
+    function wireTraceLauncherControls({ openButton, fileInput, onManualOpen }) {
+      openButton.addEventListener("click", () => { onManualOpen(); fileInput.click(); });
+    }
+
+    async function loadRemoteTrace({ trace, fetchTrace, FileConstructor, isCurrent, loadFile, reportError, onLoaded = () => {} }) {
+      try {
+        const response = await fetchTrace(`trace/${trace.id}`);
+        if (!isCurrent()) return false;
+        if (!response.ok) throw new Error(`Could not load ${trace.name} (HTTP ${response.status}).`);
+        const declaredSize = Number(response.headers.get("content-length"));
+        if (Number.isFinite(declaredSize) && declaredSize > MAX_INPUT_BYTES) throw new Error("This file is larger than the 128 MiB safety limit. Use a smaller trace or split the output.");
+        if (!response.body) throw new Error("Could not load this trace because the browser cannot stream the response.");
+        const file = await readResponseFile(response, trace.name, FileConstructor);
+        if (!isCurrent()) return false;
+        const loaded = await loadFile(file, isCurrent);
+        if (!isCurrent() || loaded === false) return false;
+        onLoaded();
+        return true;
+      } catch (error) {
+        if (isCurrent()) reportError(error instanceof Error ? error.message : "Unable to load this trace.");
+        return false;
+      }
+    }
+
+    async function loadLocalTrace({ file, isCurrent, read, parse, install, reportError }) {
+      if (!file) return false;
+      try {
+        const text = await read(file);
+        if (!isCurrent()) return false;
+        const parsed = parse(text);
+        if (!isCurrent()) return false;
+      install(parsed, file.name);
+        return true;
+      } catch (error) {
+        if (isCurrent()) reportError(error instanceof Error ? error.message : "Unable to read this trace.");
+        return false;
+      }
+    }
+
+    function currentProfile() { return state.document && state.document.profiles.get(state.profile); }
+
+    function makeElement(tag, className, text) {
+      const element = document.createElement(tag);
+      if (className) element.className = className;
+      if (text !== undefined) element.textContent = text;
+      return element;
+    }
+
+    function buildVisibleList() {
+      const profile = currentProfile();
+      if (!profile) return;
+      const query = ui.search.value.trim().toLocaleLowerCase();
+      const nextSearchQuery = ui.search.value.trim() || null;
+      if (nextSearchQuery !== state.searchQuery) { state.treePage = 0; state.collapsedSearchBranches.clear(); }
+      state.searchQuery = nextSearchQuery;
+      const occurrences = profile.occurrences;
+      state.matches = [];
+      if (query) {
+        for (const occurrence of occurrences) {
+           if (searchableText(occurrence).includes(query)) {
+            state.matches.push(occurrence.index);
+          }
+        }
+      }
+      const filterSubtree = Boolean(nextSearchQuery);
+      const model = buildVisibleModel(occurrences, new Set(state.matches), state.expanded, filterSubtree, state.treePage, PAGE_SIZE, state.collapsedSearchBranches);
+      state.expanded = model.expanded;
+      state.allVisible = model.allVisible;
+      state.visible = model.visible;
+      state.treePage = model.page;
+      state.visibleTotal = model.allVisible.length;
+      state.visibleStart = model.start;
+      state.matchIndex = state.matches.length ? Math.max(0, state.matches.indexOf(state.selected)) : -1;
+      updateSearchControls();
+    }
+
+    function updateSearchControls() {
+      const count = state.matches.length;
+      ui.prev.disabled = count < 1; ui.next.disabled = count < 1;
+      ui.search.disabled = !state.document;
+      ui.prev.setAttribute("aria-label", count ? `Previous search match, ${count} total` : "Previous search match");
+      ui.next.setAttribute("aria-label", count ? `Next search match, ${count} total` : "Next search match");
+    }
+
+    function renderTree() {
+      const profile = currentProfile();
+      ui.tree.replaceChildren(); state.rowByIndex.clear();
+      if (!profile) return;
+      if (profile.occurrences.length === 0) {
+        ui.tree.append(makeElement("div", "empty", "This profile has no include occurrences."));
+      } else if (!state.visible.length) {
+        ui.tree.append(makeElement("div", "empty", "No occurrences match this search."));
+      }
+      const fragment = document.createDocumentFragment();
+      for (const visible of state.visible) {
+         const occurrence = profile.occurrences[visible.index]; const site = occurrence.site;
+        const row = makeElement("div", `tree-row${state.selected === occurrence.index ? " selected" : ""}${visible.matching ? " match" : ""}`);
+        row.setAttribute("role", "treeitem"); row.setAttribute("aria-level", String(occurrence.depth + 1));
+        if (occurrence.children.length) row.setAttribute("aria-expanded", String(state.expanded.has(occurrence.index)));
+        row.setAttribute("aria-selected", state.selected === occurrence.index ? "true" : "false"); row.dataset.index = String(occurrence.index);
+        if (occurrence.children.length) {
+          const expanded = state.expanded.has(occurrence.index);
+          const toggle = makeElement("button", "tree-toggle", expanded ? "▾" : "▸");
+            toggle.type = "button"; toggle.setAttribute("aria-label", `${expanded ? "Collapse" : "Expand"} ${site.target || "unnamed template"}`);
+            toggle.setAttribute("aria-expanded", String(expanded));
+            toggle.addEventListener("click", (event) => { event.stopPropagation(); if (state.expanded.has(occurrence.index)) { state.expanded.delete(occurrence.index); if (state.searchQuery) state.collapsedSearchBranches.add(occurrence.index); } else { state.expanded.add(occurrence.index); state.collapsedSearchBranches.delete(occurrence.index); } render(); });
+          row.append(makeElement("span", "tree-indent")); row.lastChild.style.width = `${Math.min(occurrence.depth, 32) * 14}px`; row.append(toggle);
+        } else {
+          row.append(makeElement("span", "tree-indent")); row.lastChild.style.width = `${Math.min(occurrence.depth, 32) * 14}px`; row.append(makeElement("span", "tree-spacer"));
+        }
+        const main = makeElement("span", "tree-main");
+        main.append(makeElement("span", "tree-name", site.target || "(unnamed template)"));
+         main.append(makeElement("span", `badge${occurrence.status.startsWith("skipped") ? " skipped" : ""}`, `${occurrence.kind} · ${statusLabel(occurrence.status)}`));
+         if (site.location) main.append(makeElement("span", "tree-meta", site.location));
+        row.append(main);
+        row.addEventListener("click", () => { state.selected = occurrence.index; render(); });
+        row.addEventListener("keydown", onTreeKeydown);
+        row.tabIndex = state.selected === occurrence.index || (state.selected === null && occurrence.index === 0) ? 0 : -1;
+        row.id = `occurrence-${occurrence.index}`;
+        state.rowByIndex.set(occurrence.index, row); fragment.append(row);
+      }
+      ui.tree.append(fragment);
+      const pageCount = Math.max(1, Math.ceil(state.visibleTotal / PAGE_SIZE));
+      ui.treePager.hidden = pageCount < 2;
+      ui.treePrevious.disabled = state.treePage === 0;
+      ui.treeNext.disabled = state.treePage + 1 >= pageCount;
+      ui.treePageLabel.textContent = `Rows ${state.visibleStart + 1}–${state.visibleStart + state.visible.length} of ${state.visibleTotal.toLocaleString()} · page ${state.treePage + 1} of ${pageCount}`;
+       ui.expand.disabled = !profile.occurrences.length;
+       ui.collapse.disabled = !profile.occurrences.length;
+       ui.expand.textContent = "Expand all";
+       ui.collapse.textContent = "Collapse all";
+      ui.summary.textContent = `${profile.occurrences.length.toLocaleString()} ordered occurrence${profile.occurrences.length === 1 ? "" : "s"} · ${profile.sites.size.toLocaleString()} include site${profile.sites.size === 1 ? "" : "s"}`;
+      renderDetails();
+    }
+
+    function onTreeKeydown(event) {
+      const index = Number(event.currentTarget.dataset.index); const profile = currentProfile();
+      let nextIndex = null;
+      if (["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) {
+        const navigation = moveRowSelection(state.allVisible, index, state.treePage, PAGE_SIZE, event.key);
+        state.treePage = navigation.page; nextIndex = navigation.index;
+      }
+       else if (event.key === "ArrowRight" && profile.occurrences[index].children.length) { state.expanded.add(index); state.collapsedSearchBranches.delete(index); render(); state.rowByIndex.get(index)?.focus(); event.preventDefault(); return; }
+       else if (event.key === "ArrowLeft" && state.expanded.has(index)) { state.expanded.delete(index); if (state.searchQuery) state.collapsedSearchBranches.add(index); render(); state.rowByIndex.get(index)?.focus(); event.preventDefault(); return; }
+      else if (event.key === "Enter" || event.key === " ") { state.selected = index; render(); state.rowByIndex.get(index)?.focus(); event.preventDefault(); return; }
+      if (nextIndex !== null && nextIndex !== undefined) { state.selected = nextIndex; render(); state.rowByIndex.get(nextIndex)?.focus(); event.preventDefault(); }
+    }
+
+    function addDefinition(list, label, value) {
+      list.append(makeElement("dt", "", label));
+      const definition = makeElement("dd", "", value === null || value === undefined || value === "" ? "—" : value);
+      list.append(definition);
+    }
+
+    function renderDetails() {
+      const profile = currentProfile(); const details = ui.details;
+      details.replaceChildren();
+      if (!profile || state.selected === null || !profile.occurrences[state.selected]) {
+        details.append(makeElement("p", "hint", "Select an occurrence to see its resolved source, target, status, and source location."));
+      } else {
+        const occurrence = profile.occurrences[state.selected]; const site = occurrence.site;
+        details.append(makeElement("h3", "", `Occurrence ${occurrence.index}`));
+        const dl = makeElement("dl");
+        addDefinition(dl, "Profile", profile.name); addDefinition(dl, "Action", occurrence.kind); addDefinition(dl, "Status", occurrence.status);
+          addDefinition(dl, "Caller", site.caller); addDefinition(dl, "Caller source", site.callerPath);
+          addDefinition(dl, "Target", site.target); addDefinition(dl, "Target source", site.targetPath);
+        addDefinition(dl, "Source location", occurrence.location || site.location);
+        addDefinition(dl, "Parent occurrence", occurrence.parent === null ? "Root" : String(occurrence.parent));
+        details.append(dl);
+      }
+      const inventory = makeElement("section", "inventory");
+      inventory.append(makeElement("h3", "", `Dependency inventory (${state.document.dependencies.length.toLocaleString()})`));
+      const description = makeElement("p", "hint", "Files depended on while evaluating the build; this list is separate from the ordered include trace."); inventory.append(description);
+       if (state.document.dependencies.length) {
+        const dependencyCount = state.document.dependencies.length;
+          const page = dependencyPage(state.document.dependencies, state.dependencyPage, DEPENDENCY_PAGE_SIZE);
+          state.dependencyPage = page.page;
+          const list = makeElement("ul", "inventory-list");
+           for (const dependency of page.items) list.append(makeElement("li", "path", dependency));
+          inventory.append(list);
+          if (page.pageCount > 1) {
+            const pager = makeElement("nav", "pager"); pager.setAttribute("aria-label", "Dependency inventory pages");
+            const previous = makeElement("button", "", "Previous files"); previous.type = "button"; previous.disabled = state.dependencyPage === 0;
+            previous.addEventListener("click", () => { state.dependencyPage--; renderDetails(); });
+            const next = makeElement("button", "", "Next files"); next.type = "button"; next.disabled = state.dependencyPage + 1 >= page.pageCount;
+            next.addEventListener("click", () => { state.dependencyPage++; renderDetails(); });
+            pager.append(previous, makeElement("span", "counter", `Files ${page.start + 1}–${Math.min(page.start + DEPENDENCY_PAGE_SIZE, dependencyCount)} of ${dependencyCount.toLocaleString()} · page ${state.dependencyPage + 1} of ${page.pageCount}`), next);
+           inventory.append(pager);
+         }
+      } else inventory.append(makeElement("p", "hint", "No dependency inventory was recorded."));
+      details.append(inventory);
+    }
+
+    function render() { buildVisibleList(); renderTree(); }
+
+    function navigateMatch(direction) {
+      if (!state.matches.length) return;
+      const next = matchAt(state.matches, state.selected, direction);
+      state.selected = state.matches[next];
+      const profile = currentProfile();
+      let ancestor = profile.occurrences[state.selected].parent;
+      while (ancestor !== null) { state.collapsedSearchBranches.delete(ancestor); ancestor = profile.occurrences[ancestor].parent; }
+      const visiblePosition = state.allVisible.findIndex((row) => row.index === state.selected);
+      if (visiblePosition >= 0) state.treePage = Math.floor(visiblePosition / PAGE_SIZE);
+      render();
+      const row = state.rowByIndex.get(state.selected);
+      if (row) { row.scrollIntoView({ block: "nearest" }); row.focus(); }
+      setStatus(`${next + 1} of ${state.matches.length} matches in profile “${profile.name}”.`);
+    }
+
+    function installParsedDocument(parsed, filename) {
+      state.document = parsed; state.profile = parsed.profiles.keys().next().value; state.selected = parsed.profiles.get(state.profile).occurrences.length ? 0 : null;
+              ui.profileControl.hidden = false;
+      ui.profileCurrent.textContent = state.profile;
+      ui.search.disabled = false; ui.expand.disabled = false; ui.collapse.disabled = false;
+      state.expanded = new Set(); ui.search.value = ""; render();
+       if (!state.loadingRemoteTrace) {
+         state.currentTrace = null;
+         state.currentLocalFilename = filename;
+         addCurrentProfilesToPicker();
+       }
+       setStatus(state.currentTrace
+        ? `Loaded profile “${state.profile}” from ${traceDisplayName(state.currentTrace.name)}.`
+        : `${filename}: depx JSON version ${parsed.version}; ${parsed.profiles.size} profile${parsed.profiles.size === 1 ? "" : "s"}, ${parsed.dependencies.length} dependencies.`);
+    }
+
+     async function loadFile(file, isCurrent = () => true) {
+       if (!file) return;
+       setStatus(`Reading ${file.name}…`);
+      return loadLocalTrace({
+        file,
+        isCurrent,
+        read: readFile,
+        parse: parseDepx,
+        install: installParsedDocument,
+        reportError: (message) => setStatus(message, true)
+      });
+    }
+    function addCurrentProfilesToPicker() {
+      if (!state.document) return;
+      const traceName = state.currentTrace ? traceDisplayName(state.currentTrace.name) : "";
+      const entries = state.currentTrace
+        ? Array.from(state.document.profiles.keys(), (name) => ({ identity: `trace:${state.currentTrace.id}:profile:${name}`, label: traceName === name || traceName.endsWith(`/${name}`) ? traceName : `${traceName} · ${name}`, trace: state.currentTrace, profileName: name }))
+        : Array.from(state.document.profiles.keys(), (name) => ({ identity: `profile:local:${state.currentLocalFilename}:${name}`, label: name, profileName: name, trace: null }));
+      if (!state.currentTrace) {
+        state.pickerEntries = state.pickerEntries.filter(({ identity }) => !identity.startsWith("profile:local:") && !identity.startsWith("trace:"));
+        for (const trace of state.traces) {
+          state.pickerEntries.push({ identity: `trace:${trace.id}`, label: traceDisplayName(trace.name), profileName: null, trace });
+        }
+      } else {
+        state.pickerEntries = state.pickerEntries.filter(({ identity }) => identity !== `trace:${state.currentTrace.id}` && !identity.startsWith("profile:local:"));
+      }
+      for (const entry of entries) {
+        if (state.pickerEntries.some((candidate) => candidate.identity === entry.identity)) continue;
+        state.pickerEntries.push(entry);
+      }
+      renderProfileChoices();
+    }
+
+    function renderProfileChoices() {
+      state.filteredProfiles = filterProfiles(state.pickerEntries, ui.profileFilter.value);
+      const { items, page, pageCount, start } = pageItems(state.filteredProfiles, state.pickerPage, PICKER_PAGE_SIZE);
+      state.pickerPage = page;
+      ui.profileOptions.replaceChildren();
+      for (const entry of items) {
+        const option = document.createElement("option");
+        option.value = entry.identity;
+        option.textContent = entry.label;
+        option.selected = entry.profileName === state.profile && (entry.trace ? entry.trace.id === state.currentTrace?.id : state.currentTrace === null);
+        ui.profileOptions.append(option);
+      }
+      ui.profileOptions.disabled = items.length === 0;
+      ui.profileOptions.setAttribute("aria-label", `Matching profiles and traces, ${state.filteredProfiles.length} results`);
+      ui.profilePrevious.disabled = page === 0;
+      ui.profileNext.disabled = page + 1 >= pageCount || items.length === 0;
+      ui.profilePageLabel.textContent = items.length ? `${start + 1}–${start + items.length} of ${state.filteredProfiles.length.toLocaleString()}` : "No matches";
+      ui.profileStatus.textContent = state.filteredProfiles.length
+        ? `${state.filteredProfiles.length.toLocaleString()} matching profile${state.filteredProfiles.length === 1 ? "" : "s"}. Type to filter; * and ? are wildcards.`
+        : state.pickerEntries.length ? "No matching profiles. Edit the filter to see more." : "No profiles available yet. Open a trace to begin.";
+    }
+
+    function showProfilePicker(open) {
+      ui.profilePopup.hidden = !open;
+      ui.profileToggle.setAttribute("aria-expanded", String(open));
+      ui.profileToggle.setAttribute("aria-controls", "profile-picker-popup");
+      if (open) { renderProfileChoices(); ui.profileFilter.focus(); }
+      else ui.profileToggle.focus();
+    }
+
+    function setCurrentProfile(name) {
+      if (!state.document?.profiles.has(name)) return;
+      state.profile = name; state.selected = currentProfile().occurrences.length ? 0 : null;
+      state.expanded = new Set(); render(); setStatus(`Showing profile “${state.profile}”.`);
+    }
+
+    function choosePickerEntry(entry) {
+      if (!entry) return;
+      if (entry.trace) {
+        if (entry.trace.id === state.currentTrace?.id) {
+          state.traceGeneration++;
+          state.loadingRemoteTrace = false;
+          setCurrentProfile(entry.profileName);
+          ui.profileCurrent.textContent = entry.profileName;
+          showProfilePicker(false);
+        } else {
+          void selectRemoteTrace(entry.trace, entry.profileName);
+        }
+        return;
+      }
+      state.traceGeneration++;
+      state.loadingRemoteTrace = false;
+      setCurrentProfile(entry.profileName);
+      ui.profileCurrent.textContent = entry.label;
+      showProfilePicker(false);
+    }
+
+    async function selectRemoteTrace(trace, profileName) {
+      if (!trace) return;
+      showProfilePicker(false);
+      state.pendingProfileName = profileName || null;
+      state.loadingRemoteTrace = true;
+      const generation = ++state.traceGeneration;
+      const isCurrent = () => generation === state.traceGeneration;
+      setStatus(`Loading ${traceDisplayName(trace.name)}…`);
+      await loadRemoteTrace({
+        trace,
+        fetchTrace: (relativePath) => fetch(relativePath),
+        FileConstructor: File,
+        isCurrent,
+        loadFile: (file, current) => loadFile(file, current),
+        onLoaded: () => {
+          state.loadingRemoteTrace = false;
+          state.currentTrace = trace;
+          state.pickerEntries = state.pickerEntries.filter(({ identity }) => identity !== `trace:${trace.id}`);
+          addCurrentProfilesToPicker();
+          if (profileName && state.document.profiles.has(profileName)) setCurrentProfile(profileName);
+          ui.profileCurrent.textContent = state.profile;
+          setStatus(`Loaded profile “${state.profile}” from ${traceDisplayName(trace.name)}.`);
+          showProfilePicker(false);
+        },
+        reportError: (message) => { state.loadingRemoteTrace = false; setStatus(message, true); }
+      });
+    }
+
+     wireTraceLauncherControls({ openButton: ui.open, fileInput: ui.input, onManualOpen: () => { state.traceGeneration++; state.loadingRemoteTrace = false; state.pendingProfileName = null; } });
+    ui.input.addEventListener("change", async () => {
+      const generation = ++state.traceGeneration;
+      await loadFile(ui.input.files && ui.input.files[0], () => generation === state.traceGeneration);
+      ui.input.value = "";
+    });
+     ui.profileToggle.addEventListener("click", () => showProfilePicker(ui.profilePopup.hidden));
+      ui.profileFilter.addEventListener("input", () => { state.pickerPage = 0; renderProfileChoices(); });
+      const chooseSelectedProfile = () => {
+        if (ui.profilePopup.hidden) return;
+        const option = ui.profileOptions.options[ui.profileOptions.selectedIndex];
+        choosePickerEntry(state.filteredProfiles.find(({ identity }) => identity === option?.value));
+      };
+      ui.profileOptions.addEventListener("change", chooseSelectedProfile);
+      ui.profileOptions.addEventListener("click", chooseSelectedProfile);
+     ui.profilePrevious.addEventListener("click", () => { if (state.pickerPage > 0) { state.pickerPage--; renderProfileChoices(); } });
+     ui.profileNext.addEventListener("click", () => { if ((state.pickerPage + 1) * PICKER_PAGE_SIZE < state.filteredProfiles.length) { state.pickerPage++; renderProfileChoices(); } });
+     ui.profileToggle.addEventListener("keydown", (event) => { if (event.key === "ArrowDown" || event.key === "Enter" || event.key === " ") { event.preventDefault(); showProfilePicker(true); } });
+       ui.profileFilter.addEventListener("keydown", (event) => {
+         if (event.key === "Escape") { event.preventDefault(); showProfilePicker(false); }
+         if (event.key === "ArrowDown" && ui.profileOptions.options.length) { event.preventDefault(); ui.profileOptions.focus(); ui.profileOptions.selectedIndex = 0; }
+       });
+      ui.profileOptions.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") { event.preventDefault(); chooseSelectedProfile(); }
+       if (event.key === "Escape") { event.preventDefault(); showProfilePicker(false); }
+       if (event.key === "ArrowUp" && ui.profileOptions.selectedIndex === 0) { event.preventDefault(); ui.profileFilter.focus(); }
+     });
+     document.addEventListener("pointerdown", (event) => { if (!ui.profileControl.contains(event.target) && !ui.profilePopup.hidden) showProfilePicker(false); });
+     document.addEventListener("keydown", (event) => { if (event.key === "Escape" && !ui.profilePopup.hidden) showProfilePicker(false); });
+    ui.search.addEventListener("input", () => { state.matchIndex = -1; render(); setStatus(state.matches.length ? `${state.matches.length} matching occurrence${state.matches.length === 1 ? "" : "s"}. Use Previous and Next to move through matches.` : "No matching occurrences."); });
+    ui.search.addEventListener("keydown", (event) => { if (event.key === "Enter" && state.matches.length) { navigateMatch(event.shiftKey ? -1 : 1); event.preventDefault(); } });
+    ui.prev.addEventListener("click", () => navigateMatch(-1)); ui.next.addEventListener("click", () => navigateMatch(1));
+      ui.treePrevious.addEventListener("click", () => { if (state.treePage > 0) { state.treePage--; state.selected = state.allVisible[state.treePage * PAGE_SIZE + PAGE_SIZE - 1].index; render(); } });
+      ui.treeNext.addEventListener("click", () => { if (state.treePage + 1 < Math.ceil(state.allVisible.length / PAGE_SIZE)) { state.treePage++; state.selected = state.allVisible[state.treePage * PAGE_SIZE].index; render(); } });
+       ui.expand.addEventListener("click", () => { const profile = currentProfile(); state.expanded = new Set(profile.occurrences.map((item) => item.index)); state.collapsedSearchBranches.clear(); render(); });
+       ui.collapse.addEventListener("click", () => { state.expanded.clear(); if (state.searchQuery) state.collapsedSearchBranches = new Set(currentProfile().occurrences.filter((item) => item.children.length).map((item) => item.index)); state.treePage = 0; render(); });
+
+    // Export the parser for dependency-free node:test coverage in the offline test suite.
+       if (typeof globalThis !== "undefined") globalThis.DepxViewerParser = { parseDepx, resolvePath, readFile, readResponseFile, validateTraceCatalog, traceDisplayName, filterTraces, filterProfiles, pageItems, initializeTraceCatalog, wireTraceLauncherControls, loadRemoteTrace, loadLocalTrace, buildVisibleModel, matchAt, moveRowSelection, dependencyPage, statusLabel, searchableText };
+       void initializeTraceCatalog({
+           protocol: window.location.protocol,
+           fetchCatalog: (relativePath) => fetch(relativePath),
+         onCatalog: (traces) => {
+              state.traces = traces;
+              state.pickerEntries = traces.map((trace) => ({ identity: `trace:${trace.id}`, label: traceDisplayName(trace.name), profileName: null, trace }));
+             ui.profileControl.hidden = false;
+             renderProfileChoices();
+           },
+          onError: (message) => setStatus(message, true)
+        });
+  })();
+  </script>
+</body>
+</html>

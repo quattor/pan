@@ -285,6 +285,64 @@ quote, newline, carriage return and tab are escaped as ``\\\\``, ``\\\"``,
 lowercase four-digit ``\\uXXXX`` escapes. Other characters are preserved. A
 quoted ``"null"`` is a string, distinct from missing metadata.
 
+Offline trace viewer
+--------------------
+
+Run ``depviewer path/to/profile.depx`` (or ``.depx.gz``) to open the
+viewer with the supplied trace already loaded. Supply multiple files,
+directories, or a mixture to browse a trace collection::
+
+    depviewer profile-a.depx.gz profile-b.depx.gz
+    depviewer /path/to/compiled/profiles
+
+Directories are searched recursively for ``.depx`` and ``.depx.gz``
+files without following directory symlinks. Duplicate file paths are listed
+once. With multiple traces, select a profile to load it; only its trace is fetched
+and decompressed, not the entire collection. The inventory is collected at
+startup; restart the launcher to discover newly added files.
+
+Open the **Profile** selector to filter profile names and choose from ten matching
+entries at a time. Names initially come from filenames without the
+``.depx`` or ``.depx.gz`` suffix; relative directories distinguish
+namespaced profiles. Additional profiles inside a trace become available when
+that trace is loaded. Selecting a profile loads its trace automatically.
+
+The case-sensitive filter updates as you type and implicitly surrounds your text
+with ``*``: entering ``web`` matches names containing ``web``. Explicit ``*``
+matches any number of characters and ``?`` matches one character, including path
+separators. An empty filter matches all names. This filter is separate from
+searching occurrences inside the displayed profile; typing does not replace it.
+
+From a checkout, the launcher is
+``panc/src/main/scripts/depviewer/depviewer``; compiler bundles install it as
+``bin/depviewer/depviewer``.
+It requires Python 3.9 or newer and ``xdg-open``. Its helper and
+``depviewer.html`` must remain
+beside the launcher, but the command can run from any working directory.
+
+The launcher serves only the viewer, trace inventory and allowlisted traces on
+a token-protected loopback address; it does not upload data or create a temporary
+trace copy.
+Keep the command running while using the viewer, and press Ctrl+C to stop the
+server. Browser reloads require the server to remain running.
+
+Alternatively, open ``panc/src/main/scripts/depviewer/depviewer.html`` directly
+in a browser
+and select a local file using the picker. This standalone mode needs no server,
+installation, or network connection. The viewer accepts JSON schema version 1
+only.
+
+Select a profile, expand occurrences, or search for a template, source location,
+or status to follow an inclusion chain. Repeated includes and skipped unique
+or declaration includes remain separate occurrences. Details show source
+descriptors with resolved load directories; the dependency inventory is separate
+from the occurrence tree. The trace describes evaluation, not timing.
+
+Gzip loading requires browser support for ``DecompressionStream``. If unavailable,
+decompress the file locally and open the resulting ``.depx`` file. The viewer
+limits input and decompressed content to 128 MiB; this is a safety limit, not a
+guarantee that very large traces will load quickly on every machine.
+
 
 panc-annotations
 ================

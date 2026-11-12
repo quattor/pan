@@ -163,7 +163,7 @@ Dependency output is separate from the generated configuration. The default
 ``dep`` format lists dependency files; the optional ``depx`` format (or
 gzip-compressed ``depx.gz``) also records runtime include order, callers and
 repeated unique-template suppression. These formats provide structured JSON
-traces. See
+traces for the dependency viewer. See
 :ref:`depx-output` for selection and trace interpretation.
 
 The pan compiler can generate output in three additional formats: json,

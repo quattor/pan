@@ -21,9 +21,28 @@
       <destName>panlint</destName>
       <fileMode>0755</fileMode>
     </file>
+    <file>
+      <source>src/main/scripts/depviewer/depviewer</source>
+      <outputDirectory>bin/depviewer</outputDirectory>
+      <fileMode>0755</fileMode>
+    </file>
   </files>
 
   <fileSets>
+    <fileSet>
+      <directory>src/main/scripts/depviewer</directory>
+      <outputDirectory>bin/depviewer</outputDirectory>
+      <includes>
+        <include>**/*</include>
+      </includes>
+      <excludes>
+        <exclude>depviewer</exclude>
+        <exclude>tests/**</exclude>
+        <exclude>**/__pycache__/**</exclude>
+      </excludes>
+      <fileMode>0644</fileMode>
+      <directoryMode>0755</directoryMode>
+    </fileSet>
     <fileSet>
       <directory>src/main/scripts</directory>
       <outputDirectory>bin</outputDirectory>

@@ -123,11 +123,82 @@ runtime operations; tracing does not need to disable constant folding to
 capture the global reads in this example. Intermediate arithmetic operations
 are outside the tracing contract.
 
+Acceptance scenario: distinct value representations
+---------------------------------------------------
+
+Trace rendering must preserve value types. Pan ``null`` and ``undef`` must
+not be confused with an empty string or strings containing those words.
+For example, an included template may contain::
+
+   template config/value_types;
+   variable V_NULL = null;
+   variable V_UNDEF = undef;
+   variable V_EMPTY = '';
+   variable V_NULL_TEXT = 'null';
+   variable V_UNDEF_TEXT = 'undef';
+
+For a selected object named ``hosts/node01``, the assignment records must
+distinguish all five values. One acceptable illustrative representation is::
+
+   TRACE object=hosts/node01 object_file=hosts/node01.pan template=config/value_types location=2 ASSIGN global=V_NULL type=null value=null
+   TRACE object=hosts/node01 object_file=hosts/node01.pan template=config/value_types location=3 ASSIGN global=V_UNDEF type=undef value=undef
+   TRACE object=hosts/node01 object_file=hosts/node01.pan template=config/value_types location=4 ASSIGN global=V_EMPTY type=string value=""
+   TRACE object=hosts/node01 object_file=hosts/node01.pan template=config/value_types location=5 ASSIGN global=V_NULL_TEXT type=string value="null"
+   TRACE object=hosts/node01 object_file=hosts/node01.pan template=config/value_types location=6 ASSIGN global=V_UNDEF_TEXT type=string value="undef"
+
+The exact encoding is not yet fixed, but this distinction is mandatory for
+reads, assignments, skipped-default existing values, and both old and new
+values in overwrite records. String quoting and escaping must be unambiguous.
+A string containing a quote or a literal backslash must not lose those
+characters; an actual newline and the two characters backslash and ``n``
+must have different encodings. The same type distinction applies recursively
+inside lists and dictionaries.
+
+An undefined global (no binding exists) is not automatically the same as a
+global bound to Pan ``undef`` or ``null``. If absence is represented in a
+record, use a separate explicit marker, not the string ``"undef"`` or an
+empty value field. Tests must preserve the compiler's existing assignment,
+lookup, and ``?=`` semantics for these values rather than changing them to
+simplify tracing. In particular, verify whether a ``null`` assignment retains
+or removes a binding before asserting a subsequent read or default outcome.
+
+Acceptance scenario: dynamic include and conditional reads
+----------------------------------------------------------
+
+Future regression tests must cover global reads that drive a dynamic include
+and conditional execution. The following records are illustrative, not live
+compiler output, and do not prescribe runnable Pan syntax::
+
+   TRACE object=hosts/node01 object_file=hosts/node01.pan template=hosts/node01 location=2 READ global=INCLUDE_TARGET type=string value="config/network"
+   TRACE object=hosts/node01 object_file=hosts/node01.pan template=hosts/node01 location=3 READ global=ENABLED type=boolean value=true
+   TRACE object=hosts/node01 object_file=hosts/node01.pan template=hosts/node01 location=3 READ global=ENABLED type=boolean value=false
+
+The true and false records represent separate test outcomes. The tests must
+verify:
+
+* For ``include(VARIABLE)``, evaluating a selected global include target emits
+  a read with the actual template-name string, attributed to the including
+  template and the include expression's source location. Subsequent reads and
+  assignments in the included template retain the object identity but use the
+  included logical template name and their own locations.
+* For ``if(VARIABLE)``, the global read reports the boolean value at the
+  condition expression's source location. Test both outcomes and execute and
+  trace only the chosen branch.
+* In a DML block, a global condition read is traced, but a local condition
+  variable is not.
+* Variable-glob exclusions suppress these reads without affecting include
+  resolution or branch selection.
+* Skipped branches produce no reads, assignments, or side effects from that
+  branch. Internal include and default bookkeeping must not be mislabeled as
+  extra global reads.
+
 Additional acceptance checks
 ----------------------------
 
 Future automated tests must also cover:
 
+* Distinct representations for null, undef, empty strings, and strings
+  containing those words, including type-changing overwrites and nested values.
 * A matching object glob and a nonmatching object glob, using template names
   that differ from their physical source filenames.
 * The default variable glob selecting all globals, and a narrower glob

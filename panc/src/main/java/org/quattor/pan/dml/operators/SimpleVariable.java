@@ -57,6 +57,11 @@ public class SimpleVariable extends Variable {
 					MSG_UNDEFINED_VAR, identifier), sourceRange, context);
 		}
 
+		if (context.isGlobalVariableTraceSelected(identifier)
+				&& context.getLocalVariable(identifier) == null) {
+			context.traceGlobalVariableRead(identifier, sourceRange, null, result);
+		}
+
 		return result;
 	}
 

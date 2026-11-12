@@ -92,6 +92,11 @@ public class NestedVariable extends Variable {
 					MSG_UNDEFINED_VAR, sb.toString()), sourceRange, context);
 		}
 
+		if (context.isGlobalVariableTraceSelected(identifier)
+				&& context.getLocalVariable(identifier) == null) {
+			context.traceGlobalVariableRead(identifier, sourceRange, terms, result);
+		}
+
 		// Send the result back to the caller.
 		return result;
 	}

@@ -192,6 +192,37 @@ verify:
   branch. Internal include and default bookkeeping must not be mislabeled as
   extra global reads.
 
+DEPX integration and streamed trace capture
+-------------------------------------------
+
+Capturing global-variable trace events directly in DEPX would be a useful
+extension, if the implementation can do so without compromising disabled-run
+performance or existing DEPX compatibility. It is not required for the initial
+tracer: streaming records to stderr (as proposed above), or a separately
+selected stdout destination, is acceptable. Stdout must not mix trace records
+with profile output or other machine-readable compiler output.
+
+The streamed format should allow a future parser to augment a compiler-generated
+DEPX file with trace data. Preserve explicit object identity, logical source
+template identity, source ranges, actions, global-variable names, and
+unambiguous typed values. Preserve execution order within each object's trace;
+do not infer cross-object execution order from concurrent stream output.
+Escaping and framing must allow records to be distinguished from ordinary
+compiler diagnostics without interpreting diagnostics as trace events.
+
+Direct DEPX integration and post-processing must represent reads, assignments,
+overwrites, and skipped defaults as trace events, not silently reinterpret them
+as existing dependency occurrences. Any DEPX extension requires an explicit
+schema and compatibility decision, including support for both ``.depx`` and
+``.depx.gz``. This contract does not prescribe new DEPX fields or require a
+viewer change.
+
+Future parser and DEPX-integration tests should verify event attribution and
+ordering, lossless typed-value decoding, and compatibility with existing
+dependency data. Incomplete or truncated trace capture must be identified as
+such rather than presented as a complete execution trace. The initial tracer
+must not require retaining events in memory merely to enable later enrichment.
+
 Additional acceptance checks
 ----------------------------
 

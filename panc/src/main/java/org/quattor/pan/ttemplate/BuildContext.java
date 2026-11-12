@@ -43,6 +43,7 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.google.gson.JsonObject;
 import org.quattor.pan.Compiler;
 import org.quattor.pan.CompilerLogging.LoggingType;
 import org.quattor.pan.CompilerOptions;
@@ -113,6 +114,8 @@ public class BuildContext implements Context {
 	private Template currentTemplate;
 
 	private final Template objectTemplate;
+
+    private final GlobalVariableTrace globalVariableTrace;
 
 	private List<String> relativeLoadpaths;
 
@@ -248,6 +251,8 @@ public class BuildContext implements Context {
 		assert (objectTemplate != null);
 		assert (objectTemplate.type == TemplateType.OBJECT);
 		this.objectTemplate = objectTemplate;
+        globalVariableTrace = compiler != null && compiler.options.isGlobalVariableTraceEnabled(objectTemplate.name)
+                ? new GlobalVariableTrace(objectTemplate, compiler.options.getGlobalVariableTracePattern()) : null;
 		dependencies.put(objectTemplate.name, objectTemplate);
 		objectDependencies.add(objectTemplate.name);
 
@@ -736,6 +741,39 @@ public class BuildContext implements Context {
 		}
 		return variable;
 	}
+
+    @Override
+    public boolean isGlobalVariableTraceSelected(String name) {
+        return globalVariableTrace != null && globalVariableTrace.matchesVariable(name);
+    }
+
+    @Override
+    public JsonObject snapshotGlobalVariableTraceValue(Element value) {
+        return globalVariableTrace == null ? null : TraceValueWriter.snapshot(value);
+    }
+
+    @Override
+    public void traceGlobalVariableAssignment(String name, SourceRange range, JsonObject oldValue,
+            Element newValue, boolean conditional, boolean finalFlag) {
+        if (!isGlobalVariableTraceSelected(name)) return;
+        String oldType = oldValue.get("type").getAsString();
+        String action = "absent".equals(oldType) || "undef".equals(oldType) ? "assign" : "overwrite";
+        globalVariableTrace.write(currentTemplate, range, name, action, conditional, finalFlag,
+                oldValue, TraceValueWriter.snapshot(newValue));
+    }
+
+    @Override
+    public void traceGlobalVariableSkip(String name, SourceRange range, Element existing, boolean finalFlag) {
+        if (!isGlobalVariableTraceSelected(name)) return;
+        globalVariableTrace.write(currentTemplate, range, name, "skip_default", true, finalFlag,
+                TraceValueWriter.snapshot(existing), null);
+    }
+
+    @Override
+    public void traceGlobalVariableRead(String name, SourceRange range, Term[] terms, Element value) {
+        if (!isGlobalVariableTraceSelected(name)) return;
+        globalVariableTrace.read(currentTemplate, range, name, terms, TraceValueWriter.snapshot(value));
+    }
 
 	public void pushTemplate(Template template, SourceRange sourceRange,
 			Level logLevel, String logMessage) {

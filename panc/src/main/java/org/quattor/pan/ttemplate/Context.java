@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
+import com.google.gson.JsonObject;
 import org.quattor.pan.CompilerOptions;
 import org.quattor.pan.dml.Operation;
 import org.quattor.pan.dml.data.Element;
@@ -291,6 +292,22 @@ public interface Context {
 	public Element getGlobalVariable(String name);
 
 	public GlobalVariable retrieveGlobalVariable(String name);
+
+    /** Whether explicit operations on this global are traced. */
+    default boolean isGlobalVariableTraceSelected(String name) { return false; }
+
+    /** Snapshot a trace value before it can be mutated. */
+    default JsonObject snapshotGlobalVariableTraceValue(Element value) { return null; }
+
+    /** Record a successful explicit global assignment. */
+    default void traceGlobalVariableAssignment(String name, SourceRange range, JsonObject oldValue,
+            Element newValue, boolean conditional, boolean finalFlag) { }
+
+    /** Record a skipped conditional global assignment. */
+    default void traceGlobalVariableSkip(String name, SourceRange range, Element existing, boolean finalFlag) { }
+
+    /** Record an explicit global read. */
+    default void traceGlobalVariableRead(String name, SourceRange range, Term[] terms, Element value) { }
 
 	public void pushTemplate(Template template, SourceRange sourceRange,
 			Level logLevel, String logMessage);

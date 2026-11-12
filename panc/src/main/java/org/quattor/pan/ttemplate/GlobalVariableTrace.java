@@ -22,9 +22,13 @@ public final class GlobalVariableTrace {
     private long sequence;
 
     public GlobalVariableTrace(Template object, String variableGlob) {
+        this(object, compileGlob(variableGlob));
+    }
+
+    public GlobalVariableTrace(Template object, Pattern variablePattern) {
         this.object = object.name;
         this.objectFile = object.source == null ? null : object.source.getPath();
-        this.variables = compileGlob(variableGlob);
+        this.variables = variablePattern;
     }
 
     /** Compile a case-sensitive glob matching an entire logical name. */

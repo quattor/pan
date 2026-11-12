@@ -16,7 +16,8 @@
             DepGzipFormatter
             NullFormatter]
            [org.quattor.pan CompilerOptions$DeprecationWarnings]
-           [clojure.lang ExceptionInfo]))
+           [clojure.lang ExceptionInfo]
+           [org.quattor.pan.ttemplate GlobalVariableTrace]))
 
 (declare process)
 
@@ -75,6 +76,18 @@
 (defmethod process :debug-ns-exclude
            [[k v]]
   {:debug-ns-exclude (when-not (nil? v) (re-pattern v))})
+
+(defn process-trace-glob [[k v]]
+  (when-not (nil? v)
+    (try
+      (GlobalVariableTrace/compileGlob v)
+      (catch IllegalArgumentException e
+        (let [msg (str "--" (name k) ": " (.getMessage e))]
+          (throw (ex-info msg {:type :options :msg msg} e))))))
+  {k v})
+
+(defmethod process :trace-object-glob [option] (process-trace-glob option))
+(defmethod process :trace-variable-glob [option] (process-trace-glob option))
 
 (defmethod process :include-path
            [[k v]]

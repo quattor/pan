@@ -22,9 +22,12 @@ package org.quattor.pan;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -40,6 +43,40 @@ import org.quattor.pan.output.Formatter;
 import org.quattor.pan.output.PanFormatter;
 
 public class CompilerOptionsTest {
+
+    private CompilerOptions traceOptions(String objectGlob, String variableGlob) throws SyntaxException {
+        return new CompilerOptions(null, null, 100, 50, Collections.<Formatter>emptySet(), null,
+                Collections.<File>emptyList(), CompilerOptions.DeprecationWarnings.OFF,
+                null, null, null, 0, objectGlob, variableGlob);
+    }
+
+    @Test
+    public void testGlobalTraceDefaultsAndGlobMatching() throws SyntaxException {
+        CompilerOptions old = new CompilerOptions(null, null, 100, 50, Collections.<Formatter>emptySet(), null,
+                Collections.<File>emptyList(), CompilerOptions.DeprecationWarnings.OFF, null, null, null, 0);
+        assertFalse(old.isGlobalVariableTraceEnabled("site/host"));
+        assertFalse(traceOptions(null, "x*").isGlobalVariableTraceEnabled("site/host"));
+        CompilerOptions options = traceOptions("site/[x].?*", null);
+        assertTrue(options.isGlobalVariableTraceEnabled("site/[x].a/host"));
+        assertFalse(options.isGlobalVariableTraceEnabled("site/x.a/host"));
+        assertFalse(options.isGlobalVariableTraceEnabled("SITE/[x].a/host"));
+        assertTrue(options.getGlobalVariableTracePattern().matcher("a/b").matches());
+        assertTrue(traceOptions("*", "a.[x]?*").getGlobalVariableTracePattern().matcher("a.[x]/b").matches());
+        assertFalse(traceOptions("*", "a.[x]?*").getGlobalVariableTracePattern().matcher("a.x/b").matches());
+    }
+
+    @Test
+    public void testEmptyGlobalTraceGlobsHaveNamedDiagnostics() throws SyntaxException {
+        for (String name : new String[] {"traceObjectGlob", "traceVariableGlob"}) {
+            try {
+                traceOptions(name.equals("traceObjectGlob") ? "" : null,
+                        name.equals("traceVariableGlob") ? "" : null);
+                fail("Expected empty glob rejection");
+            } catch (IllegalArgumentException e) {
+                assertTrue(e.getMessage().contains(name));
+            }
+        }
+    }
 
     @Test
     public void testConstructorAndGetters1() throws SyntaxException {

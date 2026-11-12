@@ -24,6 +24,15 @@
     (is (= "ok" (:unknown unknown)))
     (is (= 1 (count unknown)))))
 
+(deftest test-trace-glob-option-errors
+  (doseq [option [:trace-object-glob :trace-variable-glob]]
+    (try
+      (process [option ""])
+      (is false "Expected an options error")
+      (catch ExceptionInfo e
+        (is (= :options (:type (ex-data e))))
+        (is (.contains (.getMessage e) (name option)))))))
+
 (deftest test-formats
   (is (= #{(DepxGzipFormatter/getInstance)} (:formatter (process [:formats "depx.gz"]))))
   (is (.requiresIncludeTrace (DepxGzipFormatter/getInstance)))

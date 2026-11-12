@@ -64,6 +64,10 @@ public class PanCompilerTask extends Task {
 
     private Pattern debugNsExclude = null;
 
+    private String traceObjectGlob;
+
+    private String traceVariableGlob;
+
     private boolean debugTask = false;
 
     /* Produce very verbose output */
@@ -125,21 +129,7 @@ public class PanCompilerTask extends Task {
             addPaths(antpath);
         }
 
-        // This can be dropped when the old style parameters are removed.
-        if (deprecationWarnings == null) {
-            deprecationWarnings = CompilerOptions.getDeprecationWarnings(
-                    deprecationLevel, failOnWarn);
-        }
-
-        // Collect the options for the compilation.
-        CompilerOptions options = null;
-        try {
-            options = new CompilerOptions(debugNsInclude, debugNsExclude,
-                    maxIteration, maxRecursion, formatters, outputDir, includeDirectories,
-                    deprecationWarnings, null, null, initialData, nthread);
-        } catch (SyntaxException e) {
-            throw new BuildException("invalid root element: " + e.getMessage());
-        }
+        CompilerOptions options = createCompilerOptions();
 
         // If the debugging for the task is enabled, then print out the options
         // and the arguments.
@@ -204,6 +194,29 @@ public class PanCompilerTask extends Task {
         // Stop build if there was an error.
         if (hadError) {
             throw new BuildException("Compilation failed; see messages.");
+        }
+    }
+
+    CompilerOptions createCompilerOptions() {
+        // This can be dropped when the old style parameters are removed.
+        if (deprecationWarnings == null) {
+            deprecationWarnings = CompilerOptions.getDeprecationWarnings(
+                    deprecationLevel, failOnWarn);
+        }
+
+        // Collect the options for the compilation.
+        try {
+            return new CompilerOptions(debugNsInclude, debugNsExclude,
+                    maxIteration, maxRecursion, formatters, outputDir, includeDirectories,
+                    deprecationWarnings, null, null, initialData, nthread, traceObjectGlob, traceVariableGlob);
+        } catch (SyntaxException e) {
+            throw new BuildException("invalid root element: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            if (e.getMessage() != null && (e.getMessage().startsWith("traceObjectGlob:")
+                    || e.getMessage().startsWith("traceVariableGlob:"))) {
+                throw new BuildException(e.getMessage(), e);
+            }
+            throw e;
         }
     }
 
@@ -347,6 +360,16 @@ public class PanCompilerTask extends Task {
      */
     public void setDebugNsExclude(String pattern) {
         debugNsExclude = Pattern.compile(pattern);
+    }
+
+    /** Select object names for tracing by glob; output may expose sensitive values on stderr. */
+    public void setTraceObjectGlob(String glob) {
+        traceObjectGlob = glob;
+    }
+
+    /** Select global variable names for tracing by glob. */
+    public void setTraceVariableGlob(String glob) {
+        traceVariableGlob = glob;
     }
 
     /**

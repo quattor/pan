@@ -65,6 +65,7 @@ import org.quattor.pan.repository.SourceRepository;
 import org.quattor.pan.repository.SourceRepositoryFactory;
 import org.quattor.pan.ttemplate.CompileTimeContext;
 import org.quattor.pan.ttemplate.Context;
+import org.quattor.pan.ttemplate.GlobalVariableTrace;
 import org.quattor.pan.ttemplate.SourceRange;
 
 /**
@@ -127,6 +128,9 @@ public class CompilerOptions {
     private final Pattern debugNsInclude;
     private final Pattern debugNsExclude;
 
+    private final Pattern traceObjectPattern;
+    private final Pattern traceVariablePattern;
+
     /**
      * Directory that will contain the annotation output files.
      */
@@ -184,6 +188,22 @@ public class CompilerOptions {
                            File outputDirectory, List<File> includeDirectories, DeprecationWarnings deprecationWarnings, File annotationDirectory,
                            File annotationBaseDirectory, String rootElement, int nthread)
             throws SyntaxException {
+
+        this(debugNsInclude, debugNsExclude, maxIteration, maxRecursion, formatters, outputDirectory,
+                includeDirectories, deprecationWarnings, annotationDirectory, annotationBaseDirectory,
+                rootElement, nthread, null, null);
+    }
+
+    /** Construct options with optional object and variable name globs for global tracing. */
+    public CompilerOptions(Pattern debugNsInclude, Pattern debugNsExclude, int maxIteration, int maxRecursion,
+                           Set<Formatter> formatters, File outputDirectory, List<File> includeDirectories,
+                           DeprecationWarnings deprecationWarnings, File annotationDirectory,
+                           File annotationBaseDirectory, String rootElement, int nthread,
+                           String traceObjectGlob, String traceVariableGlob) throws SyntaxException {
+
+        this.traceObjectPattern = traceObjectGlob == null ? null : compileTraceGlob(traceObjectGlob, "traceObjectGlob");
+        this.traceVariablePattern = compileTraceGlob(traceVariableGlob == null ? "*" : traceVariableGlob,
+                "traceVariableGlob");
 
         // Check that the iteration and call depth limits are sensible. If
         // negative or zero set these effectively to infinity.
@@ -272,6 +292,24 @@ public class CompilerOptions {
         } else {
             this.nthread = nthread;
         }
+    }
+
+    private static Pattern compileTraceGlob(String glob, String name) {
+        try {
+            return GlobalVariableTrace.compileGlob(glob);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(name + ": " + e.getMessage(), e);
+        }
+    }
+
+    /** Return whether the logical object name is selected for global tracing. */
+    public boolean isGlobalVariableTraceEnabled(String objectName) {
+        return traceObjectPattern != null && traceObjectPattern.matcher(objectName).matches();
+    }
+
+    /** Return the compiled logical variable name selector. */
+    public Pattern getGlobalVariableTracePattern() {
+        return traceVariablePattern;
     }
 
     // Utility method to turn old options into new deprecation flag.

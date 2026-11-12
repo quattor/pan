@@ -75,8 +75,10 @@ reorganized and simplified options, replaces the older ``panc`` command.
 
 ``--formats=``
     A comma separated list of desired output formats. Allowed values are
-    "pan", "pan.gz", "xml", "xml.gz", "json", "json.gz", "txt", "dep", "dep.gz"
-    and "dot". The default is value is "pan,dep".
+    "pan", "pan.gz", "xml", "xml.gz", "json", "json.gz", "txt", "dep", "dep.gz",
+    "depx", "depx.gz" and "dot".
+    The default value is "pan,dep". See
+    :ref:`depx-output` for the extended dependency trace.
 
 ``--java-opts=``
     List of options to use when starting the java virtual machine. These
@@ -133,6 +135,155 @@ the command is invoked without options and just a list of object
 templates as the arguments. Larger sets of templates will need to set
 the memory option for the Java Virtual Machine; this should be done
 through the ``--java-opts`` option.
+
+
+.. _depx-output:
+
+Extended dependency traces (depx)
+=================================
+
+Select ``depx`` to write a ``.depx`` file containing the runtime include
+trace and the complete file dependency set. For example::
+
+    panc --formats pan,depx profiles/example.pan
+
+Select ``depx.gz`` for a gzip-compressed ``.depx.gz`` file with the same
+UTF-8 content, streamed directly without an intermediate uncompressed file::
+
+    panc --formats pan,depx.gz profiles/example.pan
+
+The existing ``dep`` output and default formats are unchanged.
+Collection is enabled only when a selected
+formatter requests it. Within each profile, metadata shares existing template
+and source-location references, while occurrence indexes, parents and statuses
+use primitive arrays. Storage grows with encountered occurrences, not merely
+with the number of distinct templates.
+
+Only successfully resolved, type-valid named includes encountered during
+evaluation are recorded, including computed names and validation-time execution.
+Untaken branches and includes evaluating to ``null`` or ``undef`` produce no
+occurrence. Repeated ordinary includes retain their own occurrences and children.
+Later references to already loaded unique or declaration templates are marked
+``skipped_unique`` or ``skipped_declaration`` and have no synthetic descendants.
+An include inside a skipped template is not encountered again.
+
+Structure template invocations are labeled ``create``, not ``include``. The
+caller identifies the executing template, including a function's defining
+template when applicable; this is not a general function-call trace. Reachable
+external object profiles have separate sections, not fabricated include edges.
+The final dependency section preserves the same complete file set as ``dep``,
+including dependencies that are not represented by include occurrences.
+
+Version 1 JSON format
+----------------------
+
+Both compiler formats contain identical UTF-8 JSON after decompression. The
+top-level object contains
+``format: "depx"``, ``version: 1``, an ordered ``roots`` array of absolute
+include directories, a ``profiles`` array sorted by name, and a separate
+``dependencies`` array. For example::
+
+    {
+      "format": "depx", "version": 1, "roots": ["/templates"],
+      "profiles": [{
+        "name": "example",
+        "sites": [{
+          "caller": {"name": "example", "source": {
+            "name": "example", "type": "PAN",
+            "location": {"root": 0, "path": ""}}},
+          "target": {"name": "common", "source": {
+            "name": "common", "type": "PAN",
+            "location": {"root": 0, "path": ""}}},
+          "location": {"begin_line": 2, "begin_column": 1,
+                       "end_line": 2, "end_column": 17}
+        }],
+        "occurrences": [{"site": 0, "parent": null, "status": "executed"}]
+      }],
+      "dependencies": [
+        {"name": "common", "type": "PAN", "location": {"root": 0, "path": ""}},
+        {"name": "example", "type": "PAN", "location": {"root": 0, "path": ""}}
+      ]
+    }
+
+Site and occurrence identifiers are their array indexes, local to each profile.
+Each occurrence references a shared ``site`` and has a ``parent`` that is either
+``null`` or an earlier occurrence index. The flat array preserves encounter
+order and nesting without deeply nested JSON. Status is ``executed``,
+``skipped_unique``, ``skipped_declaration``, or ``create``. Suppressed occurrences
+have no children. Caller, target, source, or statement location can be ``null``
+when the corresponding metadata is absent.
+
+A source has separate ``name``, ``type``, and ``location`` fields. The location
+is still a load directory, not an inferred source filename. In-root locations
+use ``{"root": INDEX, "path": RELATIVE}``, where ``RELATIVE`` is a literal
+slash-separated filesystem path; an empty path denotes the root itself. JSON
+relative paths are not URI-escaped. Percent signs,
+spaces and Unicode characters retain their literal meaning. The first matching
+include root wins, observing directory boundaries. Other locations use
+``{"uri": ABSOLUTE_FILE_URI}``; absent locations use ``null``. Dependencies
+include files that do not correspond to an include occurrence.
+
+Quick text inspection
+---------------------
+
+Use the dependency-free ``depx2text.py`` converter to inspect a trace as text.
+It requires Python 3.7 or newer and uses only the Python standard library. From
+a checkout it is ``panc/src/main/scripts/depx2text.py``; compiler bundles install
+it as ``bin/depx2text.py``. For example::
+
+    depx2text.py profile.depx.gz
+    depx2text.py profile.depx.gz -o profile.txt
+    depx2text.py -o profile.txt.gz < profile.depx
+
+The optional input defaults to standard input; ``-`` also selects standard
+input. Output defaults to standard output; ``-o PATH`` or ``--output PATH``
+selects a file, and ``-o -`` selects standard output. Input and output filenames
+ending in ``.gz`` are decompressed and compressed respectively. Standard input
+and output are uncompressed. The converter validates the JSON before opening an
+output file and reports invalid input without a traceback.
+
+The resulting UTF-8 text uses LF line endings and starts with ``depx 2``.
+Profile and dependency ordering follows the input; site and occurrence indexes
+are local to each profile and assigned in encounter order. For example::
+
+    depx 2
+    root 0 "/templates"
+    profile "example"
+      site 0 caller="example" target="common" caller-path="example PAN //" target-path="common PAN //" location=2:1-2:17
+      occurrences
+        include 0 site=0 caller="example" target="common" location=2:1-2:17 status=executed
+    dependencies
+      file "common PAN //"
+      file "example PAN //"
+
+The ordered ``root`` table records the absolute include directories. With one
+directory, ``//`` denotes that root; with several, ``//0//``, ``//1//`` and so
+on denote directories in configured include-search order. Locations beneath a
+root carry a URI-escaped relative suffix, for example
+``//site/configuration/`` or ``//1//site/configuration/``. Decode the suffix
+once and join it to the recorded root to resolve the directory. Locations
+outside every root remain absolute file URIs.
+
+Source values use ``NAME TYPE LOCATION`` descriptors, where the location is the
+load directory, not the full filename. For example, ``common PAN //`` identifies
+the Pan source named ``common`` in ``/templates``. A source without a location
+uses ``NAME (TYPE)``; absent metadata is the bare token ``null``.
+
+Each ``site`` record contains caller and target names, source descriptors and
+statement location in ``beginLine:beginColumn-endLine:endColumn`` form.
+Descriptors occur in site metadata rather than on every occurrence line. After
+``occurrences``, each record begins with ``include`` or ``create``, its
+occurrence index and ``site=<index>``. Caller, target, location and status follow.
+Root occurrences have four leading spaces; each enclosing occurrence adds two
+spaces. Status is ``executed``, ``skipped-unique``, ``skipped-declaration`` or
+``create``. Indentation expresses occurrence nesting, not a deduplicated graph.
+
+The ``dependencies`` section follows all profiles, with two-space-indented
+``file`` records. Names and paths are double-quoted strings. Backslash, double
+quote, newline, carriage return and tab are escaped as ``\\\\``, ``\\\"``,
+``\\n``, ``\\r`` and ``\\t`` respectively; other ISO control characters use
+lowercase four-digit ``\\uXXXX`` escapes. Other characters are preserved. A
+quoted ``"null"`` is a string, distinct from missing metadata.
 
 
 panc-annotations
@@ -455,4 +606,3 @@ the activity on each thread.
     plot(stop/1000,thread, type="n", xlab="time (s)", ylab="thread ID")
     segments(start/1000, thread, stop/1000, thread)
     detach(tstats)
-

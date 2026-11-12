@@ -34,6 +34,7 @@ import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.ttemplate.CompileTimeContext;
 import org.quattor.pan.ttemplate.Context;
+import org.quattor.pan.ttemplate.IncludeTrace;
 import org.quattor.pan.ttemplate.SourceRange;
 import org.quattor.pan.ttemplate.Template;
 import org.quattor.pan.ttemplate.Template.TemplateType;
@@ -157,10 +158,20 @@ abstract public class IncludeStatement extends Statement {
 		// Push the template, execute it, then pop it from the stack.
 		// Template loops will be caught by the call depth check when pushing
 		// the template.
-		context.pushTemplate(template, getSourceRange(), Level.INFO,
-				includedType.toString());
-		template.execute(context, runStatic);
-		context.popTemplate(Level.INFO, includedType.toString());
+        IncludeTrace.Status status = IncludeTrace.Status.EXECUTED;
+        if (!runStatic && includedType == TemplateType.UNIQUE) {
+            status = IncludeTrace.Status.SKIPPED_UNIQUE;
+        } else if (!runStatic && includedType == TemplateType.DECLARATION) {
+            status = IncludeTrace.Status.SKIPPED_DECLARATION;
+        }
+        int previousParent = context.enterIncludeTrace(template, getSourceRange(), status);
+        try {
+            context.pushTemplate(template, getSourceRange(), Level.INFO, includedType.toString());
+            template.execute(context, runStatic);
+            context.popTemplate(Level.INFO, includedType.toString());
+        } finally {
+            context.leaveIncludeTrace(previousParent);
+        }
 
 	}
 

@@ -35,6 +35,7 @@ import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.InvalidTermException;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.ttemplate.Context;
+import org.quattor.pan.ttemplate.IncludeTrace;
 import org.quattor.pan.ttemplate.LocalVariableMap;
 import org.quattor.pan.ttemplate.SelfHolder;
 import org.quattor.pan.ttemplate.SourceRange;
@@ -163,12 +164,17 @@ final public class Create extends BuiltInFunction {
 		// Template loops will be caught by the call depth check when pushing
 		// the template. Note that the actual state of the SELF must be saved
 		// (restored) when entering (exiting) a structure template.
-		context.pushTemplate(template, getSourceRange(), Level.INFO,
-				"STRUCTURE");
-		SelfHolder self = context.saveSelf();
-		template.execute(context, runStatic);
-		context.restoreSelf(self);
-		context.popTemplate(Level.INFO, "STRUCTURE");
+        int previousParent = context.enterIncludeTrace(template, getSourceRange(),
+                IncludeTrace.Status.CREATE);
+        try {
+            context.pushTemplate(template, getSourceRange(), Level.INFO, "STRUCTURE");
+            SelfHolder self = context.saveSelf();
+            template.execute(context, runStatic);
+            context.restoreSelf(self);
+            context.popTemplate(Level.INFO, "STRUCTURE");
+        } finally {
+            context.leaveIncludeTrace(previousParent);
+        }
 
 	}
 

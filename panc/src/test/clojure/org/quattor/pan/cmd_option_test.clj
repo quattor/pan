@@ -8,6 +8,8 @@
                                    DotFormatter
                                    PanFormatter
                                    DepFormatter
+                                   DepxFormatter
+                                   DepxGzipFormatter
                                    NullFormatter]
            [org.quattor.pan CompilerOptions$DeprecationWarnings]
            [java.util.regex Pattern]
@@ -23,6 +25,12 @@
     (is (= 1 (count unknown)))))
 
 (deftest test-formats
+  (is (= #{(DepxGzipFormatter/getInstance)} (:formatter (process [:formats "depx.gz"]))))
+  (is (.requiresIncludeTrace (DepxGzipFormatter/getInstance)))
+  (is (= #{(DepxFormatter/getInstance)} (:formatter (process [:formats "depx"]))))
+  (is (.requiresIncludeTrace (DepxFormatter/getInstance)))
+  (is (thrown? ExceptionInfo (process [:formats "depx.json"])))
+  (is (thrown? ExceptionInfo (process [:formats "depx.json.gz"])))
   (let [pandep (process [:formats "pan,dep"])
         text (process [:formats "text"])
         json (process [:formats "json"])

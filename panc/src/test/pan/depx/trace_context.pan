@@ -1,0 +1,10 @@
+object template trace_context;
+include 'trace_functions';
+'/built' = trace_make();
+variable TARGET = 'trace_leaf';
+include { TARGET; };
+include { if (false) 'not_encountered' else null; };
+valid '/built' = { trace_make(); true; };
+'/external' = value('trace_external:/value');
+'/external_again' = value('trace_external:/value');
+'/text' = file_contents('trace_payload.txt');

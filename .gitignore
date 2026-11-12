@@ -5,3 +5,6 @@ bin
 .idea
 *.iml
 *.pyc
+/doc/superpowers/
+/docs/superpowers/
+/.cortexkit/

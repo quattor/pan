@@ -297,6 +297,20 @@ public interface Context {
 
 	public void popTemplate(Level logLevel, String logMessage);
 
+    /** Records a resolved occurrence, returning its previous parent for restoration. */
+    default int enterIncludeTrace(Template target, SourceRange range, IncludeTrace.Status status) {
+        return -1;
+    }
+
+    /** Restores the parent occurrence; non-build contexts have no trace. */
+    default void leaveIncludeTrace(int previousParent) {
+    }
+
+    /** Returns a snapshot, or null when tracing is disabled. */
+    default IncludeTrace getIncludeTrace() {
+        return null;
+    }
+
 	public void printTraceback(SourceRange sourceRange);
 
 	public String getTraceback(SourceRange sourceRange);

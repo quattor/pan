@@ -164,6 +164,33 @@ public class BuildContext implements Context {
 		this(null, emptyTemplate);
 	}
 
+    private final IncludeTrace.Builder includeTrace;
+
+    /** Records a resolved occurrence and returns the parent to restore. */
+    @Override
+    public int enterIncludeTrace(Template target, SourceRange range, IncludeTrace.Status status) {
+        if (includeTrace == null) {
+            return -1;
+        }
+        int previous = includeTrace.getParent();
+        includeTrace.enter(getCurrentTemplate(), target, range, status);
+        return previous;
+    }
+
+    /** Restores the parent after included or created template execution. */
+    @Override
+    public void leaveIncludeTrace(int previousParent) {
+        if (includeTrace != null) {
+            includeTrace.leave(previousParent);
+        }
+    }
+
+    /** Returns immutable occurrences collected through validation. */
+    @Override
+    public IncludeTrace getIncludeTrace() {
+        return includeTrace == null ? null : includeTrace.snapshot();
+    }
+
 	/**
 	 * Constructs a new context for the given root element. The function, type,
 	 * and variable hashes are initially empty. (In particular, the object
@@ -178,6 +205,8 @@ public class BuildContext implements Context {
 
 		// Set the compiler.
 		this.compiler = compiler;
+        includeTrace = compiler != null && compiler.options.requiresIncludeTrace()
+                ? new IncludeTrace.Builder() : null;
 
 		// Copy in a couple of options used for function evaluation. The
 		// compiler will be null for compile-time DML evaluations.

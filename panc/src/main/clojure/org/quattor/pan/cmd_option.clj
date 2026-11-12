@@ -11,6 +11,8 @@
             XmlFormatter
             XmlGzipFormatter
             DepFormatter
+            DepxFormatter
+            DepxGzipFormatter
             DepGzipFormatter
             NullFormatter]
            [org.quattor.pan CompilerOptions$DeprecationWarnings]
@@ -38,6 +40,8 @@
             "xml" (conj v (XmlFormatter/getInstance))
             "xml.gz" (conj v (XmlGzipFormatter/getInstance))
             "dep" (conj v (DepFormatter/getInstance))
+            "depx" (conj v (DepxFormatter/getInstance))
+            "depx.gz" (conj v (DepxGzipFormatter/getInstance))
             "dep.gz" (conj v (DepGzipFormatter/getInstance))
             "null" (conj v (NullFormatter/getInstance))
             "none" v
@@ -126,4 +130,3 @@
     (switches v)
     (let [msg (str k " value must be off, on, or fatal")]
       (throw (ex-info msg {:type :options :msg msg})))))
-

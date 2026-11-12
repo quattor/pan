@@ -27,6 +27,7 @@ import java.util.TreeSet;
 
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.repository.SourceFile;
+import org.quattor.pan.ttemplate.IncludeTrace;
 
 /**
  * Encapsulates the results of the second validation phase.
@@ -45,10 +46,17 @@ public class Valid2Result extends TaskResult {
 	Set<String> objectDependencies;
 
 	Set<SourceFile> dependencies;
+    private final IncludeTrace includeTrace;
 
 	public Valid2Result(String objectName, Element root,
 			Set<String> objectDependencies, Set<SourceFile> dependencies) {
+        this(objectName, root, objectDependencies, dependencies, null);
+    }
+
+    public Valid2Result(String objectName, Element root, Set<String> objectDependencies,
+            Set<SourceFile> dependencies, IncludeTrace includeTrace) {
 		super(ResultType.VALID2);
+        this.includeTrace = includeTrace;
 
 		this.root = root;
 		this.objectName = objectName;
@@ -63,6 +71,11 @@ public class Valid2Result extends TaskResult {
 	public Element getRoot() {
 		return root;
 	}
+
+    /** Returns the immutable post-validation trace, or null when disabled. */
+    public IncludeTrace getIncludeTrace() {
+        return includeTrace;
+    }
 
 	public Set<String> getObjectDependencies() {
 		return objectDependencies;

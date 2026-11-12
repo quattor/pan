@@ -43,6 +43,8 @@ import org.quattor.pan.exceptions.ConfigurationException;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.output.DepFormatter;
+import org.quattor.pan.output.DepxFormatter;
+import org.quattor.pan.output.DepxGzipFormatter;
 import org.quattor.pan.output.DepGzipFormatter;
 import org.quattor.pan.output.DotFormatter;
 import org.quattor.pan.output.Formatter;
@@ -112,6 +114,9 @@ public class CompilerOptions {
     public final DeprecationWarnings deprecationWarnings;
 
     public final SourceRepository sourceRepository;
+
+    /** Shared ordered absolute include directories used by root-aware output. */
+    public final List<File> includeRoots;
 
     /**
      * Patterns that are matched against a template name to determine if debug()
@@ -215,6 +220,11 @@ public class CompilerOptions {
         this.maxIteration = maxIteration;
         this.maxRecursion = maxRecursion;
         this.outputDirectory = outputDirectory;
+        List<File> roots = new LinkedList<File>();
+        for (File directory : includeDirectories) {
+            roots.add(directory.getAbsoluteFile().toPath().normalize().toFile());
+        }
+        this.includeRoots = Collections.unmodifiableList(roots);
 
         this.deprecationWarnings = deprecationWarnings;
 
@@ -485,6 +495,12 @@ public class CompilerOptions {
                 formatters.add(XmlGzipFormatter.getInstance());
             } else if ("dep".equals(fname)) {
                 formatters.add(DepFormatter.getInstance());
+            } else if ("depx".equals(fname)) {
+                formatters.add(DepxFormatter.getInstance());
+            } else if ("depx.gz".equals(fname)) {
+                formatters.add(DepxGzipFormatter.getInstance());
+            } else if ("depx.json".equals(fname) || "depx.json.gz".equals(fname)) {
+                throw new IllegalArgumentException("Unsupported formatter: " + fname);
             } else if ("dep.gz".equals(fname)) {
                 formatters.add(DepGzipFormatter.getInstance());
             } else if ("null".equals(fname)) {
@@ -495,6 +511,16 @@ public class CompilerOptions {
         }
 
         return formatters;
+    }
+
+    /** Enables collection only when a selected formatter needs runtime occurrences. */
+    public boolean requiresIncludeTrace() {
+        for (Formatter formatter : formatters) {
+            if (formatter.requiresIncludeTrace()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

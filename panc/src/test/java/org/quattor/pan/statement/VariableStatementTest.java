@@ -130,6 +130,57 @@ public class VariableStatementTest extends StatementTestUtils {
         assertEquals(4, e[5].getAsJsonObject("new").get("value").getAsInt());
     }
 
+    @Test public void computedAssignmentSnapshotsListBeforeInPlaceSelfMutation() throws Exception {
+        final ListResource original = new ListResource(new Element[] { LongProperty.getInstance(1) });
+        TestContext context = new TestContext("object", "list") {
+            @Override public Element executeDmlBlock(Operation dml) {
+                evaluations++;
+                ListResource self = (ListResource) getSelf();
+                assertSame(original, self);
+                self.put(0, LongProperty.getInstance(2));
+                return self;
+            }
+        };
+        context.setGlobalVariable("list", original, false);
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        PrintStream previous = System.err;
+        try {
+            System.setErr(new PrintStream(bytes, true, "UTF-8"));
+            new ComputedVariableStatement(RANGE, "list", null, false, true).execute(context);
+        } finally { System.setErr(previous); }
+
+        JsonObject[] e = events(bytes);
+        assertEquals(1, e.length);
+        assertEquals("overwrite", e[0].get("action").getAsString());
+        assertEquals(1, e[0].getAsJsonObject("old").getAsJsonArray("value")
+                .get(0).getAsJsonObject().get("value").getAsInt());
+        assertEquals(2, e[0].getAsJsonObject("new").getAsJsonArray("value")
+                .get(0).getAsJsonObject().get("value").getAsInt());
+        assertEquals(2L, ((LongProperty) ((ListResource) context.getGlobalVariable("list"))
+                .iterator().next().getValue()).getValue().longValue());
+        assertEquals(1, context.evaluations);
+    }
+
+    @Test public void skippedAlreadyFinalDefaultPreservesFinalityAndDoesNotEvaluateRhs() throws Exception {
+        TestContext context = new TestContext("object", "final");
+        context.setGlobalVariable("final", LongProperty.getInstance(1), true);
+        context.fail = true;
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        PrintStream previous = System.err;
+        try {
+            System.setErr(new PrintStream(bytes, true, "UTF-8"));
+            new ComputedVariableStatement(RANGE, "final", null, true, true).execute(context);
+        } finally { System.setErr(previous); }
+
+        JsonObject[] e = events(bytes);
+        assertEquals(1, e.length);
+        assertEquals("skip_default", e[0].get("action").getAsString());
+        assertTrue(e[0].get("final").getAsBoolean());
+        assertTrue(context.retrieveGlobalVariable("final").getFinalFlag());
+        assertEquals(1L, ((LongProperty) context.getGlobalVariable("final")).getValue().longValue());
+        assertEquals(0, context.evaluations);
+    }
+
     @Test public void failedWritesAndInternalLookupsDoNotEmitEvents() throws Exception {
         TestContext context = new TestContext("object", "*");
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();

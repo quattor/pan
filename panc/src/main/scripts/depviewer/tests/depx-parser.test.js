@@ -66,6 +66,62 @@ const fixture = () => ({
   ]
 });
 
+const traceEvent = (sequence, action = "read", variable = "alpha") => ({
+  format: "pan-global-trace", version: 1, sequence, object: "default", object_file: null,
+  template: "source", template_file: null, location: { ...location }, occurrence: null,
+  action, variable, ...(action === "read" ? { value: { type: "string", value: "hello" } } :
+    action === "skip_default" ? { conditional: true, final: false, existing: { type: "null" } } :
+      { conditional: false, final: false, old: { type: "absent" }, new: { type: "long", value: 9223372036854776000 } })
+});
+const trace = (events = []) => ({ version: 1, object_glob: "*", variable_glob: "*", selected: true, complete: true, limits: { max_events: 10000, max_bytes: 8388608 }, dropped_events: 0, events });
+const withTrace = (capture) => { const value = fixture(); value.profiles[0].global_trace = capture; return value; };
+
+test("global trace helper states, counts, literal filtering and pages", () => {
+  const { filterVariables, variableEventPage, traceCaptureState } = globalThis.DepxViewerParser;
+  const old = parseDepx(JSON.stringify(fixture())).profiles.get("default");
+  assert.equal(old.globalTrace, null);
+  assert.equal(traceCaptureState(old), "unavailable");
+  const events = [traceEvent(1), traceEvent(2, "assign"), traceEvent(3, "overwrite"), traceEvent(4, "skip_default"), traceEvent(5, "read", "b*")];
+  const profile = parseDepx(JSON.stringify(withTrace(trace(events)))).profiles.get("default");
+  assert.equal(traceCaptureState(profile), "captured");
+  assert.deepEqual(filterVariables(profile, "AL"), [{ name: "alpha", read: 1, set: 2, skip: 1 }]);
+  assert.deepEqual(filterVariables(profile, "*"), [{ name: "b*", read: 1, set: 0, skip: 0 }]);
+  assert.deepEqual(variableEventPage(profile, "alpha", 1, 2), { items: events.slice(2, 4), page: 1, pageCount: 2, start: 2 });
+  for (const [capture, expected] of [[{ ...trace(), selected: false }, "filtered"], [trace(), "empty"], [{ ...trace(), complete: false, dropped_events: 1 }, "incomplete"]]) {
+    assert.equal(traceCaptureState(parseDepx(JSON.stringify(withTrace(capture))).profiles.get("default")), expected);
+  }
+});
+
+test("rejects malformed global trace metadata, event references and typed values", () => {
+  const cases = [
+    c => { c.version = 2; }, c => { c.selected = false; }, c => { c.complete = false; },
+    c => { c.dropped_events = 1; }, c => { c.limits.max_events = -1; },
+    c => { c.events[0].sequence = Number.MAX_SAFE_INTEGER + 1; },
+    c => { c.events.push({ ...c.events[0] }); }, c => { c.events[0].object = "other"; },
+    c => { c.events[0].occurrence = 3; }, c => { c.events[0].occurrence = 20; },
+    c => { c.events[0].location.begin_line = 0; }, c => { c.events[0].action = "unknown"; },
+    c => { c.events[0].value = { type: "long", value: "1" }; },
+    c => { c.events[0].access_path = [{ type: "boolean", value: true }]; },
+    c => { c.events[0].value = { type: "list", value: [{ type: "wat" }] }; },
+  ];
+  for (const change of cases) { const capture = trace([traceEvent(1)]); change(capture); assert.throws(() => parseDepx(JSON.stringify(withTrace(capture)))); }
+  let nested = { type: "null" };
+  for (let i = 0; i < 200; i++) nested = { type: "list", value: [nested] };
+  const capture = trace([traceEvent(1)]); capture.events[0].value = nested;
+  assert.throws(() => parseDepx(JSON.stringify(withTrace(capture))), /limit|depth/i);
+});
+
+test("accepts producer long and nonfinite double snapshots and typed collection indicators", () => {
+  const snapshots = [
+    { type: "long", value: 9223372036854775807 },
+    { type: "long", value: -9223372036854775808 },
+    ...["NaN", "Infinity", "-Infinity"].map(value => ({ type: "double", value })),
+    { type: "dict", value: [{ key: { type: "string", value: "<key>" }, value: { type: "list", truncated: true, reason: "cycle", size: 1 } }] },
+  ];
+  const events = snapshots.map((value, index) => ({ ...traceEvent(index + 1), value }));
+  assert.equal(parseDepx(JSON.stringify(withTrace(trace(events)))).profiles.get("default").globalTrace.events.length, snapshots.length);
+});
+
 test("normalizes structured sources and preserves statuses, null metadata, and dependencies", () => {
   const normalized = parseDepx(JSON.stringify(fixture()));
   const profile = normalized.profiles.get("default");

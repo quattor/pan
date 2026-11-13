@@ -94,6 +94,10 @@
     .inventory-list { max-height: 200px; overflow: auto; margin: 0; padding: 0; list-style: none; }
     .inventory-list li { overflow-wrap: anywhere; padding: 5px 0; border-bottom: 1px solid #edf0f2; font-family: "IBM Plex Mono", "Cascadia Code", Consolas, monospace; font-size: .8rem; }
     .hint { color: var(--muted); font-size: .82rem; line-height: 1.5; }
+    #variable-options { width: 100%; }
+    #variable-details dd { white-space: pre-wrap; }
+    #variable-events button { width: 100%; text-align: left; overflow-wrap: anywhere; }
+    #variable-events button[aria-pressed="true"] { background: var(--accent-soft); box-shadow: inset 3px 0 var(--accent); }
     .noscript { margin-top: 16px; border: 1px solid #dfb277; background: var(--warning-soft); padding: 12px; }
     @media (max-width: 820px) {
       header { align-items: start; flex-direction: column; }
@@ -166,6 +170,23 @@
         <div id="details" class="details"><p class="hint">Select an occurrence to see its resolved source, target, status, and source location.</p></div>
       </section>
     </section>
+    <section class="workspace" aria-labelledby="variables-heading">
+      <section class="panel" aria-labelledby="variables-heading">
+        <div class="panel-head"><h2 id="variables-heading">Variables</h2></div>
+        <div class="details">
+          <div id="variable-capture-status" class="status">Open a trace to view global variables.</div>
+          <div class="control"><label for="variable-filter">Find a variable</label><input id="variable-filter" type="search" disabled></div>
+          <select id="variable-options" size="10" aria-label="Matching variables" disabled></select>
+          <nav class="pager" aria-label="Variable result pages"><button id="variable-previous-page" type="button" disabled>Previous</button><span id="variable-page-label" class="counter" aria-live="polite"></span><button id="variable-next-page" type="button" disabled>Next</button></nav>
+          <p id="variable-search-status" class="hint" role="status" aria-live="polite"></p>
+          <h3 id="variable-events-heading" tabindex="-1">Events</h3>
+          <p id="variable-events-empty" class="hint">Select a variable to see its events.</p>
+          <ol id="variable-events"></ol>
+          <nav class="pager" aria-label="Variable event pages"><button id="variable-event-previous-page" type="button" disabled>Previous</button><span id="variable-event-page-label" class="counter" aria-live="polite"></span><button id="variable-event-next-page" type="button" disabled>Next</button></nav>
+        </div>
+      </section>
+      <section class="panel" aria-labelledby="variable-details-heading"><div class="panel-head"><h2 id="variable-details-heading">Selected variable event</h2></div><div id="variable-details" class="details"><p class="hint">Select an event to see its values and execution context.</p></div></section>
+    </section>
     <noscript><div class="noscript">JavaScript is required to parse and display a trace. Enable it and reopen this local page.</div></noscript>
   </main>
 
@@ -233,6 +254,26 @@
       const start = Math.min(currentPage * pageSize, Math.max(0, items.length - 1));
       return { items: items.slice(start, start + pageSize), page: currentPage, pageCount, start };
     }
+    function traceCaptureState(profile) {
+      const trace = profile?.globalTrace;
+      if (!trace) return "unavailable";
+      if (!trace.selected) return "filtered";
+      if (!trace.complete) return "incomplete";
+      return trace.events.length ? "captured" : "empty";
+    }
+    function filterVariables(profile, query) {
+      const counts = new Map();
+      for (const event of profile?.globalTrace?.selected ? profile.globalTrace.events : []) {
+        if (!counts.has(event.variable)) counts.set(event.variable, { name: event.variable, read: 0, set: 0, skip: 0 });
+        const count = counts.get(event.variable);
+        count[event.action === "read" ? "read" : event.action === "skip_default" ? "skip" : "set"]++;
+      }
+      const needle = query.toLocaleLowerCase();
+      return Array.from(counts.values()).filter(item => item.name.toLocaleLowerCase().includes(needle)).sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
+    }
+    function variableEventPage(profile, variable, page, pageSize) {
+      return pageItems(variable === null || variable === undefined ? [] : (profile?.globalTrace?.events || []).filter(event => event.variable === variable), page, pageSize);
+    }
     function traceDisplayName(filename) { return filename.replace(/\.depx(?:\.gz)?$/i, ""); }
     function statusLabel(status) { return status.replaceAll("_", " "); }
     function searchableText(occurrence) {
@@ -240,17 +281,18 @@
       return [site.caller, site.target, site.callerPath, site.targetPath, occurrence.location, occurrence.status, statusLabel(occurrence.status)].join(" ").toLocaleLowerCase();
     }
     if (typeof document === "undefined") {
-        globalThis.DepxViewerParser = { parseDepx, resolvePath, readFile, readResponseFile, validateTraceCatalog, traceDisplayName, filterTraces, filterProfiles, pageItems, initializeTraceCatalog, loadRemoteTrace, loadLocalTrace, buildVisibleModel, matchAt, moveRowSelection, dependencyPage, statusLabel, searchableText };
+        globalThis.DepxViewerParser = { parseDepx, resolvePath, readFile, readResponseFile, validateTraceCatalog, traceDisplayName, filterTraces, filterProfiles, pageItems, initializeTraceCatalog, loadRemoteTrace, loadLocalTrace, buildVisibleModel, matchAt, moveRowSelection, dependencyPage, statusLabel, searchableText, filterVariables, variableEventPage, traceCaptureState };
       return;
     }
-      const state = { document: null, profile: null, allVisible: [], visible: [], matches: [], matchIndex: -1, selected: null, expanded: new Set(), collapsedSearchBranches: new Set(), rowByIndex: new Map(), treePage: 0, dependencyPage: 0, searchQuery: null, traces: [], filteredProfiles: [], pickerPage: 0, pickerEntries: [], currentTrace: null, currentLocalFilename: null, traceGeneration: 0, pendingProfileName: null, loadingRemoteTrace: false };
+      const state = { document: null, profile: null, allVisible: [], visible: [], matches: [], matchIndex: -1, selected: null, expanded: new Set(), collapsedSearchBranches: new Set(), rowByIndex: new Map(), treePage: 0, dependencyPage: 0, searchQuery: null, traces: [], filteredProfiles: [], pickerPage: 0, pickerEntries: [], currentTrace: null, currentLocalFilename: null, traceGeneration: 0, pendingProfileName: null, loadingRemoteTrace: false, variableQuery: "", variablePage: 0, selectedVariable: null, variableEventPage: 0, selectedVariableEvent: null };
       const ui = {
         input: document.getElementById("file-input"), open: document.getElementById("open-file"), status: document.getElementById("status"),
        profileControl: document.getElementById("profile-control"), profileCurrent: document.getElementById("profile-current"), profileToggle: document.getElementById("profile-picker-toggle"), profilePopup: document.getElementById("profile-picker-popup"), profileFilter: document.getElementById("profile-filter"), profileOptions: document.getElementById("profile-options"), profileStatus: document.getElementById("profile-picker-status"), profilePrevious: document.getElementById("profile-previous-page"), profileNext: document.getElementById("profile-next-page"), profilePageLabel: document.getElementById("profile-page-label"),
       search: document.getElementById("search-input"), prev: document.getElementById("previous-match"), next: document.getElementById("next-match"),
       tree: document.getElementById("tree"), summary: document.getElementById("occurrence-summary"), details: document.getElementById("details"),
       expand: document.getElementById("expand-all"), collapse: document.getElementById("collapse-all"),
-      treePager: document.getElementById("tree-pager"), treePrevious: document.getElementById("tree-previous-page"), treeNext: document.getElementById("tree-next-page"), treePageLabel: document.getElementById("tree-page-label")
+       treePager: document.getElementById("tree-pager"), treePrevious: document.getElementById("tree-previous-page"), treeNext: document.getElementById("tree-next-page"), treePageLabel: document.getElementById("tree-page-label"),
+       variableCapture: document.getElementById("variable-capture-status"), variableFilter: document.getElementById("variable-filter"), variableOptions: document.getElementById("variable-options"), variablePrevious: document.getElementById("variable-previous-page"), variableNext: document.getElementById("variable-next-page"), variablePageLabel: document.getElementById("variable-page-label"), variableStatus: document.getElementById("variable-search-status"), variableEvents: document.getElementById("variable-events"), variableEventsEmpty: document.getElementById("variable-events-empty"), variableEventHeading: document.getElementById("variable-events-heading"), variableEventPrevious: document.getElementById("variable-event-previous-page"), variableEventNext: document.getElementById("variable-event-next-page"), variableEventPageLabel: document.getElementById("variable-event-page-label"), variableDetails: document.getElementById("variable-details")
     };
 
     function setStatus(message, isError = false) {
@@ -264,7 +306,7 @@
       ui.search.disabled = true; ui.expand.disabled = true; ui.collapse.disabled = true; ui.profileControl.hidden = true;
       ui.tree.replaceChildren(makeElement("div", "empty", message));
       ui.details.replaceChildren(makeElement("p", "hint", "Correct the file or choose another depx trace to continue."));
-      updateSearchControls(); setStatus(message, true);
+      resetVariables(); renderVariables(); updateSearchControls(); setStatus(message, true);
     }
 
     function parseDepx(text) {
@@ -327,6 +369,71 @@
         if (fileUri.protocol !== "file:" || !fileUri.pathname.startsWith("/") || !/^file:(?:\/\/|\/)/i.test(location.uri) || /%(?![0-9a-f]{2})/i.test(location.uri)) throw new Error(`${label} URI must be an absolute file URI.`);
         return { name: value.name, type: value.type, location: { uri: fileUri.href } };
       };
+      const validateValue = (root) => {
+        const stack = [{ value: root, depth: 0 }]; let nodes = 0;
+        while (stack.length) {
+          const { value, depth } = stack.pop();
+          if (++nodes > 4096 || depth > 32) throw new Error("Typed value depth or node limit exceeded.");
+          requireObject(value, "Typed value");
+          const type = value.type;
+          if (!["absent", "null", "undef", "string", "long", "double", "boolean", "list", "dict", "unsupported"].includes(type)) throw new Error("Unknown typed value.");
+          const truncated = Object.hasOwn(value, "truncated");
+          if (truncated) {
+            if (value.truncated !== true || !["string", "list", "dict"].includes(type) || !["string", "cycle", "depth", "nodes"].includes(value.reason) || (type === "string" ? value.reason !== "string" : value.reason === "string")) throw new Error("Invalid value truncation.");
+            requireIndex(value.size, "Value size");
+          } else if (Object.hasOwn(value, "reason") || Object.hasOwn(value, "size")) throw new Error("Invalid value truncation metadata.");
+          const hasValue = Object.hasOwn(value, "value");
+          if (type === "string") { if (typeof value.value !== "string") throw new Error("Invalid string value."); }
+          else if (type === "long") { if (typeof value.value !== "number" || !Number.isFinite(value.value) || !Number.isInteger(value.value) || value.value < -9223372036854775808 || value.value > 9223372036854775807) throw new Error("Invalid long value."); }
+          else if (type === "double") { if (!(typeof value.value === "number" && Number.isFinite(value.value)) && !["NaN", "Infinity", "-Infinity"].includes(value.value)) throw new Error("Invalid double value."); }
+          else if (type === "boolean") { if (typeof value.value !== "boolean") throw new Error("Invalid boolean value."); }
+          else if (type === "unsupported") { requireString(value.class, "Unsupported class"); if (hasValue) throw new Error("Unexpected value."); }
+          else if (type === "list" || type === "dict") {
+            if (!hasValue && !(truncated && ["cycle", "depth"].includes(value.reason))) throw new Error("Missing collection value.");
+            if (hasValue) {
+              if (!Array.isArray(value.value) || (truncated && ["cycle", "depth"].includes(value.reason))) throw new Error("Invalid collection value.");
+              for (const item of value.value) {
+                if (type === "dict") { requireObject(item, "Dictionary item"); if (item.key?.type !== "string") throw new Error("Invalid dictionary key."); stack.push({ value: item.key, depth: depth + 1 }, { value: item.value, depth: depth + 1 }); }
+                else stack.push({ value: item, depth: depth + 1 });
+              }
+            }
+          } else if (hasValue) throw new Error("Unexpected sentinel value.");
+        }
+      };
+      const validateGlobalTrace = (trace, profileName, occurrences) => {
+        requireObject(trace, "Global trace");
+        if (trace.version !== 1) throw new Error("Unsupported global trace version.");
+        requireString(trace.object_glob, "Object glob"); requireString(trace.variable_glob, "Variable glob");
+        if (typeof trace.selected !== "boolean" || typeof trace.complete !== "boolean") throw new Error("Invalid global trace state.");
+        requireObject(trace.limits, "Global trace limits");
+        if (trace.limits.max_events !== 10000 || trace.limits.max_bytes !== 8388608) throw new Error("Invalid global trace limits.");
+        requireIndex(trace.dropped_events, "Dropped events");
+        if (!Array.isArray(trace.events) || trace.events.length > trace.limits.max_events) throw new Error("Invalid global trace events.");
+        if (trace.complete !== (trace.dropped_events === 0) || (!trace.selected && (!trace.complete || trace.events.length))) throw new Error("Contradictory global trace state.");
+        let previous = 0;
+        for (const event of trace.events) {
+          requireObject(event, "Global trace event");
+          if (event.format !== "pan-global-trace" || event.version !== 1 || event.object !== profileName) throw new Error("Global trace event envelope mismatch.");
+          requireIndex(event.sequence, "Event sequence"); if (event.sequence <= previous) throw new Error("Event sequences must increase."); previous = event.sequence;
+          requireString(event.variable, "Event variable");
+          for (const key of ["object_file", "template", "template_file"]) if (event[key] !== null) requireString(event[key], `Event ${key}`, false);
+          validateLocation(event.location, "Event location");
+          if (event.occurrence !== null) { requireIndex(event.occurrence, "Event occurrence"); if (!occurrences[event.occurrence] || occurrences[event.occurrence].status.startsWith("skipped")) throw new Error("Invalid event occurrence."); }
+          if (!["read", "assign", "overwrite", "skip_default"].includes(event.action)) throw new Error("Invalid event action.");
+          if (event.action === "read") {
+            validateValue(event.value);
+            if (Object.hasOwn(event, "access_path")) {
+              if (!Array.isArray(event.access_path) || !event.access_path.length || event.access_path.length > 4096) throw new Error("Invalid access path.");
+              for (const part of event.access_path) { validateValue(part); if (!['string', 'long'].includes(part.type) || (part.type === "long" && !Number.isSafeInteger(part.value))) throw new Error("Invalid access path component."); }
+            }
+          } else {
+            if (typeof event.conditional !== "boolean" || typeof event.final !== "boolean") throw new Error("Invalid assignment flags.");
+            if (event.action === "skip_default") validateValue(event.existing);
+            else { validateValue(event.old); validateValue(event.new); }
+          }
+        }
+        return trace;
+      };
       const profiles = new Map();
       for (const [profileIndex, rawProfile] of input.profiles.entries()) {
         requireObject(rawProfile, `Profile ${profileIndex}`);
@@ -383,7 +490,8 @@
           activePositions.set(index, activeAncestors.length);
           activeAncestors.push(index);
         }
-        profiles.set(rawProfile.name, { name: rawProfile.name, sites, occurrences });
+        const globalTrace = Object.hasOwn(rawProfile, "global_trace") ? validateGlobalTrace(rawProfile.global_trace, rawProfile.name, occurrences) : null;
+        profiles.set(rawProfile.name, { name: rawProfile.name, sites, occurrences, globalTrace });
       }
       if (!profiles.size) throw new Error("This depx JSON file contains no profiles.");
       const dependencies = input.dependencies.map((dependency, index) => {
@@ -703,7 +811,95 @@
       details.append(inventory);
     }
 
-    function render() { buildVisibleList(); renderTree(); }
+    const VARIABLE_ACTIONS = { assign: "Assigned", overwrite: "Overwritten", read: "Read", skip_default: "Skipped default" };
+    function resetVariables() {
+      state.variableQuery = ""; state.variablePage = 0; state.selectedVariable = null; state.variableEventPage = 0; state.selectedVariableEvent = null; ui.variableFilter.value = "";
+    }
+    function typedValueText(value) {
+      const lines = []; const stack = [{ value, label: "" }]; let nodes = 0;
+      while (stack.length && nodes < 2048) {
+        const entry = stack.pop(); const item = entry.value; nodes++;
+        let line = `${entry.label}${item.type}`;
+        if (Object.hasOwn(item, "class")) line += `: ${item.class}`;
+        else if (Object.hasOwn(item, "value") && !Array.isArray(item.value)) line += `: ${JSON.stringify(item.value)}`;
+        if (item.truncated) line += ` (truncated: ${item.reason}, size ${item.size})`;
+        lines.push(line);
+        if (Array.isArray(item.value)) {
+          for (let i = item.value.length - 1; i >= 0; i--) {
+            if (item.type === "dict") {
+              stack.push({ value: item.value[i].value, label: `[${i}] value: ` }, { value: item.value[i].key, label: `[${i}] key: ` });
+            } else stack.push({ value: item.value[i], label: `[${i}]: ` });
+          }
+        }
+      }
+      if (stack.length) lines.push("Value display limit reached");
+      return lines.join("\n");
+    }
+    function renderVariableDetails(profile, event) {
+      ui.variableDetails.replaceChildren();
+      if (!event) { ui.variableDetails.append(makeElement("p", "hint", "Select an event to see its values and execution context.")); return; }
+      const dl = makeElement("dl");
+      addDefinition(dl, "Variable", event.variable); addDefinition(dl, "Sequence", String(event.sequence)); addDefinition(dl, "Action", VARIABLE_ACTIONS[event.action]);
+      addDefinition(dl, "Source template", event.template === null ? "null" : event.template);
+      addDefinition(dl, "Source file", event.template_file === null ? "null" : event.template_file);
+      const location = event.location && `${event.location.begin_line}:${event.location.begin_column}-${event.location.end_line}:${event.location.end_column}`;
+      addDefinition(dl, "Source location", location || "null");
+      const occurrence = event.occurrence === null ? null : profile.occurrences[event.occurrence];
+      addDefinition(dl, "Execution context", occurrence ? `${occurrence.kind === "create" ? "Create" : "Include"} occurrence ${event.occurrence}` : "Profile root");
+      for (const field of ["conditional", "final", "value", "old", "new", "existing", "access_path"]) {
+        if (!Object.hasOwn(event, field)) continue;
+        const value = field === "access_path" ? event[field].map((part, i) => `[${i}] ${typedValueText(part)}`).join("\n") : typeof event[field] === "boolean" ? String(event[field]) : typedValueText(event[field]);
+        addDefinition(dl, field, value);
+      }
+      ui.variableDetails.append(dl);
+      if (occurrence) {
+        const button = makeElement("button", "", `Show occurrence ${event.occurrence}`); button.id = "variable-show-occurrence"; button.type = "button";
+        button.addEventListener("click", revealVariableOccurrence); ui.variableDetails.append(button);
+      }
+    }
+    function renderVariables() {
+      const profile = currentProfile(); const capture = profile?.globalTrace; const captureState = traceCaptureState(profile);
+      const messages = { unavailable: profile ? "Variable activity was not captured or is unavailable in this trace." : "Open a trace to view global variables.", filtered: "This profile was excluded by the object filter.", empty: "No matching variable activity was recorded for this profile.", captured: "Showing recorded variable activity for this profile.", incomplete: `Capture incomplete: ${capture?.dropped_events} matching events were omitted. Counts and events show only the retained prefix.` };
+      ui.variableCapture.textContent = messages[captureState] + (capture ? ` Object filter: ${capture.object_glob}; variable filter: ${capture.variable_glob}; retained events: ${capture.events.length}; max events: ${capture.limits.max_events}; max bytes: ${capture.limits.max_bytes}; dropped events: ${capture.dropped_events}.` : "");
+      ui.variableCapture.classList.toggle("error", captureState === "incomplete");
+      const all = filterVariables(profile, ""); const filtered = filterVariables(profile, state.variableQuery);
+      const page = pageItems(filtered, state.variablePage, PICKER_PAGE_SIZE); state.variablePage = page.page;
+      ui.variableFilter.disabled = !all.length; ui.variableOptions.disabled = !filtered.length;
+      ui.variableOptions.replaceChildren();
+      for (const item of page.items) {
+        const option = makeElement("option", "", `${item.name} · ${item.set} set · ${item.read} use · ${item.skip} skipped`); option.value = item.name; option.selected = item.name === state.selectedVariable; ui.variableOptions.append(option);
+      }
+      if (!page.items.some(item => item.name === state.selectedVariable)) ui.variableOptions.selectedIndex = -1;
+      ui.variablePrevious.disabled = page.page === 0 || !filtered.length; ui.variableNext.disabled = page.page + 1 >= page.pageCount || !filtered.length;
+      ui.variablePageLabel.textContent = filtered.length ? `${page.start + 1}–${page.start + page.items.length} of ${filtered.length} · page ${page.page + 1} of ${page.pageCount}` : "No results";
+      ui.variableStatus.textContent = all.length && !filtered.length ? "No variables match this search. Edit the filter to see more." : `${filtered.length} matching variable${filtered.length === 1 ? "" : "s"}.`;
+      const events = state.selectedVariable === null ? [] : capture.events.filter(event => event.variable === state.selectedVariable);
+      const eventPage = variableEventPage(profile, state.selectedVariable, state.variableEventPage, 50); state.variableEventPage = eventPage.page;
+      ui.variableEvents.replaceChildren(); ui.variableEventsEmpty.textContent = state.selectedVariable === null ? "Select a variable to see its events." : "";
+      for (const event of eventPage.items) {
+        const location = event.location ? `${event.location.begin_line}:${event.location.begin_column}-${event.location.end_line}:${event.location.end_column}` : "unknown location";
+        const item = makeElement("li"); const selected = state.selectedVariableEvent === event.sequence;
+        const button = makeElement("button"); button.type = "button"; button.setAttribute("aria-pressed", String(selected));
+        button.append(makeElement("span", "", `${selected ? "Selected · " : ""}#${event.sequence} `), makeElement("span", `badge${event.action === "skip_default" ? " skipped" : ""}`, VARIABLE_ACTIONS[event.action]), makeElement("span", "path", ` ${event.template ?? "(no template)"} · ${event.template_file ?? "(no file)"} · ${location}`));
+        button.addEventListener("click", () => { state.selectedVariableEvent = event.sequence; renderVariables(); const replacement = ui.variableEvents.children[eventPage.items.indexOf(event)]?.children[0]; replacement?.focus(); });
+        item.append(button); ui.variableEvents.append(item);
+      }
+      ui.variableEventPrevious.disabled = !events.length || eventPage.page === 0; ui.variableEventNext.disabled = !events.length || eventPage.page + 1 >= eventPage.pageCount;
+      ui.variableEventPageLabel.textContent = events.length ? `Events ${eventPage.start + 1}–${eventPage.start + eventPage.items.length} of ${events.length} · page ${eventPage.page + 1} of ${eventPage.pageCount}` : "No events";
+      renderVariableDetails(profile, events.find(event => event.sequence === state.selectedVariableEvent));
+    }
+    function revealVariableOccurrence() {
+      const profile = currentProfile(); const event = profile?.globalTrace?.events.find(item => item.variable === state.selectedVariable && item.sequence === state.selectedVariableEvent);
+      if (!event || !Number.isSafeInteger(event.occurrence) || !profile.occurrences[event.occurrence] || profile.occurrences[event.occurrence].status.startsWith("skipped")) return;
+      const cleared = Boolean(ui.search.value.trim()); ui.search.value = ""; state.searchQuery = null; state.collapsedSearchBranches.clear();
+      state.selected = event.occurrence; let parent = profile.occurrences[event.occurrence].parent;
+      while (parent !== null) { state.expanded.add(parent); parent = profile.occurrences[parent].parent; }
+      buildVisibleList(); const position = state.allVisible.findIndex(row => row.index === event.occurrence);
+      if (position < 0) return;
+      state.treePage = Math.floor(position / PAGE_SIZE); render(); const row = state.rowByIndex.get(event.occurrence); if (row) { row.scrollIntoView({ block: "nearest" }); row.focus(); }
+      setStatus(`${cleared ? "Occurrence search cleared. " : ""}Showing occurrence ${event.occurrence} in profile “${profile.name}”.`);
+    }
+    function render() { buildVisibleList(); renderTree(); renderVariables(); }
 
     function navigateMatch(direction) {
       if (!state.matches.length) return;
@@ -722,6 +918,7 @@
 
     function installParsedDocument(parsed, filename) {
       state.document = parsed; state.profile = parsed.profiles.keys().next().value; state.selected = parsed.profiles.get(state.profile).occurrences.length ? 0 : null;
+      resetVariables();
               ui.profileControl.hidden = false;
       ui.profileCurrent.textContent = state.profile;
       ui.search.disabled = false; ui.expand.disabled = false; ui.collapse.disabled = false;
@@ -802,6 +999,7 @@
     function setCurrentProfile(name) {
       if (!state.document?.profiles.has(name)) return;
       state.profile = name; state.selected = currentProfile().occurrences.length ? 0 : null;
+      resetVariables();
       state.expanded = new Set(); render(); setStatus(`Showing profile “${state.profile}”.`);
     }
 
@@ -883,6 +1081,22 @@
      });
      document.addEventListener("pointerdown", (event) => { if (!ui.profileControl.contains(event.target) && !ui.profilePopup.hidden) showProfilePicker(false); });
      document.addEventListener("keydown", (event) => { if (event.key === "Escape" && !ui.profilePopup.hidden) showProfilePicker(false); });
+    ui.variableFilter.addEventListener("input", () => {
+      state.variableQuery = ui.variableFilter.value; state.variablePage = 0;
+      if (state.selectedVariable !== null && !filterVariables(currentProfile(), state.variableQuery).some(item => item.name === state.selectedVariable)) { state.selectedVariable = null; state.selectedVariableEvent = null; state.variableEventPage = 0; }
+      renderVariables();
+    });
+    ui.variableOptions.addEventListener("change", () => {
+      const option = ui.variableOptions.options[ui.variableOptions.selectedIndex];
+      state.selectedVariable = option ? option.value : null; state.variableEventPage = 0; state.selectedVariableEvent = null; renderVariables();
+    });
+    function variablePager(button, other, fallback, change) {
+      button.addEventListener("click", () => { change(); renderVariables(); (button.disabled ? (other.disabled ? fallback : other) : button).focus(); });
+    }
+    variablePager(ui.variablePrevious, ui.variableNext, ui.variableOptions, () => state.variablePage--);
+    variablePager(ui.variableNext, ui.variablePrevious, ui.variableOptions, () => state.variablePage++);
+    variablePager(ui.variableEventPrevious, ui.variableEventNext, ui.variableEventHeading, () => state.variableEventPage--);
+    variablePager(ui.variableEventNext, ui.variableEventPrevious, ui.variableEventHeading, () => state.variableEventPage++);
     ui.search.addEventListener("input", () => { state.matchIndex = -1; render(); setStatus(state.matches.length ? `${state.matches.length} matching occurrence${state.matches.length === 1 ? "" : "s"}. Use Previous and Next to move through matches.` : "No matching occurrences."); });
     ui.search.addEventListener("keydown", (event) => { if (event.key === "Enter" && state.matches.length) { navigateMatch(event.shiftKey ? -1 : 1); event.preventDefault(); } });
     ui.prev.addEventListener("click", () => navigateMatch(-1)); ui.next.addEventListener("click", () => navigateMatch(1));
@@ -892,7 +1106,7 @@
        ui.collapse.addEventListener("click", () => { state.expanded.clear(); if (state.searchQuery) state.collapsedSearchBranches = new Set(currentProfile().occurrences.filter((item) => item.children.length).map((item) => item.index)); state.treePage = 0; render(); });
 
     // Export the parser for dependency-free node:test coverage in the offline test suite.
-       if (typeof globalThis !== "undefined") globalThis.DepxViewerParser = { parseDepx, resolvePath, readFile, readResponseFile, validateTraceCatalog, traceDisplayName, filterTraces, filterProfiles, pageItems, initializeTraceCatalog, wireTraceLauncherControls, loadRemoteTrace, loadLocalTrace, buildVisibleModel, matchAt, moveRowSelection, dependencyPage, statusLabel, searchableText };
+       if (typeof globalThis !== "undefined") globalThis.DepxViewerParser = { parseDepx, resolvePath, readFile, readResponseFile, validateTraceCatalog, traceDisplayName, filterTraces, filterProfiles, pageItems, initializeTraceCatalog, wireTraceLauncherControls, loadRemoteTrace, loadLocalTrace, buildVisibleModel, matchAt, moveRowSelection, dependencyPage, statusLabel, searchableText, filterVariables, variableEventPage, traceCaptureState };
        void initializeTraceCatalog({
            protocol: window.location.protocol,
            fetchCatalog: (relativePath) => fetch(relativePath),

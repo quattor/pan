@@ -1,0 +1,36 @@
+<project name="shared-session" default="root">
+  <target name="define">
+    <taskdef name="shared-trace-probe" classname="org.quattor.ant.SharedTraceProbe"
+             loaderref="trace.loader">
+      <classpath>
+        <pathelement location="${probe.classes}"/>
+        <pathelement location="${compiler.classes}"/>
+      </classpath>
+    </taskdef>
+  </target>
+  <target name="root">
+    <subant target="group" genericantfile="${fixture}" inheritall="true">
+      <buildpath><pathelement location="${output}"/></buildpath>
+      <reference refid="trace.loader"/>
+      <reference refid="trace.session"/>
+    </subant>
+  </target>
+  <target name="group" depends="define">
+    <subant target="cluster-a" genericantfile="${fixture}" inheritall="true">
+      <buildpath><pathelement location="${output}"/></buildpath>
+      <reference refid="trace.loader"/>
+      <reference refid="trace.session"/>
+    </subant>
+    <subant target="cluster-b" genericantfile="${fixture}" inheritall="true">
+      <buildpath><pathelement location="${output}"/></buildpath>
+      <reference refid="trace.loader"/>
+      <reference refid="trace.session"/>
+    </subant>
+  </target>
+  <target name="cluster-a" depends="define">
+    <shared-trace-probe templates="${templates}" output="${output}" object="selected_a"/>
+  </target>
+  <target name="cluster-b" depends="define">
+    <shared-trace-probe templates="${templates}" output="${output}" object="selected_b" fail="${fail.second}"/>
+  </target>
+</project>

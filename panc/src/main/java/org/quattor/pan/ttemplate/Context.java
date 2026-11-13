@@ -296,6 +296,11 @@ public interface Context {
     /** Whether explicit operations on this global are traced. */
     default boolean isGlobalVariableTraceSelected(String name) { return false; }
 
+    /** Whether any destination currently needs this selected variable's payload. */
+    default boolean isGlobalVariableTracePayloadRequired(String name) {
+        return isGlobalVariableTraceSelected(name);
+    }
+
     /** Snapshot a trace value before it can be mutated. */
     default JsonObject snapshotGlobalVariableTraceValue(Element value) { return null; }
 

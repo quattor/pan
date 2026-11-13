@@ -39,10 +39,28 @@ import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.dml.data.HashResource;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.output.DepFormatter;
+import org.quattor.pan.output.DepxFormatter;
 import org.quattor.pan.output.Formatter;
 import org.quattor.pan.output.PanFormatter;
 
 public class CompilerOptionsTest {
+
+    @Test public void depxCaptureRequiresTraceConfigurationAndPreservesGlobs() throws Exception {
+        Set<Formatter> formats = Collections.<Formatter>singleton(DepxFormatter.getInstance());
+        File output = new File(System.getProperty("user.dir"));
+        CompilerOptions disabled = new CompilerOptions(null, null, 100, 50, formats, output,
+                Collections.<File>emptyList(), CompilerOptions.DeprecationWarnings.OFF,
+                null, null, null, 1, null, null);
+        assertFalse(disabled.isGlobalVariableTraceCaptureEnabled());
+        CompilerOptions enabled = new CompilerOptions(null, null, 100, 50, formats, output,
+                Collections.<File>emptyList(), CompilerOptions.DeprecationWarnings.OFF,
+                null, null, null, 1, "obj*", null, true);
+        assertTrue(enabled.isGlobalVariableTraceCaptureEnabled());
+        assertTrue(enabled.isGlobalVariableTraceFileEnabled());
+        assertEquals("obj*", enabled.getGlobalVariableTraceObjectGlob());
+        assertEquals(null, enabled.getGlobalVariableTraceVariableGlob());
+        assertFalse(traceOptions("*", "*").isGlobalVariableTraceCaptureEnabled());
+    }
 
     private CompilerOptions traceOptions(String objectGlob, String variableGlob) throws SyntaxException {
         return new CompilerOptions(null, null, 100, 50, Collections.<Formatter>emptySet(), null,

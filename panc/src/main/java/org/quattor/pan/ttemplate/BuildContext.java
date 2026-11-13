@@ -116,6 +116,7 @@ public class BuildContext implements Context {
 	private final Template objectTemplate;
 
     private final GlobalVariableTrace globalVariableTrace;
+    private final GlobalVariableTraceCapture.Builder globalVariableTraceCapture;
 
 	private List<String> relativeLoadpaths;
 
@@ -251,9 +252,14 @@ public class BuildContext implements Context {
 		assert (objectTemplate != null);
 		assert (objectTemplate.type == TemplateType.OBJECT);
 		this.objectTemplate = objectTemplate;
-        globalVariableTrace = compiler != null && compiler.options.isGlobalVariableTraceEnabled(objectTemplate.name)
-                ? new GlobalVariableTrace(objectTemplate, compiler.options.getGlobalVariableTracePattern(),
-                        compiler.getGlobalVariableTraceSink()) : null;
+        boolean selected = compiler != null && compiler.options.isGlobalVariableTraceEnabled(objectTemplate.name);
+        boolean capture = compiler != null && compiler.options.isGlobalVariableTraceCaptureEnabled();
+        globalVariableTraceCapture = capture ? new GlobalVariableTraceCapture.Builder(
+                compiler.options.getGlobalVariableTraceObjectGlob(), compiler.options.getGlobalVariableTraceVariableGlob(),
+                selected, GlobalVariableTraceCapture.MAX_EVENTS, GlobalVariableTraceCapture.MAX_BYTES) : null;
+        globalVariableTrace = selected ? new GlobalVariableTrace(objectTemplate,
+                compiler.options.getGlobalVariableTracePattern(), compiler.getGlobalVariableTraceSink(),
+                globalVariableTraceCapture, !capture || compiler.options.isGlobalVariableTraceFileEnabled()) : null;
 		dependencies.put(objectTemplate.name, objectTemplate);
 		objectDependencies.add(objectTemplate.name);
 
@@ -748,6 +754,18 @@ public class BuildContext implements Context {
         return globalVariableTrace != null && globalVariableTrace.matchesVariable(name);
     }
 
+    /** Returns the current immutable capture, including metadata for filtered profiles. */
+    public GlobalVariableTraceCapture getGlobalVariableTraceCapture() {
+        return globalVariableTraceCapture == null ? null : globalVariableTraceCapture.snapshot();
+    }
+
+    @Override
+    public boolean isGlobalVariableTracePayloadRequired(String name) {
+        return isGlobalVariableTraceSelected(name) && globalVariableTrace.needsPayload();
+    }
+
+    private int activeTraceOccurrence() { return includeTrace == null ? -1 : includeTrace.getParent(); }
+
     @Override
     public JsonObject snapshotGlobalVariableTraceValue(Element value) {
         return globalVariableTrace == null ? null : TraceValueWriter.snapshot(value);
@@ -757,23 +775,27 @@ public class BuildContext implements Context {
     public void traceGlobalVariableAssignment(String name, SourceRange range, JsonObject oldValue,
             Element newValue, boolean conditional, boolean finalFlag) {
         if (!isGlobalVariableTraceSelected(name)) return;
+        if (!globalVariableTrace.needsPayload()) { globalVariableTrace.drop(); return; }
         String oldType = oldValue.get("type").getAsString();
         String action = "absent".equals(oldType) || "undef".equals(oldType) ? "assign" : "overwrite";
         globalVariableTrace.write(currentTemplate, range, name, action, conditional, finalFlag,
-                oldValue, TraceValueWriter.snapshot(newValue));
+                oldValue, TraceValueWriter.snapshot(newValue), activeTraceOccurrence());
     }
 
     @Override
     public void traceGlobalVariableSkip(String name, SourceRange range, Element existing, boolean finalFlag) {
         if (!isGlobalVariableTraceSelected(name)) return;
+        if (!globalVariableTrace.needsPayload()) { globalVariableTrace.drop(); return; }
         globalVariableTrace.write(currentTemplate, range, name, "skip_default", true, finalFlag,
-                TraceValueWriter.snapshot(existing), null);
+                TraceValueWriter.snapshot(existing), null, activeTraceOccurrence());
     }
 
     @Override
     public void traceGlobalVariableRead(String name, SourceRange range, Term[] terms, Element value) {
         if (!isGlobalVariableTraceSelected(name)) return;
-        globalVariableTrace.read(currentTemplate, range, name, terms, TraceValueWriter.snapshot(value));
+        if (!globalVariableTrace.needsPayload()) { globalVariableTrace.drop(); return; }
+        globalVariableTrace.read(currentTemplate, range, name, terms, TraceValueWriter.snapshot(value),
+                activeTraceOccurrence());
     }
 
 	public void pushTemplate(Template template, SourceRange sourceRange,

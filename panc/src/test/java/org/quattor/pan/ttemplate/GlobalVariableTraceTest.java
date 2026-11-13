@@ -21,6 +21,8 @@ import org.quattor.pan.Compiler;
 import org.quattor.pan.CompilerOptions;
 import java.util.Collections;
 import org.quattor.pan.utils.Term;
+import org.quattor.pan.output.DepxFormatter;
+import org.quattor.pan.output.Formatter;
 
 public class GlobalVariableTraceTest {
     private static class NeverRenderList extends ListResource {
@@ -147,5 +149,58 @@ public class GlobalVariableTraceTest {
             assertFalse(event.has("old"));
             assertTrue(event.get("object_file").isJsonNull());
         } finally { System.setErr(previous); }
+    }
+
+    @Test public void streamingContinuesAfterCaptureSaturates() throws Exception {
+        GlobalVariableTraceCapture.Builder capture = new GlobalVariableTraceCapture.Builder("*", "*", true, 1, 10000);
+        Template object = new Template("object");
+        GlobalVariableTrace trace = new GlobalVariableTrace(object, GlobalVariableTrace.compileGlob("*"), null, capture, true);
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        PrintStream previous = System.err;
+        try {
+            System.setErr(new PrintStream(bytes, true, "UTF-8"));
+            trace.read(object, null, "x", null, TraceValueWriter.snapshot(LongProperty.getInstance(1)));
+            trace.read(object, null, "x", null, TraceValueWriter.snapshot(LongProperty.getInstance(2)));
+        } finally { System.setErr(previous); }
+        assertEquals(2, bytes.toString("UTF-8").split("\n").length);
+        assertEquals(1, capture.snapshot().getEvents().size());
+        assertEquals(1, capture.snapshot().getDroppedEvents());
+        String[] lines = bytes.toString("UTF-8").split("\n");
+        assertEquals(lines[0].substring(17), capture.snapshot().getEvents().get(0));
+        assertEquals(1, new JsonParser().parse(capture.snapshot().getEvents().get(0))
+                .getAsJsonObject().get("sequence").getAsInt());
+        assertEquals(2, new JsonParser().parse(lines[1].substring(17))
+                .getAsJsonObject().get("sequence").getAsInt());
+    }
+
+    @Test public void depxCaptureTracksActiveOccurrenceAndFilteredProfiles() throws Exception {
+        CompilerOptions options = new CompilerOptions(null, null, 1000, 50,
+                Collections.<Formatter>singleton(DepxFormatter.getInstance()), new File(System.getProperty("user.dir")),
+                Collections.<File>emptyList(), CompilerOptions.DeprecationWarnings.OFF, null, null, null, 1,
+                "object", "x");
+        Compiler compiler = new Compiler(options, Collections.<String>emptyList(), Collections.<File>emptyList());
+        BuildContext context = new BuildContext(compiler, new Template("object"));
+        int previous = context.enterIncludeTrace(new Template("child"), null, IncludeTrace.Status.EXECUTED);
+        context.setCurrentTemplate(new Template("definition"));
+        ByteArrayOutputStream stderr = new ByteArrayOutputStream();
+        PrintStream original = System.err;
+        try {
+            System.setErr(new PrintStream(stderr, true, "UTF-8"));
+            context.traceGlobalVariableRead("x", null, null, LongProperty.getInstance(1));
+        } finally { System.setErr(original); }
+        assertEquals("", stderr.toString("UTF-8"));
+        context.leaveIncludeTrace(previous);
+        context.traceGlobalVariableRead("x", null, null, LongProperty.getInstance(2));
+        GlobalVariableTraceCapture capture = context.getGlobalVariableTraceCapture();
+        assertTrue(capture.isSelected());
+        assertEquals(2, capture.getEvents().size());
+        JsonParser parser = new JsonParser();
+        assertEquals(0, parser.parse(capture.getEvents().get(0)).getAsJsonObject().get("occurrence").getAsInt());
+        assertEquals("definition", parser.parse(capture.getEvents().get(0)).getAsJsonObject().get("template").getAsString());
+        assertTrue(parser.parse(capture.getEvents().get(1)).getAsJsonObject().get("occurrence").isJsonNull());
+        BuildContext filtered = new BuildContext(compiler, new Template("other"));
+        assertFalse(filtered.getGlobalVariableTraceCapture().isSelected());
+        assertFalse(filtered.isGlobalVariableTraceSelected("x"));
+        assertTrue(filtered.getGlobalVariableTraceCapture().getEvents().isEmpty());
     }
 }

@@ -131,6 +131,8 @@ public class CompilerOptions {
     private final Pattern traceObjectPattern;
     private final Pattern traceVariablePattern;
     private final boolean traceFile;
+    private final String traceObjectGlob;
+    private final String traceVariableGlob;
 
     /**
      * Directory that will contain the annotation output files.
@@ -213,6 +215,8 @@ public class CompilerOptions {
                            File annotationBaseDirectory, String rootElement, int nthread,
                            String traceObjectGlob, String traceVariableGlob, boolean traceFile) throws SyntaxException {
 
+        this.traceObjectGlob = traceObjectGlob;
+        this.traceVariableGlob = traceVariableGlob;
         this.traceObjectPattern = traceObjectGlob == null ? null : compileTraceGlob(traceObjectGlob, "traceObjectGlob");
         this.traceVariablePattern = compileTraceGlob(traceVariableGlob == null ? "*" : traceVariableGlob,
                 "traceVariableGlob");
@@ -331,6 +335,18 @@ public class CompilerOptions {
     /** File selection alone does not enable tracing. */
     public boolean isGlobalVariableTraceFileEnabled() {
         return traceFile && isGlobalVariableTraceConfigured();
+    }
+
+    public String getGlobalVariableTraceObjectGlob() { return traceObjectGlob; }
+    public String getGlobalVariableTraceVariableGlob() { return traceVariableGlob; }
+
+    /** DEPX and tracing must both be selected for capture. */
+    public boolean isGlobalVariableTraceCaptureEnabled() {
+        if (!isGlobalVariableTraceConfigured()) return false;
+        for (Formatter formatter : formatters) {
+            if (formatter instanceof DepxFormatter) return true;
+        }
+        return false;
     }
 
     /** Return the compiled logical variable name selector. */

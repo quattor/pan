@@ -20,6 +20,8 @@ public final class GlobalVariableTrace {
     private final String objectFile;
     private final Pattern variables;
     private final GlobalVariableTraceSink sink;
+    private final GlobalVariableTraceCapture.Builder capture;
+    private final boolean stream;
     private long sequence;
 
     public GlobalVariableTrace(Template object, String variableGlob) {
@@ -31,10 +33,17 @@ public final class GlobalVariableTrace {
     }
 
     public GlobalVariableTrace(Template object, Pattern variablePattern, GlobalVariableTraceSink sink) {
+        this(object, variablePattern, sink, null, true);
+    }
+
+    GlobalVariableTrace(Template object, Pattern variablePattern, GlobalVariableTraceSink sink,
+            GlobalVariableTraceCapture.Builder capture, boolean stream) {
         this.object = object.name;
         this.objectFile = object.source == null ? null : object.source.getPath();
         this.variables = variablePattern;
         this.sink = sink;
+        this.capture = capture;
+        this.stream = stream;
     }
 
     /** Compile a case-sensitive glob matching an entire logical name. */
@@ -55,6 +64,10 @@ public final class GlobalVariableTrace {
         return variables.matcher(name).matches();
     }
 
+    boolean needsPayload() { return stream || capture != null && capture.needsPayload(); }
+
+    void drop() { sequence++; capture.drop(); }
+
     private JsonObject event(Template template, SourceRange location, String action, String variable) {
         JsonObject event = new JsonObject();
         event.addProperty("format", "pan-global-trace");
@@ -73,7 +86,13 @@ public final class GlobalVariableTrace {
     /** Emit a read and optional evaluated access path. */
     public synchronized void read(Template template, SourceRange location, String variable,
             Term[] path, JsonObject value) {
+        read(template, location, variable, path, value, -1);
+    }
+
+    synchronized void read(Template template, SourceRange location, String variable,
+            Term[] path, JsonObject value, int occurrence) {
         JsonObject event = event(template, location, "read", variable);
+        addOccurrence(event, occurrence);
         if (path != null && path.length > 0) {
             JsonArray accessPath = new JsonArray();
             for (Term term : path) {
@@ -100,7 +119,14 @@ public final class GlobalVariableTrace {
     /** Emit a successful assignment or a skipped conditional assignment. */
     public synchronized void write(Template template, SourceRange location, String variable,
             String action, boolean conditional, boolean isFinal, JsonObject oldValue, JsonObject newValue) {
+        write(template, location, variable, action, conditional, isFinal, oldValue, newValue, -1);
+    }
+
+    synchronized void write(Template template, SourceRange location, String variable,
+            String action, boolean conditional, boolean isFinal, JsonObject oldValue, JsonObject newValue,
+            int occurrence) {
         JsonObject event = event(template, location, action, variable);
+        addOccurrence(event, occurrence);
         event.addProperty("conditional", conditional);
         event.addProperty("final", isFinal);
         if ("skip_default".equals(action)) event.add("existing", oldValue);
@@ -111,8 +137,18 @@ public final class GlobalVariableTrace {
         emit(event);
     }
 
+    private void addOccurrence(JsonObject event, int occurrence) {
+        if (capture != null) {
+            if (occurrence < 0) event.add("occurrence", JsonNull.INSTANCE);
+            else event.addProperty("occurrence", occurrence);
+        }
+    }
+
     private void emit(JsonObject event) {
-        String line = "PAN_GLOBAL_TRACE " + JSON.toJson(event);
+        String serialized = JSON.toJson(event);
+        if (capture != null) capture.add(serialized);
+        if (!stream) return;
+        String line = "PAN_GLOBAL_TRACE " + serialized;
         if (sink != null) {
             sink.emit(line);
             return;

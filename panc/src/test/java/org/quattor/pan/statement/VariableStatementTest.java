@@ -40,6 +40,8 @@ import org.quattor.pan.dml.data.Undef;
 import org.quattor.pan.dml.Operation;
 import org.quattor.pan.Compiler;
 import org.quattor.pan.CompilerOptions;
+import org.quattor.pan.output.DepxFormatter;
+import org.quattor.pan.output.Formatter;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.ttemplate.BuildContext;
 import org.quattor.pan.ttemplate.Context;
@@ -57,8 +59,13 @@ public class VariableStatementTest extends StatementTestUtils {
         boolean mutateSelf;
 
         TestContext(String objectGlob, String variableGlob) throws Exception {
+            this(objectGlob, variableGlob, false);
+        }
+
+        TestContext(String objectGlob, String variableGlob, boolean depx) throws Exception {
             super(new Compiler(new CompilerOptions(null, null, 1000, 50,
-                    Collections.emptySet(), null, Collections.<File>emptyList(),
+                    depx ? Collections.<Formatter>singleton(DepxFormatter.getInstance()) : Collections.<Formatter>emptySet(),
+                    depx ? new File(System.getProperty("user.dir")) : null, Collections.<File>emptyList(),
                     CompilerOptions.DeprecationWarnings.OFF, null, null, null, 1,
                     objectGlob, variableGlob), Collections.<String>emptyList(),
                     Collections.<File>emptyList()), new Template("object"));
@@ -71,6 +78,31 @@ public class VariableStatementTest extends StatementTestUtils {
             if (mutateSelf) resetSelf(result);
             return result;
         }
+    }
+
+    @Test public void computedAssignmentAndSkippedDefaultsCountAfterNestedReadSaturatesCapture() throws Exception {
+        TestContext context = new TestContext("object", "*", true) {
+            @Override public Element executeDmlBlock(Operation dml) {
+                for (int i = 0; i < 10000; i++) {
+                    traceGlobalVariableRead("nested", RANGE, null, LongProperty.getInstance(i));
+                }
+                return LongProperty.getInstance(2);
+            }
+        };
+        context.setGlobalVariable("x", LongProperty.getInstance(1), false);
+        new ComputedVariableStatement(RANGE, "x", null, false, true).execute(context);
+        assertEquals(10000, context.getGlobalVariableTraceCapture().getEvents().size());
+        assertEquals(1, context.getGlobalVariableTraceCapture().getDroppedEvents());
+        assertFalse(context.isGlobalVariableTracePayloadRequired("x"));
+        new ComputedVariableStatement(RANGE, "x", null, true, true).execute(context);
+        new ConstantVariableStatement(RANGE, "x", LongProperty.getInstance(3), false, true).execute(context);
+        context.traceGlobalVariableRead("nested", RANGE, null, new ListResource() {
+            @Override public org.quattor.pan.dml.data.Resource.Iterator iterator() {
+                fail("snapshot requested after saturation");
+                return null;
+            }
+        });
+        assertEquals(4, context.getGlobalVariableTraceCapture().getDroppedEvents());
     }
 
     private static JsonObject[] events(ByteArrayOutputStream bytes) throws Exception {

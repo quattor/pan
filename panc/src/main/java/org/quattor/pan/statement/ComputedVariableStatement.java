@@ -76,7 +76,8 @@ public class ComputedVariableStatement extends VariableStatement {
 			// cases anyway. Use the method that doesn't duplicate the value.
 			// Children of the SELF can be set directly.
             boolean selected = context.isGlobalVariableTraceSelected(name);
-            Element oldValue = selected ? context.getGlobalVariable(name) : null;
+            Element oldValue = selected && context.isGlobalVariableTracePayloadRequired(name)
+                    ? context.getGlobalVariable(name) : null;
 			GlobalVariable variable = context.retrieveGlobalVariable(this.name);
 			SelfHolder selfHolder = new VariableSelfHolder(variable);
 			context.initializeSelfHolder(selfHolder);
@@ -86,7 +87,8 @@ public class ComputedVariableStatement extends VariableStatement {
 
 			if (!conditional || currentValue instanceof Undef) {
 
-                JsonObject oldSnapshot = selected ? context.snapshotGlobalVariableTraceValue(oldValue) : null;
+                JsonObject oldSnapshot = selected && context.isGlobalVariableTracePayloadRequired(name)
+                        ? context.snapshotGlobalVariableTraceValue(oldValue) : null;
 
 				Element result = context.executeDmlBlock(dml);
 

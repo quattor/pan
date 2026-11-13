@@ -5,15 +5,68 @@ import static org.junit.Assert.*;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
+import java.lang.reflect.Field;
 import java.util.regex.Pattern;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.junit.Test;
 import org.quattor.pan.dml.data.LongProperty;
 import org.quattor.pan.dml.data.StringProperty;
+import org.quattor.pan.dml.data.Element;
+import org.quattor.pan.dml.data.ListResource;
+import org.quattor.pan.dml.data.Resource;
+import org.quattor.pan.dml.operators.SimpleVariable;
+import org.quattor.pan.statement.VariableStatement;
+import org.quattor.pan.Compiler;
+import org.quattor.pan.CompilerOptions;
+import java.util.Collections;
 import org.quattor.pan.utils.Term;
 
 public class GlobalVariableTraceTest {
+    private static class NeverRenderList extends ListResource {
+        @Override public Resource.Iterator iterator() { fail("snapshot rendered value"); return null; }
+        @Override public String toString() { fail("value rendered as text"); return null; }
+    }
+
+    private static class NoSnapshotContext extends BuildContext {
+        NoSnapshotContext(String objectGlob, String variableGlob) throws Exception {
+            super(new Compiler(new CompilerOptions(null, null, 1000, 50,
+                    Collections.emptySet(), null, Collections.<File>emptyList(),
+                    CompilerOptions.DeprecationWarnings.OFF, null, null, null, 1,
+                    objectGlob, variableGlob), Collections.<String>emptyList(), Collections.<File>emptyList()),
+                    new Template("object"));
+        }
+        @Override public JsonObject snapshotGlobalVariableTraceValue(Element value) {
+            fail("snapshot requested");
+            return null;
+        }
+    }
+
+    @Test public void disabledAndNonmatchingObjectsAvoidTracerAndValueRendering() throws Exception {
+        Field field = BuildContext.class.getDeclaredField("globalVariableTrace");
+        field.setAccessible(true);
+        for (String objectGlob : new String[] { null, "other" }) {
+            NoSnapshotContext context = new NoSnapshotContext(objectGlob, "*");
+            assertNull(field.get(context));
+            NeverRenderList value = new NeverRenderList();
+            context.setGlobalVariable("VALUE", value, false);
+            assertNotNull(new SimpleVariable(new SourceRange(1, 1, 1, 1), "VALUE", false).execute(context));
+            VariableStatement.getInstance(new SourceRange(1, 1, 1, 1), "VALUE",
+                    LongProperty.getInstance(1), true, true).execute(context);
+        }
+    }
+
+    @Test public void nonmatchingVariableAvoidsValueRendering() throws Exception {
+        NoSnapshotContext context = new NoSnapshotContext("object", "selected");
+        Field field = BuildContext.class.getDeclaredField("globalVariableTrace");
+        field.setAccessible(true);
+        assertNotNull(field.get(context));
+        context.setGlobalVariable("VALUE", new NeverRenderList(), false);
+        assertNotNull(new SimpleVariable(new SourceRange(1, 1, 1, 1), "VALUE", false).execute(context));
+        VariableStatement.getInstance(new SourceRange(1, 1, 1, 1), "VALUE",
+                LongProperty.getInstance(1), true, true).execute(context);
+    }
+
     @Test public void globMatchesEntireLogicalName() {
         Pattern pattern = GlobalVariableTrace.compileGlob("node/*/x?");
         assertTrue(pattern.matcher("node/a/b/xz").matches());

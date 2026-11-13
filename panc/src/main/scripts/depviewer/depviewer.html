@@ -816,10 +816,10 @@
       state.variableQuery = ""; state.variablePage = 0; state.selectedVariable = null; state.variableEventPage = 0; state.selectedVariableEvent = null; ui.variableFilter.value = "";
     }
     function typedValueText(value) {
-      const lines = []; const stack = [{ value, label: "" }]; let nodes = 0;
+      const lines = []; const stack = [{ value, label: "", depth: 0 }]; let nodes = 0;
       while (stack.length && nodes < 2048) {
         const entry = stack.pop(); const item = entry.value; nodes++;
-        let line = `${entry.label}${item.type}`;
+        let line = `${"  ".repeat(entry.depth)}${entry.label}${item.type}`;
         if (Object.hasOwn(item, "class")) line += `: ${item.class}`;
         else if (Object.hasOwn(item, "value") && !Array.isArray(item.value)) line += `: ${JSON.stringify(item.value)}`;
         if (item.truncated) line += ` (truncated: ${item.reason}, size ${item.size})`;
@@ -827,8 +827,8 @@
         if (Array.isArray(item.value)) {
           for (let i = item.value.length - 1; i >= 0; i--) {
             if (item.type === "dict") {
-              stack.push({ value: item.value[i].value, label: `[${i}] value: ` }, { value: item.value[i].key, label: `[${i}] key: ` });
-            } else stack.push({ value: item.value[i], label: `[${i}]: ` });
+              stack.push({ value: item.value[i].value, label: `[${i}] value: `, depth: entry.depth + 1 }, { value: item.value[i].key, label: `[${i}] key: `, depth: entry.depth + 1 });
+            } else stack.push({ value: item.value[i], label: `[${i}]: `, depth: entry.depth + 1 });
           }
         }
       }

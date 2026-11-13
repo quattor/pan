@@ -48,6 +48,39 @@ test("variables expose literal names, counts, root details and safe values", asy
   assert.doesNotMatch(html, /innerHTML\s*=/);
 });
 
+test("nested typed list and dictionary details preserve parent depth and key value siblings", async () => {
+  const { element, load } = viewer();
+  const nested = event(1, "nested");
+  nested.value = { type: "list", value: [
+    { type: "dict", value: [
+      { key: { type: "string", value: "first" }, value: { type: "list", value: [
+        { type: "string", value: "child" },
+        { type: "dict", value: [{ key: { type: "string", value: "inner" }, value: { type: "long", value: 42 } }] },
+      ] } },
+      { key: { type: "string", value: "second" }, value: { type: "boolean", value: true } },
+    ] },
+    { type: "null" },
+  ] };
+  await load([profile([nested])]);
+  element("variable-options").selectedIndex = 0; await element("variable-options").fire("change");
+  await element("variable-events").children[0].children[0].fire("click");
+  const definitions = element("variable-details").children[0].children;
+  const value = definitions[definitions.findIndex(child => child.tag === "dt" && child.textContent === "value") + 1];
+  assert.equal(value.textContent, [
+    "list",
+    "  [0]: dict",
+    '    [0] key: string: "first"',
+    "    [0] value: list",
+    '      [0]: string: "child"',
+    "      [1]: dict",
+    '        [0] key: string: "inner"',
+    "        [0] value: long: 42",
+    '    [1] key: string: "second"',
+    "    [1] value: boolean: true",
+    "  [1]: null",
+  ].join("\n"));
+});
+
 test("variable searches distinguish no match and retain incomplete metadata", async () => {
   const { element, load } = viewer(); const p = profile([event(1)]); p.global_trace.complete = false; p.global_trace.dropped_events = 7;
   await load([p]); element("variable-filter").value = "missing"; await element("variable-filter").fire("input");

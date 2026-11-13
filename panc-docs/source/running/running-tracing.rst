@@ -54,6 +54,61 @@ unselected object emits no records. Disabled tracing must be bypassed early,
 without allocating events, formatting messages, rendering values, or retaining
 trace history. Normal runs must preserve compiler optimizations and results.
 
+Compiler-managed trace files
+----------------------------
+
+Add ``--trace-file`` to write trace records to ``trace.log`` in the compiler's
+output directory instead of stderr. On an Ant ``panc`` task, use
+``traceFile="true"``. Object selection is still required; requesting file output
+alone does not enable tracing. Ordinary compiler diagnostics remain separate.
+
+The output directory must exist. Each invocation replaces its previous trace
+file after acquiring an exclusive lock. A concurrent invocation targeting the
+same file fails without truncating it. Requested file-output failures fail the
+compilation, unlike the best-effort stderr stream. A failed compilation may
+leave a partial trace. The file uses the same prefixed JSON lines as stderr.
+An enabled invocation that recompiles no objects produces an empty trace file.
+
+One Ant ``panc`` task shares its file across compilation batches. For a build
+with multiple ``panc`` tasks or nested builds, use an outer session to avoid
+replacing the file at each task::
+
+   <taskdef resource="org/quattor/ant/panc-ant.xml" loaderref="pan.trace.loader">
+     <classpath><pathelement location="/path/to/panc.jar"/></classpath>
+   </taskdef>
+   <panc-trace-session outputDir="build/xml" referenceId="pan.trace.session">
+     <panc outputDir="build/xml" traceObjectGlob="hosts/*"
+           traceVariableGlob="NETWORK_*" traceSessionRef="pan.trace.session"
+           checkDependencies="false">
+       <path><pathelement location="templates"/></path>
+       <fileset dir="templates" includes="hosts/*.pan"/>
+     </panc>
+   </panc-trace-session>
+
+Replace the example paths and source selection with those of your build.
+``traceSessionRef`` selects the shared file without needing ``traceFile`` on
+each compiler task. The session opens the file once, closes it after its nested
+tasks finish or fail, and removes its reference. Its ``referenceId`` must not
+already exist. Disabled compiler tracing does not resolve ``traceSessionRef``;
+an explicitly invoked session still opens its file, so use the session only in
+the debug build path.
+
+At **every** nested ``subant`` link, explicitly forward both references::
+
+   <reference refid="pan.trace.loader"/>
+   <reference refid="pan.trace.session"/>
+
+Child task definitions must use the same ``loaderref="pan.trace.loader"``.
+Property inheritance alone does not forward references. An incompatible task
+classloader or missing session reference causes an error rather than silently
+starting a separate log.
+
+Dependency checking may skip up-to-date profiles, which then emit no records.
+For a complete debug recompilation, use ``checkDependencies="false"`` instead
+of deleting existing build outputs. Record sequence numbers remain local to
+each object's build context, including when an object is compiled again in a
+later task; the shared log does not provide a global execution sequence.
+
 Record identity and location
 ----------------------------
 
@@ -74,7 +129,8 @@ read's location (or enclosing body range), rather than attributing the read to
 the caller's template. The object identity always remains the object currently
 being compiled.
 
-Records go to stderr. Each record is a complete, non-interleaved line, including
+Records go to stderr by default, or to the requested trace file. Each record is
+a complete, non-interleaved line, including
 when objects are compiled concurrently. Embedded newlines in names and values
 must be escaped. Values are rendered only for selected events and must describe
 the value at the time of the event, not a later mutation.
@@ -86,7 +142,7 @@ Consumers should parse fields rather than relying on JSON field order.
 Stream format and typed snapshots
 ---------------------------------
 
-Each trace line on stderr starts with ``PAN_GLOBAL_TRACE`` followed by a space
+Each trace line starts with ``PAN_GLOBAL_TRACE`` followed by a space
 and one JSON object.
 For example (shown on one line, with illustrative filenames)::
 

@@ -30,6 +30,7 @@ import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.DirSet;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.Path;
+import org.apache.tools.ant.types.Reference;
 import org.quattor.pan.Compiler;
 import org.quattor.pan.CompilerLogging;
 import org.quattor.pan.CompilerOptions;
@@ -71,6 +72,8 @@ public class PanCompilerTask extends Task {
     private String traceVariableGlob;
 
     private boolean traceFile;
+
+    private Reference traceSessionRef;
 
     private boolean debugTask = false;
 
@@ -182,8 +185,18 @@ public class PanCompilerTask extends Task {
         // Batch the files to process, if requested.
         List<List<File>> batches = batchOutdatedFiles(outdatedFiles);
 
-        try (GlobalVariableTraceSink sink = options.isGlobalVariableTraceFileEnabled()
+        GlobalVariableTraceSink borrowed = null;
+        if (options.isGlobalVariableTraceFileEnabled() && traceSessionRef != null) {
+            Object reference = getProject().getReference(traceSessionRef.getRefId());
+            if (!(reference instanceof GlobalVariableTraceSink)) {
+                throw new BuildException("traceSessionRef '" + traceSessionRef.getRefId()
+                        + "' is missing or incompatible; forward the session reference and use the same Ant taskdef classloader");
+            }
+            borrowed = (GlobalVariableTraceSink) reference;
+        }
+        try (GlobalVariableTraceSink owned = options.isGlobalVariableTraceFileEnabled() && borrowed == null
                 ? GlobalVariableTraceSink.open(options.outputDirectory) : null) {
+            GlobalVariableTraceSink sink = borrowed != null ? borrowed : owned;
             boolean hadError = false;
             for (List<File> batch : batches) {
                 CompilerResults results = Compiler.run(options, null, batch, sink);
@@ -216,13 +229,14 @@ public class PanCompilerTask extends Task {
         try {
             return new CompilerOptions(debugNsInclude, debugNsExclude,
                     maxIteration, maxRecursion, formatters, outputDir, includeDirectories,
-                    deprecationWarnings, null, null, initialData, nthread, traceObjectGlob, traceVariableGlob, traceFile);
+                    deprecationWarnings, null, null, initialData, nthread, traceObjectGlob, traceVariableGlob,
+                    traceFile || (traceSessionRef != null && traceObjectGlob != null));
         } catch (SyntaxException e) {
             throw new BuildException("invalid root element: " + e.getMessage());
         } catch (IllegalArgumentException e) {
             if (e.getMessage() != null && (e.getMessage().startsWith("traceObjectGlob:")
                     || e.getMessage().startsWith("traceVariableGlob:")
-                    || (traceFile && outputDir == null))) {
+                    || ((traceFile || (traceSessionRef != null && traceObjectGlob != null)) && outputDir == null))) {
                 throw new BuildException(e.getMessage(), e);
             }
             throw e;
@@ -384,6 +398,11 @@ public class PanCompilerTask extends Task {
     /** Write sensitive global trace records to outputDir/trace.log. */
     public void setTraceFile(boolean traceFile) {
         this.traceFile = traceFile;
+    }
+
+    /** Borrow a trace sink owned by an enclosing panc-trace-session. */
+    public void setTraceSessionRef(Reference traceSessionRef) {
+        this.traceSessionRef = traceSessionRef;
     }
 
     /**

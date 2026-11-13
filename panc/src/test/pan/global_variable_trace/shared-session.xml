@@ -12,6 +12,7 @@
     <subant target="group" genericantfile="${fixture}" inheritall="true">
       <buildpath><pathelement location="${output}"/></buildpath>
       <reference refid="trace.loader"/>
+      <reference refid="trace.expected.loader"/>
       <reference refid="trace.session"/>
     </subant>
   </target>
@@ -19,11 +20,13 @@
     <subant target="cluster-a" genericantfile="${fixture}" inheritall="true">
       <buildpath><pathelement location="${output}"/></buildpath>
       <reference refid="trace.loader"/>
+      <reference refid="trace.expected.loader"/>
       <reference refid="trace.session"/>
     </subant>
     <subant target="cluster-b" genericantfile="${fixture}" inheritall="true">
       <buildpath><pathelement location="${output}"/></buildpath>
       <reference refid="trace.loader"/>
+      <reference refid="trace.expected.loader"/>
       <reference refid="trace.session"/>
     </subant>
   </target>

@@ -25,11 +25,22 @@ public class SharedTraceProbe extends Task {
     @Override
     public void execute() {
         Object reference = getProject().getReference("trace.session");
+        ClassLoader loader = (ClassLoader) getProject().getReference("trace.loader");
+        if (loader == null || loader != getProject().getReference("trace.expected.loader")) {
+            throw new BuildException("nested taskdef did not retain the root loader reference");
+        }
         if (reference == null || reference.getClass() != GlobalVariableTraceSink.class
                 || getClass().getClassLoader() != GlobalVariableTraceSink.class.getClassLoader()
-                || getClass().getClassLoader() != PanCompilerTask.class.getClassLoader()
-                || getClass().getClassLoader() != getProject().getReference("trace.loader")) {
+                || getClass().getClassLoader() != PanCompilerTask.class.getClassLoader()) {
             throw new BuildException("inherited sink and receiving task use different class identities");
+        }
+        try {
+            if (loader.loadClass(getClass().getName()) != getClass()
+                    || loader.loadClass(GlobalVariableTraceSink.class.getName()) != reference.getClass()) {
+                throw new BuildException("inherited loader resolves incompatible classes");
+            }
+        } catch (ClassNotFoundException e) {
+            throw new BuildException("inherited loader cannot resolve task or sink", e);
         }
         GlobalVariableTraceSink sink = (GlobalVariableTraceSink) reference;
         PanCompilerTask task = new PanCompilerTask();

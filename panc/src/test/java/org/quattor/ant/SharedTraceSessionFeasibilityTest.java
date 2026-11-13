@@ -3,6 +3,7 @@ package org.quattor.ant;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -26,7 +27,7 @@ import org.quattor.pan.utils.TestUtils;
 public class SharedTraceSessionFeasibilityTest {
     @Rule public TemporaryFolder temporary = new TemporaryFolder(TestUtils.getTmpdir());
 
-    private void runNestedBuild(boolean failSecond) throws Exception {
+    private void runNestedBuild(boolean failSecond, boolean isolated) throws Exception {
         File output = temporary.newFolder();
         File templates = new File(TestUtils.getTestdir(), "global_variable_trace");
         File fixture = new File(templates, "shared-session.xml");
@@ -45,19 +46,33 @@ public class SharedTraceSessionFeasibilityTest {
                 .getCodeSource().getLocation().toURI()).getAbsolutePath();
         project.setUserProperty("probe.classes", probeClasses);
         project.setUserProperty("compiler.classes", compilerClasses);
-        // Surefire already has both classes on its parent loader; emulate an Ant task jar.
-        Path taskPath = new Path(project);
-        taskPath.createPathElement().setLocation(new File(probeClasses));
-        taskPath.createPathElement().setLocation(new File(compilerClasses));
-        project.addReference("trace.loader", new AntClassLoader(project, taskPath, false));
+        if (isolated) {
+            // Surefire already has both classes on its parent loader; emulate an Ant task jar.
+            Path taskPath = new Path(project);
+            taskPath.createPathElement().setLocation(new File(probeClasses));
+            taskPath.createPathElement().setLocation(new File(compilerClasses));
+            project.addReference("trace.loader", new AntClassLoader(project, taskPath, false));
+        } else {
+            assertNull(project.getReference("trace.loader"));
+        }
         ProjectHelper.configureProject(project, fixture);
         project.executeTarget("define");
 
         Class<?> rootTask = project.getTaskDefinitions().get("shared-trace-probe");
         ClassLoader taskLoader = rootTask.getClassLoader();
-        assertNotSame(SharedTraceProbe.class.getClassLoader(), taskLoader);
-        assertSame(project.getReference("trace.loader"), taskLoader);
-        // Open with the task loader: the test runner's sink class has a different identity.
+        Object loaderReference = project.getReference("trace.loader");
+        assertTrue(loaderReference instanceof AntClassLoader);
+        assertSame(rootTask, ((ClassLoader) loaderReference).loadClass(rootTask.getName()));
+        if (isolated) {
+            assertNotSame(SharedTraceProbe.class.getClassLoader(), taskLoader);
+            assertSame(loaderReference, taskLoader);
+        } else {
+            // Ant's default parent-first loader delegates to Surefire's existing classes.
+            assertSame(SharedTraceProbe.class.getClassLoader(), taskLoader);
+            assertNotSame(loaderReference, taskLoader);
+        }
+        project.addReference("trace.expected.loader", loaderReference);
+        // Open with the task loader: the isolated sink class has a different identity.
         Class<?> sinkClass = taskLoader.loadClass(GlobalVariableTraceSink.class.getName());
         Object sink = sinkClass.getMethod("open", File.class).invoke(null, output);
         assertSame(taskLoader, sink.getClass().getClassLoader());
@@ -84,10 +99,14 @@ public class SharedTraceSessionFeasibilityTest {
     }
 
     @Test public void repeatedChildTaskDefinitionsBorrowTheSameSink() throws Exception {
-        runNestedBuild(false);
+        runNestedBuild(false, true);
     }
 
     @Test public void nestedFailureRetainsPartialRecordsAndReleasesLock() throws Exception {
-        runNestedBuild(true);
+        runNestedBuild(true, true);
+    }
+
+    @Test public void rootTaskdefCreatesLoaderReferenceForNestedTaskdefs() throws Exception {
+        runNestedBuild(false, false);
     }
 }

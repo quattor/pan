@@ -24,6 +24,10 @@
     (is (= "ok" (:unknown unknown)))
     (is (= 1 (count unknown)))))
 
+(deftest test-trace-file-setting
+  (is (= {:trace-file true} (process [:trace-file true])))
+  (is (= {:trace-file false} (process [:trace-file false]))))
+
 (deftest test-trace-glob-option-errors
   (doseq [option [:trace-object-glob :trace-variable-glob]]
     (try

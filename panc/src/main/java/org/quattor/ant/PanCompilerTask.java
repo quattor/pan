@@ -17,6 +17,7 @@
 package org.quattor.ant;
 
 import java.io.File;
+import java.io.UncheckedIOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -36,6 +37,7 @@ import org.quattor.pan.CompilerResults;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.output.Formatter;
 import org.quattor.pan.repository.SourceType;
+import org.quattor.pan.ttemplate.GlobalVariableTraceSink;
 
 /**
  * An ant task which permits calling the pan compiler from an ant build file.
@@ -67,6 +69,8 @@ public class PanCompilerTask extends Task {
     private String traceObjectGlob;
 
     private String traceVariableGlob;
+
+    private boolean traceFile;
 
     private boolean debugTask = false;
 
@@ -178,22 +182,26 @@ public class PanCompilerTask extends Task {
         // Batch the files to process, if requested.
         List<List<File>> batches = batchOutdatedFiles(outdatedFiles);
 
-        boolean hadError = false;
-        for (List<File> batch : batches) {
-
-            CompilerResults results = Compiler.run(options, null, batch);
-
-            boolean batchHadError = results.print(verbose);
-
-            if (batchHadError) {
-                hadError = true;
+        try (GlobalVariableTraceSink sink = options.isGlobalVariableTraceFileEnabled()
+                ? GlobalVariableTraceSink.open(options.outputDirectory) : null) {
+            boolean hadError = false;
+            for (List<File> batch : batches) {
+                CompilerResults results = Compiler.run(options, null, batch, sink);
+                if (sink != null) {
+                    try {
+                        sink.throwIfFailed();
+                    } catch (UncheckedIOException failure) {
+                        for (Throwable error : results.getErrors()) {
+                            if (error != failure) failure.addSuppressed(error);
+                        }
+                        throw failure;
+                    }
+                }
+                if (results.print(verbose)) hadError = true;
             }
-
-        }
-
-        // Stop build if there was an error.
-        if (hadError) {
-            throw new BuildException("Compilation failed; see messages.");
+            if (hadError) throw new BuildException("Compilation failed; see messages.");
+        } catch (UncheckedIOException e) {
+            throw new BuildException(e.getMessage(), e);
         }
     }
 
@@ -208,12 +216,13 @@ public class PanCompilerTask extends Task {
         try {
             return new CompilerOptions(debugNsInclude, debugNsExclude,
                     maxIteration, maxRecursion, formatters, outputDir, includeDirectories,
-                    deprecationWarnings, null, null, initialData, nthread, traceObjectGlob, traceVariableGlob);
+                    deprecationWarnings, null, null, initialData, nthread, traceObjectGlob, traceVariableGlob, traceFile);
         } catch (SyntaxException e) {
             throw new BuildException("invalid root element: " + e.getMessage());
         } catch (IllegalArgumentException e) {
             if (e.getMessage() != null && (e.getMessage().startsWith("traceObjectGlob:")
-                    || e.getMessage().startsWith("traceVariableGlob:"))) {
+                    || e.getMessage().startsWith("traceVariableGlob:")
+                    || (traceFile && outputDir == null))) {
                 throw new BuildException(e.getMessage(), e);
             }
             throw e;
@@ -370,6 +379,11 @@ public class PanCompilerTask extends Task {
     /** Select global variable names for tracing by glob. */
     public void setTraceVariableGlob(String glob) {
         traceVariableGlob = glob;
+    }
+
+    /** Write sensitive global trace records to outputDir/trace.log. */
+    public void setTraceFile(boolean traceFile) {
+        this.traceFile = traceFile;
     }
 
     /**

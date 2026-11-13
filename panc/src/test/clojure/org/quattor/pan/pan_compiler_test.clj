@@ -9,6 +9,22 @@
 (deftest test-create-compiler-options
   (is (instance? CompilerOptions (create-compiler-options))))
 
+(deftest test-cli-trace-file-option
+  (let [{:keys [options errors summary]} (cli/parse-opts ["--trace-file" "--output-dir" "."
+                                                          "--trace-object-glob" "*"] cli-args)
+        configured (settings/with-settings (option/to-settings options) (create-compiler-options))]
+    (is (nil? errors))
+    (is (:trace-file options))
+    (is (.isGlobalVariableTraceFileEnabled configured))
+    (is (.contains summary "trace.log")))
+  (let [{:keys [options]} (cli/parse-opts ["--trace-file" "--output-dir" "."] cli-args)
+        configured (settings/with-settings (option/to-settings options) (create-compiler-options))]
+    (is (not (.isGlobalVariableTraceFileEnabled configured))))
+  (let [{:keys [options]} (cli/parse-opts ["--trace-file" "--formats" "none"] cli-args)]
+    (is (thrown-with-msg? clojure.lang.ExceptionInfo #"outputDirectory"
+                          (settings/with-settings (assoc (option/to-settings options) :output-dir nil)
+                            (create-compiler-options))))))
+
 (deftest test-cli-global-trace-options
   (let [{:keys [options errors summary]} (cli/parse-opts ["--trace-object-glob" "site/[x].?*"
                                                          "--trace-variable-glob" "a.[x]?*"] cli-args)

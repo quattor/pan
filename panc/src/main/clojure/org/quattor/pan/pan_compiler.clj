@@ -35,19 +35,24 @@ Please file a bug report including the stack trace.
                 annotationDirectory
                 annotationBaseDirectory
                 initial-data
-                nthread trace-object-glob trace-variable-glob]} settings/*settings*]
-    (CompilerOptions. debug-ns-include
-                      debug-ns-exclude
-                      max-iteration
-                      max-recursion
-                      formatter
-                      output-dir
-                      include-path
-                      warnings
-                      annotationDirectory
-                      annotationBaseDirectory
-                      initial-data
-                      nthread trace-object-glob trace-variable-glob)))
+                nthread trace-object-glob trace-variable-glob trace-file]} settings/*settings*]
+    (try
+      (CompilerOptions. debug-ns-include
+                        debug-ns-exclude
+                        max-iteration
+                        max-recursion
+                        formatter
+                        output-dir
+                        include-path
+                        warnings
+                        annotationDirectory
+                        annotationBaseDirectory
+                        initial-data
+                        nthread trace-object-glob trace-variable-glob (boolean trace-file))
+      (catch IllegalArgumentException e
+        (if (and trace-file (nil? output-dir))
+          (throw (ex-info (.getMessage e) {:type :options :msg (.getMessage e)} e))
+          (throw e))))))
 
 (defn default-compiler-options []
   (let [{:keys [debug-ns-include
@@ -88,6 +93,7 @@ Please file a bug report including the stack trace.
    [nil "--debug-ns-exclude REGEX" "ns regex to exclude debugging"]
    [nil "--trace-object-glob GLOB" "trace full, case-sensitive object names; sensitive values go to stderr (* and ? match across /; other characters are literal)"]
    [nil "--trace-variable-glob GLOB" "select full, case-sensitive global variable names (* and ? match across /; other characters are literal; default *)"]
+   [nil "--trace-file" "write sensitive trace records to output-dir/trace.log instead of stderr"]
    [nil "--initial-data DICT" "set root element (must be a dict)"]
    [nil "--include-path PATH" "template lookup path"]
    [nil "--output-dir DIR" "output directory"]

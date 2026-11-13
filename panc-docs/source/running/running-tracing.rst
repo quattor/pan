@@ -1,14 +1,13 @@
 .. _global_variable_tracing_contract:
 
-Global-variable tracing: proposed contract
-==========================================
+Global-variable tracing
+=======================
 
 .. warning::
 
-   This page specifies expected behavior for a future tracing facility.
-   It does not document an implemented feature. The examples are acceptance
-   scenarios, not captured compiler output; option names are proposed.
    Traced values may contain secrets. Treat trace output as sensitive data.
+   Snapshots are bounded and may be truncated. A trace is diagnostic output,
+   not a lossless dump of the configuration or a guarantee of complete capture.
 
 Scope and selection
 -------------------
@@ -20,12 +19,35 @@ Local DML variables are excluded, even when their names match the variable glob.
 When a local variable shadows a global variable, reading the local variable
 must not produce a global-variable read record.
 
-The proposed ``--trace-object-glob`` selects object template names, not source
-filenames. The proposed ``--trace-variable-glob`` selects global-variable names
-and defaults to ``*``. Equivalent settings must be available on the compiler's
-Ant task, including when that task is invoked from Maven. Both entry points
-must use shared compiler-option validation and selection semantics. Exact Ant
-attribute names and glob syntax remain to be finalized.
+``--trace-object-glob`` selects object template names, not source filenames.
+``--trace-variable-glob`` selects global-variable names and defaults to ``*``.
+The compiler's Ant task exposes equivalent ``traceObjectGlob`` and
+``traceVariableGlob`` attributes, including when invoked from Maven. Both entry
+points use shared compiler-option validation and selection semantics.
+
+Globs are case-sensitive and match the entire logical name. ``*`` matches zero
+or more characters, including ``/``; ``?`` matches one character. All other
+characters are literal, including brackets and backslashes. Empty globs are
+invalid. A variable glob alone does not enable tracing.
+
+For example, add these options to an existing compiler invocation::
+
+   --trace-object-glob 'hosts/*' --trace-variable-glob 'NETWORK_*'
+
+On an existing Ant compiler task, use::
+
+   traceObjectGlob="hosts/*" traceVariableGlob="NETWORK_*"
+
+Omit the variable selection to trace all globals in the selected objects.
+Quote CLI globs so the shell does not expand them.
+
+Redirect stderr on the existing command to capture the stream, for example::
+
+   panc --trace-object-glob 'hosts/*' [existing compiler arguments] 2>trace.log
+
+Replace the bracketed placeholder with your normal compiler arguments.
+The file also contains ordinary stderr diagnostics; a parser must select only
+lines with the ``PAN_GLOBAL_TRACE`` prefix followed by a space.
 
 Tracing is disabled unless object selection is explicitly enabled. An
 unselected object emits no records. Disabled tracing must be bypassed early,
@@ -57,9 +79,50 @@ when objects are compiled concurrently. Embedded newlines in names and values
 must be escaped. Values are rendered only for selected events and must describe
 the value at the time of the event, not a later mutation.
 
-The examples below use a compact illustrative format. Exact field ordering,
-quoting, and value serialization remain to be finalized. Tests should assert
-the fields and behavior, not the illustrative spacing or column boundaries.
+The examples below use a compact illustrative format, not literal compiler
+output. The actual stream uses the versioned JSON format described next.
+Consumers should parse fields rather than relying on JSON field order.
+
+Stream format and typed snapshots
+---------------------------------
+
+Each trace line on stderr starts with ``PAN_GLOBAL_TRACE`` followed by a space
+and one JSON object.
+For example (shown on one line, with illustrative filenames)::
+
+   PAN_GLOBAL_TRACE {"format":"pan-global-trace","version":1,"sequence":1,"object":"hosts/node01","object_file":"hosts/node01.pan","template":"config/network","template_file":"config/network.pan","location":{"begin_line":2,"begin_column":1,"end_line":2,"end_column":21},"action":"assign","variable":"PORT","conditional":false,"final":false,"old":{"type":"absent"},"new":{"type":"long","value":8080}}
+
+``sequence`` increases within each object's build context. There is no global
+execution order across objects. ``location`` is a line-and-column range or
+JSON ``null`` when unavailable; filenames can also be JSON ``null`` when no
+source file is available, and otherwise reflect the compiler's source paths.
+
+Actions are ``read``, ``assign``, ``overwrite``, and ``skip_default``. Reads have
+a typed ``value`` and, for indexed reads, an ``access_path`` array of typed keys
+or indices. Successful writes have ``old`` and ``new`` snapshots plus
+``conditional`` and ``final`` flags. Skipped defaults have an ``existing``
+snapshot instead of ``old`` and ``new``; the RHS is not evaluated.
+``assign`` versus ``overwrite`` follows the compiler's binding semantics, not
+merely whether an earlier assignment appeared in the source.
+
+Snapshots use a ``type`` tag. ``absent``, ``null``, and ``undef`` have no
+``value`` field. Strings, longs, booleans, and finite doubles have a JSON
+``value`` of the corresponding type. Non-finite doubles retain ``type=double``
+but use a string value such as ``NaN`` or ``Infinity``. Lists have an array of
+typed snapshots; dictionaries have an array of entries with typed ``key`` and
+``value`` fields. This preserves dictionary keys without relying on JSON
+object-key encoding. Unsupported values carry ``type=unsupported`` and a
+``class`` name rather than arbitrary object text.
+
+Snapshots limit nesting to 16 levels, value traversal to 1024 nodes, and each
+string or dictionary key to 4096 Unicode code points. Truncated snapshots carry
+``truncated=true``, a ``reason`` (``depth``, ``nodes``, ``string``, or ``cycle``),
+and ``size`` for the affected string or resource. Do not interpret a truncated
+snapshot as the complete original value. JSON escaping preserves embedded
+newlines, quotes, and backslashes while keeping each record on a single line.
+The tracer does not retain an event history. Stderr output failures must not
+turn a successful compilation into a failure; missing records therefore remain
+possible and must not be treated as proof that an operation did not occur.
 
 Acceptance scenario: assignment, overwrite, and skipped default
 ---------------------------------------------------------------
@@ -146,7 +209,7 @@ distinguish all five values. One acceptable illustrative representation is::
    TRACE object=hosts/node01 object_file=hosts/node01.pan template=config/value_types location=5 ASSIGN global=V_NULL_TEXT type=string value="null"
    TRACE object=hosts/node01 object_file=hosts/node01.pan template=config/value_types location=6 ASSIGN global=V_UNDEF_TEXT type=string value="undef"
 
-The exact encoding is not yet fixed, but this distinction is mandatory for
+The typed JSON encoding preserves this distinction for
 reads, assignments, skipped-default existing values, and both old and new
 values in overwrite records. String quoting and escaping must be unambiguous.
 A string containing a quote or a literal backslash must not lose those
@@ -165,9 +228,9 @@ or removes a binding before asserting a subsequent read or default outcome.
 Acceptance scenario: dynamic include and conditional reads
 ----------------------------------------------------------
 
-Future regression tests must cover global reads that drive a dynamic include
-and conditional execution. The following records are illustrative, not live
-compiler output, and do not prescribe runnable Pan syntax::
+Regression tests cover global reads that drive a dynamic include and
+conditional execution. The following records are illustrative, not live
+compiler output::
 
    TRACE object=hosts/node01 object_file=hosts/node01.pan template=hosts/node01 location=2 READ global=INCLUDE_TARGET type=string value="config/network"
    TRACE object=hosts/node01 object_file=hosts/node01.pan template=hosts/node01 location=3 READ global=ENABLED type=boolean value=true
@@ -198,9 +261,9 @@ DEPX integration and streamed trace capture
 Capturing global-variable trace events directly in DEPX would be a useful
 extension, if the implementation can do so without compromising disabled-run
 performance or existing DEPX compatibility. It is not required for the initial
-tracer: streaming records to stderr (as proposed above), or a separately
-selected stdout destination, is acceptable. Stdout must not mix trace records
-with profile output or other machine-readable compiler output.
+tracer, which streams records to stderr as described above. Direct DEPX capture
+and a parser to enrich DEPX from the stream are not implemented. There is no
+separate stdout destination option.
 
 The streamed format should allow a future parser to augment a compiler-generated
 DEPX file with trace data. Preserve explicit object identity, logical source
@@ -226,7 +289,7 @@ must not require retaining events in memory merely to enable later enrichment.
 Additional acceptance checks
 ----------------------------
 
-Future automated tests must also cover:
+The regression coverage includes the following requirements:
 
 * Distinct representations for null, undef, empty strings, and strings
   containing those words, including type-changing overwrites and nested values.
@@ -241,9 +304,8 @@ Future automated tests must also cover:
   as global reads.
 * A global read inside a function defined in another included template:
   preserve object identity and attribute the source location to the function
-  definition's template. Resolve and verify this attribution during
-  implementation rather than assuming the current executing template is
-  always the definition's template.
+  definition's template, rather than assuming the current executing template
+  is always the definition's template.
 * Local/global name shadowing and absence of records for compiler bookkeeping.
 * Multiple objects compiled concurrently: records are not interleaved and
   selection or object identity cannot leak between build contexts.
@@ -253,7 +315,16 @@ Future automated tests must also cover:
 * Values containing newlines and mutable collections: single-line records
   that reflect the value when read or assigned, without altering evaluation.
 
-These scenarios belong in compiler regression tests under ``panc/src/test``
-or ``panc/tests`` when the feature is implemented. This page is the readable
-acceptance contract until those executable tests exist; it is not evidence
-that the scenarios currently pass.
+Executable tests are under ``panc/src/test``. Compiler-level fixtures cover
+assignments and reads, filtering, source attribution, both conditional outcomes,
+dynamic includes, shadowing, nested mutation snapshots, and multiple objects
+using a worker pool. Structural tests check that disabled and nonmatching
+selections avoid tracing and value rendering. Serializer tests cover typed
+values, escaping, cycles, and truncation.
+
+The worker-pool test does not force simultaneous object execution. Truncation
+is tested at the serializer level, not through a compiled fixture. Namespaced
+logical object names and physical paths are tested, but differing object/file
+basenames are not. Disabled-path checks are structural rather than a complete
+allocation or timing benchmark. These limitations remain distinct from the
+requirements above.

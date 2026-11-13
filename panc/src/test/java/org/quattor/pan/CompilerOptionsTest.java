@@ -50,6 +50,19 @@ public class CompilerOptionsTest {
                 null, null, null, 0, objectGlob, variableGlob);
     }
 
+    @Test public void fileSelectionRequiresOutputDirectory() throws Exception {
+        for (String objectGlob : new String[] { null, "*" }) {
+            try {
+                new CompilerOptions(null, null, 100, 50, Collections.<Formatter>emptySet(), null,
+                        Collections.<File>emptyList(), CompilerOptions.DeprecationWarnings.OFF, null, null, null, 1,
+                        objectGlob, null, true);
+                fail("file selection needs an output directory");
+            } catch (IllegalArgumentException expected) {
+                assertTrue(expected.getMessage().contains("outputDirectory"));
+            }
+        }
+    }
+
     @Test
     public void testGlobalTraceDefaultsAndGlobMatching() throws SyntaxException {
         CompilerOptions old = new CompilerOptions(null, null, 100, 50, Collections.<Formatter>emptySet(), null,

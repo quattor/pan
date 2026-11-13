@@ -252,7 +252,8 @@ public class BuildContext implements Context {
 		assert (objectTemplate.type == TemplateType.OBJECT);
 		this.objectTemplate = objectTemplate;
         globalVariableTrace = compiler != null && compiler.options.isGlobalVariableTraceEnabled(objectTemplate.name)
-                ? new GlobalVariableTrace(objectTemplate, compiler.options.getGlobalVariableTracePattern()) : null;
+                ? new GlobalVariableTrace(objectTemplate, compiler.options.getGlobalVariableTracePattern(),
+                        compiler.getGlobalVariableTraceSink()) : null;
 		dependencies.put(objectTemplate.name, objectTemplate);
 		objectDependencies.add(objectTemplate.name);
 

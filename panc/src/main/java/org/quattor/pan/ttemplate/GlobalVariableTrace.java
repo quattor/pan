@@ -19,6 +19,7 @@ public final class GlobalVariableTrace {
     private final String object;
     private final String objectFile;
     private final Pattern variables;
+    private final GlobalVariableTraceSink sink;
     private long sequence;
 
     public GlobalVariableTrace(Template object, String variableGlob) {
@@ -26,9 +27,14 @@ public final class GlobalVariableTrace {
     }
 
     public GlobalVariableTrace(Template object, Pattern variablePattern) {
+        this(object, variablePattern, null);
+    }
+
+    public GlobalVariableTrace(Template object, Pattern variablePattern, GlobalVariableTraceSink sink) {
         this.object = object.name;
         this.objectFile = object.source == null ? null : object.source.getPath();
         this.variables = variablePattern;
+        this.sink = sink;
     }
 
     /** Compile a case-sensitive glob matching an entire logical name. */
@@ -105,8 +111,12 @@ public final class GlobalVariableTrace {
         emit(event);
     }
 
-    private static void emit(JsonObject event) {
+    private void emit(JsonObject event) {
         String line = "PAN_GLOBAL_TRACE " + JSON.toJson(event);
+        if (sink != null) {
+            sink.emit(line);
+            return;
+        }
         try {
             PrintStream stream = System.err;
             synchronized (stream) { stream.println(line); }

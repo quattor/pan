@@ -130,6 +130,7 @@ public class CompilerOptions {
 
     private final Pattern traceObjectPattern;
     private final Pattern traceVariablePattern;
+    private final boolean traceFile;
 
     /**
      * Directory that will contain the annotation output files.
@@ -200,10 +201,25 @@ public class CompilerOptions {
                            DeprecationWarnings deprecationWarnings, File annotationDirectory,
                            File annotationBaseDirectory, String rootElement, int nthread,
                            String traceObjectGlob, String traceVariableGlob) throws SyntaxException {
+        this(debugNsInclude, debugNsExclude, maxIteration, maxRecursion, formatters, outputDirectory,
+                includeDirectories, deprecationWarnings, annotationDirectory, annotationBaseDirectory,
+                rootElement, nthread, traceObjectGlob, traceVariableGlob, false);
+    }
+
+    /** Construct options with optional file output for global tracing. */
+    public CompilerOptions(Pattern debugNsInclude, Pattern debugNsExclude, int maxIteration, int maxRecursion,
+                           Set<Formatter> formatters, File outputDirectory, List<File> includeDirectories,
+                           DeprecationWarnings deprecationWarnings, File annotationDirectory,
+                           File annotationBaseDirectory, String rootElement, int nthread,
+                           String traceObjectGlob, String traceVariableGlob, boolean traceFile) throws SyntaxException {
 
         this.traceObjectPattern = traceObjectGlob == null ? null : compileTraceGlob(traceObjectGlob, "traceObjectGlob");
         this.traceVariablePattern = compileTraceGlob(traceVariableGlob == null ? "*" : traceVariableGlob,
                 "traceVariableGlob");
+        this.traceFile = traceFile;
+        if (traceFile && outputDirectory == null) {
+            throw new IllegalArgumentException("outputDirectory must be specified for trace file output");
+        }
 
         // Check that the iteration and call depth limits are sensible. If
         // negative or zero set these effectively to infinity.
@@ -305,6 +321,16 @@ public class CompilerOptions {
     /** Return whether the logical object name is selected for global tracing. */
     public boolean isGlobalVariableTraceEnabled(String objectName) {
         return traceObjectPattern != null && traceObjectPattern.matcher(objectName).matches();
+    }
+
+    /** Return whether object tracing has been configured. */
+    public boolean isGlobalVariableTraceConfigured() {
+        return traceObjectPattern != null;
+    }
+
+    /** File selection alone does not enable tracing. */
+    public boolean isGlobalVariableTraceFileEnabled() {
+        return traceFile && isGlobalVariableTraceConfigured();
     }
 
     /** Return the compiled logical variable name selector. */

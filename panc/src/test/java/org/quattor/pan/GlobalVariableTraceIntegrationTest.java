@@ -6,6 +6,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -18,9 +20,116 @@ import com.google.gson.JsonParser;
 import org.junit.Test;
 import org.quattor.pan.output.Formatter;
 import org.quattor.pan.tasks.FinalResult;
+import org.quattor.pan.ttemplate.GlobalVariableTraceSink;
 import org.quattor.pan.utils.TestUtils;
 
 public class GlobalVariableTraceIntegrationTest {
+    private File outputDirectory() throws Exception {
+        return Files.createTempDirectory(TestUtils.getTmpdir().toPath(), "trace-integration-").toFile();
+    }
+
+    private CompilerOptions fileOptions(File output, String objectGlob, boolean file) throws Exception {
+        return new CompilerOptions(null, null, 1000, 50, Collections.<Formatter>singleton(new ResultsFormatter()),
+                output, Collections.singletonList(new File(TestUtils.getTestdir(), "global_variable_trace")),
+                CompilerOptions.DeprecationWarnings.OFF, null, null, null, 4, objectGlob, "ITEM", file);
+    }
+
+    private String log(File output) throws Exception {
+        return new String(Files.readAllBytes(new File(output, "trace.log").toPath()), StandardCharsets.UTF_8);
+    }
+
+    @Test public void processOwnsFreshFileAndDoesNotDuplicateTraceOnStderr() throws Exception {
+        File output = outputDirectory();
+        Files.write(new File(output, "trace.log").toPath(), "old".getBytes(StandardCharsets.UTF_8));
+        ByteArrayOutputStream errors = new ByteArrayOutputStream();
+        PrintStream previous = System.err;
+        try {
+            System.setErr(new PrintStream(errors, true, "UTF-8"));
+            Compiler compiler = new Compiler(fileOptions(output, "selected_*", true),
+                    Arrays.asList("selected_a", "selected_b"), Collections.<File>emptyList());
+            assertNull(compiler.process().formatErrors());
+        } finally { System.setErr(previous); }
+        assertFalse(errors.toString("UTF-8").contains("PAN_GLOBAL_TRACE "));
+        String[] lines = log(output).split("\n");
+        assertEquals(4, lines.length);
+        for (String line : lines) {
+            assertTrue(line.startsWith("PAN_GLOBAL_TRACE "));
+            JsonObject event = new JsonParser().parse(line.substring(17)).getAsJsonObject();
+            assertEquals("ITEM", event.get("variable").getAsString());
+            assertEquals("string", event.getAsJsonObject(event.has("new") ? "new" : "value").get("type").getAsString());
+        }
+        try (GlobalVariableTraceSink ignored = GlobalVariableTraceSink.open(output)) { }
+    }
+
+    @Test public void disabledAndEmptyInvocationsLeaveOrReplaceLogAsAppropriate() throws Exception {
+        File output = outputDirectory();
+        File trace = new File(output, "trace.log");
+        assertNull(new Compiler(fileOptions(output, null, true), Collections.<String>emptyList(), null).process().formatErrors());
+        assertFalse(trace.exists());
+        Files.write(trace.toPath(), "old".getBytes(StandardCharsets.UTF_8));
+        assertNull(new Compiler(fileOptions(output, null, true), Collections.<String>emptyList(), null).process().formatErrors());
+        assertEquals("old", log(output));
+        assertNull(new Compiler(fileOptions(output, "*", true), Collections.<String>emptyList(), null).process().formatErrors());
+        assertEquals("", log(output));
+    }
+
+    @Test public void constructionFailureDoesNotTouchExistingLog() throws Exception {
+        File output = outputDirectory();
+        Files.write(new File(output, "trace.log").toPath(), "old".getBytes(StandardCharsets.UTF_8));
+        try {
+            new Compiler(fileOptions(output, "*", true), Collections.singletonList("does-not-exist"), null);
+            fail("missing object should fail resolution");
+        } catch (RuntimeException expected) { }
+        assertEquals("old", log(output));
+    }
+
+    @Test public void failedCompilationRetainsPartialTraceAndReleasesLock() throws Exception {
+        File output = outputDirectory();
+        CompilerOptions options = new CompilerOptions(null, null, 1000, 50,
+                Collections.<Formatter>singleton(new ResultsFormatter()), output,
+                Collections.singletonList(new File(TestUtils.getTestdir(), "global_variable_trace")),
+                CompilerOptions.DeprecationWarnings.OFF, null, null, null, 1, "rejected", "X", true);
+        assertNotNull(new Compiler(options, Collections.singletonList("rejected"), null).process().formatErrors());
+        assertTrue(log(output).contains("PAN_GLOBAL_TRACE "));
+        try (GlobalVariableTraceSink ignored = GlobalVariableTraceSink.open(output)) { }
+    }
+
+    @Test public void borrowedSinkStaysOpenAndWriteFailureFailsCompilation() throws Exception {
+        File output = outputDirectory();
+        GlobalVariableTraceSink sink = GlobalVariableTraceSink.open(output);
+        try {
+            assertNull(Compiler.run(fileOptions(output, "selected_a", true),
+                    Collections.singletonList("selected_a"), null, sink).formatErrors());
+            assertNull(Compiler.run(fileOptions(output, "selected_b", true),
+                    Collections.singletonList("selected_b"), null, sink).formatErrors());
+            assertTrue(log(output).contains("selected_a"));
+            assertTrue(log(output).contains("selected_b"));
+            sink.emit("still open");
+        } finally { sink.close(); }
+        CompilerResults result = Compiler.run(fileOptions(output, "selected_a", true),
+                Collections.singletonList("selected_a"), null, sink);
+        assertNotNull(result.formatErrors());
+        assertTrue(result.formatErrors().contains("trace"));
+        assertTrue(result.formatErrors().contains("cannot write trace file"));
+    }
+
+    @Test public void processReportsOpenAndLockFailuresWithoutCorruptingExistingLog() throws Exception {
+        File output = outputDirectory();
+        try (GlobalVariableTraceSink sink = GlobalVariableTraceSink.open(output)) {
+            sink.emit("first record");
+            CompilerResults locked = new Compiler(fileOptions(output, "selected_a", true),
+                    Collections.singletonList("selected_a"), null).process();
+            assertNotNull(locked.formatErrors());
+            assertTrue(locked.formatErrors().contains("trace"));
+            assertEquals("first record\n", log(output));
+        }
+        File blocked = outputDirectory();
+        assertTrue(new File(blocked, "trace.log").mkdir());
+        CompilerResults failed = new Compiler(fileOptions(blocked, "selected_a", true),
+                Collections.singletonList("selected_a"), null).process();
+        assertNotNull(failed.formatErrors());
+        assertTrue(failed.formatErrors().contains("trace"));
+    }
     private static class ResultsFormatter implements Formatter {
         final Map<String, String> profiles = Collections.synchronizedMap(new HashMap<String, String>());
         public URI getResultURI(String name) { return URI.create(name + ".trace-test"); }

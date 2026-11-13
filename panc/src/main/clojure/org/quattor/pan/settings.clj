@@ -20,6 +20,8 @@
 (defn defaults []
   {:debug-ns-include nil
    :debug-ns-exclude nil
+   :trace-object-glob nil
+   :trace-variable-glob nil
    :max-iteration 10000
    :max-recursion 50
    :formatter #{(PanFormatter/getInstance), (DepFormatter/getInstance)}

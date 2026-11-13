@@ -1,0 +1,82 @@
+<project name="production-session">
+  <target name="define">
+    <taskdef resource="org/quattor/ant/panc-ant.xml" loaderref="trace.loader">
+      <classpath><pathelement location="${compiler.classes}"/></classpath>
+    </taskdef>
+  </target>
+  <target name="root" depends="define">
+    <panc-trace-session outputDir="${output}" referenceId="trace.session">
+      <subant target="group" genericantfile="${fixture}" inheritall="true">
+        <buildpath><pathelement location="${output}"/></buildpath>
+        <reference refid="trace.loader"/><reference refid="trace.session"/>
+      </subant>
+    </panc-trace-session>
+  </target>
+  <target name="root-fail" depends="define">
+    <panc-trace-session outputDir="${output}" referenceId="trace.session">
+      <subant target="group-fail" genericantfile="${fixture}" inheritall="true">
+        <buildpath><pathelement location="${output}"/></buildpath>
+        <reference refid="trace.loader"/><reference refid="trace.session"/>
+      </subant>
+    </panc-trace-session>
+  </target>
+  <target name="group" depends="define">
+    <subant target="cluster-a" genericantfile="${fixture}" inheritall="true">
+      <buildpath><pathelement location="${output}"/></buildpath>
+      <reference refid="trace.loader"/><reference refid="trace.session"/>
+    </subant>
+    <subant target="cluster-b" genericantfile="${fixture}" inheritall="true">
+      <buildpath><pathelement location="${output}"/></buildpath>
+      <reference refid="trace.loader"/><reference refid="trace.session"/>
+    </subant>
+  </target>
+  <target name="group-fail" depends="define">
+    <subant target="cluster-fail" genericantfile="${fixture}" inheritall="true">
+      <buildpath><pathelement location="${output}"/></buildpath>
+      <reference refid="trace.loader"/><reference refid="trace.session"/>
+    </subant>
+  </target>
+  <target name="cluster-a" depends="define">
+    <panc outputDir="${output}" traceObjectGlob="*" traceSessionRef="trace.session" batchSize="1" checkDependencies="false">
+      <path><pathelement location="${templates}"/></path>
+      <fileset dir="${templates}" includes="selected_a.pan,selected_b.pan"/>
+    </panc>
+  </target>
+  <target name="cluster-b" depends="define">
+    <panc outputDir="${output}" traceObjectGlob="*" traceSessionRef="trace.session" checkDependencies="false">
+      <path><pathelement location="${templates}"/></path><fileset dir="${templates}" includes="selected_a.pan"/>
+    </panc>
+  </target>
+  <target name="cluster-fail" depends="define">
+    <panc outputDir="${output}" traceObjectGlob="*" traceSessionRef="trace.session" checkDependencies="false">
+      <path><pathelement location="${templates}"/></path><fileset dir="${templates}" includes="rejected.pan"/>
+    </panc>
+  </target>
+  <target name="fresh" depends="define">
+    <panc-trace-session outputDir="${output}" referenceId="trace.session">
+      <panc outputDir="${output}" traceObjectGlob="*" traceSessionRef="trace.session" checkDependencies="false">
+        <path><pathelement location="${templates}"/></path><fileset dir="${templates}" includes="selected_b.pan"/>
+      </panc>
+    </panc-trace-session>
+  </target>
+  <target name="disabled" depends="define">
+    <panc outputDir="${output}" traceSessionRef="missing" checkDependencies="false">
+      <path><pathelement location="${templates}"/></path><fileset dir="${templates}" includes="selected_a.pan"/>
+    </panc>
+  </target>
+  <target name="invalid" depends="define">
+    <panc outputDir="${output}" traceObjectGlob="*" traceSessionRef="invalid"/>
+  </target>
+  <target name="missing-output" depends="define"><panc-trace-session referenceId="trace.session"/></target>
+  <target name="missing-reference" depends="define"><panc-trace-session outputDir="${output}"/></target>
+  <target name="suppressed-write" depends="define">
+    <panc-trace-session outputDir="${output}" referenceId="trace.session">
+      <shared-trace-failure-probe mode="suppressed"/>
+    </panc-trace-session>
+  </target>
+  <target name="nested-and-close-failure" depends="define">
+    <panc-trace-session outputDir="${output}" referenceId="trace.session">
+      <shared-trace-failure-probe mode="nested"/>
+    </panc-trace-session>
+  </target>
+</project>

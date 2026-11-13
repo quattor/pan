@@ -17,6 +17,7 @@
 package org.quattor.ant;
 
 import java.io.File;
+import java.io.UncheckedIOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -29,6 +30,7 @@ import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.DirSet;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.Path;
+import org.apache.tools.ant.types.Reference;
 import org.quattor.pan.Compiler;
 import org.quattor.pan.CompilerLogging;
 import org.quattor.pan.CompilerOptions;
@@ -36,6 +38,7 @@ import org.quattor.pan.CompilerResults;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.output.Formatter;
 import org.quattor.pan.repository.SourceType;
+import org.quattor.pan.ttemplate.GlobalVariableTraceSink;
 
 /**
  * An ant task which permits calling the pan compiler from an ant build file.
@@ -63,6 +66,14 @@ public class PanCompilerTask extends Task {
     private Pattern debugNsInclude = null;
 
     private Pattern debugNsExclude = null;
+
+    private String traceObjectGlob;
+
+    private String traceVariableGlob;
+
+    private boolean traceFile;
+
+    private Reference traceSessionRef;
 
     private boolean debugTask = false;
 
@@ -125,21 +136,7 @@ public class PanCompilerTask extends Task {
             addPaths(antpath);
         }
 
-        // This can be dropped when the old style parameters are removed.
-        if (deprecationWarnings == null) {
-            deprecationWarnings = CompilerOptions.getDeprecationWarnings(
-                    deprecationLevel, failOnWarn);
-        }
-
-        // Collect the options for the compilation.
-        CompilerOptions options = null;
-        try {
-            options = new CompilerOptions(debugNsInclude, debugNsExclude,
-                    maxIteration, maxRecursion, formatters, outputDir, includeDirectories,
-                    deprecationWarnings, null, null, initialData, nthread);
-        } catch (SyntaxException e) {
-            throw new BuildException("invalid root element: " + e.getMessage());
-        }
+        CompilerOptions options = createCompilerOptions();
 
         // If the debugging for the task is enabled, then print out the options
         // and the arguments.
@@ -188,22 +185,61 @@ public class PanCompilerTask extends Task {
         // Batch the files to process, if requested.
         List<List<File>> batches = batchOutdatedFiles(outdatedFiles);
 
-        boolean hadError = false;
-        for (List<File> batch : batches) {
-
-            CompilerResults results = Compiler.run(options, null, batch);
-
-            boolean batchHadError = results.print(verbose);
-
-            if (batchHadError) {
-                hadError = true;
+        GlobalVariableTraceSink borrowed = null;
+        if (options.isGlobalVariableTraceFileEnabled() && traceSessionRef != null) {
+            Object reference = getProject().getReference(traceSessionRef.getRefId());
+            if (!(reference instanceof GlobalVariableTraceSink)) {
+                throw new BuildException("traceSessionRef '" + traceSessionRef.getRefId()
+                        + "' is missing or incompatible; forward the session reference and use the same Ant taskdef classloader");
             }
+            borrowed = (GlobalVariableTraceSink) reference;
+        }
+        try (GlobalVariableTraceSink owned = options.isGlobalVariableTraceFileEnabled() && borrowed == null
+                ? GlobalVariableTraceSink.open(options.outputDirectory) : null) {
+            GlobalVariableTraceSink sink = borrowed != null ? borrowed : owned;
+            boolean hadError = false;
+            for (List<File> batch : batches) {
+                CompilerResults results = Compiler.run(options, null, batch, sink);
+                if (sink != null) {
+                    try {
+                        sink.throwIfFailed();
+                    } catch (UncheckedIOException failure) {
+                        for (Throwable error : results.getErrors()) {
+                            if (error != failure) failure.addSuppressed(error);
+                        }
+                        throw failure;
+                    }
+                }
+                if (results.print(verbose)) hadError = true;
+            }
+            if (hadError) throw new BuildException("Compilation failed; see messages.");
+        } catch (UncheckedIOException e) {
+            throw new BuildException(e.getMessage(), e);
+        }
+    }
 
+    CompilerOptions createCompilerOptions() {
+        // This can be dropped when the old style parameters are removed.
+        if (deprecationWarnings == null) {
+            deprecationWarnings = CompilerOptions.getDeprecationWarnings(
+                    deprecationLevel, failOnWarn);
         }
 
-        // Stop build if there was an error.
-        if (hadError) {
-            throw new BuildException("Compilation failed; see messages.");
+        // Collect the options for the compilation.
+        try {
+            return new CompilerOptions(debugNsInclude, debugNsExclude,
+                    maxIteration, maxRecursion, formatters, outputDir, includeDirectories,
+                    deprecationWarnings, null, null, initialData, nthread, traceObjectGlob, traceVariableGlob,
+                    traceFile || (traceSessionRef != null && traceObjectGlob != null));
+        } catch (SyntaxException e) {
+            throw new BuildException("invalid root element: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            if (e.getMessage() != null && (e.getMessage().startsWith("traceObjectGlob:")
+                    || e.getMessage().startsWith("traceVariableGlob:")
+                    || ((traceFile || (traceSessionRef != null && traceObjectGlob != null)) && outputDir == null))) {
+                throw new BuildException(e.getMessage(), e);
+            }
+            throw e;
         }
     }
 
@@ -347,6 +383,26 @@ public class PanCompilerTask extends Task {
      */
     public void setDebugNsExclude(String pattern) {
         debugNsExclude = Pattern.compile(pattern);
+    }
+
+    /** Select object names for tracing by glob; output may expose sensitive values on stderr. */
+    public void setTraceObjectGlob(String glob) {
+        traceObjectGlob = glob;
+    }
+
+    /** Select global variable names for tracing by glob. */
+    public void setTraceVariableGlob(String glob) {
+        traceVariableGlob = glob;
+    }
+
+    /** Write sensitive global trace records to outputDir/trace.log. */
+    public void setTraceFile(boolean traceFile) {
+        this.traceFile = traceFile;
+    }
+
+    /** Borrow a trace sink owned by an enclosing panc-trace-session. */
+    public void setTraceSessionRef(Reference traceSessionRef) {
+        this.traceSessionRef = traceSessionRef;
     }
 
     /**

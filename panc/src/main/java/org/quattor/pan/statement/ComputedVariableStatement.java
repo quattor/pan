@@ -30,6 +30,7 @@ import org.quattor.pan.ttemplate.SelfHolder;
 import org.quattor.pan.ttemplate.SourceRange;
 import org.quattor.pan.ttemplate.VariableSelfHolder;
 import org.quattor.pan.utils.GlobalVariable;
+import com.google.gson.JsonObject;
 
 /**
  * Sets a global variable to a constant or computed value.
@@ -74,6 +75,9 @@ public class ComputedVariableStatement extends VariableStatement {
 			// Get the value to use for the SELF variable. Will need this in all
 			// cases anyway. Use the method that doesn't duplicate the value.
 			// Children of the SELF can be set directly.
+            boolean selected = context.isGlobalVariableTraceSelected(name);
+            Element oldValue = selected && context.isGlobalVariableTracePayloadRequired(name)
+                    ? context.getGlobalVariable(name) : null;
 			GlobalVariable variable = context.retrieveGlobalVariable(this.name);
 			SelfHolder selfHolder = new VariableSelfHolder(variable);
 			context.initializeSelfHolder(selfHolder);
@@ -83,10 +87,15 @@ public class ComputedVariableStatement extends VariableStatement {
 
 			if (!conditional || currentValue instanceof Undef) {
 
+                JsonObject oldSnapshot = selected && context.isGlobalVariableTracePayloadRequired(name)
+                        ? context.snapshotGlobalVariableTraceValue(oldValue) : null;
+
 				Element result = context.executeDmlBlock(dml);
 
 				variable.setValue(result);
 				variable.setFinalFlag(!modifiable);
+                if (selected) context.traceGlobalVariableAssignment(name, getSourceRange(), oldSnapshot,
+                        result, conditional, variable.getFinalFlag());
 
 			} else {
 
@@ -97,6 +106,8 @@ public class ComputedVariableStatement extends VariableStatement {
 					variable.setFinalFlag(!modifiable);
 
 				}
+                if (selected) context.traceGlobalVariableSkip(name, getSourceRange(), currentValue,
+                        variable.getFinalFlag());
 			}
 
 			// Clear out the self reference to make sure it does not leak into

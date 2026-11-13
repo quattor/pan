@@ -27,6 +27,7 @@ import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.ttemplate.Context;
 import org.quattor.pan.ttemplate.SourceRange;
 import org.quattor.pan.utils.GlobalVariable;
+import com.google.gson.JsonObject;
 
 /**
  * Sets a global variable to a constant or computed value.
@@ -57,6 +58,9 @@ public class ConstantVariableStatement extends VariableStatement {
 			// Get the value to use for the SELF variable. Will need this in all
 			// cases anyway. Use the method that doesn't duplicate the value.
 			// Children of the SELF can be set directly.
+            boolean selected = context.isGlobalVariableTraceSelected(name);
+            Element oldValue = selected && context.isGlobalVariableTracePayloadRequired(name)
+                    ? context.getGlobalVariable(name) : null;
 			GlobalVariable variable = context.retrieveGlobalVariable(name);
 
 			Element currentValue = variable.getValue();
@@ -64,8 +68,13 @@ public class ConstantVariableStatement extends VariableStatement {
 
 			if (!conditional || currentValue instanceof Undef) {
 
+                JsonObject oldSnapshot = selected && context.isGlobalVariableTracePayloadRequired(name)
+                        ? context.snapshotGlobalVariableTraceValue(oldValue) : null;
+
 				variable.setValue(value);
 				variable.setFinalFlag(!modifiable);
+                if (selected) context.traceGlobalVariableAssignment(name, getSourceRange(), oldSnapshot,
+                        value, conditional, variable.getFinalFlag());
 
 			} else {
 
@@ -76,6 +85,8 @@ public class ConstantVariableStatement extends VariableStatement {
 					variable.setFinalFlag(!modifiable);
 
 				}
+                if (selected) context.traceGlobalVariableSkip(name, getSourceRange(), currentValue,
+                        variable.getFinalFlag());
 			}
 
 		} catch (EvaluationException ee) {

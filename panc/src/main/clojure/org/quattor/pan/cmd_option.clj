@@ -11,10 +11,13 @@
             XmlFormatter
             XmlGzipFormatter
             DepFormatter
+            DepxFormatter
+            DepxGzipFormatter
             DepGzipFormatter
             NullFormatter]
            [org.quattor.pan CompilerOptions$DeprecationWarnings]
-           [clojure.lang ExceptionInfo]))
+           [clojure.lang ExceptionInfo]
+           [org.quattor.pan.ttemplate GlobalVariableTrace]))
 
 (declare process)
 
@@ -38,6 +41,8 @@
             "xml" (conj v (XmlFormatter/getInstance))
             "xml.gz" (conj v (XmlGzipFormatter/getInstance))
             "dep" (conj v (DepFormatter/getInstance))
+            "depx" (conj v (DepxFormatter/getInstance))
+            "depx.gz" (conj v (DepxGzipFormatter/getInstance))
             "dep.gz" (conj v (DepGzipFormatter/getInstance))
             "null" (conj v (NullFormatter/getInstance))
             "none" v
@@ -71,6 +76,18 @@
 (defmethod process :debug-ns-exclude
            [[k v]]
   {:debug-ns-exclude (when-not (nil? v) (re-pattern v))})
+
+(defn process-trace-glob [[k v]]
+  (when-not (nil? v)
+    (try
+      (GlobalVariableTrace/compileGlob v)
+      (catch IllegalArgumentException e
+        (let [msg (str "--" (name k) ": " (.getMessage e))]
+          (throw (ex-info msg {:type :options :msg msg} e))))))
+  {k v})
+
+(defmethod process :trace-object-glob [option] (process-trace-glob option))
+(defmethod process :trace-variable-glob [option] (process-trace-glob option))
 
 (defmethod process :include-path
            [[k v]]
@@ -126,4 +143,3 @@
     (switches v)
     (let [msg (str k " value must be off, on, or fatal")]
       (throw (ex-info msg {:type :options :msg msg})))))
-

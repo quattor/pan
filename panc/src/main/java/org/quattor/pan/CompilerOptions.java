@@ -43,6 +43,8 @@ import org.quattor.pan.exceptions.ConfigurationException;
 import org.quattor.pan.exceptions.EvaluationException;
 import org.quattor.pan.exceptions.SyntaxException;
 import org.quattor.pan.output.DepFormatter;
+import org.quattor.pan.output.DepxFormatter;
+import org.quattor.pan.output.DepxGzipFormatter;
 import org.quattor.pan.output.DepGzipFormatter;
 import org.quattor.pan.output.DotFormatter;
 import org.quattor.pan.output.Formatter;
@@ -63,6 +65,7 @@ import org.quattor.pan.repository.SourceRepository;
 import org.quattor.pan.repository.SourceRepositoryFactory;
 import org.quattor.pan.ttemplate.CompileTimeContext;
 import org.quattor.pan.ttemplate.Context;
+import org.quattor.pan.ttemplate.GlobalVariableTrace;
 import org.quattor.pan.ttemplate.SourceRange;
 
 /**
@@ -113,6 +116,9 @@ public class CompilerOptions {
 
     public final SourceRepository sourceRepository;
 
+    /** Shared ordered absolute include directories used by root-aware output. */
+    public final List<File> includeRoots;
+
     /**
      * Patterns that are matched against a template name to determine if debug()
      * calls are turned on or off. Template names matching one of the patterns
@@ -121,6 +127,12 @@ public class CompilerOptions {
      */
     private final Pattern debugNsInclude;
     private final Pattern debugNsExclude;
+
+    private final Pattern traceObjectPattern;
+    private final Pattern traceVariablePattern;
+    private final boolean traceFile;
+    private final String traceObjectGlob;
+    private final String traceVariableGlob;
 
     /**
      * Directory that will contain the annotation output files.
@@ -180,6 +192,39 @@ public class CompilerOptions {
                            File annotationBaseDirectory, String rootElement, int nthread)
             throws SyntaxException {
 
+        this(debugNsInclude, debugNsExclude, maxIteration, maxRecursion, formatters, outputDirectory,
+                includeDirectories, deprecationWarnings, annotationDirectory, annotationBaseDirectory,
+                rootElement, nthread, null, null);
+    }
+
+    /** Construct options with optional object and variable name globs for global tracing. */
+    public CompilerOptions(Pattern debugNsInclude, Pattern debugNsExclude, int maxIteration, int maxRecursion,
+                           Set<Formatter> formatters, File outputDirectory, List<File> includeDirectories,
+                           DeprecationWarnings deprecationWarnings, File annotationDirectory,
+                           File annotationBaseDirectory, String rootElement, int nthread,
+                           String traceObjectGlob, String traceVariableGlob) throws SyntaxException {
+        this(debugNsInclude, debugNsExclude, maxIteration, maxRecursion, formatters, outputDirectory,
+                includeDirectories, deprecationWarnings, annotationDirectory, annotationBaseDirectory,
+                rootElement, nthread, traceObjectGlob, traceVariableGlob, false);
+    }
+
+    /** Construct options with optional file output for global tracing. */
+    public CompilerOptions(Pattern debugNsInclude, Pattern debugNsExclude, int maxIteration, int maxRecursion,
+                           Set<Formatter> formatters, File outputDirectory, List<File> includeDirectories,
+                           DeprecationWarnings deprecationWarnings, File annotationDirectory,
+                           File annotationBaseDirectory, String rootElement, int nthread,
+                           String traceObjectGlob, String traceVariableGlob, boolean traceFile) throws SyntaxException {
+
+        this.traceObjectGlob = traceObjectGlob;
+        this.traceVariableGlob = traceVariableGlob;
+        this.traceObjectPattern = traceObjectGlob == null ? null : compileTraceGlob(traceObjectGlob, "traceObjectGlob");
+        this.traceVariablePattern = compileTraceGlob(traceVariableGlob == null ? "*" : traceVariableGlob,
+                "traceVariableGlob");
+        this.traceFile = traceFile;
+        if (traceFile && outputDirectory == null) {
+            throw new IllegalArgumentException("outputDirectory must be specified for trace file output");
+        }
+
         // Check that the iteration and call depth limits are sensible. If
         // negative or zero set these effectively to infinity.
         if (maxIteration <= 0) {
@@ -215,6 +260,11 @@ public class CompilerOptions {
         this.maxIteration = maxIteration;
         this.maxRecursion = maxRecursion;
         this.outputDirectory = outputDirectory;
+        List<File> roots = new LinkedList<File>();
+        for (File directory : includeDirectories) {
+            roots.add(directory.getAbsoluteFile().toPath().normalize().toFile());
+        }
+        this.includeRoots = Collections.unmodifiableList(roots);
 
         this.deprecationWarnings = deprecationWarnings;
 
@@ -262,6 +312,46 @@ public class CompilerOptions {
         } else {
             this.nthread = nthread;
         }
+    }
+
+    private static Pattern compileTraceGlob(String glob, String name) {
+        try {
+            return GlobalVariableTrace.compileGlob(glob);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(name + ": " + e.getMessage(), e);
+        }
+    }
+
+    /** Return whether the logical object name is selected for global tracing. */
+    public boolean isGlobalVariableTraceEnabled(String objectName) {
+        return traceObjectPattern != null && traceObjectPattern.matcher(objectName).matches();
+    }
+
+    /** Return whether object tracing has been configured. */
+    public boolean isGlobalVariableTraceConfigured() {
+        return traceObjectPattern != null;
+    }
+
+    /** File selection alone does not enable tracing. */
+    public boolean isGlobalVariableTraceFileEnabled() {
+        return traceFile && isGlobalVariableTraceConfigured();
+    }
+
+    public String getGlobalVariableTraceObjectGlob() { return traceObjectGlob; }
+    public String getGlobalVariableTraceVariableGlob() { return traceVariableGlob; }
+
+    /** DEPX and tracing must both be selected for capture. */
+    public boolean isGlobalVariableTraceCaptureEnabled() {
+        if (!isGlobalVariableTraceConfigured()) return false;
+        for (Formatter formatter : formatters) {
+            if (formatter instanceof DepxFormatter) return true;
+        }
+        return false;
+    }
+
+    /** Return the compiled logical variable name selector. */
+    public Pattern getGlobalVariableTracePattern() {
+        return traceVariablePattern;
     }
 
     // Utility method to turn old options into new deprecation flag.
@@ -485,6 +575,12 @@ public class CompilerOptions {
                 formatters.add(XmlGzipFormatter.getInstance());
             } else if ("dep".equals(fname)) {
                 formatters.add(DepFormatter.getInstance());
+            } else if ("depx".equals(fname)) {
+                formatters.add(DepxFormatter.getInstance());
+            } else if ("depx.gz".equals(fname)) {
+                formatters.add(DepxGzipFormatter.getInstance());
+            } else if ("depx.json".equals(fname) || "depx.json.gz".equals(fname)) {
+                throw new IllegalArgumentException("Unsupported formatter: " + fname);
             } else if ("dep.gz".equals(fname)) {
                 formatters.add(DepGzipFormatter.getInstance());
             } else if ("null".equals(fname)) {
@@ -495,6 +591,16 @@ public class CompilerOptions {
         }
 
         return formatters;
+    }
+
+    /** Enables collection only when a selected formatter needs runtime occurrences. */
+    public boolean requiresIncludeTrace() {
+        for (Formatter formatter : formatters) {
+            if (formatter.requiresIncludeTrace()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

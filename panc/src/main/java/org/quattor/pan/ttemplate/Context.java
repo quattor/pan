@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
+import com.google.gson.JsonObject;
 import org.quattor.pan.CompilerOptions;
 import org.quattor.pan.dml.Operation;
 import org.quattor.pan.dml.data.Element;
@@ -292,10 +293,48 @@ public interface Context {
 
 	public GlobalVariable retrieveGlobalVariable(String name);
 
+    /** Whether explicit operations on this global are traced. */
+    default boolean isGlobalVariableTraceSelected(String name) { return false; }
+
+    /** Return the immutable profile capture, or null when capture is disabled. */
+    default GlobalVariableTraceCapture getGlobalVariableTraceCapture() { return null; }
+
+    /** Whether any destination currently needs this selected variable's payload. */
+    default boolean isGlobalVariableTracePayloadRequired(String name) {
+        return isGlobalVariableTraceSelected(name);
+    }
+
+    /** Snapshot a trace value before it can be mutated. */
+    default JsonObject snapshotGlobalVariableTraceValue(Element value) { return null; }
+
+    /** Record a successful explicit global assignment. */
+    default void traceGlobalVariableAssignment(String name, SourceRange range, JsonObject oldValue,
+            Element newValue, boolean conditional, boolean finalFlag) { }
+
+    /** Record a skipped conditional global assignment. */
+    default void traceGlobalVariableSkip(String name, SourceRange range, Element existing, boolean finalFlag) { }
+
+    /** Record an explicit global read. */
+    default void traceGlobalVariableRead(String name, SourceRange range, Term[] terms, Element value) { }
+
 	public void pushTemplate(Template template, SourceRange sourceRange,
 			Level logLevel, String logMessage);
 
 	public void popTemplate(Level logLevel, String logMessage);
+
+    /** Records a resolved occurrence, returning its previous parent for restoration. */
+    default int enterIncludeTrace(Template target, SourceRange range, IncludeTrace.Status status) {
+        return -1;
+    }
+
+    /** Restores the parent occurrence; non-build contexts have no trace. */
+    default void leaveIncludeTrace(int previousParent) {
+    }
+
+    /** Returns a snapshot, or null when tracing is disabled. */
+    default IncludeTrace getIncludeTrace() {
+        return null;
+    }
 
 	public void printTraceback(SourceRange sourceRange);
 

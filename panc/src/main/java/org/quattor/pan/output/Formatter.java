@@ -31,6 +31,10 @@ import org.quattor.pan.tasks.FinalResult;
  */
 public interface Formatter {
 
+    default boolean requiresIncludeTrace() {
+        return false;
+    }
+
 	public URI getResultURI(String objectName);
 
 	/**

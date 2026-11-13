@@ -8,6 +8,8 @@
                                    DotFormatter
                                    PanFormatter
                                    DepFormatter
+                                   DepxFormatter
+                                   DepxGzipFormatter
                                    NullFormatter]
            [org.quattor.pan CompilerOptions$DeprecationWarnings]
            [java.util.regex Pattern]
@@ -22,7 +24,26 @@
     (is (= "ok" (:unknown unknown)))
     (is (= 1 (count unknown)))))
 
+(deftest test-trace-file-setting
+  (is (= {:trace-file true} (process [:trace-file true])))
+  (is (= {:trace-file false} (process [:trace-file false]))))
+
+(deftest test-trace-glob-option-errors
+  (doseq [option [:trace-object-glob :trace-variable-glob]]
+    (try
+      (process [option ""])
+      (is false "Expected an options error")
+      (catch ExceptionInfo e
+        (is (= :options (:type (ex-data e))))
+        (is (.contains (.getMessage e) (name option)))))))
+
 (deftest test-formats
+  (is (= #{(DepxGzipFormatter/getInstance)} (:formatter (process [:formats "depx.gz"]))))
+  (is (.requiresIncludeTrace (DepxGzipFormatter/getInstance)))
+  (is (= #{(DepxFormatter/getInstance)} (:formatter (process [:formats "depx"]))))
+  (is (.requiresIncludeTrace (DepxFormatter/getInstance)))
+  (is (thrown? ExceptionInfo (process [:formats "depx.json"])))
+  (is (thrown? ExceptionInfo (process [:formats "depx.json.gz"])))
   (let [pandep (process [:formats "pan,dep"])
         text (process [:formats "text"])
         json (process [:formats "json"])

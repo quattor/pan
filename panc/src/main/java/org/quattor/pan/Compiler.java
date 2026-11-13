@@ -27,14 +27,17 @@ import org.quattor.pan.cache.Valid2Cache;
 import org.quattor.pan.repository.SourceRepository;
 import org.quattor.pan.tasks.Task;
 import org.quattor.pan.tasks.TaskResult;
+import org.quattor.pan.ttemplate.GlobalVariableTraceSink;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.io.UncheckedIOException;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -140,6 +143,9 @@ public class Compiler {
 
     private final Valid2Cache v2cache;
 
+    private final GlobalVariableTraceSink sharedTraceSink;
+    private volatile GlobalVariableTraceSink traceSink;
+
     /**
      * Create a compiler object with the given options and that will process the given templates (either by name or
      * absolute path).
@@ -149,6 +155,12 @@ public class Compiler {
      * @param tplFiles    absolute file names of templates to process
      */
     public Compiler(CompilerOptions options, List<String> objectNames, Collection<File> tplFiles) {
+        this(options, objectNames, tplFiles, null);
+    }
+
+    /** Construct a compiler borrowing an invocation-owned trace sink. */
+    public Compiler(CompilerOptions options, List<String> objectNames, Collection<File> tplFiles,
+                    GlobalVariableTraceSink sharedSink) {
 
         // Sanity check.
         assert (options != null);
@@ -164,6 +176,7 @@ public class Compiler {
         // All parameter checking is done as part of the CompilerOptions
         // object.
         this.options = options;
+        this.sharedTraceSink = sharedSink;
 
         // Create the final set of files to build.
         files = options.resolveFileList(objectNames, tplFiles);
@@ -200,6 +213,17 @@ public class Compiler {
      */
     public static CompilerResults run(CompilerOptions options, List<String> objectNames, Collection<File> tplFiles) {
         return (new Compiler(options, objectNames, tplFiles)).process();
+    }
+
+    /** Run a compiler without taking ownership of the supplied sink. */
+    public static CompilerResults run(CompilerOptions options, List<String> objectNames, Collection<File> tplFiles,
+                                      GlobalVariableTraceSink sharedSink) {
+        return new Compiler(options, objectNames, tplFiles, sharedSink).process();
+    }
+
+    /** Return the sink used by collectors during this process invocation. */
+    public GlobalVariableTraceSink getGlobalVariableTraceSink() {
+        return traceSink;
     }
 
     /**
@@ -248,12 +272,54 @@ public class Compiler {
     public synchronized CompilerResults process() {
 
         // Create the list to hold all of the exceptions.
-        Set<Throwable> exceptions = new TreeSet<Throwable>(new ThrowableComparator());
+        Set<Throwable> exceptions = new LinkedHashSet<Throwable>();
 
         long start = new Date().getTime();
 
         stats.setFileCount(files.size());
 
+        boolean ownsTraceSink = false;
+        try {
+            if (options.isGlobalVariableTraceFileEnabled()) {
+                traceSink = sharedTraceSink;
+                if (traceSink == null) {
+                    traceSink = GlobalVariableTraceSink.open(options.outputDirectory);
+                    ownsTraceSink = true;
+                }
+            }
+            processTasks();
+        } catch (UncheckedIOException e) {
+            exceptions.add(e);
+        } finally {
+            drainTasks(exceptions);
+            if (traceSink != null) {
+                try { traceSink.throwIfFailed(); } catch (UncheckedIOException e) { exceptions.add(e); }
+                if (ownsTraceSink) {
+                    try { traceSink.close(); } catch (UncheckedIOException e) { exceptions.add(e); }
+                }
+                traceSink = null;
+            }
+
+            // Shutdown the executors; a missing permission may cause a thread leak.
+            try {
+                SecurityManager security = System.getSecurityManager();
+                if (security != null) {
+                    security.checkPermission(new RuntimePermission("modifyThread"));
+                }
+
+                for (TaskResult.ResultType t : TaskResult.ResultType.values()) {
+                    executors.get(t).shutdown();
+                }
+            } catch (SecurityException se) {
+                System.err.println("WARNING: missing modifyThread permission");
+            }
+        }
+
+        stats.setBuildTime(new Date().getTime() - start);
+        return new CompilerResults(stats, exceptions);
+    }
+
+    private void processTasks() {
         // Trigger the compilation of the templates via the template cache. If
         // no building is going on, then the compile() method is used which
         // doesn't actually save the templates. This reduces drastically the
@@ -271,9 +337,9 @@ public class Compiler {
                 ccache.compile(f.getAbsolutePath());
             }
         }
+    }
 
-        // Now continually loop through the result queue until we have all
-        // of the results.
+    private void drainTasks(Set<Throwable> exceptions) {
         while (remainingTasks.get() > 0) {
             try {
                 Future<? extends TaskResult> future = resultsQueue.take();
@@ -287,34 +353,6 @@ public class Compiler {
             } catch (InterruptedException consumed) {
             }
         }
-
-        // Shutdown the executors. In certain environments (e.g. eclipse) the
-        // required "modifyThread" permission may not have been granted. Not
-        // having this permission may cause a thread leak.
-        try {
-            SecurityManager security = System.getSecurityManager();
-            if (security != null) {
-                security.checkPermission(new RuntimePermission("modifyThread"));
-            }
-
-            // We've got the correct permission, so tell all of the executors to
-            // shutdown.
-            for (TaskResult.ResultType t : TaskResult.ResultType.values()) {
-                executors.get(t).shutdown();
-            }
-
-        } catch (SecurityException se) {
-
-            // Emit a warning about the missing permission.
-            System.err.println("WARNING: missing modifyThread permission");
-
-        }
-
-        // Finalize the statistics.
-        long end = new Date().getTime();
-        stats.setBuildTime(end - start);
-
-        return new CompilerResults(stats, exceptions);
     }
 
     /**

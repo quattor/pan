@@ -41,7 +41,8 @@ On an existing Ant compiler task, use::
 Omit the variable selection to trace all globals in the selected objects.
 Quote CLI globs so the shell does not expand them.
 
-Redirect stderr on the existing command to capture the stream, for example::
+For output formats other than DEPX, redirect stderr on the existing command to
+capture the stream, for example::
 
    panc --trace-object-glob 'hosts/*' [existing compiler arguments] 2>trace.log
 
@@ -129,9 +130,11 @@ read's location (or enclosing body range), rather than attributing the read to
 the caller's template. The object identity always remains the object currently
 being compiled.
 
-Records go to stderr by default, or to the requested trace file. Each record is
-a complete, non-interleaved line, including
-when objects are compiled concurrently. Embedded newlines in names and values
+With DEPX output, records are captured in the result by default. With other
+output formats, records go to stderr by default. An explicitly requested trace
+file receives the diagnostic stream in either case. Each streamed record is
+a complete, non-interleaved line, including when objects are compiled
+concurrently. Embedded newlines in names and values
 must be escaped. Values are rendered only for selected events and must describe
 the value at the time of the event, not a later mutation.
 
@@ -176,7 +179,7 @@ string or dictionary key to 4096 Unicode code points. Truncated snapshots carry
 and ``size`` for the affected string or resource. Do not interpret a truncated
 snapshot as the complete original value. JSON escaping preserves embedded
 newlines, quotes, and backslashes while keeping each record on a single line.
-The tracer does not retain an event history. Stderr output failures must not
+Streaming alone does not retain an event history. Stderr output failures must not
 turn a successful compilation into a failure; missing records therefore remain
 possible and must not be treated as proof that an operation did not occur.
 
@@ -311,36 +314,57 @@ verify:
   branch. Internal include and default bookkeeping must not be mislabeled as
   extra global reads.
 
-DEPX integration and streamed trace capture
--------------------------------------------
+Direct DEPX capture and variable overview
+-----------------------------------------
 
-Capturing global-variable trace events directly in DEPX would be a useful
-extension, if the implementation can do so without compromising disabled-run
-performance or existing DEPX compatibility. It is not required for the initial
-tracer, which streams records to stderr as described above. Direct DEPX capture
-and a parser to enrich DEPX from the stream are not implemented. There is no
-separate stdout destination option.
+Select ``depx`` or ``depx.gz`` output together with the trace globs to capture
+global-variable events directly in successful dependency results. Selecting
+DEPX alone does not enable tracing. No implicit stderr trace stream is produced
+when DEPX capture is enabled. Add ``--trace-file`` or the Ant file/session
+settings described above if you also need a diagnostic log.
 
-The streamed format should allow a future parser to augment a compiler-generated
-DEPX file with trace data. Preserve explicit object identity, logical source
-template identity, source ranges, actions, global-variable names, and
-unambiguous typed values. Preserve execution order within each object's trace;
-do not infer cross-object execution order from concurrent stream output.
-Escaping and framing must allow records to be distinguished from ordinary
-compiler diagnostics without interpreting diagnostics as trace events.
+DEPX is written only after successful validation. A failed compilation does not
+produce a partial DEPX trace; an explicitly requested diagnostic log can retain
+events recorded before the failure. There is no separate stdout destination or
+log-to-DEPX merger.
 
-Direct DEPX integration and post-processing must represent reads, assignments,
-overwrites, and skipped defaults as trace events, not silently reinterpret them
-as existing dependency occurrences. Any DEPX extension requires an explicit
-schema and compatibility decision, including support for both ``.depx`` and
-``.depx.gz``. This contract does not prescribe new DEPX fields or require a
-viewer change.
+The outer DEPX schema remains version 1. Each profile can contain an optional
+``global_trace`` section with its own ``version: 1``, the effective
+``object_glob`` and ``variable_glob`` (``*`` when omitted), ``selected``, ``complete``,
+``limits``, ``dropped_events``, and ordered ``events``. Configured but excluded
+profiles have ``selected: false`` and an empty event list. An absent section
+means activity was not captured or is unavailable, not that no variable was used.
 
-Future parser and DEPX-integration tests should verify event attribution and
-ordering, lossless typed-value decoding, and compatibility with existing
-dependency data. Incomplete or truncated trace capture must be identified as
-such rather than presented as a complete execution trace. The initial tracer
-must not require retaining events in memory merely to enable later enrichment.
+Each event retains the stream's action and typed payload and adds ``occurrence``:
+the exact zero-based include/create occurrence active when the event happened,
+or JSON ``null`` for the profile root. Source template and location identify the
+operation's definition, independently of execution context. A function can
+therefore report its definition source while referring to a caller's occurrence.
+Repeated includes must not be correlated by filename alone. Sequences remain
+profile-local; they do not establish an order across profiles.
+
+Capture retains a prefix of at most 10,000 events or 8,388,608 serialized-event
+UTF-8 bytes per profile, whichever limit is reached first. Byte accounting
+excludes stream prefixes and enclosing DEPX punctuation. Once saturated, capture
+omits later matching events, counts them in ``dropped_events``, marks
+``complete: false``, and emits one warning for the affected profile. An explicitly
+requested diagnostic stream continues independently of this cap.
+Completeness concerns only events matching the recorded filters; individual
+snapshots can still be truncated. These limits are not a strict heap bound:
+parallel profiles and dependency results can retain multiple captures.
+
+Open the resulting file with ``depviewer path/to/profile.depx.gz``. In the
+**Variables** section, search for a global variable and select it to see set,
+use, and skipped-default counts for retained events. Select an event to inspect
+typed values, indexed access paths, source location, and execution context.
+**Show occurrence N** navigates to the exact occurrence in the existing include
+tree; root events have no occurrence link. Source paths remain text.
+
+The viewer distinguishes unavailable capture, excluded profiles, no matching
+activity, and a search with no results. Capture filters and incomplete-capture
+warnings remain visible; value-level truncation is shown separately in details.
+Old DEPX files remain usable without a variable history. Trace data can contain
+secrets even in compressed files; treat it as sensitive configuration data.
 
 Additional acceptance checks
 ----------------------------

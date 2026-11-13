@@ -338,6 +338,22 @@ or declaration includes remain separate occurrences. Details show source
 descriptors with resolved load directories; the dependency inventory is separate
 from the occurrence tree. The trace describes evaluation, not timing.
 
+If global-variable tracing was enabled during DEPX compilation, the
+**Variables** section provides a searchable set/use overview for the selected
+profile. Select a variable to list assignments, overwrites, reads, and skipped
+defaults in recorded order; select an event for typed values and source details.
+**Show occurrence N** reveals its exact include/create execution context in the
+tree. Profile-root events are identified separately, and source paths are text
+rather than external links. Variable search is a case-insensitive literal
+substring filter, distinct from the Profile selector's glob filter.
+
+Counts describe retained events only. Capture filters and incomplete-capture
+warnings are shown separately from individual value truncation. Old files without
+captured variable activity still show their include information. See
+:ref:`global_variable_tracing_contract` for enablement, capture limits, and
+diagnostic-log behavior on failed builds. Variable values may contain secrets;
+treat traced DEPX files as sensitive data.
+
 Gzip loading requires browser support for ``DecompressionStream``. If unavailable,
 decompress the file locally and open the resulting ``.depx`` file. The viewer
 limits input and decompressed content to 128 MiB; this is a safety limit, not a

@@ -482,3 +482,59 @@ test("consumes compiler-generated nested profile traces", async (t) => {
   assert.ok(parseDepx(plain).profiles.has("nested/trace_context"));
   assert.ok(parseDepx(decompressed).profiles.has("nested/trace_context"));
 });
+
+test("navigates compiler-generated global trace histories and occurrences", async (t) => {
+  const input = process.env.DEPX_GLOBAL_TRACE_INTEGRATION_FILE;
+  if (!input) return t.skip("set DEPX_GLOBAL_TRACE_INTEGRATION_FILE to compiler-generated trace_context.depx");
+  const plain = fs.readFileSync(input, "utf8");
+  const gzip = fs.readFileSync(`${input}.gz`);
+  const decompressed = await readFile({ name: path.basename(`${input}.gz`), size: gzip.length, arrayBuffer: async () => gzip.buffer.slice(gzip.byteOffset, gzip.byteOffset + gzip.byteLength) });
+  assert.equal(decompressed, plain);
+  const document = parseDepx(plain);
+  assert.deepEqual([...document.profiles.keys()].sort(), ["trace_context", "trace_external"]);
+  const { filterVariables, variableEventPage, traceCaptureState } = globalThis.DepxViewerParser;
+  const root = document.profiles.get("trace_context");
+  const external = document.profiles.get("trace_external");
+  for (const [profile, length] of [[root, 14], [external, 3]]) {
+    assert.equal(traceCaptureState(profile), "captured");
+    assert.equal(profile.globalTrace.variable_glob, "*");
+    assert.deepEqual(profile.globalTrace.events.map(event => event.sequence), Array.from({ length }, (_, index) => index + 1));
+  }
+  assert.deepEqual(filterVariables(root, "root"), [{ name: "ROOT_GLOBAL", read: 9, set: 1, skip: 0 }]);
+  assert.deepEqual(filterVariables(external, "root"), [{ name: "ROOT_GLOBAL", read: 1, set: 1, skip: 0 }]);
+  const rootHistory = variableEventPage(root, "ROOT_GLOBAL", 0, 20).items;
+  const externalHistory = variableEventPage(external, "ROOT_GLOBAL", 0, 20).items;
+  assert.deepEqual(rootHistory.map(event => event.sequence), [1, 2, 3, 4, 7, 9, 11, 12, 13, 14]);
+  assert.deepEqual(externalHistory.map(event => event.sequence), [1, 2]);
+  assert.deepEqual(rootHistory[0].new, { type: "string", value: "context" });
+  assert.deepEqual(externalHistory[0].new, { type: "string", value: "external" });
+  assert.deepEqual(externalHistory[1].value, { type: "string", value: "external" });
+
+  const repeated = rootHistory.filter(event => event.template === "trace_global_repeat");
+  assert.deepEqual(repeated.map(event => event.occurrence), [4, 5]);
+  for (const event of repeated) {
+    const occurrence = root.occurrences[event.occurrence];
+    assert.equal(occurrence.site.target, "trace_global_repeat");
+    assert.equal(occurrence.site.caller, "trace_context");
+    assert.deepEqual(event.value, { type: "string", value: "context" });
+  }
+  assert.notEqual(root.occurrences[4].siteIndex, root.occurrences[5].siteIndex);
+  assert.equal(external.occurrences[externalHistory[1].occurrence].site.target, "trace_global_repeat");
+  assert.equal(external.occurrences[externalHistory[1].occurrence].site.caller, "trace_external");
+
+  const functionRead = rootHistory.find(event => event.template === "trace_functions");
+  assert.equal(functionRead.sequence, 11);
+  assert.equal(functionRead.occurrence, null, "function source is not its caller's declaration include occurrence");
+  assert.equal(root.occurrences[0].site.target, "trace_functions");
+  for (const [parent, child] of [[1, 2], [6, 7]]) {
+    assert.equal(root.occurrences[parent].site.caller, "trace_functions");
+    assert.equal(root.occurrences[parent].site.target, "trace_structure");
+    assert.equal(root.occurrences[child].parent, parent);
+    assert.equal(root.occurrences[child].site.target, "trace_structure_leaf");
+    const visible = buildVisibleModel(root.occurrences, new Set([child]), new Set(), true, 0, 20);
+    assert.deepEqual(visible.visible.map(row => row.index), [parent, child]);
+    const childEvent = rootHistory.find(event => event.occurrence === child);
+    assert.equal(childEvent.template, "trace_structure_leaf");
+    assert.deepEqual(childEvent.value, { type: "string", value: "context" });
+  }
+});

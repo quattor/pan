@@ -14,16 +14,184 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.junit.Test;
 import org.quattor.pan.output.Formatter;
+import org.quattor.pan.output.DepxFormatter;
+import org.quattor.pan.output.DepxGzipFormatter;
 import org.quattor.pan.tasks.FinalResult;
 import org.quattor.pan.ttemplate.GlobalVariableTraceSink;
 import org.quattor.pan.utils.TestUtils;
 
 public class GlobalVariableTraceIntegrationTest {
+    private JsonObject profile(JsonObject document, String name) {
+        for (JsonElement value : document.getAsJsonArray("profiles")) {
+            JsonObject profile = value.getAsJsonObject();
+            if (name.equals(profile.get("name").getAsString())) return profile;
+        }
+        throw new AssertionError("Missing profile " + name);
+    }
+
+    private CompilerResults compileDepx(File output, String root, String objectGlob,
+            String variableGlob, boolean file, String object) throws Exception {
+        CompilerOptions options = new CompilerOptions(null, null, 1000, 50,
+                new java.util.HashSet<Formatter>(Arrays.<Formatter>asList(
+                        DepxFormatter.getInstance(), DepxGzipFormatter.getInstance())), output,
+                Collections.singletonList(new File(TestUtils.getTestdir(), root)),
+                CompilerOptions.DeprecationWarnings.OFF, null, null, null, 1,
+                objectGlob, variableGlob, file);
+        return Compiler.run(options, Collections.singletonList(object), Collections.<File>emptyList());
+    }
+
+    private JsonObject readDepx(File output, String name) throws Exception {
+        return new JsonParser().parse(new String(Files.readAllBytes(new File(output, name + ".depx").toPath()),
+                StandardCharsets.UTF_8)).getAsJsonObject();
+    }
+
+    @Test public void depxArtifactsPreserveIndependentProfilesOccurrencesAndExplicitStream() throws Exception {
+        File output = new File(TestUtils.getTmpdir(), "depx-global-trace-artifacts");
+        assertTrue(output.isDirectory() || output.mkdirs());
+        ByteArrayOutputStream stderr = new ByteArrayOutputStream();
+        PrintStream previous = System.err;
+        try {
+            System.setErr(new PrintStream(stderr, true, "UTF-8"));
+            assertNull(compileDepx(output, "depx", "trace_*", null, true, "trace_context").formatErrors());
+        } finally { System.setErr(previous); }
+        assertFalse(stderr.toString("UTF-8").contains("PAN_GLOBAL_TRACE "));
+        File plain = new File(output, "trace_context.depx");
+        byte[] bytes = Files.readAllBytes(plain.toPath());
+        ByteArrayOutputStream uncompressed = new ByteArrayOutputStream();
+        try (GZIPInputStream input = new GZIPInputStream(Files.newInputStream(
+                new File(output, "trace_context.depx.gz").toPath()))) {
+            byte[] buffer = new byte[4096];
+            for (int count; (count = input.read(buffer)) != -1;) uncompressed.write(buffer, 0, count);
+        }
+        assertArrayEquals(bytes, uncompressed.toByteArray());
+        JsonObject document = new JsonParser().parse(new String(bytes, StandardCharsets.UTF_8)).getAsJsonObject();
+        Map<String, JsonObject> captured = new HashMap<String, JsonObject>();
+        for (String name : new String[] {"trace_context", "trace_external"}) {
+            JsonObject profile = profile(document, name);
+            JsonObject trace = profile.getAsJsonObject("global_trace");
+            assertEquals("*", trace.get("variable_glob").getAsString());
+            assertTrue(trace.get("selected").getAsBoolean());
+            assertTrue(trace.get("complete").getAsBoolean());
+            JsonArray events = trace.getAsJsonArray("events");
+            assertTrue(events.size() > 0);
+            int sequence = 0;
+            for (JsonElement value : events) {
+                JsonObject event = value.getAsJsonObject();
+                assertEquals(++sequence, event.get("sequence").getAsInt());
+                assertEquals(name, event.get("object").getAsString());
+                if (!event.get("occurrence").isJsonNull()) {
+                    assertTrue(event.get("occurrence").getAsInt() < profile.getAsJsonArray("occurrences").size());
+                }
+                captured.put(name + ":" + sequence, event);
+            }
+            assertTrue(events.get(0).getAsJsonObject().get("occurrence").isJsonNull());
+        }
+        JsonArray rootEvents = profile(document, "trace_context").getAsJsonObject("global_trace").getAsJsonArray("events");
+        List<Integer> repeated = new ArrayList<Integer>();
+        List<Integer> createParents = new ArrayList<Integer>();
+        List<Integer> createChildren = new ArrayList<Integer>();
+        boolean function = false, includeExpression = false;
+        for (JsonElement value : rootEvents) {
+            JsonObject event = value.getAsJsonObject();
+            if ("read".equals(event.get("action").getAsString())
+                    && "ROOT_GLOBAL".equals(event.get("variable").getAsString())) {
+                if ("trace_structure".equals(event.get("template").getAsString())) {
+                    createParents.add(event.get("occurrence").getAsInt());
+                } else if ("trace_structure_leaf".equals(event.get("template").getAsString())) {
+                    createChildren.add(event.get("occurrence").getAsInt());
+                }
+            }
+            if ("trace_global_repeat".equals(event.get("template").getAsString())
+                    && "ROOT_GLOBAL".equals(event.get("variable").getAsString())) {
+                repeated.add(event.get("occurrence").getAsInt());
+            }
+            if ("trace_functions".equals(event.get("template").getAsString())
+                    && "ROOT_GLOBAL".equals(event.get("variable").getAsString())) {
+                assertTrue(event.get("occurrence").isJsonNull());
+                function = true;
+            }
+            if ("TARGET".equals(event.get("variable").getAsString())
+                    && "read".equals(event.get("action").getAsString())) {
+                assertTrue(event.get("occurrence").isJsonNull());
+                includeExpression = true;
+            }
+        }
+        assertEquals(2, repeated.size());
+        assertNotEquals(repeated.get(0), repeated.get(1));
+        assertEquals(4, createParents.size());
+        assertEquals(2, createChildren.size());
+        for (int i = 0; i < createChildren.size(); i++) {
+            assertEquals(createParents.get(i * 2), createParents.get(i * 2 + 1));
+            assertNotEquals(createParents.get(i * 2), createChildren.get(i));
+            JsonObject child = profile(document, "trace_context").getAsJsonArray("occurrences")
+                    .get(createChildren.get(i)).getAsJsonObject();
+            assertEquals(createParents.get(i * 2).intValue(), child.get("parent").getAsInt());
+        }
+        assertTrue(function);
+        assertTrue(includeExpression);
+        int streamed = 0;
+        for (String line : log(output).split("\n")) {
+            assertTrue(line.startsWith("PAN_GLOBAL_TRACE "));
+            JsonObject event = new JsonParser().parse(line.substring(17)).getAsJsonObject();
+            assertEquals(event, captured.get(event.get("object").getAsString() + ":" + event.get("sequence").getAsInt()));
+            streamed++;
+        }
+        assertEquals(captured.size(), streamed);
+    }
+
+    @Test public void depxUnselectedProfileAndFailedBuildHaveExpectedCapturePolicy() throws Exception {
+        File output = outputDirectory();
+        ByteArrayOutputStream stderr = new ByteArrayOutputStream();
+        PrintStream previous = System.err;
+        try {
+            System.setErr(new PrintStream(stderr, true, "UTF-8"));
+            assertNull(compileDepx(output, "depx", "trace_context", "NOT_PRESENT", false, "trace_context").formatErrors());
+        } finally { System.setErr(previous); }
+        assertFalse(stderr.toString("UTF-8").contains("PAN_GLOBAL_TRACE "));
+        assertFalse(new File(output, "trace.log").exists());
+        JsonObject selected = profile(readDepx(output, "trace_context"), "trace_context").getAsJsonObject("global_trace");
+        assertTrue(selected.get("selected").getAsBoolean());
+        assertTrue(selected.get("complete").getAsBoolean());
+        assertEquals(0, selected.getAsJsonArray("events").size());
+        JsonObject dependency = profile(readDepx(output, "trace_context"), "trace_external").getAsJsonObject("global_trace");
+        assertFalse(dependency.get("selected").getAsBoolean());
+        assertTrue(dependency.get("complete").getAsBoolean());
+        assertEquals(0, dependency.getAsJsonArray("events").size());
+        File failed = outputDirectory();
+        assertNotNull(compileDepx(failed, "global_variable_trace", "rejected", "X", true, "rejected").formatErrors());
+        assertTrue(log(failed).contains("PAN_GLOBAL_TRACE "));
+        assertFalse(new File(failed, "rejected.depx").exists());
+        assertFalse(new File(failed, "rejected.depx.gz").exists());
+    }
+
+    @Test public void depxPreservesIndexedReadsAndExcludesLocalShadows() throws Exception {
+        File output = new File(TestUtils.getTmpdir(), "depx-global-trace-artifacts");
+        assertTrue(output.isDirectory() || output.mkdirs());
+        assertNull(compileDepx(output, "global_variable_trace", "main", "*", false, "main").formatErrors());
+        JsonArray events = profile(readDepx(output, "main"), "main").getAsJsonObject("global_trace").getAsJsonArray("events");
+        boolean indexed = false;
+        for (JsonElement value : events) {
+            JsonObject event = value.getAsJsonObject();
+            if ("DATA".equals(event.get("variable").getAsString()) && event.has("access_path")) {
+                assertEquals(3, event.getAsJsonArray("access_path").size());
+                assertEquals(20, event.getAsJsonObject("value").get("value").getAsInt());
+                indexed = true;
+            }
+            if ("main".equals(event.get("template").getAsString())
+                    && event.getAsJsonObject("location").get("begin_line").getAsInt() == 23) {
+                assertNotEquals("read", event.get("action").getAsString());
+            }
+        }
+        assertTrue(indexed);
+    }
     private File outputDirectory() throws Exception {
         return Files.createTempDirectory(TestUtils.getTmpdir().toPath(), "trace-integration-").toFile();
     }

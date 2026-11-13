@@ -16,6 +16,7 @@ import org.quattor.pan.repository.SourceFile;
 import org.quattor.pan.tasks.FinalResult;
 import org.quattor.pan.tasks.Valid2Result;
 import org.quattor.pan.ttemplate.IncludeTrace;
+import org.quattor.pan.ttemplate.GlobalVariableTraceCapture;
 import org.quattor.pan.ttemplate.SourceRange;
 import org.quattor.pan.ttemplate.Template;
 import static org.junit.Assert.*;
@@ -48,6 +49,7 @@ public class DepxFormatterTest {
         assertEquals(1, json.get("version").getAsInt());
         assertEquals(0, json.getAsJsonArray("roots").size());
         JsonObject profile = json.getAsJsonArray("profiles").get(0).getAsJsonObject();
+        assertFalse(profile.has("global_trace"));
         assertEquals("é\"\n\\\t", profile.get("name").getAsString());
         JsonArray sites = profile.getAsJsonArray("sites");
         assertEquals(3, sites.size());
@@ -68,6 +70,45 @@ public class DepxFormatterTest {
         }
         assertEquals(0, json.getAsJsonArray("dependencies").size());
         assertEquals(text, render(result()));
+    }
+
+    @Test
+    public void writesOrderedCaptureAndIncompletePrefixMetadata() throws Exception {
+        GlobalVariableTraceCapture.Builder capture = new GlobalVariableTraceCapture.Builder("*", null, true, 2, 1000);
+        capture.add("{\"sequence\":1,\"variable\":\"é\"}");
+        capture.add("{\"sequence\":2,\"variable\":\"X\"}");
+        capture.drop();
+        IncludeTrace trace = new IncludeTrace.Builder().snapshot();
+        FinalResult result = new FinalResult(null, new Valid2Result("root", null,
+                Collections.<String>emptySet(), null, trace, capture.snapshot()));
+        JsonObject profile = new JsonParser().parse(render(result)).getAsJsonObject()
+                .getAsJsonArray("profiles").get(0).getAsJsonObject();
+        JsonObject value = profile.getAsJsonObject("global_trace");
+        assertEquals(1, value.get("version").getAsInt());
+        assertEquals("*", value.get("object_glob").getAsString());
+        assertEquals("*", value.get("variable_glob").getAsString());
+        assertTrue(value.get("selected").getAsBoolean());
+        assertFalse(value.get("complete").getAsBoolean());
+        assertEquals(1, value.get("dropped_events").getAsInt());
+        assertEquals(2, value.getAsJsonObject("limits").get("max_events").getAsInt());
+        assertEquals(1000, value.getAsJsonObject("limits").get("max_bytes").getAsInt());
+        assertEquals("é", value.getAsJsonArray("events").get(0).getAsJsonObject().get("variable").getAsString());
+        assertEquals(2, value.getAsJsonArray("events").get(1).getAsJsonObject().get("sequence").getAsInt());
+        try { result.getGlobalVariableTraceCaptures().clear(); fail(); }
+        catch (UnsupportedOperationException expected) { }
+    }
+
+    @Test
+    public void writesFilteredEmptyCapture() throws Exception {
+        GlobalVariableTraceCapture capture = new GlobalVariableTraceCapture.Builder("other", "X", false, 5, 100).snapshot();
+        FinalResult result = new FinalResult(null, new Valid2Result("root", null,
+                Collections.<String>emptySet(), null, new IncludeTrace.Builder().snapshot(), capture));
+        JsonObject value = new JsonParser().parse(render(result)).getAsJsonObject().getAsJsonArray("profiles")
+                .get(0).getAsJsonObject().getAsJsonObject("global_trace");
+        assertFalse(value.get("selected").getAsBoolean());
+        assertTrue(value.get("complete").getAsBoolean());
+        assertEquals(0, value.get("dropped_events").getAsInt());
+        assertEquals(0, value.getAsJsonArray("events").size());
     }
 
     @Test

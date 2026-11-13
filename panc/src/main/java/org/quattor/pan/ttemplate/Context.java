@@ -296,6 +296,9 @@ public interface Context {
     /** Whether explicit operations on this global are traced. */
     default boolean isGlobalVariableTraceSelected(String name) { return false; }
 
+    /** Return the immutable profile capture, or null when capture is disabled. */
+    default GlobalVariableTraceCapture getGlobalVariableTraceCapture() { return null; }
+
     /** Whether any destination currently needs this selected variable's payload. */
     default boolean isGlobalVariableTracePayloadRequired(String name) {
         return isGlobalVariableTraceSelected(name);

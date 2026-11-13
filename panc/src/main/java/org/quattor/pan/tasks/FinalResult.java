@@ -33,6 +33,7 @@ import org.quattor.pan.Compiler;
 import org.quattor.pan.cache.Valid2Cache;
 import org.quattor.pan.dml.data.Element;
 import org.quattor.pan.repository.SourceFile;
+import org.quattor.pan.ttemplate.GlobalVariableTraceCapture;
 import org.quattor.pan.ttemplate.IncludeTrace;
 
 /**
@@ -51,6 +52,7 @@ public class FinalResult extends TaskResult {
 
 	Set<SourceFile> dependencies;
     private final Map<String, IncludeTrace> includeTraces;
+    private final Map<String, GlobalVariableTraceCapture> globalVariableTraceCaptures;
     private final List<java.io.File> includeRoots;
 
 	public FinalResult(Compiler compiler, Valid2Result result) {
@@ -63,8 +65,13 @@ public class FinalResult extends TaskResult {
         if (result.getIncludeTrace() != null) {
             traces.put(objectName, result.getIncludeTrace());
         }
-		this.dependencies = resolveAllDependencies(compiler, traces);
+        Map<String, GlobalVariableTraceCapture> captures = new TreeMap<String, GlobalVariableTraceCapture>();
+        if (result.getGlobalVariableTraceCapture() != null) {
+            captures.put(objectName, result.getGlobalVariableTraceCapture());
+        }
+		this.dependencies = resolveAllDependencies(compiler, traces, captures);
         this.includeTraces = Collections.unmodifiableMap(traces);
+        this.globalVariableTraceCaptures = Collections.unmodifiableMap(captures);
         this.includeRoots = compiler == null ? Collections.<java.io.File>emptyList() : compiler.options.includeRoots;
 	}
 
@@ -81,16 +88,22 @@ public class FinalResult extends TaskResult {
         return includeTraces;
     }
 
+    /** Returns immutable profile-local global trace captures. */
+    public Map<String, GlobalVariableTraceCapture> getGlobalVariableTraceCaptures() {
+        return globalVariableTraceCaptures;
+    }
+
     /** Returns the compiler's shared immutable include root table. */
     public List<java.io.File> getIncludeRoots() {
         return includeRoots;
     }
 
 	public Set<SourceFile> resolveAllDependencies(Compiler compiler) {
-        return resolveAllDependencies(compiler, null);
+        return resolveAllDependencies(compiler, null, null);
     }
 
-    private Set<SourceFile> resolveAllDependencies(Compiler compiler, Map<String, IncludeTrace> traces) {
+    private Set<SourceFile> resolveAllDependencies(Compiler compiler, Map<String, IncludeTrace> traces,
+            Map<String, GlobalVariableTraceCapture> captures) {
 
 		Set<SourceFile> allDependencies = new TreeSet<SourceFile>();
 
@@ -117,6 +130,9 @@ public class FinalResult extends TaskResult {
 					allDependencies.addAll(result.getDependencies());
                     if (traces != null && result.getIncludeTrace() != null) {
                         traces.put(objectToProcess, result.getIncludeTrace());
+                    }
+                    if (captures != null && result.getGlobalVariableTraceCapture() != null) {
+                        captures.put(objectToProcess, result.getGlobalVariableTraceCapture());
                     }
 
 					unprocessed.addAll(result.getObjectDependencies());

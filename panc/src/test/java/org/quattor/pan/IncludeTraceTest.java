@@ -77,7 +77,7 @@ public class IncludeTraceTest {
         assertNotNull(external);
         assertNotSame(trace, external);
         assertEquals(2, result.getIncludeTraces().size());
-        assertEquals(1, external.size());
+        assertEquals(2, external.size());
         int creates = 0;
         int structureIncludes = 0;
         int computed = 0;

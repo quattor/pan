@@ -96,7 +96,8 @@ public class Valid2Task extends Task<Valid2Result> {
 			// This will force any values coming out of the finished
 			// configuration to be protected as well.
 			return new Valid2Result(objectName, context.getRoot().protect(),
-					context.getObjectDependencies(), context.getDependencies(), context.getIncludeTrace());
+					context.getObjectDependencies(), context.getDependencies(), context.getIncludeTrace(),
+					context.getGlobalVariableTraceCapture());
 		}
 
 		/**

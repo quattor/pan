@@ -1,4 +1,5 @@
 object template trace_context;
+variable ROOT_GLOBAL = 'context';
 include 'trace_functions';
 '/built' = trace_make();
 variable TARGET = 'trace_leaf';
@@ -8,3 +9,6 @@ valid '/built' = { trace_make(); true; };
 '/external' = value('trace_external:/value');
 '/external_again' = value('trace_external:/value');
 '/text' = file_contents('trace_payload.txt');
+include 'trace_global_repeat';
+include 'trace_global_repeat';
+'/function_global' = trace_global_read();

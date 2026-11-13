@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import org.quattor.pan.repository.SourceFile;
 import org.quattor.pan.tasks.FinalResult;
+import org.quattor.pan.ttemplate.GlobalVariableTraceCapture;
 import org.quattor.pan.ttemplate.IncludeTrace;
 import org.quattor.pan.ttemplate.SourceRange;
 import org.quattor.pan.ttemplate.Template;
@@ -86,6 +87,10 @@ public class DepxFormatter extends AbstractFormatter {
                 json.endObject();
             }
             json.endArray();
+            GlobalVariableTraceCapture capture = result.getGlobalVariableTraceCaptures().get(profile.getKey());
+            if (capture != null) {
+                writeGlobalTrace(json, capture);
+            }
             json.endObject();
         }
         json.endArray();
@@ -96,6 +101,26 @@ public class DepxFormatter extends AbstractFormatter {
         json.endArray();
         json.endObject();
         json.flush();
+    }
+
+    private static void writeGlobalTrace(JsonWriter json, GlobalVariableTraceCapture capture) throws IOException {
+        json.name("global_trace").beginObject();
+        json.name("version").value(1);
+        json.name("object_glob").value(capture.getObjectGlob());
+        json.name("variable_glob").value(capture.getVariableGlob() == null ? "*" : capture.getVariableGlob());
+        json.name("selected").value(capture.isSelected());
+        json.name("complete").value(capture.isComplete());
+        json.name("limits").beginObject();
+        json.name("max_events").value(capture.getMaxEvents());
+        json.name("max_bytes").value(capture.getMaxBytes());
+        json.endObject();
+        json.name("dropped_events").value(capture.getDroppedEvents());
+        json.name("events").beginArray();
+        for (String event : capture.getEvents()) {
+            json.jsonValue(event);
+        }
+        json.endArray();
+        json.endObject();
     }
 
     private static void writeTemplate(JsonWriter json, Template template, List<File> roots) throws IOException {

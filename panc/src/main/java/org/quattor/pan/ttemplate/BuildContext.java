@@ -755,6 +755,7 @@ public class BuildContext implements Context {
     }
 
     /** Returns the current immutable capture, including metadata for filtered profiles. */
+    @Override
     public GlobalVariableTraceCapture getGlobalVariableTraceCapture() {
         return globalVariableTraceCapture == null ? null : globalVariableTraceCapture.snapshot();
     }

@@ -13,6 +13,7 @@ import org.quattor.pan.CompilerResults;
 import org.quattor.pan.tasks.FinalResult;
 import org.quattor.pan.tasks.Valid2Result;
 import org.quattor.pan.ttemplate.IncludeTrace;
+import org.quattor.pan.ttemplate.GlobalVariableTraceCapture;
 import org.quattor.pan.ttemplate.Template;
 import org.quattor.pan.utils.TestUtils;
 import static org.junit.Assert.*;
@@ -22,8 +23,10 @@ public class DepxGzipFormatterTest {
     public void compressedBytesMatchUtf8DepxIncludingUnicode() throws Exception {
         IncludeTrace.Builder builder = new IncludeTrace.Builder();
         builder.enter(new Template("root"), new Template("child"), null, IncludeTrace.Status.EXECUTED);
+        GlobalVariableTraceCapture.Builder capture = new GlobalVariableTraceCapture.Builder("*", "*", true, 10, 1000);
+        capture.add("{\"sequence\":1,\"variable\":\"é\"}");
         FinalResult result = new FinalResult(null, new Valid2Result("røøt", null,
-                Collections.<String>emptySet(), null, builder.snapshot()));
+                Collections.<String>emptySet(), null, builder.snapshot(), capture.snapshot()));
         File plain = File.createTempFile("depx-", ".depx", TestUtils.getTmpdir());
         File compressed = new File(plain.toString() + ".gz");
         try {
